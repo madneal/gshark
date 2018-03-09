@@ -1,0 +1,15 @@
+# Created by .ignore support plugin (hsz.mobi)
+.idea
+*.exe
+*.exe*
+repos
+
+app.ini_bak
+test/
+
+.DS_Store
+main
+
+test
+
+conf
