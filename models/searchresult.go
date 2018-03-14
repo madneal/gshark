@@ -58,7 +58,7 @@ type CodeResult struct {
 	HTMLURL     *string            `json:"html_url,omitempty" xorm:"html_url"`
 	Repository  *github.Repository `json:"repository,omitempty" xorm:"json"`
 	TextMatches []TextMatch        `json:"text_matches,omitempty" xorm:"LONGBLOB"`
-	Status      int
+	Status      int                 // 1 confirmed 2 ignored
 	Version     int                `xorm:"version"`
 	CreatedTime time.Time          `xorm:"created"`
 	UpdatedTime time.Time          `xorm:"updated"`
