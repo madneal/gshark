@@ -85,7 +85,7 @@ func RunSearchTask(mapRules map[int][]models.Rules, err error) () {
 	}
 }
 
-func SaveResult(result *github.CodeSearchResult, resp *github.Response, err error) () {
+func SaveResult(result *github.CodeSearchResult, err error) () {
 	insertCount := 0
 	if err == nil && len(result.CodeResults) > 0 {
 		for _, resultItem := range result.CodeResults {
