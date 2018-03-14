@@ -128,8 +128,9 @@ func (c *Client) GetUserOrgs(username string) ([]*github.Organization, *github.R
 	return c.Client.Organizations.List(ctx, username, nil)
 }
 
-func (c *Client) SearchCode(keyword string) (*github.CodeSearchResult, error) {
+func (c *Client) SearchCode(keyword string) ([]*github.CodeSearchResult, error) {
 	var allSearchResult []*github.CodeSearchResult
+	var err error
 	ctx := context.Background()
 	listOpt := github.ListOptions{PerPage: 100}
 	opt := &github.SearchOptions{Sort: "indexed", Order: "desc", TextMatch: true, ListOptions: listOpt}
