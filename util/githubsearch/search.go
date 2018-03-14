@@ -101,7 +101,9 @@ func SaveResult(results []*github.CodeSearchResult, err error) () {
 
 					inputInfo := models.NewInputInfo("repo", repoUrl, fullName)
 					has, err := inputInfo.Exist(repoUrl)
-					has = has && !strings.HasSuffix(fullName, ".ipynb")
+					if strings.HasSuffix(fullName, "ipynb") {
+						codeResult.Status = 2
+					}
 					if err == nil && !has {
 						inputInfo.Insert()
 					}
