@@ -31,7 +31,6 @@ import (
 	"golang.org/x/oauth2"
 	"../../logger"
 	"time"
-	"fmt"
 )
 
 var (
@@ -137,13 +136,11 @@ func (c *Client) SearchCode(keyword string) ([]*github.CodeSearchResult, error) 
 	opt := &github.SearchOptions{Sort: "indexed", Order: "desc", TextMatch: true, ListOptions: listOpt}
 	for {
 		result, resp, err := c.Client.Search.Code(ctx, keyword, opt)
-		var info string
-		if err != nil {
-			info = " "
+		if err == nil {
+			logger.Log.Infof("remaining: %d, nextPage: %d, lastPage: %d", resp.Remaining, resp.NextPage, resp.LastPage)
 		} else {
-			info = fmt.Sprintf(err.Error())
+			logger.Log.Infoln(err)
 		}
-		logger.Log.Infoln(resp.Remaining, info, resp.LastPage)
 		if resp.Remaining < 10 {
 			time.Sleep(60 * time.Second)
 		}
