@@ -179,7 +179,6 @@ func DistributionTask(tasksMap map[int][]models.RepoConfig, rules []models.Rules
 	for _, rule := range rules {
 		for _, reposConf := range tasksMap {
 			Run(reposConf, rule)
-
 		}
 	}
 }

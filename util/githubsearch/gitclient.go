@@ -29,6 +29,8 @@ import (
 	"github.com/google/go-github/github"
 	"context"
 	"golang.org/x/oauth2"
+	"../../logger"
+	"time"
 )
 
 var (
@@ -126,9 +128,23 @@ func (c *Client) GetUserOrgs(username string) ([]*github.Organization, *github.R
 	return c.Client.Organizations.List(ctx, username, nil)
 }
 
-func (c *Client) SearchCode(keyword string) (*github.CodeSearchResult, *github.Response, error) {
+func (c *Client) SearchCode(keyword string) (*github.CodeSearchResult, error) {
+	var allSearchResult []*github.CodeSearchResult
 	ctx := context.Background()
-	listOpt := github.ListOptions{Page: 1, PerPage: 500}
+	listOpt := github.ListOptions{PerPage: 100}
 	opt := &github.SearchOptions{Sort: "indexed", Order: "desc", TextMatch: true, ListOptions: listOpt}
-	return c.Client.Search.Code(ctx, keyword, opt)
+	for {
+		result, resp, err := c.Client.Search.Code(ctx, keyword, opt)
+		logger.Log.Infoln(resp.Remaining, err, resp.LastPage)
+		if resp.Remaining < 10 {
+			time.Sleep(60 * time.Second)
+		}
+		time.Sleep(time.Second)
+		allSearchResult = append(allSearchResult, result)
+		if resp.NextPage <= 0 {
+			break
+		}
+		opt.Page = resp.NextPage
+	}
+	return allSearchResult, err
 }
