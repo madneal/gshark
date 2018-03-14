@@ -140,7 +140,7 @@ func (c *Client) SearchCode(keyword string) ([]*github.CodeSearchResult, error) 
 		if resp.Remaining < 10 {
 			time.Sleep(60 * time.Second)
 		}
-		time.Sleep(time.Second)
+		time.Sleep(time.Minute)
 		allSearchResult = append(allSearchResult, result)
 		if resp.NextPage <= 0 {
 			break
