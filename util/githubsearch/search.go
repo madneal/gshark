@@ -108,7 +108,6 @@ func SaveResult(results []*github.CodeSearchResult, err error) () {
 						inputInfo.Insert()
 					}
 					exist, err := codeResult.Exist()
-					logger.Log.Infoln(exist, err)
 					if err == nil && !exist {
 						insertCount++
 						logger.Log.Infoln(codeResult.Insert())
