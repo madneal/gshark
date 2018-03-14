@@ -32,6 +32,7 @@ import (
 	"encoding/json"
 	"time"
 	"sync"
+	"strings"
 	"../../logger"
 )
 
@@ -86,7 +87,7 @@ func RunSearchTask(mapRules map[int][]models.Rules, err error) () {
 }
 
 func SaveResult(results []*github.CodeSearchResult, err error) () {
-	//insertCount := 0
+	insertCount := 0
 	for _, result := range results {
 		if err == nil && len(result.CodeResults) > 0 {
 			for _, resultItem := range result.CodeResults {
@@ -100,18 +101,20 @@ func SaveResult(results []*github.CodeSearchResult, err error) () {
 
 					inputInfo := models.NewInputInfo("repo", repoUrl, fullName)
 					has, err := inputInfo.Exist(repoUrl)
+					has = has && !strings.HasSuffix(fullName, ".ipynb")
 					if err == nil && !has {
 						inputInfo.Insert()
 					}
 					exist, err := codeResult.Exist()
 					logger.Log.Infoln(exist, err)
 					if err == nil && !exist {
+						insertCount++
 						logger.Log.Infoln(codeResult.Insert())
 					}
 				}
 			}
 		}
-		//logger.Log.Infof("Has inserted %d results into code_result", insertCount)
+		logger.Log.Infof("Has inserted %d results into code_result", insertCount)
 	}
 }
 
