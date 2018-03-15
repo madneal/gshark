@@ -31,6 +31,7 @@ const (
 	DefaultVcs                   = "git"
 	DefaultBaseUrl               = "{url}/blob/master/{path}{anchor}"
 	DefaultAnchor                = "#L{line}"
+
 )
 
 var (
@@ -45,4 +46,6 @@ var (
 	DEBUG_MODE bool
 
 	PAGE_SIZE = 10
+
 )
+var IgnoreFileExtensions = [3]string{"ipynb", "nb", "resx"}
