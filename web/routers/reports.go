@@ -89,8 +89,8 @@ func ListGithubSearchResult(ctx *macaron.Context, sess session.Store) {
 
 func getRefer(ctx *macaron.Context)  string{
 	refer := "/admin/reports/github/"
-	if ctx.Req.Header["Referer"] != nil && len(ctx.Req.Header["Referer"]) > 0 {
-		u := ctx.Req.Header["Refer"][0]
+	if _, ok := ctx.Req.Header["Referer"]; len(ctx.Req.Header["Referer"]) > 0 && ok {
+		u := ctx.Req.Header["Referer"][0]
 		urlParsed, err := url.Parse(u)
 		if err == nil {
 			refer = urlParsed.RequestURI()
@@ -129,6 +129,7 @@ func DisableRepoById(ctx *macaron.Context, sess session.Store) {
 		has, result, err := models.GetReportById(int64(Id))
 		if err == nil && has {
 			models.DisableRepoByUrl(result.Repository.GetHTMLURL())
+			models.CancelReportsByRepo(int64(Id))
 		}
 		models.CancelReportById(int64(Id))
 		ctx.Redirect(getRefer(ctx))
