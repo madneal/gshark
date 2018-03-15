@@ -155,6 +155,11 @@ func CancelReportById(id int64) (page int, err error) {
 	return page, err
 }
 
-func CancelReportsByRepo(repo string) (err error) {
-	_, err = Engine.Table("code_result").Exec("update code_result set status = 2 where repo_name=>", repo)
+func CancelReportsByRepo(id int64) (err error) {
+	var repo string
+	has, err := Engine.Table("code_result").Where("id =?", id).Cols("repo_name").Get(&repo)
+	if err == nil && has {
+		_, err = Engine.Table("code_result").Exec("update code_result set status = 2 where repo_name=?", repo)
+	}
+	return err
 }
