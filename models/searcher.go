@@ -39,7 +39,7 @@ type SearchResult struct {
 	FilesOpened    int                `json:"-"`
 	Duration       time.Duration      `json:"-"`
 	Revision       string
-	Rule           Rules
+	Rule           Rule
 	Status         int                `xorm:"int default 0 notnull"`
 }
 
@@ -50,7 +50,7 @@ func NewSearchResult(
 	FilesOpened int,
 	duration time.Duration,
 	revision string,
-	rule Rules) (*SearchResult) {
+	rule Rule) (*SearchResult) {
 	return &SearchResult{Matches: matches, Repo: repo, FilesWithMatch: FilesWithMatch,
 		FilesOpened: FilesOpened, Duration: duration, Revision: revision, Rule: rule}
 }
