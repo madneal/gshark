@@ -62,6 +62,11 @@ func DoLogin(ctx *macaron.Context, sess session.Store) {
 	}
 }
 
+func DoLogout(ctx *macaron.Context, sess session.Store) {
+	sess.GC()
+	ctx.Redirect("/admin/login")
+}
+
 func ListUsers(ctx *macaron.Context, sess session.Store) {
 	if sess.Get("admin") != nil {
 		users, _ := models.ListAdmins()

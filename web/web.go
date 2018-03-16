@@ -88,11 +88,13 @@ func RunWeb(ctx *cli.Context) {
 	m.Use(cache.Cacher())
 	m.Get("/", routers.Index)
 
+
 	m.Group("/admin", func() {
 		m.Get("", routers.AdminIndex)
 		m.Get("/index/", routers.AdminIndex)
 		m.Get("/login/", routers.Login)
 		m.Post("/login/", routers.DoLogin)
+		m.Get("/logout", routers.DoLogout)
 
 		m.Group("/users/", func() {
 			m.Get("", routers.ListUsers)
