@@ -63,10 +63,10 @@ func GetRulesPage(page int) ([]Rules, int, error) {
 	totalPages, err := Engine.Table("rules").Count()
 	var pages int
 
-	if int(totalPages)%vars.PAGE_SIZE == 0 {
+	if int(totalPages) % vars.PAGE_SIZE == 0 {
 		pages = int(totalPages) / vars.PAGE_SIZE
 	} else {
-		pages = int(totalPages)/vars.PAGE_SIZE + 1
+		pages = int(totalPages) / vars.PAGE_SIZE + 1
 	}
 
 	if page >= pages {
@@ -76,7 +76,7 @@ func GetRulesPage(page int) ([]Rules, int, error) {
 	if page < 1 {
 		page = 1
 	}
-	err = Engine.Table("rules").Limit(vars.PAGE_SIZE, (page-1)*vars.PAGE_SIZE).Find(&rules)
+	err = Engine.Table("rules").Limit(vars.PAGE_SIZE, (page-1)*vars.PAGE_SIZE).Desc("status").Find(&rules)
 	return rules, pages, err
 }
 
