@@ -33,7 +33,7 @@ import (
 	"io/ioutil"
 )
 
-type Rules struct {
+type Rule struct {
 	Id          int64
 	Part        string
 	Type        string
@@ -43,23 +43,23 @@ type Rules struct {
 	Status      int    `xorm:"int default 0 notnull"`
 }
 
-func NewRules(part, ruleType, pat, caption, desc string, status int) (*Rules) {
-	return &Rules{Part: part, Type: ruleType, Pattern: pat, Caption: caption, Description: desc, Status: status}
+func NewRules(part, ruleType, pat, caption, desc string, status int) (*Rule) {
+	return &Rule{Part: part, Type: ruleType, Pattern: pat, Caption: caption, Description: desc, Status: status}
 }
 
-func (r *Rules) Insert() (err error) {
+func (r *Rule) Insert() (err error) {
 	_, err = Engine.Insert(r)
 	return err
 }
 
-func GetRules() ([]Rules, error) {
-	rules := make([]Rules, 0)
+func GetRules() ([]Rule, error) {
+	rules := make([]Rule, 0)
 	err := Engine.Table("rules").Where("status=1").Find(&rules)
 	return rules, err
 }
 
-func GetRulesPage(page int) ([]Rules, int, error) {
-	rules := make([]Rules, 0)
+func GetRulesPage(page int) ([]Rule, int, error) {
+	rules := make([]Rule, 0)
 	totalPages, err := Engine.Table("rules").Count()
 	var pages int
 
@@ -80,14 +80,14 @@ func GetRulesPage(page int) ([]Rules, int, error) {
 	return rules, pages, err
 }
 
-func GetRuleById(id int64) (*Rules, bool, error) {
-	rule := new(Rules)
+func GetRuleById(id int64) (*Rule, bool, error) {
+	rule := new(Rule)
 	has, err := Engine.ID(id).Get(rule)
 	return rule, has, err
 }
 
 func EditRuleById(id int64, part, ruleType, pat, caption, desc string, status int) (error) {
-	rule := new(Rules)
+	rule := new(Rule)
 	_, has, err := GetRuleById(id)
 	if err == nil && has {
 		rule.Part = part
@@ -102,13 +102,13 @@ func EditRuleById(id int64, part, ruleType, pat, caption, desc string, status in
 }
 
 func DeleteRulesById(id int64) (err error) {
-	rule := new(Rules)
+	rule := new(Rule)
 	_, err = Engine.Id(id).Delete(rule)
 	return err
 }
 
 func EnableRulesById(id int64) (err error) {
-	rules := new(Rules)
+	rules := new(Rule)
 	has, err := Engine.Id(id).Get(rules)
 	if err == nil && has {
 		rules.Status = 1
@@ -118,7 +118,7 @@ func EnableRulesById(id int64) (err error) {
 }
 
 func DisableRulesById(id int64) (err error) {
-	rules := new(Rules)
+	rules := new(Rule)
 	has, err := Engine.Id(id).Get(rules)
 	if err == nil && has {
 		rules.Status = 0
@@ -127,9 +127,9 @@ func DisableRulesById(id int64) (err error) {
 	return err
 }
 
-func LoadRuleFromFile(filename string) ([]Rules, error) {
+func LoadRuleFromFile(filename string) ([]Rule, error) {
 	ruleFile, err := os.Open(filename)
-	rules := make([]Rules, 0)
+	rules := make([]Rule, 0)
 	var content []byte
 	if err == nil {
 		r := bufio.NewReader(ruleFile)
@@ -151,8 +151,8 @@ func InsertRules(filename string) (error) {
 	return err
 }
 
-func GetGithubKeywords() ([]Rules, error) {
-	rules := make([]Rules, 0)
+func GetGithubKeywords() ([]Rule, error) {
+	rules := make([]Rule, 0)
 	err := Engine.Table("rules").Where("part='github' and status=1").Find(&rules)
 	return rules, err
 }

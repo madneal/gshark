@@ -26,5 +26,5 @@ package models
 
 type Task struct {
 	ReposConfig []RepoConfig
-	Rule        Rules
+	Rule        Rule
 }
