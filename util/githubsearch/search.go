@@ -75,6 +75,9 @@ func Search(rules []models.Rules) () {
 }
 
 func RunSearchTask(mapRules map[int][]models.Rules, err error) () {
+	if len(mapRules) == 0 {
+		logger.Log.Println("There is no rule enabled!")
+	}
 	if err == nil {
 		for _, rules := range mapRules {
 			startTime := time.Now()
