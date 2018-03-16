@@ -70,7 +70,7 @@ func init() {
 		logger.Log.Panicln(err)
 	} else {
 		Engine.Sync2(new(RepoConfig))
-		Engine.Sync2(new(Rules))
+		Engine.Sync2(new(Rule))
 		Engine.Sync2(new(SearchResult))
 		Engine.Sync2(new(InputInfo))
 		Engine.Sync2(new(Admin))
