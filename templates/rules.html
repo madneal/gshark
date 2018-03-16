@@ -119,7 +119,7 @@
                                     <td>{{.Pattern}}</td>
                                     <td>{{.Caption}}</td>
                                     <td>{{.Description}}</td>
-                                    <td>{{.Status}}</td>
+                                    <td>{{ if eq .Status 1}}enabled {{ else }}disabled {{ end }}</td>
                                     <td><a href="/admin/rules/edit/{{.Id}}">edit</a></td>
                                     <td><a href="/admin/rules/del/{{.Id}}">del</a></td>
                                     <td><a href="/admin/rules/enable/{{.Id}}">enable</a></td>
