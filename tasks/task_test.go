@@ -61,7 +61,7 @@ func TestSearchRepos(t *testing.T) {
 
 	repos := make([]string, 0)
 	repos = append(repos, "xsec-traffic")
-	rule := models.Rules{Part: "keyword", Type: "regex", Pattern: "password", Caption: "Contains word: password",
+	rule := models.Rule{Part: "keyword", Type: "regex", Pattern: "password", Caption: "Contains word: password",
 		Description: "Contains word: password"}
 	opts := index.SearchOptions{IgnoreCase: true, LinesOfContext: tasks.DefaultLinesOfContext, FileRegexp: ""}
 	respSearch, err := tasks.SearchRepos(rule, &opts, repos, searchers, &filesOpened, &durationMs)
