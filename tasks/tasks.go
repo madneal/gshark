@@ -82,7 +82,7 @@ func GenerateSearcher(reposConfig []models.RepoConfig) (map[string]*searcher.Sea
 
 /* search repos, return a  map[string]*index.SearchResponse map */
 func SearchRepos(
-	rule models.Rules,
+	rule models.Rule,
 	opts *index.SearchOptions,
 	repos []string,
 	idx map[string]*searcher.Searcher,
@@ -126,7 +126,7 @@ func SearchRepos(
 	return res, nil
 }
 
-func DoSearch(reposConfig []models.RepoConfig, rules models.Rules) (map[string]*index.SearchResponse, models.Rules, error) {
+func DoSearch(reposConfig []models.RepoConfig, rules models.Rule) (map[string]*index.SearchResponse, models.Rule, error) {
 	searchers, errors, _, err := GenerateSearcher(reposConfig)
 	respSearch := make(map[string]*index.SearchResponse)
 	if err == nil {
@@ -175,7 +175,7 @@ func SegmentationTask(reposConfig []models.RepoConfig) (map[int][]models.RepoCon
 }
 
 // 按批次分发、执行任务
-func DistributionTask(tasksMap map[int][]models.RepoConfig, rules []models.Rules) {
+func DistributionTask(tasksMap map[int][]models.RepoConfig, rules []models.Rule) {
 	for _, rule := range rules {
 		for _, reposConf := range tasksMap {
 			Run(reposConf, rule)
@@ -183,7 +183,7 @@ func DistributionTask(tasksMap map[int][]models.RepoConfig, rules []models.Rules
 	}
 }
 
-func Run(reposConfig []models.RepoConfig, rule models.Rules) {
+func Run(reposConfig []models.RepoConfig, rule models.Rule) {
 	var wg sync.WaitGroup
 	 wg.Add(len(reposConfig))
 	for _, rConfig := range reposConfig {
@@ -191,7 +191,7 @@ func Run(reposConfig []models.RepoConfig, rule models.Rules) {
 		reposCfg := make([]models.RepoConfig, 0)
 		reposCfg = append(reposCfg, rConfig)
 
-		go func(config []models.RepoConfig, rule models.Rules) {
+		go func(config []models.RepoConfig, rule models.Rule) {
 			defer wg.Done()
 			SaveSearchResult(DoSearch(reposCfg, rule))
 		}(reposCfg, rule)
@@ -200,7 +200,7 @@ func Run(reposConfig []models.RepoConfig, rule models.Rules) {
 	 wg.Wait()
 }
 
-func SaveSearchResult(responses map[string]*index.SearchResponse, rule models.Rules, err error, ) {
+func SaveSearchResult(responses map[string]*index.SearchResponse, rule models.Rule, err error, ) {
 	if err == nil {
 		for repo, resp := range responses {
 			result := models.NewSearchResult(resp.Matches,

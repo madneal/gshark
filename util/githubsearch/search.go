@@ -41,8 +41,8 @@ var (
 	SEARCH_NUM = 25
 )
 
-func GenerateSearchCodeTask() (map[int][]models.Rules, error) {
-	result := make(map[int][]models.Rules)
+func GenerateSearchCodeTask() (map[int][]models.Rule, error) {
+	result := make(map[int][]models.Rule)
 	rules, err := models.GetGithubKeywords()
 	ruleNum := len(rules)
 	batch := ruleNum / SEARCH_NUM
@@ -57,13 +57,13 @@ func GenerateSearchCodeTask() (map[int][]models.Rules, error) {
 	return result, err
 }
 
-func Search(rules []models.Rules) () {
+func Search(rules []models.Rule) () {
 	var wg sync.WaitGroup
 	wg.Add(len(rules))
 	client, token, err := GetGithubClient()
 	if err == nil && token != "" {
 		for _, rule := range rules {
-			go func(rule models.Rules) {
+			go func(rule models.Rule) {
 				defer wg.Done()
 
 			}(rule)
@@ -74,7 +74,7 @@ func Search(rules []models.Rules) () {
 	}
 }
 
-func RunSearchTask(mapRules map[int][]models.Rules, err error) () {
+func RunSearchTask(mapRules map[int][]models.Rule, err error) () {
 	if err == nil {
 		for _, rules := range mapRules {
 			startTime := time.Now()
