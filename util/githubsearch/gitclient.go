@@ -135,7 +135,7 @@ func (c *Client) SearchCode(keyword string) ([]*github.CodeSearchResult, error) 
 	listOpt := github.ListOptions{PerPage: 100}
 	opt := &github.SearchOptions{Sort: "indexed", Order: "desc", TextMatch: true, ListOptions: listOpt}
 	for {
-		result, resp, err := c.Client.Search.Code(ctx, keyword, opt)
+		result, resp, err := c.Client.Search.Code(ctx, "spdb in:file ", opt)
 		if err == nil {
 			logger.Log.Infof("remaining: %d, nextPage: %d, lastPage: %d", resp.Remaining, resp.NextPage, resp.LastPage)
 		} else {
