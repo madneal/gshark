@@ -141,7 +141,7 @@ func (c *Client) SearchCode(keyword string) ([]*github.CodeSearchResult, error) 
 		} else {
 			logger.Log.Infoln(err)
 		}
-		if resp.Remaining < 100 {
+		if resp.Remaining < 10 {
 			time.Sleep(60 * time.Second)
 		}
 		time.Sleep(time.Minute)
