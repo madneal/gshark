@@ -134,22 +134,31 @@ func (c *Client) SearchCode(keyword string) ([]*github.CodeSearchResult, error) 
 	ctx := context.Background()
 	listOpt := github.ListOptions{PerPage: 100}
 	opt := &github.SearchOptions{Sort: "indexed", Order: "desc", TextMatch: true, ListOptions: listOpt}
+	query := keyword + "+in:file"
 	for {
-		result, resp, err := c.Client.Search.Code(ctx, "spdb in:file ", opt)
-		if err == nil {
-			logger.Log.Infof("remaining: %d, nextPage: %d, lastPage: %d", resp.Remaining, resp.NextPage, resp.LastPage)
-		} else {
-			logger.Log.Infoln(err)
-		}
-		if resp.Remaining < 100 {
-			time.Sleep(60 * time.Second)
-		}
+		result, nextPage := searchCodeByOpt(c, ctx, query, *opt)
 		time.Sleep(time.Minute)
 		allSearchResult = append(allSearchResult, result)
-		if resp.NextPage <= 0 {
+		if (nextPage <= 0) {
 			break
 		}
-		opt.Page = resp.NextPage
+		opt.Page = nextPage
 	}
 	return allSearchResult, err
+}
+
+func searchCodeByOpt(c *Client, ctx context.Context, query string, opt github.SearchOptions) (*github.CodeSearchResult, int) {
+	result, res, err := c.Client.Search.Code(ctx, query, &opt)
+
+	if err == nil {
+		logger.Log.Infof("remaining: %d, nextPage: %d, lastPage: %d", res.Remaining, res.NextPage, res.LastPage)
+	} else {
+		logger.Log.Infoln(err)
+	}
+
+	if res.Remaining < 10 {
+		time.Sleep(60 * time.Second)
+	}
+
+	return result, res.NextPage
 }
