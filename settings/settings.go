@@ -29,6 +29,8 @@ import (
 	"../vars"
 
 	"gopkg.in/ini.v1"
+	"os"
+	"strings"
 )
 
 var (
@@ -37,7 +39,14 @@ var (
 
 func init() {
 	var err error
-	source := "conf/app.ini"
+	dirName, _ := os.Getwd()
+	endInex := strings.Index(dirName, "x-patrol")
+	var source string
+	if endInex > 0 {
+		source = dirName[:endInex] + "x-patrol/conf/app.ini"
+	} else {
+		source = "conf/app.ini"
+	}
 	Cfg, err = ini.Load(source)
 
 	if err != nil {
