@@ -54,13 +54,13 @@ func (r *Rule) Insert() (err error) {
 
 func GetRules() ([]Rule, error) {
 	rules := make([]Rule, 0)
-	err := Engine.Table("rules").Where("status=1").Find(&rules)
+	err := Engine.Table("rule").Where("status=1").Find(&rules)
 	return rules, err
 }
 
 func GetRulesPage(page int) ([]Rule, int, error) {
 	rules := make([]Rule, 0)
-	totalPages, err := Engine.Table("rules").Count()
+	totalPages, err := Engine.Table("rule").Count()
 	var pages int
 
 	if int(totalPages) % vars.PAGE_SIZE == 0 {
@@ -76,7 +76,7 @@ func GetRulesPage(page int) ([]Rule, int, error) {
 	if page < 1 {
 		page = 1
 	}
-	err = Engine.Table("rules").Limit(vars.PAGE_SIZE, (page-1)*vars.PAGE_SIZE).Desc("status").Find(&rules)
+	err = Engine.Table("rule").Limit(vars.PAGE_SIZE, (page-1)*vars.PAGE_SIZE).Desc("status").Find(&rules)
 	return rules, pages, err
 }
 
@@ -153,6 +153,6 @@ func InsertRules(filename string) (error) {
 
 func GetGithubKeywords() ([]Rule, error) {
 	rules := make([]Rule, 0)
-	err := Engine.Table("rules").Where("part='github' and status=1").Find(&rules)
+	err := Engine.Table("rule").Where("part='github' and status=1").Find(&rules)
 	return rules, err
 }
