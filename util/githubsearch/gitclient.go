@@ -31,6 +31,7 @@ import (
 	"golang.org/x/oauth2"
 	"../../logger"
 	"time"
+	"fmt"
 )
 
 var (
@@ -135,11 +136,12 @@ func (c *Client) SearchCode(keyword string) ([]*github.CodeSearchResult, error) 
 	listOpt := github.ListOptions{PerPage: 100}
 	opt := &github.SearchOptions{Sort: "indexed", Order: "desc", TextMatch: true, ListOptions: listOpt}
 	query := keyword + "+in:file"
+	fmt.Println("search with the query:" + query)
 	for {
 		result, nextPage := searchCodeByOpt(c, ctx, query, *opt)
 		time.Sleep(time.Minute)
 		allSearchResult = append(allSearchResult, result)
-		if (nextPage <= 0) {
+		if nextPage <= 0 {
 			break
 		}
 		opt.Page = nextPage
