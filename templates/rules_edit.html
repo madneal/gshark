@@ -137,8 +137,8 @@
                                         <label for="hostName" class="col-sm-2 control-label">状态</label>
                                         <div class="col-sm-10">
                                             <select class="form-control" name="status">
-                                                <option value="1">enable</option>
-                                                <option value="0" selected>disable</option>
+                                                <option value="1" {{if eq .rules.Status 1}}selected{{end}}>enable</option>
+                                                <option value="0" {{if eq .rules.Status 0}}selected{{end}}>disable</option>
                                             </select>
                                         </div>
                                     </div>
