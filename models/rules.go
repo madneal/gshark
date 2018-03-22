@@ -31,6 +31,7 @@ import (
 	"encoding/json"
 	"bufio"
 	"io/ioutil"
+	"gopkg.in/yaml.v2"
 )
 
 type Rule struct {
@@ -139,6 +140,30 @@ func LoadRuleFromFile(filename string) ([]Rule, error) {
 		}
 	}
 	return rules, err
+}
+
+func LoadBlackListRuleFromFile(filename string) ([]FilterRule, error) {
+	file, err := os.Open(filename)
+	rules := make([]FilterRule, 0)
+	var content []byte
+	if err == nil {
+		r := bufio.NewReader(file)
+		content, err = ioutil.ReadAll(r)
+		if err == nil {
+			err = yaml.Unmarshal(content, &rules)
+		}
+	}
+	return rules, err
+}
+
+func InsertBlaclistRulesFromFile(filename string) (error) {
+	rules, err := LoadBlackListRuleFromFile(filename)
+	if err == nil {
+		for _, rule := range rules {
+			rule.Insert()
+		}
+	}
+	return err
 }
 
 func InsertRules(filename string) (error) {

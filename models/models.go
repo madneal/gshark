@@ -126,8 +126,13 @@ func InitRules() () {
 	cur, _ := filepath.Abs(".")
 	ruleFile := fmt.Sprintf("%v/conf/gitrob.json", cur)
 	rules, err := GetRules()
+	blacklistFile := fmt.Sprintf("%v/conf/blacklist.yaml", cur)
+	blacklistRules, err1 := GetFilterRules()
 	if err == nil && len(rules) == 0 {
 		logger.Log.Infof("Init rules, err: %v", InsertRules(ruleFile))
+	}
+	if err1 == nil && len(blacklistRules) == 0 {
+		logger.Log.Infof("Init filter rules, err: %v", InsertBlaclistRulesFromFile(blacklistFile))
 	}
 }
 
