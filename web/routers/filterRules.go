@@ -63,7 +63,7 @@ func ListFilterRules(ctx *macaron.Context, sess session.Store) {
 		ctx.Data["next"] = next
 		ctx.Data["pageList"] = pageList
 		ctx.Data["rules"] = rules
-		ctx.HTML(200, "rules")
+		ctx.HTML(200, "filterrules")
 	} else {
 		ctx.Redirect("/admin/login/")
 	}
