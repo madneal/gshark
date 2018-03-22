@@ -3,6 +3,7 @@ package models
 import (
 	"../vars"
 )
+
 type FilterRule struct {
 	Id        int64
 	RuleType  int    `xorm:"int deault 0 not null"` // 0: blacklist rule, 1: whitelist rule
