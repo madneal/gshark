@@ -141,6 +141,17 @@ func RunWeb(ctx *cli.Context) {
 			m.Get("/disable/:id", routers.DisableRules)
 		})
 
+		m.Group("/filterrules/", func() {
+			m.Get("", routers.ListFilterRules)
+			m.Get("/list/", routers.ListFilterRules)
+			m.Get("/list/:page", routers.ListFilterRules)
+			m.Get("/new/", routers.NewRule)
+			m.Post("/new/", routers.PostNewRule)
+			m.Get("/eit/:id", routers.EditRule)
+			m.Post("/edit/:id", routers.PostEditedRule)
+			m.Delete("/del/:id", routers.DeleteRule)
+		})
+
 		m.Group("/repos/", func() {
 			m.Get("", routers.ListRepos)
 			m.Get("/list/", routers.ListRepos)
