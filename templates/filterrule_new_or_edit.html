@@ -60,7 +60,7 @@
                 <li class="header">后台管理</li>
                 <li><a href="/admin/assets/"><i class="fa fa-rmb"></i> <span>资产管理</span></a></li>
                 <li><a href="/admin/repos/"><i class="fa fa-link"></i> <span>仓库管理</span></a></li>
-                <li class="active"><a href="/admin/rules/"><i class="fa fa-link"></i> <span>规则管理</span></a></li>
+                <li class="active"><a href="/admin/filterrules/"><i class="fa fa-link"></i> <span>规则管理</span></a></li>
                 <li><a href="/admin/tokens/"><i class="fa fa-users"></i> <span>token管理</span></a></li>
                 <li><a href="/admin/users/"><i class="fa fa-users"></i> <span>用户管理</span></a></li>
             </ul>
@@ -84,14 +84,14 @@
                 <div class="col-xs-12">
                     <div class="box">
                         <div class="box-body">
-                            <form class="form-horizontal" action="/admin/rules/new/{{if eq .type "edit"}}{{.rule.Id}}{{end}}" method="post">
+                            <form class="form-horizontal" action="/admin/filterrules{{if eq .type "edit"}}/edit/{{.rule.Id}}{{else}}/new/{{end}}" method="post">
                                 <div class="box-body">
                                     <input type="hidden" id="id">
                                     <input type="hidden" name="_csrf" value="{{.csrf_token}}">
                                     <div class="form-group">
                                         <label for="hostName" class="col-sm-2 control-label">规则类型</label>
                                         <div class="col-sm-10">
-                                            <select class="form-control" name="part">
+                                            <select class="form-control" name="ruletype">
                                                 <option value=0 {{if eq .rule.RuleType 0}}selected{{end}}>黑名单</option>
                                                 <option value=1 {{if eq .rule.RuleType 1}}selected{{end}}>白名单</option>
                                             </select>
@@ -100,7 +100,7 @@
                                     <div class="form-group">
                                         <label for="hostName" class="col-sm-2 control-label">规则属性</label>
                                         <div class="col-sm-10">
-                                            <select class="form-control" name="ruletype">
+                                            <select class="form-control" name="rulekey">
                                                 <option value="ext" {{if eq .rule.RuleKey "ext"}}selected{{end}}>ext 文件拓展</option>
                                                 <option value="lang" {{if eq .rule.RuleKey "lang"}}selected{{end}}>lang 语言</option>
                                             </select>
