@@ -84,33 +84,32 @@
                 <div class="col-xs-12">
                     <div class="box">
                         <div class="box-body">
-                            <form class="form-horizontal" action="/admin/rules/new/" method="post">
+                            <form class="form-horizontal" action="/admin/rules/new/{{if eq .type "edit"}}{{.rule.Id}}{{end}}" method="post">
                                 <div class="box-body">
                                     <input type="hidden" id="id">
                                     <input type="hidden" name="_csrf" value="{{.csrf_token}}">
                                     <div class="form-group">
                                         <label for="hostName" class="col-sm-2 control-label">规则类型</label>
-
                                         <div class="col-sm-10">
                                             <select class="form-control" name="part">
-                                                <option value=0>黑名单</option>
-                                                <option value=1>白名单</option>
+                                                <option value=0 {{if eq .rule.RuleType 0}}selected{{end}}>黑名单</option>
+                                                <option value=1 {{if eq .rule.RuleType 1}}selected{{end}}>白名单</option>
                                             </select>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="hostName" class="col-sm-2 control-label">规则属性</label>
                                         <div class="col-sm-10">
-                                            <select class="form-control" name="type">
-                                                <option value="ext">ext 文件拓展</option>
-                                                <option value="lang">lang 语言</option>
+                                            <select class="form-control" name="ruletype">
+                                                <option value="ext" {{if eq .rule.RuleKey "ext"}}selected{{end}}>ext 文件拓展</option>
+                                                <option value="lang" {{if eq .rule.RuleKey "lang"}}selected{{end}}>lang 语言</option>
                                             </select>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="content" class="col-sm-2 control-label">规则内容</label>
                                         <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="content" name="content"
+                                            <input type="text" class="form-control" id="rulevalue" name="rulevalue" value={{.rule.RuleValue}}
                                                    placeholder="规则内容,使用逗号分隔">
                                         </div>
                                     </div>
