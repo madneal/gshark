@@ -120,8 +120,8 @@
                                     <td>{{if eq .RuleType 0}}黑名单{{end}}{{if eq .RuleType 1}}白名单{{end}}</td>
                                     <td>{{.RuleKey}}</td>
                                     <td>{{.RuleValue}}</td>
-                                    <td><a href="/admin/rules/edit/{{.Id}}">edit</a></td>
-                                    <td><a href="/admin/rules/del/{{.Id}}">del</a></td>
+                                    <td><a href="/admin/filterrules/edit/{{.Id}}">edit</a></td>
+                                    <td><a href="/admin/filterrules/del/{{.Id}}">del</a></td>
                                 </tr>
                                 {{end}}
                                 </thead>
