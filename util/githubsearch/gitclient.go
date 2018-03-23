@@ -32,6 +32,7 @@ import (
 	"../../logger"
 	"time"
 	"fmt"
+	"strings"
 )
 
 var (
@@ -147,6 +148,33 @@ func (c *Client) SearchCode(keyword string) ([]*github.CodeSearchResult, error) 
 		opt.Page = nextPage
 	}
 	return allSearchResult, err
+}
+
+func BuildQuery(query string) (string, error) {
+	filterRules, err := models.GetFilterRules()
+	str := ""
+	for _, filterRule := range filterRules {
+		ruleValue := filterRule.RuleValue
+		ruleType := filterRule.RuleType
+		ruleKey := filterRule.RuleKey
+		ruleValueList := strings.Split(ruleValue, ",")
+		for _, value := range ruleValueList {
+			if ruleType == 0 {
+				str += " -"
+			} else {
+				str += " +"
+			}
+
+			if ruleKey == "ext" {
+				str += "extension:"
+			} else if ruleKey == "lang" {
+				str += "language:"
+			}
+			str += value
+		}
+	}
+	buildedQuery := query + str
+	return buildedQuery, err
 }
 
 func searchCodeByOpt(c *Client, ctx context.Context, query string, opt github.SearchOptions) (*github.CodeSearchResult, int) {
