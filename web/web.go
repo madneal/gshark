@@ -147,7 +147,7 @@ func RunWeb(ctx *cli.Context) {
 			m.Get("/list/:page", routers.ListFilterRules)
 			m.Get("/new/", routers.NewRule)
 			m.Post("/new/", routers.PostNewRule)
-			m.Get("/eit/:id", routers.EditRule)
+			m.Get("/edit/:id", routers.EditRule)
 			m.Post("/edit/:id", routers.PostEditedRule)
 			m.Delete("/del/:id", routers.DeleteRule)
 		})

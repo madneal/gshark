@@ -100,8 +100,9 @@ func EditRule(ctx *macaron.Context, sess session.Store, x csrf.CSRF) {
 		rule, _, _ := models.GetFilterRuleById(int64(Id))
 		ctx.Data["csrf_token"] = x.GetToken()
 		ctx.Data["rule"] = rule
+		ctx.Data["type"] = "edit"
 		ctx.Data["user"] = sess.Get("admin")
-		ctx.HTML(200, "filterrule_edit")
+		ctx.HTML(200, "filterrule_new_or_edit")
 	} else {
 		ctx.Redirect("/admin/login/")
 	}
