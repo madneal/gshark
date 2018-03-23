@@ -60,3 +60,11 @@ func TestSearchCode(t *testing.T) {
 		}
 	}
 }
+
+func TestBuildQuery(t *testing.T) {
+	query := "shang"
+	buildedQuery, err := githubsearch.BuildQuery(query)
+	if err == nil {
+		fmt.Println(buildedQuery)
+	}
+}
