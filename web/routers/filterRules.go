@@ -71,7 +71,10 @@ func ListFilterRules(ctx *macaron.Context, sess session.Store) {
 
 func NewRule(ctx *macaron.Context, sess session.Store) {
 	if sess.Get("admin") != nil {
-		ctx.HTML(200, "filterrule_new")
+		ctx.Data["type"] = "new"
+		rule := models.NewFilterRule(0, "", "")
+		ctx.Data["rule"] = rule
+		ctx.HTML(200, "filterrule_new_or_edit")
 	} else {
 		ctx.Redirect("/admin/login/")
 	}
@@ -79,7 +82,7 @@ func NewRule(ctx *macaron.Context, sess session.Store) {
 
 func PostNewRule(ctx *macaron.Context, sess session.Store) {
 	ctx.Req.ParseForm()
-	if sess.Get("amin") != nil {
+	if sess.Get("admin") != nil {
 		ruleType := strings.TrimSpace(ctx.Req.Form.Get("ruletype"))
 		ruleKey := strings.TrimSpace(ctx.Req.Form.Get("rulekey"))
 		ruleValue := strings.TrimSpace(ctx.Req.Form.Get("rulevalue"))
