@@ -149,7 +149,7 @@ func RunWeb(ctx *cli.Context) {
 			m.Post("/new/", routers.PostNewRule)
 			m.Get("/edit/:id", routers.EditRule)
 			m.Post("/edit/:id", routers.PostEditedRule)
-			m.Delete("/del/:id", routers.DeleteRule)
+			m.Get("/del/:id", routers.DeleteRule)
 		})
 
 		m.Group("/repos/", func() {
