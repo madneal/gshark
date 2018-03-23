@@ -117,7 +117,7 @@
                                 {{range .rules}}
                                 <tr>
                                     <td>{{.Id}}</td>
-                                    <td>{{.RuleType}}</td>
+                                    <td>{{if eq .RuleType 0}}黑名单{{end}}{{if eq .RuleType 1}}白名单{{end}}</td>
                                     <td>{{.RuleKey}}</td>
                                     <td>{{.RuleValue}}</td>
                                     <td><a href="/admin/rules/edit/{{.Id}}">edit</a></td>
