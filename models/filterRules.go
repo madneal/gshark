@@ -47,7 +47,7 @@ func GetFilterRulesPage(page int) ([]FilterRule, int, error) {
 		page = 1
 	}
 
-	err = Engine.Table("filter_rule").Limit(vars.PAGE_SIZE, (page - 1) * vars.PAGE_SIZE).Desc("ruletype").Find(&rules)
+	err = Engine.Table("filter_rule").Limit(vars.PAGE_SIZE, (page - 1) * vars.PAGE_SIZE).Desc("rule_type").Find(&rules)
 	return rules, pages, err
 }
 
@@ -80,7 +80,7 @@ func ConvertRuleType(id int64) (err error) {
 	has, err := Engine.Id(id).Get(rule)
 	if err == nil && has {
 		rule.RuleType = rule.RuleType ^ 1
-		_, err = Engine.Id(id).Cols("ruletype").Update(rule)
+		_, err = Engine.Id(id).Cols("rule_type").Update(rule)
 	}
 	return err
 }
