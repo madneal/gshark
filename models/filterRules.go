@@ -22,13 +22,13 @@ func (r *FilterRule) Insert()(err error) {
 
 func GetFilterRules() ([]FilterRule, error) {
 	rules := make([]FilterRule, 0)
-	err := Engine.Table("filterrule").Find(&rules)
+	err := Engine.Table("filter_rule").Find(&rules)
 	return rules, err
 }
 
 func GetFilterRulesPage(page int) ([]FilterRule, int, error) {
 	rules := make([]FilterRule, 0)
-	totalPages, err := Engine.Table("filterrule").Count()
+	totalPages, err := Engine.Table("filter_rule").Count()
 
 	var pages int
 	pageSize := int64(vars.PAGE_SIZE)
@@ -47,7 +47,7 @@ func GetFilterRulesPage(page int) ([]FilterRule, int, error) {
 		page = 1
 	}
 
-	err = Engine.Table("filterrule").Limit(vars.PAGE_SIZE, (page - 1) * vars.PAGE_SIZE).Desc("ruletype").Find(&rules)
+	err = Engine.Table("filter_rule").Limit(vars.PAGE_SIZE, (page - 1) * vars.PAGE_SIZE).Desc("ruletype").Find(&rules)
 	return rules, pages, err
 }
 
