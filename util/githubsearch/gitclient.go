@@ -136,9 +136,10 @@ func (c *Client) SearchCode(keyword string) ([]*github.CodeSearchResult, error) 
 	ctx := context.Background()
 	listOpt := github.ListOptions{PerPage: 100}
 	opt := &github.SearchOptions{Sort: "indexed", Order: "desc", TextMatch: true, ListOptions: listOpt}
-	query := keyword + "+in:file"
-	fmt.Println("search with the query:" + query)
+	query := keyword + " +in:file"
 	for {
+		query, err = BuildQuery(query)
+		fmt.Println("search with the query:" + query)
 		result, nextPage := searchCodeByOpt(c, ctx, query, *opt)
 		time.Sleep(time.Minute)
 		allSearchResult = append(allSearchResult, result)
@@ -173,8 +174,8 @@ func BuildQuery(query string) (string, error) {
 			str += value
 		}
 	}
-	buildedQuery := query + str
-	return buildedQuery, err
+	builtQuery := query + str
+	return builtQuery, err
 }
 
 func searchCodeByOpt(c *Client, ctx context.Context, query string, opt github.SearchOptions) (*github.CodeSearchResult, int) {
