@@ -137,9 +137,9 @@ func (c *Client) SearchCode(keyword string) ([]*github.CodeSearchResult, error) 
 	listOpt := github.ListOptions{PerPage: 100}
 	opt := &github.SearchOptions{Sort: "indexed", Order: "desc", TextMatch: true, ListOptions: listOpt}
 	query := keyword + " +in:file"
+	query, err = BuildQuery(query)
+	fmt.Println("search with the query:" + query)
 	for {
-		query, err = BuildQuery(query)
-		fmt.Println("search with the query:" + query)
 		result, nextPage := searchCodeByOpt(c, ctx, query, *opt)
 		time.Sleep(time.Minute)
 		allSearchResult = append(allSearchResult, result)
