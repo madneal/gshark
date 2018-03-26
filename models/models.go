@@ -130,9 +130,14 @@ func InitRules() () {
 	blacklistRules, err1 := GetFilterRules()
 	if err == nil && len(rules) == 0 {
 		logger.Log.Infof("Init rules, err: %v", InsertRules(ruleFile))
+	} else if err != nil {
+		logger.Log.Println(err)
 	}
+
 	if err1 == nil && len(blacklistRules) == 0 {
 		logger.Log.Infof("Init filter rules, err: %v", InsertBlaclistRulesFromFile(blacklistFile))
+	} else if err1 != nil {
+		logger.Log.Println(err1)
 	}
 }
 
