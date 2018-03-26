@@ -171,6 +171,8 @@ func BuildQuery(query string) (string, error) {
 			} else if ruleKey == "lang" {
 				str += "language:"
 			}
+
+			value = strings.TrimSpace(value)
 			str += value
 		}
 	}
