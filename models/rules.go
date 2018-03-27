@@ -156,7 +156,7 @@ func LoadBlackListRuleFromFile(filename string) ([]FilterRule, error) {
 	return rules, err
 }
 
-func InsertBlaclistRulesFromFile(filename string) (error) {
+func InsertBlacklistRules(filename string) (error) {
 	rules, err := LoadBlackListRuleFromFile(filename)
 	if err == nil {
 		for _, rule := range rules {
