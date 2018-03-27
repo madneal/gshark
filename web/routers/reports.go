@@ -29,7 +29,7 @@ import (
 	"gopkg.in/macaron.v1"
 
 	"github.com/go-macaron/session"
-
+	"../../util"
 	"strconv"
 	"net/url"
 )
@@ -37,18 +37,11 @@ import (
 func ListGithubSearchResult(ctx *macaron.Context, sess session.Store) {
 	page := ctx.Params(":page")
 	p, _ := strconv.Atoi(page)
-	if p < 1 {
-		p = 1
-	}
-	pre := p - 1
-	if pre <= 0 {
-		pre = 1
-	}
-	next := p + 1
+	p, pre, next := util.GetPreAndNext(p)
 	if sess.Get("admin") != nil {
 		reports, pages, _ := models.ListGithubSearchResultPage(p)
 		pList := 0
-		if pages-p > 10 {
+		if pages - p > 10 {
 			pList = p + 10
 		} else {
 			pList = pages
