@@ -48,4 +48,3 @@ var (
 	PAGE_SIZE = 10
 
 )
-var IgnoreFileExtensions = [3]string{"ipynb", "nb", "resx"}
