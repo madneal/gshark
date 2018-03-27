@@ -32,9 +32,7 @@ import (
 	"encoding/json"
 	"time"
 	"sync"
-	"strings"
 	"../../logger"
-	"../../vars"
 )
 
 var (
@@ -87,15 +85,6 @@ func RunSearchTask(mapRules map[int][]models.Rule, err error) () {
 	}
 }
 
-func isValidExtension(fullname string) bool{
-	for _, extension := range vars.IgnoreFileExtensions {
-		if strings.HasSuffix(fullname, extension) {
-			return false
-		}
-	}
-	return true
-}
-
 func SaveResult(results []*github.CodeSearchResult, err error) () {
 	insertCount := 0
 	for _, result := range results {
@@ -111,9 +100,7 @@ func SaveResult(results []*github.CodeSearchResult, err error) () {
 
 					inputInfo := models.NewInputInfo("repo", repoUrl, fullName)
 					has, err := inputInfo.Exist(repoUrl)
-					if !isValidExtension(fullName) {
-						codeResult.Status = 2
-					}
+
 					if err == nil && !has {
 						inputInfo.Insert()
 					}
