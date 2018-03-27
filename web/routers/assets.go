@@ -30,7 +30,7 @@ import (
 	"github.com/go-macaron/session"
 	"github.com/go-macaron/csrf"
 	"gopkg.in/macaron.v1"
-
+	"../../util"
 	"strconv"
 	"strings"
 )
@@ -38,14 +38,7 @@ import (
 func ListAssets(ctx *macaron.Context, sess session.Store) {
 	page := ctx.Params(":page")
 	p, _ := strconv.Atoi(page)
-	if p < 1 {
-		p = 1
-	}
-	pre := p - 1
-	if pre <= 0 {
-		pre = 1
-	}
-	next := p + 1
+	p, pre, next := util.GetPreAndNext(p)
 
 	if sess.Get("admin") != nil {
 		assets, pages, _ := models.ListInputInfoPage(p)
