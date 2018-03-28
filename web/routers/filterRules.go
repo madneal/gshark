@@ -4,6 +4,7 @@ import (
 	"gopkg.in/macaron.v1"
 	"github.com/go-macaron/session"
 	"strconv"
+	"../../vars"
 	"../../models"
 	"../../util"
 	"strings"
@@ -17,7 +18,7 @@ func ListFilterRules(ctx *macaron.Context, sess session.Store) {
 
 	if sess.Get("admin") != nil {
 		rules, pages, _ := models.GetFilterRulesPage(p)
-		pageList := util.GetPageList(p, pages)
+		pageList := util.GetPageList(p, vars.PageStep, pages)
 
 		ctx.Data["pages"] = pages
 		ctx.Data["page"] = page
