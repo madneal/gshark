@@ -21,7 +21,11 @@ func GetPageList(p, pages int) ([]int) {
 	pList := 0
 
 	if pages - p > 10 {
-		pList = p + 10
+		if p == 1 {
+			pList = p + 10
+		} else {
+			pList = p + 6
+		}
 	} else {
 		pList = pages
 	}
@@ -32,7 +36,7 @@ func GetPageList(p, pages int) ([]int) {
 		}
 	} else {
 		if p <= 10 {
-			for i := 1; i <= pList; i++ {
+			for i := pList - 10; i <= pList; i++ {
 				pageList = append(pageList, i)
 			}
 		} else {

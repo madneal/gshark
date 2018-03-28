@@ -41,35 +41,7 @@ func ListGithubSearchResult(ctx *macaron.Context, sess session.Store) {
 
 	if sess.Get("admin") != nil {
 		reports, pages, _ := models.ListGithubSearchResultPage(p)
-		pList := 0
-
-		if pages - p > 10 {
-			pList = p + 10
-		} else {
-			pList = pages
-		}
-
-		pageList := make([]int, 0)
-
-		if pages <= 10 {
-			for i := 1; i <= pList; i++ {
-				pageList = append(pageList, i)
-			}
-		} else {
-			if p <= 10 {
-				for i := 1; i <= pList; i++ {
-					pageList = append(pageList, i)
-				}
-			} else {
-				t := p + 5
-				if t > pages {
-					t = pages
-				}
-				for i := p - 5; i <= t; i++ {
-					pageList = append(pageList, i)
-				}
-			}
-		}
+		pageList := util.GetPageList(p, pages)
 
 		ctx.Data["reports"] = reports
 		ctx.Data["pages"] = pages
