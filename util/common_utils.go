@@ -16,8 +16,15 @@ func GetPreAndNext(p int) (p_ int, pre int, next int) {
 	return p_, pre, next
 }
 
-func GetPageList(p, pList, pages int) ([]int) {
+func GetPageList(p, pages int) ([]int) {
 	pageList := make([]int, 0)
+	pList := 0
+
+	if pages - p > 10 {
+		pList = p + 10
+	} else {
+		pList = pages
+	}
 
 	if pages <= 10 {
 		for i := 1; i <= pList; i++ {
