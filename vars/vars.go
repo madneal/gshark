@@ -31,6 +31,7 @@ const (
 	DefaultVcs                   = "git"
 	DefaultBaseUrl               = "{url}/blob/master/{path}{anchor}"
 	DefaultAnchor                = "#L{line}"
+	PageStep                     = 5
 
 )
 
