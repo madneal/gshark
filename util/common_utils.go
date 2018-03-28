@@ -1,5 +1,6 @@
 package util
 
+
 func GetPreAndNext(p int) (p_ int, pre int, next int) {
 	if p < 1 {
 		p_ = 1
@@ -16,38 +17,33 @@ func GetPreAndNext(p int) (p_ int, pre int, next int) {
 	return p_, pre, next
 }
 
-func GetPageList(p, pages int) ([]int) {
+func GetPageList(p, step, pages int) ([]int) {
 	pageList := make([]int, 0)
-	pList := 0
+	startIndex := p - step
+	endIndex := p + step
 
-	if pages - p > 10 {
-		if p == 1 {
-			pList = p + 10
-		} else {
-			pList = p + 6
-		}
-	} else {
-		pList = pages
+	if startIndex < 1 && endIndex <= pages {
+		startIndex = 1
+		endIndex = startIndex + 2 * step
+	} else if startIndex >= 1 && endIndex > pages {
+		endIndex = pages
+		startIndex = pages - 2 * step
+	} else if startIndex < 1 && endIndex > pages {
+		startIndex = 1
+		endIndex = pages
 	}
 
-	if pages <= 10 {
-		for i := 1; i <= pList; i++ {
-			pageList = append(pageList, i)
-		}
-	} else {
-		if p <= 10 {
-			for i := pList - 10; i <= pList; i++ {
-				pageList = append(pageList, i)
-			}
-		} else {
-			t := p + 5
-			if t > pages {
-				t = pages
-			}
-			for i := p - 5; i <= t; i++ {
-				pageList = append(pageList, i)
-			}
-		}
+	if startIndex < 1 {
+		startIndex = 1
 	}
+
+	if endIndex > pages {
+		endIndex = pages
+	}
+
+	for i := startIndex; i <= endIndex; i++ {
+		pageList = append(pageList, i)
+	}
+
 	return pageList
 }
