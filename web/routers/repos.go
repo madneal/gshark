@@ -27,6 +27,7 @@ package routers
 import (
 	"../../models"
 	"../../util"
+	"../../vars"
 
 	"gopkg.in/macaron.v1"
 
@@ -42,7 +43,7 @@ func ListRepos(ctx *macaron.Context, sess session.Store) {
 
 	if sess.Get("admin") != nil {
 		repos, pages, _ := models.ListReposPage(p)
-		pageList := util.GetPageList(p, pages)
+		pageList := util.GetPageList(p, vars.PageStep, pages)
 
 		ctx.Data["pages"] = pages
 		ctx.Data["page"] = p

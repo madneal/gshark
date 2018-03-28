@@ -27,7 +27,7 @@ package routers
 import (
 	"../../models"
 	"../../util"
-
+	"../../vars"
 	"gopkg.in/macaron.v1"
 
 	"github.com/go-macaron/session"
@@ -44,7 +44,7 @@ func ListRules(ctx *macaron.Context, sess session.Store) {
 
 	if sess.Get("admin") != nil {
 		rules, pages, _ := models.GetRulesPage(p)
-		pageList := util.GetPageList(p, pages)
+		pageList := util.GetPageList(p, vars.PageStep, pages)
 
 		ctx.Data["pages"] = pages
 		ctx.Data["page"] = p
