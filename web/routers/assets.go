@@ -26,7 +26,7 @@ package routers
 
 import (
 	"../../models"
-
+	"../../vars"
 	"github.com/go-macaron/session"
 	"github.com/go-macaron/csrf"
 	"gopkg.in/macaron.v1"
@@ -42,7 +42,7 @@ func ListAssets(ctx *macaron.Context, sess session.Store) {
 
 	if sess.Get("admin") != nil {
 		assets, pages, _ := models.ListInputInfoPage(p)
-		pageList := util.GetPageList(p, pages)
+		pageList := util.GetPageList(p, vars.PageStep, pages)
 
 		ctx.Data["pages"] = pages
 		ctx.Data["page"] = p

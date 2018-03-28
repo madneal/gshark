@@ -27,6 +27,7 @@ package routers
 import (
 	"../../models"
 	"gopkg.in/macaron.v1"
+	"../../vars"
 
 	"github.com/go-macaron/session"
 	"../../util"
@@ -41,7 +42,7 @@ func ListGithubSearchResult(ctx *macaron.Context, sess session.Store) {
 
 	if sess.Get("admin") != nil {
 		reports, pages, _ := models.ListGithubSearchResultPage(p)
-		pageList := util.GetPageList(p, pages)
+		pageList := util.GetPageList(p, vars.PageStep, pages)
 
 		ctx.Data["reports"] = reports
 		ctx.Data["pages"] = pages
