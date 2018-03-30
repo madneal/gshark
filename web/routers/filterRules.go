@@ -12,9 +12,14 @@ import (
 )
 
 func ListFilterRules(ctx *macaron.Context, sess session.Store) {
-	page := ctx.Params(":page")
-	p, _ := strconv.Atoi(page)
+	page, _ := strconv.Atoi(ctx.Params(":page"))
+
+	if page < 1 {
+		page = 1
+	}
+	p := page
 	p, pre, next := util.GetPreAndNext(p)
+
 
 	if sess.Get("admin") != nil {
 		rules, pages, _ := models.GetFilterRulesPage(p)
