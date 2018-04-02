@@ -64,6 +64,15 @@ type CodeResult struct {
 	UpdatedTime time.Time          `xorm:"updated"`
 }
 
+type CodeResultDetail struct {
+	Id           int64
+	Name         *string
+	Path         *string
+	RepoName     *string
+	HTMLRUL      *string
+
+}
+
 // CodeSearchResult represents the result of a code search.
 type CodeSearchResult struct {
 	Total             *int         `json:"total_count,omitempty"`
