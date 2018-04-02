@@ -123,7 +123,7 @@ func ScheduleTasks(duration time.Duration) {
 		// insert repos from inputInfo
 		InsertAllRepos()
 
-		logger.Log.Infof("Complete the scan of Github, start to sleep %v seconds", duration*time.Second)
+		logger.Log.Infof("Complete the scan of Github, start to sleep %v seconds", duration * time.Second)
 		time.Sleep(duration * time.Second)
 	}
 }
