@@ -79,6 +79,7 @@ func init() {
 		Engine.Sync2(new(GithubToken))
 		Engine.Sync2(new(CodeResult))
 		Engine.Sync2(new(FilterRule))
+		Engine.Sync2(new(CodeResultDetail))
 		InitRules()
 		InitAdmin()
 		InitUrlPattern()

@@ -66,11 +66,24 @@ type CodeResult struct {
 
 type CodeResultDetail struct {
 	Id           int64
-	Name         *string
-	Path         *string
-	RepoName     *string
-	HTMLRUL      *string
+	// owner
+	OwnerName      *string
+	OwnerURl       *string
+	Company        *string
+	Location       *string
+	Email          *string
+	Blog           *string
+	OwnerCreatedAt *github.Timestamp
+	// repo
+	RepoName       *string
+	RepoUrl        *string
+	Lang           *string
+	RepoCreatedAt  *github.Timestamp
+	RepoUpdatedAt  *github.Timestamp
 
+	Keyword        *string
+	MatchedText    *string
+	Status         int
 }
 
 // CodeSearchResult represents the result of a code search.
@@ -133,6 +146,41 @@ func GetPageById(id int64) (int, error) {
 		}
 	}
 	return page, err
+}
+
+
+func GetCodeResultDetailById(id int64) (*CodeResultDetail, error) {
+	codeResultDetail := CodeResultDetail{Id: id}
+	has, err := Engine.Table("code_result_detail").ID(id).Get(&codeResultDetail)
+
+	if err == nil && !has {
+		_, codeResult, _ := GetReportById(id)
+		codeResultDetail = setCodeResultDetail(codeResult)
+	}
+	return &codeResultDetail, err
+}
+
+func setCodeResultDetail(codeResult *CodeResult) CodeResultDetail{
+	detail := CodeResultDetail{}
+	repo := codeResult.Repository
+	owner := codeResult.Repository.Owner
+
+	detail.OwnerName = owner.Name
+	detail.OwnerURl = owner.HTMLURL
+	detail.Blog = owner.Blog
+	detail.Company = owner.Company
+	detail.Email = owner.Email
+	detail.OwnerCreatedAt = owner.CreatedAt
+
+	detail.RepoName = repo.FullName
+	detail.Lang = repo.Language
+	detail.RepoCreatedAt = repo.CreatedAt
+	detail.RepoUpdatedAt = repo.UpdatedAt
+
+	//detail.Keyword = ""
+	//detail.MatchedText = ""
+	detail.Status = codeResult.Status
+	return detail
 }
 
 func GetReportById(id int64) (bool, *CodeResult, error) {
