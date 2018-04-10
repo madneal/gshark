@@ -64,6 +64,13 @@ type CodeResult struct {
 	UpdatedTime time.Time          `xorm:"updated"`
 }
 
+type MatchedText struct {
+	Keyword       *string
+	StartIndex    int
+	EndIndex      int
+	Text          *string
+}
+
 type CodeResultDetail struct {
 	Id           int64
 	// owner
@@ -74,16 +81,15 @@ type CodeResultDetail struct {
 	Email          *string
 	Blog           *string
 	OwnerCreatedAt *github.Timestamp
+	Type           *string
 	// repo
 	RepoName       *string
 	RepoUrl        *string
 	Lang           *string
 	RepoCreatedAt  *github.Timestamp
 	RepoUpdatedAt  *github.Timestamp
-
-	Keyword        *string
-	MatchedText    *string
 	Status         int
+	MatchedTexts   []*MatchedText
 }
 
 // CodeSearchResult represents the result of a code search.
@@ -154,7 +160,8 @@ func GetCodeResultDetailById(id int64) (*CodeResultDetail, error) {
 	has, err := Engine.Table("code_result_detail").ID(id).Get(&codeResultDetail)
 
 	if err == nil && !has {
-		_, codeResult, _ := GetReportById(id)
+		omitRepo := false
+		_, codeResult, _ := GetReportById(id, omitRepo)
 		codeResultDetail = setCodeResultDetail(codeResult)
 	}
 	return &codeResultDetail, err
@@ -162,30 +169,53 @@ func GetCodeResultDetailById(id int64) (*CodeResultDetail, error) {
 
 func setCodeResultDetail(codeResult *CodeResult) CodeResultDetail{
 	detail := CodeResultDetail{}
-	repo := codeResult.Repository
-	owner := codeResult.Repository.Owner
+	repo := *codeResult.Repository
+	owner := *codeResult.Repository.Owner
 
-	detail.OwnerName = owner.Name
+	detail.OwnerName = owner.Login
 	detail.OwnerURl = owner.HTMLURL
 	detail.Blog = owner.Blog
 	detail.Company = owner.Company
 	detail.Email = owner.Email
 	detail.OwnerCreatedAt = owner.CreatedAt
+	detail.Type = owner.Type
 
 	detail.RepoName = repo.FullName
 	detail.Lang = repo.Language
 	detail.RepoCreatedAt = repo.CreatedAt
 	detail.RepoUpdatedAt = repo.UpdatedAt
-
-	//detail.Keyword = ""
-	//detail.MatchedText = ""
 	detail.Status = codeResult.Status
+	setMatchedTexts(&detail, codeResult)
 	return detail
 }
 
-func GetReportById(id int64) (bool, *CodeResult, error) {
+
+func setMatchedTexts(detail *CodeResultDetail, codeResult *CodeResult) {
+	textMatches := codeResult.TextMatches
+	matchedTexts := make([]*MatchedText, 0)
+	for _, textMatch := range textMatches {
+		matchedText := MatchedText{}
+		match := Match{}
+		if textMatch.Matches != nil && len(textMatch.Matches) != 0 {
+			match = textMatch.Matches[0]
+			matchedText.Keyword = match.Text
+			matchedText.StartIndex = match.Indices[0]
+			matchedText.EndIndex = match.Indices[1]
+			matchedTexts = append(matchedTexts, &matchedText)
+		}
+	}
+	detail.MatchedTexts = matchedTexts
+}
+
+func GetReportById(id int64, omitRepo bool) (bool, *CodeResult, error) {
 	report := new(CodeResult)
-	has, err := Engine.Id(id).Omit("repository").Get(report)
+	var has bool
+	var err error
+	if omitRepo {
+		has, err = Engine.Id(id).Omit("repository").Get(report)
+	} else {
+		has, err = Engine.ID(id).Get(report)
+	}
 
 	return has, report, err
 }
