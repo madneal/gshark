@@ -182,6 +182,7 @@ func setCodeResultDetail(codeResult *CodeResult) CodeResultDetail{
 	detail.Type = owner.Type
 
 	detail.RepoName = repo.FullName
+	detail.RepoUrl = repo.HTMLURL
 	detail.Lang = repo.Language
 	detail.RepoCreatedAt = repo.CreatedAt
 	detail.RepoUpdatedAt = repo.UpdatedAt
