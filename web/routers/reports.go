@@ -35,7 +35,7 @@ import (
 	"net/url"
 )
 
-func GetDetailedReportById(ctx *macaron.Context, sess session.Store) *models.CodeResultDetail {
+func GetDetailedReportById(ctx *macaron.Context, sess session.Store) {
 	if sess.Get("admin") != nil {
 		id := ctx.Params(":id")
 		Id, _ := strconv.Atoi(id)
@@ -45,7 +45,6 @@ func GetDetailedReportById(ctx *macaron.Context, sess session.Store) *models.Cod
 	} else {
 		ctx.Redirect("/admin/login/")
 	}
-
 }
 
 func ListGithubSearchResult(ctx *macaron.Context, sess session.Store) {
