@@ -35,6 +35,19 @@ import (
 	"net/url"
 )
 
+func GetDetailedReportById(ctx *macaron.Context, sess session.Store) *models.CodeResultDetail {
+	if sess.Get("admin") != nil {
+		id := ctx.Params(":id")
+		Id, _ := strconv.Atoi(id)
+		codeResultDetail, _ := models.GetCodeResultDetailById(int64(Id))
+		ctx.Data["detailed_report"] = codeResultDetail
+		ctx.HTML(200, "report_detail")
+	} else {
+		ctx.Redirect("/admin/login/")
+	}
+
+}
+
 func ListGithubSearchResult(ctx *macaron.Context, sess session.Store) {
 	page := ctx.Params(":page")
 	p, _ := strconv.Atoi(page)
@@ -95,7 +108,8 @@ func DisableRepoById(ctx *macaron.Context, sess session.Store) {
 	if sess.Get("admin") != nil {
 		id := ctx.Params(":id")
 		Id, _ := strconv.Atoi(id)
-		has, result, err := models.GetReportById(int64(Id))
+		omitRepo := true
+		has, result, err := models.GetReportById(int64(Id), omitRepo)
 		if err == nil && has {
 			models.DisableRepoByUrl(result.Repository.GetHTMLURL())
 			models.CancelReportsByRepo(int64(Id))
