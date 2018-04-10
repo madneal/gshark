@@ -114,7 +114,7 @@
                                 </tr>
                                 {{range .reports}}
                                 <tr>
-                                    <td>{{.Id}}</td>
+                                    <td><a href="/admin/reports/github/report_detail/{{.Id}}" target="_blank">{{.Id}}</a> </td>
                                     <td><a href="{{.HTMLURL}}" target="_blank">{{.RepoName}} > {{.Name}}</a></td>
                                     <td class="code-column">
                                     <code class="prettyprint linenums">{{range  .TextMatches}}
