@@ -88,6 +88,7 @@ type CodeResultDetail struct {
 	Lang           *string
 	RepoCreatedAt  *github.Timestamp
 	RepoUpdatedAt  *github.Timestamp
+
 	Status         int
 	MatchedTexts   []*MatchedText
 }
@@ -188,7 +189,6 @@ func setCodeResultDetail(codeResult *CodeResult) CodeResultDetail{
 	setMatchedTexts(&detail, codeResult)
 	return detail
 }
-
 
 func setMatchedTexts(detail *CodeResultDetail, codeResult *CodeResult) {
 	textMatches := codeResult.TextMatches
