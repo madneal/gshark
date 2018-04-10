@@ -167,7 +167,7 @@ func RunWeb(ctx *cli.Context) {
 			m.Get("/github/confirm/:id", routers.ConfirmReportById)
 			m.Get("/github/cancel/:id", routers.CancelReportById)
 			m.Get("/github/disable_repo/:id", routers.DisableRepoById)
-			m.Get("/github/report_detail/:id", routers)
+			m.Get("/github/report_detail/:id", routers.GetDetailedReportById)
 
 			/* For local repos search */
 			m.Get("/search/", routers.ListLocalSearchResultPage)
