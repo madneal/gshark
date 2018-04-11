@@ -5,85 +5,87 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Github leaked patrol</title>
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-    <link rel="stylesheet" href="/lib/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/lib/font-awesome-4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="/lib/adminLET2/css/AdminLTE.min.css">
-    <link rel="stylesheet" href="/lib/adminLET2/css/skins/skin-red.css">
-    <link rel="stylesheet" href="/css/main.css">
-    <link rel="stylesheet" href="/lib/code_prettify/prettify.css">
-    <script src="/lib/code_prettify/prettify.js"></script>
     <link rel="stylesheet" href="/css/report.css">
 </head>
 <body>
 <div class="report">
     <header>搜索结果详细报告</header>
-    <title>Owner 信息</title>
-    <section>
+    <article>
+        <title>Owner 信息</title>
+        <section>
+            <div class="info">
+                <label>用户名</label>
+                <span>{{ .detailed_report.OwnerName}}</span>
+            </div>
+            <div class="info">
+                <label>公司</label>
+                <span>{{ .detailed_report.Company}}</span>
+            </div>
+            <div class="info">
+                <label>博客</label>
+                <span>{{ .detailed_report.Blog}}</span>
+            </div>
+            <div class="info">
+                <label>归属地</label>
+                <span>{{ .detailed_report.Location}}</span>
+            </div>
+            <div class="info">
+                <label>邮箱</label>
+                <span>{{ .detailed_report.Email}}</span>
+            </div>
+            <div class="info">
+                <label>类型</label>
+                <span>{{ .detailed_report.Type}}</span>
+            </div>
+            <div class="info">
+                <label>创建时间</label>
+                <span>{{ .detailed_report.OwnerCreatedAt}}</span>
+            </div>
+        </section>
+        <title>仓库信息</title>
+        <section>
+            <div class="info">
+                <label>仓库名称</label>
+                <span><a href="{{ .detailed_report.RepoUrl}}" target="_blank">{{ .detailed_report.RepoName}}</a></span>
+            </div>
+            <div class="info">
+                <label>语言</label>
+                <span>{{ .detailed_report.Lang}}</span>
+            </div>
+            <div class="info">
+                <label>创建时间</label>
+                <span>{{ .detailed_report.RepoCreatedAt}}</span>
+            </div>
+            <div class="info">
+                <label>最近更新时间</label>
+                <span>{{ .detailed_report.RepoUpdatedAt}}</span>
+            </div>
+        </section>
+        <title>资产状态</title>
+        <section>
+            <div class="info">
+                <label>状态</label>
+                <span>{{if eq 0 .detailed_report.Status}}未确认{{else if eq 1 .detailed_report.Status}}已确认{{else}}已忽略{{end}}</span>
+            </div>
+            <div class="info">
+                <span>
+                {{if eq 0 .detailed_report.Status}}
+                    <a href="/admin/reports/github/confirm/{{.Id}}">确认</a>
+                    <a href="/admin/reports/github/cancel/{{.Id}}">忽略文件</a>
+                    <a href="/admin/reports/github/disable_repo/{{.Id }}">忽略仓库</a>
+                {{end}}
+                </span>
+            </div>
+        </section>
+        <title>匹配内容</title>
         <div class="info">
-            <label>用户名</label>
-            <span>{{ .detailed_report.OwnerName}}</span>
+        {{range .detailed_report.MatchedTexts}}
+            <label>关键字</label>
+            <span>{{.Keyword}}</span>
+            <code class="w3-code">{{.Text}}</code>
+        {{end}}
         </div>
-        <div class="info">
-            <label>公司</label>
-            <span>{{ .detailed_report.Company}}</span>
-        </div>
-        <div class="info">
-            <label>博客</label>
-            <span>{{ .detailed_report.Blog}}</span>
-        </div>
-        <div class="info">
-            <label>归属地</label>
-            <span>{{ .detailed_report.Location}}</span>
-        </div>
-        <div class="info">
-            <label>邮箱</label>
-            <span>{{ .detailed_report.Email}}</span>
-        </div>
-        <div class="info">
-            <label>类型</label>
-            <span>{{ .detailed_report.Type}}</span>
-        </div>
-        <div class="info">
-            <label>创建时间</label>
-            <span>{{ .detailed_report.OwnerCreatedAt}}</span>
-        </div>
-    </section>
-    <title>仓库信息</title>
-    <section>
-        <div class="info">
-            <label>仓库名称</label>
-            <span><a href="{{ .detailed_report.RepoUrl}}" target="_blank">{{ .detailed_report.RepoName}}</a></span>
-        </div>
-        <div class="info">
-            <label>语言</label>
-            <span>{{ .detailed_report.Lang}}</span>
-        </div>
-        <div class="info">
-            <label>创建时间</label>
-            <span>{{ .detailed_report.RepoCreatedAt}}</span>
-        </div>
-        <div class="info">
-            <label>最近更新时间</label>
-            <span>{{ .detailed_report.RepoUpdatedAt}}</span>
-        </div>
-    </section>
-    <title>资产状态</title>
-    <section>
-        <div class="info">
-            <label>状态</label>
-            <span>{{if eq 0 .detailed_report.Status}}未确认{{else if eq 1 .detailed_report.Status}}已确认{{else}}已忽略{{end}}</span>
-            <span>{{if eq 0 .detailed_report.Status}}
-                <a href="/admin/reports/github/confirm/{{.Id}}">确认</a>
-                <a href="/admin/reports/github/cancel/{{.Id}}">忽略文件</a>
-                <a href="/admin/reports/github/disable_repo/{{.Id }}">忽略仓库</a>
-            {{end}}
-            </span>
-        </div>
-        <div class="info">
-            <label>匹配文字</label>
-            <div class="text"></div>
-        </div>
-    </section>
+    </article>
 </div>
 </body>
 </html>
