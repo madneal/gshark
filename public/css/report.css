@@ -2,10 +2,24 @@ body {
     background-color: #eeeeee;
 }
 
-a:link { text-decoration: none;color: #0366d6}
-a:active { text-decoration:blink}
-a:hover { text-decoration:underline;color: red}
-a:visited { text-decoration: none;color: green}
+a:link {
+    text-decoration: none;
+    color: #0366d6
+}
+
+a:active {
+    text-decoration:blink
+}
+
+a:hover {
+    text-decoration:underline;
+    color: red
+}
+
+a:visited {
+    text-decoration: none;
+    color: green
+}
 
 .report {
     background-color: #ffffff;
