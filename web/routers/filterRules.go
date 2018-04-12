@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"../../vars"
 	"../../models"
-	"../../util"
+	"../../util/common"
 	"strings"
 	"github.com/go-macaron/csrf"
 )
@@ -18,12 +18,12 @@ func ListFilterRules(ctx *macaron.Context, sess session.Store) {
 		page = 1
 	}
 	p := page
-	p, pre, next := util.GetPreAndNext(p)
+	p, pre, next := common.GetPreAndNext(p)
 
 
 	if sess.Get("admin") != nil {
 		rules, pages, _ := models.GetFilterRulesPage(p)
-		pageList := util.GetPageList(p, vars.PageStep, pages)
+		pageList := common.GetPageList(p, vars.PageStep, pages)
 
 		ctx.Data["pages"] = pages
 		ctx.Data["page"] = page

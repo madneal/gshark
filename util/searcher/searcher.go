@@ -25,11 +25,13 @@ THE SOFTWARE.
 package searcher
 
 import (
-	"../../util/index"
 	"../../models"
 	"../../logger"
 	"../../vars"
-	"../../util/vcs"
+	"../common"
+
+    "../index"
+    "../vcs"
 
 	"sync"
 	"time"
@@ -38,8 +40,6 @@ import (
 	"runtime"
 	"os"
 	"fmt"
-	"crypto/sha1"
-	"encoding/hex"
 	"math/rand"
 )
 
@@ -270,16 +270,9 @@ func reportOnMemory() {
 	fmt.Printf("HeapIdle  = %0.2f\n", float64(ms.HeapIdle)/1e6)
 }
 
-// Utility function for producing a hex encoded sha1 hash for a string.
-func hashFor(name string) string {
-	h := sha1.New()
-	h.Write([]byte(name))
-	return hex.EncodeToString(h.Sum(nil))
-}
-
 // Create a normalized name for the vcs directory of this repo.
 func vcsDirFor(repoCfg *models.RepoConfig) string {
-	return fmt.Sprintf("vcs-%s", hashFor(repoCfg.Url))
+	return fmt.Sprintf("vcs-%s", common.HashFor(repoCfg.Url))
 }
 
 func init() {
