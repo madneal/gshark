@@ -1,5 +1,16 @@
-package util
+package common
 
+import (
+	"crypto/sha1"
+	"encoding/hex"
+)
+
+// Utility function for producing a hex encoded sha1 hash for a string.
+func HashFor(name string) string {
+	h := sha1.New()
+	h.Write([]byte(name))
+	return hex.EncodeToString(h.Sum(nil))
+}
 
 func GetPreAndNext(p int) (p_ int, pre int, next int) {
 	if p < 1 {
