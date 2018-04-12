@@ -89,20 +89,25 @@
                 <div class="col-xs-12">
                     <div class="box">
                         <div class="box-body">
-                            <div class="page-arear">
-                                <ul class="pagination">
-                                    <li><a href="/admin/reports/github/1">第一页</a></li>
-                                    <li><a href="/admin/reports/github/{{.pre}}">上一页</a></li>
-                                {{ range $i, $v := .pageList }}
-                                {{ if eq $v $.page }}
-                                    <li class="active"><a href="/admin/reports/github/{{$v}}">{{$v}}</a></li>
-                                {{ else }}
-                                    <li><a href="/admin/reports/github/{{$v}}">{{$v}}</a></li>
-                                {{ end }}
-                                {{ end }}
-                                    <li><a href="/admin/reports/github/{{.next}}">下一页</a></li>
-                                    <li><a href="/admin/reports/github/{{.pages}}">最后一页</a></li>
-                                </ul>
+                            <div class="filter">
+                                <div class="row">
+                                    <div class="col-xs-8">
+                                        <div class="col-xs-2">
+                                            <label>状态：</label>
+                                        </div>
+                                        <div class="form-group col-xs-6">
+                                                <div>
+                                                    <input name="status" type="radio" id="unhandled" value="未处理" checked></input>
+                                                    <label>未处理</label>
+                                                    <input name="status" type="radio" id="confirmed" value="已确认"></input>
+                                                    <label>已确认</label>
+                                                    <input name="status" type="radio" id="ignored" value="已忽略"></input>
+                                                    <label>已忽略</label>
+                                                </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-6"></div>
+                                </div>
                             </div>
                             <table class="table table-striped table-bordered table-hover">
                                 <thead>
