@@ -26,10 +26,15 @@ package models
 
 import (
 	"../vars"
-
 	"github.com/google/go-github/github"
 
 	"time"
+	"fmt"
+	"path/filepath"
+	"github.com/etsy/hound/vcs"
+	"crypto/sha1"
+	"encoding/hex"
+	"strings"
 )
 
 type Match struct {
@@ -62,6 +67,7 @@ type CodeResult struct {
 	Version     int                `xorm:"version"`
 	CreatedTime time.Time          `xorm:"created"`
 	UpdatedTime time.Time          `xorm:"updated"`
+	RepoPath    * string
 }
 
 type MatchedText struct {
@@ -221,10 +227,28 @@ func GetReportById(id int64, omitRepo bool) (bool, *CodeResult, error) {
 	return has, report, err
 }
 
+// Utility function for producing a hex encoded sha1 hash for a string.
+func HashFor(name string) string {
+	h := sha1.New()
+	h.Write([]byte(name))
+	return hex.EncodeToString(h.Sum(nil))
+}
+
 func ConfirmReportById(id int64) (page int, err error) {
 	report := new(CodeResult)
 	has, err := Engine.Id(id).Get(report)
 	page, err = GetPageById(id)
+	wd, err := vcs.New("git", nil)
+	if err != nil {
+		fmt.Errorf("git init failed")
+	}
+	url := "https://github.com/" + report.RepoName
+	vcsDir := filepath.Join(vars.REPO_PATH, strings.Replace(report.RepoName, "/", "-", 1))
+	rev, err := wd.PullOrClone(vcsDir, url)
+	if rev == "" {
+		fmt.Println("has pulled")
+	}
+	report.RepoPath = &vcsDir
 	if err == nil && has {
 		report.Status = 1
 		_, err = Engine.Id(id).Cols("status").Update(report)
