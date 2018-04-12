@@ -40,10 +40,11 @@ var (
 func init() {
 	var err error
 	dirName, _ := os.Getwd()
-	endInex := strings.Index(dirName, "x-patrol")
+	endIndex := strings.Index(dirName, "x-patrol")
 	var source string
-	if endInex > 0 {
-		source = dirName[:endInex] + "x-patrol/conf/app.ini"
+
+	if endIndex > 0 {
+		source = dirName[:endIndex] + "x-patrol/conf/app.ini"
 	} else {
 		source = "conf/app.ini"
 	}
