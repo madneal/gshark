@@ -30,7 +30,7 @@ import (
 	"../../vars"
 
 	"github.com/go-macaron/session"
-	"../../util"
+	"../../util/common"
 	"strconv"
 	"net/url"
 )
@@ -50,11 +50,11 @@ func GetDetailedReportById(ctx *macaron.Context, sess session.Store) {
 func ListGithubSearchResult(ctx *macaron.Context, sess session.Store) {
 	page := ctx.Params(":page")
 	p, _ := strconv.Atoi(page)
-	p, pre, next := util.GetPreAndNext(p)
+	p, pre, next := common.GetPreAndNext(p)
 
 	if sess.Get("admin") != nil {
 		reports, pages, _ := models.ListGithubSearchResultPage(p)
-		pageList := util.GetPageList(p, vars.PageStep, pages)
+		pageList := common.GetPageList(p, vars.PageStep, pages)
 
 		ctx.Data["reports"] = reports
 		ctx.Data["pages"] = pages
@@ -79,7 +79,6 @@ func getRefer(ctx *macaron.Context)  string{
 	}
 	return refer
 }
-
 
 func ConfirmReportById(ctx *macaron.Context, sess session.Store) {
 	if sess.Get("admin") != nil {
