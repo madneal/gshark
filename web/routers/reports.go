@@ -47,25 +47,41 @@ func GetDetailedReportById(ctx *macaron.Context, sess session.Store) {
 	}
 }
 
-func ListGithubSearchResult(ctx *macaron.Context, sess session.Store) {
-	page := ctx.Params(":page")
-	p, _ := strconv.Atoi(page)
-	p, pre, next := common.GetPreAndNext(p)
+func ListGihubSearchResultByStatus(ctx *macaron.Context, sess session.Store) {
+	status, _ := strconv.Atoi(ctx.Params(":status"))
+	p := 0
 
 	if sess.Get("admin") != nil {
-		reports, pages, _ := models.ListGithubSearchResultPage(p)
-		pageList := common.GetPageList(p, vars.PageStep, pages)
-
-		ctx.Data["reports"] = reports
-		ctx.Data["pages"] = pages
-		ctx.Data["page"] = p
-		ctx.Data["pre"] = pre
-		ctx.Data["next"] = next
-		ctx.Data["pageList"] = pageList
-		ctx.HTML(200, "report_github")
+		renderDataForGithubSearchResult(ctx, p, status)
 	} else {
 		ctx.Redirect("/admin/login/")
 	}
+}
+
+func ListGithubSearchResult(ctx *macaron.Context, sess session.Store) {
+	page := ctx.Params(":page")
+	p, _ := strconv.Atoi(page)
+	status := 0
+
+	if sess.Get("admin") != nil {
+		renderDataForGithubSearchResult(ctx, p, status)
+	} else {
+		ctx.Redirect("/admin/login/")
+	}
+}
+
+func renderDataForGithubSearchResult(ctx *macaron.Context, p, status int) {
+	p, pre, next := common.GetPreAndNext(p)
+	reports, pages, _ := models.ListGithubSearchResultPage(p, status)
+	pageList := common.GetPageList(p, vars.PageStep, pages)
+
+	ctx.Data["reports"] = reports
+	ctx.Data["pages"] = pages
+	ctx.Data["page"] = p
+	ctx.Data["pre"] = pre
+	ctx.Data["next"] = next
+	ctx.Data["pageList"] = pageList
+	ctx.HTML(200, "report_github")
 }
 
 func getRefer(ctx *macaron.Context)  string{
