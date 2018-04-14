@@ -73,6 +73,7 @@ func renderDataForGithubSearchResult(ctx *macaron.Context, sess session.Store, p
 		ctx.Data["pre"] = pre
 		ctx.Data["next"] = next
 		ctx.Data["pageList"] = pageList
+		ctx.Data["status"] = status
 		ctx.HTML(200, "report_github")
 	} else {
 		ctx.Redirect("/admin/login/")
