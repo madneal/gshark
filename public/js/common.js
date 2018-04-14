@@ -7,5 +7,5 @@ $('input[type=radio][name=status]').change(function() {
     } else {
 	    status = 2;
     }
-    $.get('/admin/reports/github/query/' + status);
+    window.location.href = ('/admin/reports/github/query/' + status);
 })
