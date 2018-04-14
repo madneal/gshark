@@ -121,9 +121,9 @@ func ListGithubSearchResult() ([]CodeResult, error) {
 	return results, err
 }
 
-func ListGithubSearchResultPage(page int) ([]CodeResult, int, error) {
+func ListGithubSearchResultPage(page int, status int) ([]CodeResult, int, error) {
 	results := make([]CodeResult, 0)
-	totalPages, err := Engine.Table("code_result").Where("status=0").Count()
+	totalPages, err := Engine.Table("code_result").Where("status=?", status).Count()
 	var pages int
 
 	if int(totalPages) % vars.PAGE_SIZE == 0 {
