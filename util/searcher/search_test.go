@@ -25,11 +25,11 @@ THE SOFTWARE.
 package searcher_test
 
 import (
-	"../util/searcher"
-	"../models"
-	"../vars"
+	"../../models"
+	"../../vars"
 
 	"testing"
+	"../searcher"
 )
 
 func TestMakeAll(t *testing.T) {
