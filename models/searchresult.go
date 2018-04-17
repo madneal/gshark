@@ -113,12 +113,6 @@ func (r *CodeResult) Exist() (bool, error) {
 	return Engine.Table("code_result").Where("name=? and sha=?", r.Name, r.SHA).Get(&c)
 }
 
-func ListGithubSearchResult() ([]CodeResult, error) {
-	results := make([]CodeResult, 0)
-	err := Engine.Where("status=0").Find(&results)
-	return results, err
-}
-
 func ListGithubSearchResultPage(page int, status int) ([]CodeResult, int, error) {
 	results := make([]CodeResult, 0)
 	totalPages, err := Engine.Table("code_result").Where("status=?", status).Count()
