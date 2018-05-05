@@ -2,6 +2,30 @@
 
 This project is based on [x-patrol](https://github.com/MiSecurity/x-patrol). It is utilize to scan sensitive information in github or local repos.
 
+## Config
+
+The configuration can be set according to app.ini. Hence, it is suggested the rename app-template.ini file to app.ini. 
+
+```
+HTTP_HOST = 127.0.0.1
+HTTP_PORT = 8000
+MAX_INDEXERS = 2
+DEBUG_MODE = true
+REPO_PATH = repos
+MAX_Concurrency_REPOS = 5
+
+[database]
+;support sqlite3, mysql, postgres
+DB_TYPE = sqlite
+HOST = 127.0.0.1
+PORT = 3306
+NAME = misec
+USER = root
+PASSWD = 
+SSL_MODE = disable
+PATH = 
+```
+
 ## Run
 
 You should build the `main.go` file firstly with the command `go build main.go`.
