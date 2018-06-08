@@ -189,7 +189,7 @@ func searchCodeByOpt(c *Client, ctx context.Context, query string, opt github.Se
 		logger.Log.Infoln(err)
 	}
 
-	if res.Remaining < 10 {
+	if res != nil && res.Remaining < 10 {
 		time.Sleep(60 * time.Second)
 	}
 
