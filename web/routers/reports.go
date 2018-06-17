@@ -69,7 +69,7 @@ func ListGithubSearchResult(ctx *macaron.Context, sess session.Store) {
 func renderDataForGithubSearchResult(ctx *macaron.Context, sess session.Store, p, status int) {
 	if sess.Get("admin") != nil {
 		p, pre, next := common.GetPreAndNext(p)
-		reports, pages, _ := models.ListGithubSearchResultPage(p, status)
+		reports, pages, count := models.ListGithubSearchResultPage(p, status)
 		pageList := common.GetPageList(p, vars.PageStep, pages)
 
 		ctx.Data["reports"] = reports
@@ -79,6 +79,7 @@ func renderDataForGithubSearchResult(ctx *macaron.Context, sess session.Store, p
 		ctx.Data["next"] = next
 		ctx.Data["pageList"] = pageList
 		ctx.Data["status"] = status
+		ctx.Data["count"] = count
 		ctx.HTML(200, "report_github")
 	} else {
 		ctx.Redirect("/admin/login/")

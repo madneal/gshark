@@ -50,6 +50,14 @@
     right: 25px;
     top: 10px;
 }
+.page-arear {
+    display: flex;
+    flex-direction: row;
+}
+.page-arear .count {
+    margin-top: 30px;
+    margin-left: 100px;
+}
 @media (max-width: 991px){
     .navbar-custom-menu>.navbar-nav>li>.dropdown-menu {
         right: 0;
