@@ -113,7 +113,8 @@ func (r *CodeResult) Exist() (bool, error) {
 	return Engine.Table("code_result").Where("name=? and sha=?", r.Name, r.SHA).Get(&c)
 }
 
-func ListGithubSearchResultPage(page int, status int) ([]CodeResult, int, error) {
+func
+ListGithubSearchResultPage(page int, status int) ([]CodeResult, int, int) {
 	results := make([]CodeResult, 0)
 	totalPages, err := Engine.Table("code_result").Where("status=?", status).Count()
 	var pages int
@@ -134,7 +135,11 @@ func ListGithubSearchResultPage(page int, status int) ([]CodeResult, int, error)
 
 	err = Engine.Where("status=?", status).Omit("repository").Limit(vars.PAGE_SIZE, (page-1)*vars.PAGE_SIZE).Desc("id").Find(&results)
 
-	return results, pages, err
+	if err != nil {
+		fmt.Errorf("search failed:%s", err)
+	}
+
+	return results, pages, int(totalPages)
 }
 
 func GetPageById(id int64) (int, error) {
