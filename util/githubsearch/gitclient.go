@@ -185,7 +185,7 @@ func searchCodeByOpt(c *Client, ctx context.Context, query string, opt github.Se
 
 
 	if res != nil && res.Remaining < 10 {
-		time.Sleep(10 * time.Second)
+		time.Sleep(45 * time.Second)
 	}
 
 	if err == nil {
