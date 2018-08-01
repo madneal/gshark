@@ -141,7 +141,7 @@ func (c *Client) SearchCode(keyword string) ([]*github.CodeSearchResult, error) 
 	fmt.Println("search with the query:" + query)
 	for {
 		result, nextPage := searchCodeByOpt(c, ctx, query, *opt)
-		time.Sleep(time.Minute)
+		time.Sleep(time.Second * 3)
 		allSearchResult = append(allSearchResult, result)
 		if nextPage <= 0 {
 			break
@@ -185,7 +185,7 @@ func searchCodeByOpt(c *Client, ctx context.Context, query string, opt github.Se
 
 
 	if res != nil && res.Remaining < 10 {
-		time.Sleep(60 * time.Second)
+		time.Sleep(10 * time.Second)
 	}
 
 	if err == nil {
