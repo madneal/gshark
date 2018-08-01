@@ -65,8 +65,8 @@ func Search(rules []models.Rule) () {
 				defer wg.Done()
 
 			}(rule)
-
-			SaveResult(client.SearchCode(rule.Pattern))
+			results, err := client.SearchCode(rule.Pattern)
+			SaveResult(results, err, &rule.Pattern)
 		}
 		wg.Wait()
 	}
@@ -85,15 +85,16 @@ func RunSearchTask(mapRules map[int][]models.Rule, err error) () {
 	}
 }
 
-func SaveResult(results []*github.CodeSearchResult, err error) () {
+func SaveResult(results []*github.CodeSearchResult, err error, keyword *string) () {
 	insertCount := 0
 	for _, result := range results {
-		if err == nil && len(result.CodeResults) > 0 {
+		if err == nil && result != nil && len(result.CodeResults) > 0 {
 			for _, resultItem := range result.CodeResults {
 				ret, err := json.Marshal(resultItem)
 				if err == nil {
 					var codeResult *models.CodeResult
 					err = json.Unmarshal(ret, &codeResult)
+					codeResult.Keyword = keyword
 					fullName := codeResult.Repository.GetFullName()
 					repoUrl := codeResult.Repository.GetHTMLURL()
 					codeResult.RepoName = fullName

@@ -65,7 +65,8 @@ type CodeResult struct {
 	Version     int                `xorm:"version"`
 	CreatedTime time.Time          `xorm:"created"`
 	UpdatedTime time.Time          `xorm:"updated"`
-	RepoPath    * string
+	RepoPath    *string
+	Keyword     *string
 }
 
 type MatchedText struct {
