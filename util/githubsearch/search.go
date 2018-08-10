@@ -29,10 +29,11 @@ import (
 
 	"github.com/google/go-github/github"
 
-	"encoding/json"
-	"time"
-	"sync"
 	"../../logger"
+	"encoding/json"
+	"regexp"
+	"sync"
+	"time"
 )
 
 var (
@@ -46,16 +47,16 @@ func GenerateSearchCodeTask() (map[int][]models.Rule, error) {
 	batch := ruleNum / SEARCH_NUM
 
 	for i := 0; i < batch; i++ {
-		result[i] = rules[SEARCH_NUM*i:SEARCH_NUM*(i+1)]
+		result[i] = rules[SEARCH_NUM*i : SEARCH_NUM*(i+1)]
 	}
 
 	if ruleNum%SEARCH_NUM != 0 {
-		result[batch] = rules[SEARCH_NUM*batch:ruleNum]
+		result[batch] = rules[SEARCH_NUM*batch : ruleNum]
 	}
 	return result, err
 }
 
-func Search(rules []models.Rule) () {
+func Search(rules []models.Rule) {
 	var wg sync.WaitGroup
 	wg.Add(len(rules))
 	client, token, err := GetGithubClient()
@@ -72,7 +73,7 @@ func Search(rules []models.Rule) () {
 	}
 }
 
-func RunSearchTask(mapRules map[int][]models.Rule, err error) () {
+func RunSearchTask(mapRules map[int][]models.Rule, err error) {
 	if err == nil {
 		for _, rules := range mapRules {
 			startTime := time.Now()
@@ -85,7 +86,13 @@ func RunSearchTask(mapRules map[int][]models.Rule, err error) () {
 	}
 }
 
-func SaveResult(results []*github.CodeSearchResult, err error, keyword *string) () {
+func passFilters(codeResult *models.CodeResult) bool {
+	textMatches := codeResult.TextMatches[0].Fragment
+	reg := regexp.MustCompile(`[A-Za-z0-9_+]{50,}`)
+	return !reg.MatchString(*textMatches)
+}
+
+func SaveResult(results []*github.CodeSearchResult, err error, keyword *string) {
 	insertCount := 0
 	for _, result := range results {
 		if err == nil && result != nil && len(result.CodeResults) > 0 {
@@ -106,7 +113,7 @@ func SaveResult(results []*github.CodeSearchResult, err error, keyword *string) 
 						inputInfo.Insert()
 					}
 					exist, err := codeResult.Exist()
-					if err == nil && !exist {
+					if err == nil && !exist && passFilters(codeResult) {
 						insertCount++
 						logger.Log.Infoln(codeResult.Insert())
 					}
@@ -124,7 +131,7 @@ func ScheduleTasks(duration time.Duration) {
 		// insert repos from inputInfo
 		InsertAllRepos()
 
-		logger.Log.Infof("Complete the scan of Github, start to sleep %v seconds", duration * time.Second)
+		logger.Log.Infof("Complete the scan of Github, start to sleep %v seconds", duration*time.Second)
 		time.Sleep(duration * time.Second)
 	}
 }
