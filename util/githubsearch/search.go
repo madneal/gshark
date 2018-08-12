@@ -86,7 +86,7 @@ func RunSearchTask(mapRules map[int][]models.Rule, err error) {
 	}
 }
 
-func passFilters(codeResult *models.CodeResult) bool {
+func PassFilters(codeResult *models.CodeResult) bool {
 	textMatches := codeResult.TextMatches[0].Fragment
 	reg := regexp.MustCompile(`[A-Za-z0-9_+]{50,}`)
 	return !reg.MatchString(*textMatches)
@@ -113,7 +113,7 @@ func SaveResult(results []*github.CodeSearchResult, err error, keyword *string) 
 						inputInfo.Insert()
 					}
 					exist, err := codeResult.Exist()
-					if err == nil && !exist && passFilters(codeResult) {
+					if err == nil && !exist && PassFilters(codeResult) {
 						insertCount++
 						logger.Log.Infoln(codeResult.Insert())
 					}
