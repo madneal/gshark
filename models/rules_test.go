@@ -25,7 +25,7 @@ THE SOFTWARE.
 package models_test
 
 import (
-	"../models"
+	"github.com/neal1991/x-patrol/models"
 
 	"testing"
 )
