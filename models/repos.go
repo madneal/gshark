@@ -25,7 +25,7 @@ THE SOFTWARE.
 package models
 
 import (
-	"../vars"
+	"github.com/neal1991/x-patrol/vars"
 )
 
 type Repo struct {

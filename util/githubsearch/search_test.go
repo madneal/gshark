@@ -1,8 +1,8 @@
 package githubsearch
 
 import "testing"
-import "../../models"
-import "../githubsearch"
+import "github.com/neal1991/x-patrol/models"
+import "github.com/neal1991/x-patrol"
 
 func TestFiltetString(t *testing.T) {
 	codeResult := new(models.CodeResult)

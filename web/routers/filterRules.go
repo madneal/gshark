@@ -4,9 +4,9 @@ import (
 	"gopkg.in/macaron.v1"
 	"github.com/go-macaron/session"
 	"strconv"
-	"../../vars"
-	"../../models"
-	"../../util/common"
+	"github.com/neal1991/x-patrol/vars"
+	"github.com/neal1991/x-patrol/models"
+	"github.com/neal1991/x-patrol/util/common"
 	"strings"
 	"github.com/go-macaron/csrf"
 )
