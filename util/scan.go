@@ -25,14 +25,14 @@ THE SOFTWARE.
 package util
 
 import (
-	"../tasks"
-	"../util/githubsearch"
+	"github.com/neal1991/x-patrol/tasks"
+	"github.com/neal1991/x-patrol/util/githubsearch"
 
 	"github.com/urfave/cli"
 
 	"strings"
 	"time"
-	"../logger"
+	"github.com/neal1991/x-patrol/logger"
 )
 
 func Scan(ctx *cli.Context) () {

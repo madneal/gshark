@@ -25,12 +25,12 @@ THE SOFTWARE.
 package routers
 
 import (
-	"../../models"
+	"github.com/neal1991/x-patrol/models"
 	"gopkg.in/macaron.v1"
-	"../../vars"
+	"github.com/neal1991/x-patrol/vars"
 
 	"github.com/go-macaron/session"
-	"../../util/common"
+	"github.com/neal1991/x-patrol/util/common"
 	"strconv"
 	"net/url"
 )
