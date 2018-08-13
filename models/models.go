@@ -25,8 +25,8 @@ THE SOFTWARE.
 package models
 
 import (
-	"../settings"
-	"../logger"
+	"github.com/neal1991/x-patrol/settings"
+	"github.com/neal1991/x-patrol/logger"
 
 	_ "github.com/mattn/go-sqlite3"
 	_ "github.com/go-sql-driver/mysql"

@@ -25,13 +25,13 @@ THE SOFTWARE.
 package searcher
 
 import (
-	"../../models"
-	"../../logger"
-	"../../vars"
-	"../common"
+	"github.com/neal1991/x-patrol/models"
+	"github.com/neal1991/x-patrol/logger"
+	"github.com/neal1991/x-patrol/vars"
+	"github.com/neal1991/x-patrol/util/common"
 
-    "../index"
-    "../vcs"
+    "github.com/neal1991/x-patrol/util/index"
+    "github.com/neal1991/x-patrol/util/vcs"
 
 	"sync"
 	"time"

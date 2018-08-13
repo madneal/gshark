@@ -25,7 +25,7 @@ THE SOFTWARE.
 package models
 
 import (
-	"../misc"
+	"github.com/neal1991/x-patrol/misc"
 )
 
 type Admin struct {
@@ -34,7 +34,7 @@ type Admin struct {
 	Password string
 }
 
-func NewAdmin(username, password string) (*Admin) {
+func NewAdmin(username, password string) *Admin {
 	encryptPass := misc.MakeMd5(password)
 	return &Admin{Username: username, Password: encryptPass}
 }
@@ -55,7 +55,7 @@ func GetAdminById(id int64) (*Admin, bool, error) {
 	return admin, has, err
 }
 
-func EditAdminById(id int64, username, password string) (error) {
+func EditAdminById(id int64, username, password string) error {
 	admin := new(Admin)
 	has, err := Engine.ID(id).Get(admin)
 	if err == nil && has {
@@ -66,7 +66,7 @@ func EditAdminById(id int64, username, password string) (error) {
 	return err
 }
 
-func DeleteAdminById(id int64) (error) {
+func DeleteAdminById(id int64) error {
 	admin := new(Admin)
 	_, err := Engine.ID(id).Delete(admin)
 	return err
