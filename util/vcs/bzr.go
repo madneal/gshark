@@ -1,7 +1,7 @@
 package vcs
 
 import (
-	"../../logger"
+	"github.com/neal1991/x-patrol/logger"
 
 	"bytes"
 	"io"

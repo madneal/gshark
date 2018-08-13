@@ -1,8 +1,8 @@
 package index
 
 import (
-	"../../util/codesearch/index"
-	"../../util/codesearch/regexp"
+	"github.com/etsy/hound/codesearch/index"
+	"github.com/etsy/hound/codesearch/regexp"
 
 	"compress/gzip"
 	"encoding/gob"

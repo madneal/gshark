@@ -25,8 +25,8 @@ THE SOFTWARE.
 package githubsearch
 
 import (
-	"../../models"
-	"../../logger"
+	"github.com/neal1991/x-patrol/models"
+	"github.com/neal1991/x-patrol/logger"
 	"github.com/google/go-github/github"
 	"strings"
 )

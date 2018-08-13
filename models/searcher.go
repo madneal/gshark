@@ -25,8 +25,8 @@ THE SOFTWARE.
 package models
 
 import (
-	"../util/index"
-	"../vars"
+	"github.com/neal1991/x-patrol/util/index"
+	"github.com/neal1991/x-patrol/vars"
 
 	"time"
 )

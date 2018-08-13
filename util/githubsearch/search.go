@@ -25,11 +25,11 @@ THE SOFTWARE.
 package githubsearch
 
 import (
-	"../../models"
+	"github.com/neal1991/x-patrol/models"
 
 	"github.com/google/go-github/github"
 
-	"../../logger"
+	"github.com/neal1991/x-patrol/logger"
 	"encoding/json"
 	"regexp"
 	"sync"
