@@ -4,7 +4,7 @@ This project is based on [x-patrol](https://github.com/MiSecurity/x-patrol). It 
 
 ## Config
 
-The configuration can be set according to app.ini. Hence, it is suggested the rename app-template.ini file to app.ini. 
+The configuration can be set according to app.ini. Hence, it is suggested the rename app-template.ini file to app.ini. If you want the web service can be accessed externally, `HTTP_HOST` should be set to `0.0.0.0`.
 
 ```
 HTTP_HOST = 127.0.0.1
