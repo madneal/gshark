@@ -28,13 +28,11 @@ import (
 	"github.com/neal1991/x-patrol/web/routers"
 	"github.com/neal1991/x-patrol/logger"
 	"github.com/neal1991/x-patrol/vars"
-
 	"github.com/go-macaron/cache"
 	"github.com/go-macaron/csrf"
 	"github.com/go-macaron/session"
 	"gopkg.in/macaron.v1"
 	"github.com/urfave/cli"
-
 	"net/http"
 	"fmt"
 	"runtime"
