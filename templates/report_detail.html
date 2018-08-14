@@ -70,9 +70,9 @@
             <div class="info">
                 <span>
                 {{if eq 0 .detailed_report.Status}}
-                    <a href="/admin/reports/github/confirm/{{.Id}}">确认</a>
-                    <a href="/admin/reports/github/cancel/{{.Id}}">忽略文件</a>
-                    <a href="/admin/reports/github/disable_repo/{{.Id }}">忽略仓库</a>
+                    <a href="/admin/reports/github/confirm/{{.Id}}"><img src="/img/confirm.png" alt="确认" /></a>
+                    <a href="/admin/reports/github/cancel/{{.Id}}"><img src="/img/file.png" alt="忽略文件" /></a>
+                    <a href="/admin/reports/github/disable_repo/{{.Id }}"><img src="/img/repo.png" alt="忽略仓库" /></a>
                 {{end}}
                 </span>
             </div>
