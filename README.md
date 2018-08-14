@@ -4,7 +4,7 @@ This project is based on [x-patrol](https://github.com/MiSecurity/x-patrol). It 
 
 ## Config
 
-The configuration can be set according to app.ini. Hence, it is suggested the rename app-template.ini file to app.ini. 
+The configuration can be set according to app.ini. Hence, it is suggested the rename app-template.ini file to app.ini.
 
 ```
 HTTP_HOST = 127.0.0.1
