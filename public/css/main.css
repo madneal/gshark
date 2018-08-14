@@ -58,6 +58,10 @@
     margin-top: 30px;
     margin-left: 100px;
 }
+.wrapper .table td img {
+    width: 24px;
+    height: 24px;
+}
 @media (max-width: 991px){
     .navbar-custom-menu>.navbar-nav>li>.dropdown-menu {
         right: 0;
