@@ -26,9 +26,7 @@ package githubsearch
 
 import (
 	"github.com/neal1991/x-patrol/models"
-
 	"github.com/google/go-github/github"
-
 	"github.com/neal1991/x-patrol/logger"
 	"encoding/json"
 	"regexp"
