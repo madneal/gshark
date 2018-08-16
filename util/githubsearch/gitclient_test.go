@@ -30,26 +30,6 @@ import (
 	"fmt"
 )
 
-//func TestClient_GetUserInfo(t *testing.T) {
-//	t.Log(githubsearch.GithubClient.GetUserInfo("netxfly"))
-//}
-//
-//func TestClient_GetOrgsMembers(t *testing.T) {
-//	t.Log(githubsearch.GithubClient.GetOrgsMembers("netxfly"))
-//}
-//
-//func TestClient_GetOrgsRepos(t *testing.T) {
-//	t.Log(githubsearch.GithubClient.GetOrgsRepos("xsec-lab"))
-//}
-//
-//func TestClient_GetUserRepos(t *testing.T) {
-//	t.Log(githubsearch.GithubClient.GetUserRepos("netxfly"))
-//}
-//
-//func TestClient_GetUserOrgs(t *testing.T) {
-//	t.Log(githubsearch.GithubClient.GetUserOrgs("54chen"))
-//}
-
 func TestSearchCode(t *testing.T) {
 	gitClient, _, _ := githubsearch.GetGithubClient()
 	codeSearchResults, _ := gitClient.SearchCode("spdb")
