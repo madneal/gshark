@@ -108,7 +108,11 @@
                                     <th>Repo Name</th>
                                     <th>Matches</th>
                                     <th>Keyword</th>
-                                    <th colspan="3">Review</th>
+                                    {{if eq 0 .status}}
+                                        <th colspan="3">Review</th>
+                                    {{else}}
+                                        <th>Status</th>
+                                    {{end}}
                                 </tr>
                                 {{range .reports}}
                                 <tr>
@@ -123,9 +127,13 @@
                                     </code>
                                     </td>
                                     <td>{{ .Keyword}}</td>
+                                    {{if eq 0 .status}}
                                     <td><a href="/admin/reports/github/confirm/{{.Id}}"><img src="/img/confirm.png" alt="确认" /></a></td>
                                     <td><a href="/admin/reports/github/cancel/{{.Id}}"><img src="/img/file.png" alt="忽略文件" /></a></td>
                                     <td><a href="/admin/reports/github/disable_repo/{{.Id }}"><img src="/img/repo.png" alt="忽略仓库" /></a></td>
+                                    {{else}}
+                                            <td>{{.status}}</td>
+                                    {{end}}
                                 </tr>
                                 {{end}}
                                 </thead>
