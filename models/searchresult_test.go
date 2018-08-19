@@ -3,7 +3,7 @@ package models
 import (
 	"testing"
 	"fmt"
-	"github.com/neal1991/x-patrol/models"
+	"x-patrol/models"
 )
 
 func TestGetCodeResultDetailById(t *testing.T) {

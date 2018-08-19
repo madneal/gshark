@@ -25,7 +25,7 @@ THE SOFTWARE.
 package main
 
 import (
-	"github.com/neal1991/x-patrol/cmd"
+	"x-patrol/cmd"
 	"github.com/urfave/cli"
 	"os"
 	"runtime"

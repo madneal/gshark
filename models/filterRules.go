@@ -1,7 +1,7 @@
 package models
 
 import (
-	"github.com/neal1991/x-patrol/vars"
+	"x-patrol/vars"
 )
 
 type FilterRule struct {

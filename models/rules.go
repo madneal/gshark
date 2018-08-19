@@ -25,7 +25,7 @@ THE SOFTWARE.
 package models
 
 import (
-	"github.com/neal1991/x-patrol/vars"
+	"x-patrol/vars"
 
 	"os"
 	"encoding/json"

@@ -25,8 +25,8 @@ THE SOFTWARE.
 package models
 
 import (
-	"github.com/neal1991/x-patrol/vars"
-	"github.com/neal1991/x-patrol/logger"
+	"x-patrol/vars"
+	"x-patrol/logger"
 	"github.com/google/go-github/github"
 	"time"
 	"fmt"

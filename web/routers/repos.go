@@ -25,9 +25,9 @@ THE SOFTWARE.
 package routers
 
 import (
-	"github.com/neal1991/x-patrol/models"
-	"github.com/neal1991/x-patrol/util/common"
-	"github.com/neal1991/x-patrol/vars"
+	"x-patrol/models"
+	"x-patrol/util/common"
+	"x-patrol/vars"
 
 	"gopkg.in/macaron.v1"
 
