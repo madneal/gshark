@@ -26,7 +26,7 @@ package githubsearch_test
 
 import (
 	"testing"
-	"github.com/neal1991/x-patrol/util/githubsearch"
+	"x-patrol/util/githubsearch"
 	"fmt"
 )
 
