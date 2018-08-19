@@ -25,11 +25,11 @@ THE SOFTWARE.
 package searcher_test
 
 import (
-	"github.com/neal1991/x-patrol/models"
-	"github.com/neal1991/x-patrol/vars"
+	"x-patrol/models"
+	"x-patrol/vars"
 
 	"testing"
-	"github.com/neal1991/x-patrol/util/searcher"
+	"x-patrol/util/searcher"
 )
 
 func TestMakeAll(t *testing.T) {

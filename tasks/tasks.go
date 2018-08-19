@@ -25,17 +25,17 @@ THE SOFTWARE.
 package tasks
 
 import (
-	"github.com/neal1991/x-patrol/util/index"
-	"github.com/neal1991/x-patrol/util/searcher"
-	"github.com/neal1991/x-patrol/models"
-	"github.com/neal1991/x-patrol/vars"
-	"github.com/neal1991/x-patrol/logger"
+	"x-patrol/util/index"
+	"x-patrol/util/searcher"
+	"x-patrol/models"
+	"x-patrol/vars"
+	"x-patrol/logger"
 
 	"time"
 	"os"
 	"sync"
 	"strings"
-	"github.com/neal1991/x-patrol/util/githubsearch"
+	"x-patrol/util/githubsearch"
 )
 
 const (

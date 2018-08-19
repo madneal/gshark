@@ -25,10 +25,10 @@ THE SOFTWARE.
 package tasks_test
 
 import (
-	"github.com/neal1991/x-patrol/tasks"
-	"github.com/neal1991/x-patrol/models"
-	"github.com/neal1991/x-patrol/vars"
-	"github.com/neal1991/x-patrol/util/index"
+	"x-patrol/tasks"
+	"x-patrol/models"
+	"x-patrol/vars"
+	"x-patrol/util/index"
 
 	"testing"
 	"encoding/json"

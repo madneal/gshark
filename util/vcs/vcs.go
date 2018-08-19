@@ -1,7 +1,7 @@
 package vcs
 
 import (
-	"github.com/neal1991/x-patrol/logger"
+	"x-patrol/logger"
 
 	"fmt"
 	"os"
