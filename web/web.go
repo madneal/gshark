@@ -25,9 +25,9 @@ THE SOFTWARE.
 package web
 
 import (
-	"github.com/neal1991/x-patrol/web/routers"
-	"github.com/neal1991/x-patrol/logger"
-	"github.com/neal1991/x-patrol/vars"
+	"x-patrol/web/routers"
+	"x-patrol/logger"
+	"x-patrol/vars"
 	"github.com/go-macaron/cache"
 	"github.com/go-macaron/csrf"
 	"github.com/go-macaron/session"
