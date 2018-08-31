@@ -32,7 +32,7 @@ import (
 
 func TestSearchCode(t *testing.T) {
 	gitClient, _, _ := githubsearch.GetGithubClient()
-	codeSearchResults, _ := gitClient.SearchCode("spdb")
+	codeSearchResults, _ := gitClient.SearchCode("proxy\\.spdb\\.com")
 	for _, codeSearchResult := range codeSearchResults {
 		for _, codeResult := range codeSearchResult.CodeResults {
 			fmt.Println(codeResult.TextMatches)
