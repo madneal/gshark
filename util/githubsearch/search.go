@@ -25,13 +25,16 @@ THE SOFTWARE.
 package githubsearch
 
 import (
-	"x-patrol/models"
-	"github.com/google/go-github/github"
-	"x-patrol/logger"
+	"context"
 	"encoding/json"
+	"fmt"
+	"github.com/google/go-github/github"
 	"regexp"
+	"strings"
 	"sync"
 	"time"
+	"x-patrol/logger"
+	"x-patrol/models"
 )
 
 var (
@@ -132,4 +135,70 @@ func ScheduleTasks(duration time.Duration) {
 		logger.Log.Infof("Complete the scan of Github, start to sleep %v seconds", duration*time.Second)
 		time.Sleep(duration * time.Second)
 	}
+}
+
+func (c *Client) SearchCode(keyword string) ([]*github.CodeSearchResult, error) {
+	var allSearchResult []*github.CodeSearchResult
+	var err error
+	ctx := context.Background()
+	listOpt := github.ListOptions{PerPage: 100}
+	opt := &github.SearchOptions{Sort: "indexed", Order: "desc", TextMatch: true, ListOptions: listOpt}
+	query := keyword + " +in:file"
+	query, err = BuildQuery(query)
+	fmt.Println("search with the query:" + query)
+	for {
+		result, nextPage := searchCodeByOpt(c, ctx, query, *opt)
+		time.Sleep(time.Second * 3)
+		allSearchResult = append(allSearchResult, result)
+		if nextPage <= 0 {
+			break
+		}
+		opt.Page = nextPage
+	}
+	return allSearchResult, err
+}
+
+func BuildQuery(query string) (string, error) {
+	filterRules, err := models.GetFilterRules()
+	str := ""
+	for _, filterRule := range filterRules {
+		ruleValue := filterRule.RuleValue
+		ruleType := filterRule.RuleType
+		ruleKey := filterRule.RuleKey
+		ruleValueList := strings.Split(ruleValue, ",")
+		for _, value := range ruleValueList {
+			if ruleType == 0 {
+				str += " -"
+			} else {
+				str += " +"
+			}
+
+			if ruleKey == "ext" {
+				str += "extension:"
+			} else if ruleKey == "lang" {
+				str += "language:"
+			}
+
+			value = strings.TrimSpace(value)
+			str += value
+		}
+	}
+	builtQuery := query + str
+	return builtQuery, err
+}
+
+func searchCodeByOpt(c *Client, ctx context.Context, query string, opt github.SearchOptions) (*github.CodeSearchResult, int) {
+	result, res, err := c.Client.Search.Code(ctx, query, &opt)
+
+	if res != nil && res.Remaining < 10 {
+		time.Sleep(45 * time.Second)
+	}
+
+	if err == nil {
+		logger.Log.Infof("remaining: %d, nextPage: %d, lastPage: %d", res.Remaining, res.NextPage, res.LastPage)
+	} else {
+		logger.Log.Infoln(err)
+		return nil, 0
+	}
+	return result, res.NextPage
 }
