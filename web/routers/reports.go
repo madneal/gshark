@@ -71,6 +71,7 @@ func renderDataForGithubSearchResult(ctx *macaron.Context, sess session.Store, p
 		p, pre, next := common.GetPreAndNext(p)
 		reports, pages, count := models.ListGithubSearchResultPage(p, status)
 		pageList := common.GetPageList(p, vars.PageStep, pages)
+		lastPage := pageList[len(pageList) - 1]
 
 		ctx.Data["reports"] = reports
 		ctx.Data["pages"] = pages
@@ -80,6 +81,7 @@ func renderDataForGithubSearchResult(ctx *macaron.Context, sess session.Store, p
 		ctx.Data["pageList"] = pageList
 		ctx.Data["status"] = status
 		ctx.Data["count"] = count
+		ctx.Data["lastPage"] = lastPage
 		ctx.HTML(200, "report_github")
 	} else {
 		ctx.Redirect("/admin/login/")
