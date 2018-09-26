@@ -90,7 +90,8 @@ func DoNewUser(ctx *macaron.Context, sess session.Store) {
 	if sess.Get("admin") != nil {
 		username := strings.TrimSpace(ctx.Req.Form.Get("username"))
 		password := strings.TrimSpace(ctx.Req.Form.Get("password"))
-		admin := models.NewAdmin(username, password)
+		role := ctx.Req.Form.Get("role")
+		admin := models.NewAdmin(username, password, role)
 		admin.Insert()
 		ctx.Redirect("/admin/users/list/")
 	} else {
@@ -119,7 +120,8 @@ func DoEditUser(ctx *macaron.Context, sess session.Store) {
 		Id, _ := strconv.Atoi(id)
 		username := strings.TrimSpace(ctx.Req.Form.Get("username"))
 		password := strings.TrimSpace(ctx.Req.Form.Get("password"))
-		models.EditAdminById(int64(Id), username, password)
+		role := ctx.Req.Form.Get("role")
+		models.EditAdminById(int64(Id), username, password, role)
 		ctx.Redirect("/admin/users/list/")
 	} else {
 		ctx.Redirect("/admin/login/")
