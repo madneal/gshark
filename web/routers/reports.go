@@ -25,14 +25,14 @@ THE SOFTWARE.
 package routers
 
 import (
-	"x-patrol/models"
 	"gopkg.in/macaron.v1"
+	"x-patrol/models"
 	"x-patrol/vars"
 
 	"github.com/go-macaron/session"
-	"x-patrol/util/common"
-	"strconv"
 	"net/url"
+	"strconv"
+	"x-patrol/util/common"
 )
 
 func GetDetailedReportById(ctx *macaron.Context, sess session.Store) {
@@ -71,7 +71,10 @@ func renderDataForGithubSearchResult(ctx *macaron.Context, sess session.Store, p
 		p, pre, next := common.GetPreAndNext(p)
 		reports, pages, count := models.ListGithubSearchResultPage(p, status)
 		pageList := common.GetPageList(p, vars.PageStep, pages)
-		lastPage := pageList[len(pageList) - 1]
+		lastPage := 0
+		if len(pageList) >= 1 {
+			lastPage = pageList[len(pageList)-1]
+		}
 
 		ctx.Data["reports"] = reports
 		ctx.Data["pages"] = pages
@@ -88,7 +91,7 @@ func renderDataForGithubSearchResult(ctx *macaron.Context, sess session.Store, p
 	}
 }
 
-func getRefer(ctx *macaron.Context)  string{
+func getRefer(ctx *macaron.Context) string {
 	refer := "/admin/reports/github/"
 	if _, ok := ctx.Req.Header["Referer"]; len(ctx.Req.Header["Referer"]) > 0 && ok {
 		u := ctx.Req.Header["Referer"][0]
