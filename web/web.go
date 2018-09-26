@@ -31,6 +31,7 @@ import (
 	"github.com/go-macaron/cache"
 	"github.com/go-macaron/csrf"
 	"github.com/go-macaron/session"
+	"github.com/go-macaron/authz"
 	"gopkg.in/macaron.v1"
 	"github.com/urfave/cli"
 	"net/http"
@@ -38,6 +39,7 @@ import (
 	"runtime"
 	"html/template"
 	"strings"
+	"github.com/casbin/casbin"
 )
 
 func init() {
@@ -57,6 +59,8 @@ func RunWeb(ctx *cli.Context) {
 	}
 
 	m := macaron.Classic()
+	e := casbin.NewEnforcer("./conf/auth_model.conf", "./conf/policy.csv")
+	m.Use(authz.Authorizer(e))
 
 	m.Use(macaron.Renderer(
 		macaron.RenderOptions{
@@ -90,8 +94,6 @@ func RunWeb(ctx *cli.Context) {
 	m.Use(csrf.Csrfer())
 	m.Use(cache.Cacher())
 	m.Get("/", routers.Index)
-
-
 	m.Group("/admin", func() {
 		m.Get("", routers.AdminIndex)
 		m.Get("/index/", routers.AdminIndex)
