@@ -25,21 +25,22 @@ THE SOFTWARE.
 package web
 
 import (
-	"x-patrol/web/routers"
-	"x-patrol/logger"
-	"x-patrol/vars"
+	"fmt"
+	"github.com/casbin/casbin"
+	"github.com/go-macaron/auth"
+	"github.com/go-macaron/authz"
 	"github.com/go-macaron/cache"
 	"github.com/go-macaron/csrf"
 	"github.com/go-macaron/session"
-	"github.com/go-macaron/authz"
-	"gopkg.in/macaron.v1"
 	"github.com/urfave/cli"
-	"net/http"
-	"fmt"
-	"runtime"
+	"gopkg.in/macaron.v1"
 	"html/template"
+	"net/http"
+	"runtime"
 	"strings"
-	"github.com/casbin/casbin"
+	"x-patrol/logger"
+	"x-patrol/vars"
+	"x-patrol/web/routers"
 )
 
 func init() {
@@ -59,6 +60,7 @@ func RunWeb(ctx *cli.Context) {
 	}
 
 	m := macaron.Classic()
+	m.Use(auth.Basic("admin", ""))
 	e := casbin.NewEnforcer("./conf/auth_model.conf", "./conf/policy.csv")
 	m.Use(authz.Authorizer(e))
 
@@ -87,9 +89,9 @@ func RunWeb(ctx *cli.Context) {
 
 	m.Use(session.Sessioner(session.Options{
 		// GC 执行时间间隔，默认为 3600 秒
-		Gclifetime:     3600,
+		Gclifetime: 3600,
 		// 最大生存时间，默认和 GC 执行时间间隔相同
-		Maxlifetime:    3600,
+		Maxlifetime: 3600,
 	}))
 	m.Use(csrf.Csrfer())
 	m.Use(cache.Cacher())
