@@ -81,7 +81,12 @@ func RunWeb(ctx *cli.Context) {
 			HTMLContentType: "text/html",
 		}))
 
-	m.Use(session.Sessioner())
+	m.Use(session.Sessioner(session.Options{
+		// GC 执行时间间隔，默认为 3600 秒
+		Gclifetime:     3600,
+		// 最大生存时间，默认和 GC 执行时间间隔相同
+		Maxlifetime:    3600,
+	}))
 	m.Use(csrf.Csrfer())
 	m.Use(cache.Cacher())
 	m.Get("/", routers.Index)
