@@ -67,6 +67,9 @@ func ListGithubSearchResult(ctx *macaron.Context, sess session.Store) {
 }
 
 func renderDataForGithubSearchResult(ctx *macaron.Context, sess session.Store, p, status int) {
+	if sess.Get("user") != nil {
+		ctx.Req.Header.Set("user", sess.Get("user").(string))
+	}
 	if sess.Get("admin") != nil {
 		p, pre, next := common.GetPreAndNext(p)
 		reports, pages, count := models.ListGithubSearchResultPage(p, status)
