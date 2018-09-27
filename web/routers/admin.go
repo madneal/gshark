@@ -34,9 +34,14 @@ import (
 
 	"strings"
 	"strconv"
+	"fmt"
 )
 
 func AdminIndex(ctx *macaron.Context, sess session.Store) {
+	fmt.Println(sess.Get("user").(string))
+	if sess.Get("user") != nil {
+		ctx.Req.Header.Set("user", sess.Get("user").(string))
+	}
 	if sess.Get("admin") != nil {
 		ctx.Redirect("/admin/reports/github/")
 	} else {
@@ -53,9 +58,12 @@ func DoLogin(ctx *macaron.Context, sess session.Store) {
 	ctx.Req.ParseForm()
 	username := ctx.Req.Form.Get("username")
 	password := ctx.Req.Form.Get("password")
-	has, err := models.Auth(username, password)
+	has, role, err := models.Auth(username, password)
 	if err == nil && has {
+		sess.Set("user", role)
 		sess.Set("admin", username)
+		ctx.Req.Header.Set("user", role)
+		ctx.Data["user"] = role
 		ctx.Redirect("/admin/index/")
 	} else {
 		ctx.Redirect("/admin/login/")
