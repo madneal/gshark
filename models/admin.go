@@ -32,11 +32,12 @@ type Admin struct {
 	Id       int64
 	Username string
 	Password string
+	Role     string
 }
 
-func NewAdmin(username, password string) *Admin {
+func NewAdmin(username, password, role string) *Admin {
 	encryptPass := misc.MakeMd5(password)
-	return &Admin{Username: username, Password: encryptPass}
+	return &Admin{Username: username, Password: encryptPass, Role: role}
 }
 
 func (u *Admin) Insert() (int64, error) {
@@ -55,12 +56,13 @@ func GetAdminById(id int64) (*Admin, bool, error) {
 	return admin, has, err
 }
 
-func EditAdminById(id int64, username, password string) error {
+func EditAdminById(id int64, username, password, role string) error {
 	admin := new(Admin)
 	has, err := Engine.ID(id).Get(admin)
 	if err == nil && has {
 		admin.Username = username
 		admin.Password = misc.MakeMd5(password)
+		admin.Role = role
 		Engine.ID(id).Update(admin)
 	}
 	return err
@@ -72,8 +74,15 @@ func DeleteAdminById(id int64) error {
 	return err
 }
 
-func Auth(username, password string) (bool, error) {
+func Auth(username, password string) (bool, string, error) {
 	admin := new(Admin)
 	encryptPass := misc.MakeMd5(password)
-	return Engine.Table("admin").Where("username=? and password=?", username, encryptPass).Get(admin)
+	has, err := Engine.Table("admin").
+		Where("username=? and password=?", username, encryptPass).Get(admin)
+	var role string
+	if has {
+		role = admin.Role
+	}
+	return has, role, err
 }
+

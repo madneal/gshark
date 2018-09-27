@@ -26,8 +26,10 @@ package routers
 
 import (
 	"gopkg.in/macaron.v1"
+	"github.com/go-macaron/session"
 )
 
-func Index(ctx *macaron.Context) {
+func Index(ctx *macaron.Context, sess session.Store) {
+	ctx.Req.Header.Set("user", "anonymous")
 	ctx.Redirect("/admin/index/")
 }

@@ -147,7 +147,8 @@ func InitAdmin() {
 	if err == nil && len(admins) == 0 {
 		username := "xsec"
 		password := "x@xsec.io"
-		admin := NewAdmin(username, password)
+		role := "user"
+		admin := NewAdmin(username, password, role)
 		admin.Insert()
 	}
 }
