@@ -9,7 +9,7 @@ import (
 
 func Authorizer(e *casbin.Enforcer) macaron.Handler {
 	return func(res http.ResponseWriter, req *http.Request, c *macaron.Context) {
-		user := c.Req.Header.Get("user")
+		user := c.GetCookie("user")
 		if user == "" {
 			user = "anonymous"
 		}
