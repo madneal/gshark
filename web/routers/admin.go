@@ -63,6 +63,7 @@ func DoLogin(ctx *macaron.Context, sess session.Store) {
 		sess.Set("user", role)
 		sess.Set("admin", username)
 		ctx.Req.Header.Set("user", role)
+		ctx.SetCookie("user", role)
 		ctx.Data["user"] = role
 		ctx.Redirect("/admin/index/")
 	} else {
