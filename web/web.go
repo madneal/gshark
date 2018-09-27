@@ -27,8 +27,7 @@ package web
 import (
 	"fmt"
 	"github.com/casbin/casbin"
-	"github.com/go-macaron/auth"
-	"github.com/go-macaron/authz"
+	"x-patrol/sauth"
 	"github.com/go-macaron/cache"
 	"github.com/go-macaron/csrf"
 	"github.com/go-macaron/session"
@@ -60,9 +59,9 @@ func RunWeb(ctx *cli.Context) {
 	}
 
 	m := macaron.Classic()
-	m.Use(auth.Basic("admin", ""))
+	//m.Use(auth.Basic("admin", ""))
 	e := casbin.NewEnforcer("./conf/auth_model.conf", "./conf/policy.csv")
-	m.Use(authz.Authorizer(e))
+	m.Use(sauth.Authorizer(e))
 
 	m.Use(macaron.Renderer(
 		macaron.RenderOptions{
