@@ -74,8 +74,15 @@ func DeleteAdminById(id int64) error {
 	return err
 }
 
-func Auth(username, password string) (bool, error) {
+func Auth(username, password string) (bool, string, error) {
 	admin := new(Admin)
 	encryptPass := misc.MakeMd5(password)
-	return Engine.Table("admin").Where("username=? and password=?", username, encryptPass).Get(admin)
+	has, err := Engine.Table("admin").
+		Where("username=? and password=?", username, encryptPass).Get(admin)
+	var role string
+	if has {
+		role = admin.Role
+	}
+	return has, role, err
 }
+
