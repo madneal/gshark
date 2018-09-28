@@ -1,38 +1,14 @@
-/*
-
-Copyright (c) 2018 sec.xiaomi.com
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THEq
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-
-*/
-
 package routers
 
 import (
-	"x-patrol/models"
 	"gopkg.in/macaron.v1"
+	"x-patrol/models"
 	"x-patrol/vars"
 
 	"github.com/go-macaron/session"
-	"x-patrol/util/common"
-	"strconv"
 	"net/url"
+	"strconv"
+	"x-patrol/util/common"
 )
 
 func GetDetailedReportById(ctx *macaron.Context, sess session.Store) {
@@ -67,11 +43,15 @@ func ListGithubSearchResult(ctx *macaron.Context, sess session.Store) {
 }
 
 func renderDataForGithubSearchResult(ctx *macaron.Context, sess session.Store, p, status int) {
+
 	if sess.Get("admin") != nil {
 		p, pre, next := common.GetPreAndNext(p)
 		reports, pages, count := models.ListGithubSearchResultPage(p, status)
 		pageList := common.GetPageList(p, vars.PageStep, pages)
-		lastPage := pageList[len(pageList) - 1]
+		lastPage := 0
+		if len(pageList) >= 1 {
+			lastPage = pageList[len(pageList)-1]
+		}
 
 		ctx.Data["reports"] = reports
 		ctx.Data["pages"] = pages
@@ -82,13 +62,14 @@ func renderDataForGithubSearchResult(ctx *macaron.Context, sess session.Store, p
 		ctx.Data["status"] = status
 		ctx.Data["count"] = count
 		ctx.Data["lastPage"] = lastPage
+		ctx.Data["role"] = sess.Get("user").(string)
 		ctx.HTML(200, "report_github")
 	} else {
 		ctx.Redirect("/admin/login/")
 	}
 }
 
-func getRefer(ctx *macaron.Context)  string{
+func getRefer(ctx *macaron.Context) string {
 	refer := "/admin/reports/github/"
 	if _, ok := ctx.Req.Header["Referer"]; len(ctx.Req.Header["Referer"]) > 0 && ok {
 		u := ctx.Req.Header["Referer"][0]
