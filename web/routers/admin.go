@@ -62,9 +62,7 @@ func DoLogin(ctx *macaron.Context, sess session.Store) {
 	if err == nil && has {
 		sess.Set("user", role)
 		sess.Set("admin", username)
-		ctx.Req.Header.Set("user", role)
 		ctx.SetCookie("user", role)
-		ctx.Data["user"] = role
 		ctx.Redirect("/admin/index/")
 	} else {
 		ctx.Data["login_error"] = "用户名或者密码错误！"
