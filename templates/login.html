@@ -4,13 +4,9 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Github leaked patrol</title>
-
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-
     <link rel="stylesheet" href="/lib/bootstrap/css/bootstrap.min.css">
-
     <link rel="stylesheet" href="/lib/font-awesome-4.7.0/css/font-awesome.min.css">
-
     <link rel="stylesheet" href="/lib/adminLET2/css/AdminLTE.min.css">
     <link rel="stylesheet" href="/lib/adminLET2/css/skins/skin-red.min.css">
 </head>
@@ -19,12 +15,11 @@
     <div class="login-logo">
         <a href="#"><b>Github leaked patrol</b></a>
     </div>
-    <!-- /.login-logo -->
     <div class="login-box-body">
         <p class="login-box-msg">登陆后即可使用</p>
-
         <form action="/admin/login/" method="post">
             <input type="hidden" name="_csrf" value="{{.csrf_token}}">
+            <div style="color: red;">{{.login_error}}</div>
             <div class="form-group has-feedback">
                 <input type="text" class="form-control" placeholder="用户名" name="username">
                 <span class="glyphicon glyphicon-user form-control-feedback"></span>
@@ -41,11 +36,9 @@
                         </label>
                     </div>
                 </div>
-                <!-- /.col -->
                 <div class="col-xs-4">
                     <button type="submit" class="btn btn-primary btn-block btn-flat">登 陆</button>
                 </div>
-                <!-- /.col -->
             </div>
         </form>
     </div>
