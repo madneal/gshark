@@ -67,7 +67,9 @@ func DoLogin(ctx *macaron.Context, sess session.Store) {
 		ctx.Data["user"] = role
 		ctx.Redirect("/admin/index/")
 	} else {
-		ctx.Redirect("/admin/login/")
+		ctx.Data["login_error"] = "用户名或者密码错误！"
+		ctx.HTML(200, "login")
+		//ctx.Redirect("/admin/login/")
 	}
 }
 
