@@ -1,67 +1,11 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Github leaked patrol</title>
-
-    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-
-    <link rel="stylesheet" href="/lib/bootstrap/css/bootstrap.min.css">
-
-    <link rel="stylesheet" href="/lib/font-awesome-4.7.0/css/font-awesome.min.css">
-
-    <link rel="stylesheet" href="/lib/adminLET2/css/AdminLTE.min.css">
-    <link rel="stylesheet" href="/lib/adminLET2/css/skins/skin-red.css">
-    <link rel="stylesheet" href="/css/main.css">
-</head>
+{{template "head"}}
 <body class="hold-transition skin-red sidebar-mini">
 <div class="wrapper">
 
-    <header class="main-header">
-
-        <a href="/admin/index/" class="logo">
-            <!-- mini logo for sidebar mini 50x50 pixels -->
-            <span class="logo-mini"><b>Github leaked patrol</b></span>
-            <!-- logo for regular state and mobile devices -->
-            <span class="logo-lg"><b>Github leaked patrol</b></span>
-        </a>
-
-        <nav class="navbar navbar-static-top" role="navigation">
-
-            <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
-                <span class="sr-only">Toggle navigation</span>
-            </a>
-            <div class="navbar-custom-menu">
-                <ul class="nav navbar-nav">
-                    <li class="dropdown user user-menu">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                            <span style="font-size: 20px;margin-right: 10px;"><i class="fa fa-user-circle"></i></span>
-                            <span class="hidden-xs">{{.user}}</span>
-                        </a>
-                        <div class="dropdown-menu">
-                            <a href="/admin/logout/" class="btn btn-default btn-flat">退出登陆</a>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-    </header>
-    <aside class="main-sidebar">
-        <section class="sidebar">
-            <ul class="sidebar-menu tree" data-widget="tree">
-                <li class="header">检查报告</li>
-                <li><a href="/admin/reports/github/"><i class="fa fa-dashboard"></i> <span>github搜索报告</span></a></li>
-                <li><a href="/admin/reports/search/"><i class="fa fa-dashboard"></i> <span>本地检测报告</span></a></li>
-                <li class="header">后台管理</li>
-                <li><a href="/admin/assets/"><i class="fa fa-rmb"></i> <span>资产管理</span></a></li>
-                <li><a href="/admin/repos/"><i class="fa fa-link"></i> <span>仓库管理</span></a></li>
-                <li class="treeview">                    <a><i class="fa fa-link"></i><span>规则管理</span><span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span></a>                    <ul class="treeview-menu">                        <li><a href="/admin/rules/"><i class="fa fa-link"></i> <span>普通规则</span></a></li>                        <li><a href="/admin/filterrules/"><i class="fa fa-link"></i> <span>过滤规则</span></a></li>                    </ul>                </li>
-                <li><a href="/admin/tokens/"><i class="fa fa-users"></i> <span>token管理</span></a></li>
-                <li class="active"><a href="/admin/users/"><i class="fa fa-users"></i> <span>用户管理</span></a></li>
-            </ul>
-        </section>
-    </aside>
+{{template "header"}}
+{{template "menu"}}
 
     <div class="content-wrapper">
         <section class="content-header">
@@ -74,11 +18,9 @@
                 <a href="/admin/users/new/" class="btn btn-success c-add-btn"> 添加用户</a>
             </ol>
         </section>
-
         <section class="content">
             <div class="row c-manager">
                 <div class="col-xs-12">
-
                     <div class="box">
                         <div class="box-body">
                             <table id="dataList" class="table table-striped table-bordered table-hover">

@@ -25,19 +25,21 @@ THE SOFTWARE.
 package web
 
 import (
-	"x-patrol/web/routers"
-	"x-patrol/logger"
-	"x-patrol/vars"
+	"fmt"
+	"github.com/casbin/casbin"
+	"x-patrol/sauth"
 	"github.com/go-macaron/cache"
 	"github.com/go-macaron/csrf"
 	"github.com/go-macaron/session"
-	"gopkg.in/macaron.v1"
 	"github.com/urfave/cli"
-	"net/http"
-	"fmt"
-	"runtime"
+	"gopkg.in/macaron.v1"
 	"html/template"
+	"net/http"
+	"runtime"
 	"strings"
+	"x-patrol/logger"
+	"x-patrol/vars"
+	"x-patrol/web/routers"
 )
 
 func init() {
@@ -57,6 +59,9 @@ func RunWeb(ctx *cli.Context) {
 	}
 
 	m := macaron.Classic()
+	//m.Use(auth.Basic("admin", ""))
+	e := casbin.NewEnforcer("./conf/auth_model.conf", "./conf/policy.csv")
+	m.Use(sauth.Authorizer(e))
 
 	m.Use(macaron.Renderer(
 		macaron.RenderOptions{
@@ -81,12 +86,15 @@ func RunWeb(ctx *cli.Context) {
 			HTMLContentType: "text/html",
 		}))
 
-	m.Use(session.Sessioner())
+	m.Use(session.Sessioner(session.Options{
+		// GC 执行时间间隔，默认为 3600 秒
+		Gclifetime: 3600,
+		// 最大生存时间，默认和 GC 执行时间间隔相同
+		Maxlifetime: 3600,
+	}))
 	m.Use(csrf.Csrfer())
 	m.Use(cache.Cacher())
 	m.Get("/", routers.Index)
-
-
 	m.Group("/admin", func() {
 		m.Get("", routers.AdminIndex)
 		m.Get("/index/", routers.AdminIndex)
