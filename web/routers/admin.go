@@ -68,6 +68,7 @@ func DoLogin(ctx *macaron.Context, sess session.Store) {
 
 func DoLogout(ctx *macaron.Context, sess session.Store) {
 	sess.GC()
+	ctx.SetCookie("user", "anonymous")
 	ctx.Redirect("/admin/login")
 }
 
