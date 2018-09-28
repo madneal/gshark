@@ -53,17 +53,22 @@ func DoLogin(ctx *macaron.Context, sess session.Store) {
 	ctx.Req.ParseForm()
 	username := ctx.Req.Form.Get("username")
 	password := ctx.Req.Form.Get("password")
-	has, err := models.Auth(username, password)
+	has, role, err := models.Auth(username, password)
 	if err == nil && has {
+		sess.Set("user", role)
 		sess.Set("admin", username)
+		ctx.SetCookie("user", role)
 		ctx.Redirect("/admin/index/")
 	} else {
-		ctx.Redirect("/admin/login/")
+		ctx.Data["login_error"] = "用户名或者密码错误！"
+		ctx.HTML(200, "login")
+		//ctx.Redirect("/admin/login/")
 	}
 }
 
 func DoLogout(ctx *macaron.Context, sess session.Store) {
 	sess.GC()
+	ctx.SetCookie("user", "anonymous")
 	ctx.Redirect("/admin/login")
 }
 
@@ -90,7 +95,8 @@ func DoNewUser(ctx *macaron.Context, sess session.Store) {
 	if sess.Get("admin") != nil {
 		username := strings.TrimSpace(ctx.Req.Form.Get("username"))
 		password := strings.TrimSpace(ctx.Req.Form.Get("password"))
-		admin := models.NewAdmin(username, password)
+		role := ctx.Req.Form.Get("role")
+		admin := models.NewAdmin(username, password, role)
 		admin.Insert()
 		ctx.Redirect("/admin/users/list/")
 	} else {
@@ -119,7 +125,8 @@ func DoEditUser(ctx *macaron.Context, sess session.Store) {
 		Id, _ := strconv.Atoi(id)
 		username := strings.TrimSpace(ctx.Req.Form.Get("username"))
 		password := strings.TrimSpace(ctx.Req.Form.Get("password"))
-		models.EditAdminById(int64(Id), username, password)
+		role := ctx.Req.Form.Get("role")
+		models.EditAdminById(int64(Id), username, password, role)
 		ctx.Redirect("/admin/users/list/")
 	} else {
 		ctx.Redirect("/admin/login/")
