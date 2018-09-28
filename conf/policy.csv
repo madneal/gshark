@@ -2,5 +2,8 @@ p, admin, /*, *
 p, anonymous, /admin/index/*, *
 p, anonymous, /admin/login/*, *
 p, anonymous, /admin/logout/*, *
+p, user, /admin/index/*, *
+p, user, /admin/login/*, *
+p, user, /admin/logout/*, *
 p, user, /admin/reports/*, GET
 p, *, /favicon.ico, GET
