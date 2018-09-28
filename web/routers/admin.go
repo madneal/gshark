@@ -34,14 +34,9 @@ import (
 
 	"strings"
 	"strconv"
-	"fmt"
 )
 
 func AdminIndex(ctx *macaron.Context, sess session.Store) {
-	fmt.Println(sess.Get("user").(string))
-	if sess.Get("user") != nil {
-		ctx.Req.Header.Set("user", sess.Get("user").(string))
-	}
 	if sess.Get("admin") != nil {
 		ctx.Redirect("/admin/reports/github/")
 	} else {
