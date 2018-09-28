@@ -4,31 +4,21 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Github leaked patrol</title>
-
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-
     <link rel="stylesheet" href="/lib/bootstrap/css/bootstrap.min.css">
-
     <link rel="stylesheet" href="/lib/font-awesome-4.7.0/css/font-awesome.min.css">
-
     <link rel="stylesheet" href="/lib/adminLET2/css/AdminLTE.min.css">
     <link rel="stylesheet" href="/lib/adminLET2/css/skins/skin-red.css">
     <link rel="stylesheet" href="/css/main.css">
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <div class="wrapper">
-
     <header class="main-header">
-
         <a href="/admin/index/" class="logo">
-            <!-- mini logo for sidebar mini 50x50 pixels -->
             <span class="logo-mini"><b>Github leaked patrol</b></span>
-            <!-- logo for regular state and mobile devices -->
             <span class="logo-lg"><b>Github leaked patrol</b></span>
         </a>
-
         <nav class="navbar navbar-static-top" role="navigation">
-
             <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
                 <span class="sr-only">Toggle navigation</span>
             </a>
@@ -62,15 +52,15 @@
             </ul>
         </section>
     </aside>
-
     <div class="content-wrapper">
         <section class="content-header">
             <h1>
                 用户管理
             </h1>
             <ol class="breadcrumb">
-                <li><a href="/admin/index/"><i class="fa fa-dashboard"></i> 主页</a></li>
-                <li class="active">用户管理</li>
+                <li class="btn btn-success c-add-btn"><a href="/admin/index/"> 主页</a></li>
+                <li class="btn btn-success c-add-btn">用户管理</li>
+                <a href="/admin/users/new/" class="btn btn-success c-add-btn"> 添加用户</a>
             </ol>
         </section>
 
@@ -86,18 +76,25 @@
                                     <input type="hidden" id="id">
                                     <div class="form-group">
                                         <label for="name" class="col-sm-2 control-label">用户名</label>
-
-                                        <div class="col-sm-10">
+                                        <div class="col-sm-6">
                                             <input type="text" class="form-control" id="name" name="username"
                                                    placeholder="请输入用户名">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="password" class="col-sm-2 control-label">密码</label>
-
-                                        <div class="col-sm-10">
+                                        <div class="col-sm-6">
                                             <input type="text" class="form-control" id="password" name="password"
                                                    placeholder="请输入密码">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="role" class="col-sm-2 control-label">角色</label>
+                                        <div class="col-sm-6">
+                                            <select name="type">
+                                                <option value="admin" selected>admin</option>
+                                                <option value="user">user</option>
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -115,6 +112,7 @@
         </section>
     </div>
 </div>
+
 <script src="/lib/jQuery/jquery-2.2.3.min.js"></script>
 <script src="/lib/bootstrap/js/bootstrap.min.js"></script>
 <script src="/lib/slimScroll/jquery.slimscroll.min.js"></script>
