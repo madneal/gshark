@@ -9,3 +9,12 @@ $('input[type=radio][name=status]').change(function() {
     }
     window.location.href = ('/admin/reports/github/query/' + status);
 })
+var url = window.location;
+// for sidebar menu but not for treeview submenu
+$('ul.sidebar-menu a').filter(function() {
+    return this.href == url;
+}).parent().siblings().removeClass('active').end().addClass('active');
+// for treeview which is like a submenu
+$('ul.treeview-menu a').filter(function() {
+    return this.href == url;
+}).parentsUntil(".sidebar-menu > .treeview-menu").siblings().removeClass('active').end().addClass('active');
