@@ -26,13 +26,9 @@ package models
 
 import (
 	"x-patrol/vars"
-	"x-patrol/logger"
 	"github.com/google/go-github/github"
 	"time"
 	"fmt"
-	"path/filepath"
-	"github.com/etsy/hound/vcs"
-	"strings"
 )
 
 type Match struct {
@@ -225,33 +221,14 @@ func GetReportById(id int64, omitRepo bool) (bool, *CodeResult, error) {
 	return has, report, err
 }
 
-func ConfirmReportById(id int64) (page int, err error) {
+// confirm the whole repository by id
+func ConfirmResultById(id int64) (err error) {
 	report := new(CodeResult)
 	has, err := Engine.Id(id).Get(report)
-	page, err = GetPageById(id)
-	wd, err := vcs.New("git", nil)
-
-	if err != nil {
-		fmt.Errorf("git init failed")
-	}
-	url := "https://github.com/" + report.RepoName
-	vcsDir := filepath.Join(vars.REPO_PATH, strings.Replace(report.RepoName, "/", "-", 1))
-	rev, err := wd.PullOrClone(vcsDir, url)
-
-	if err != nil {
-		logger.Log.Infoln(err)
-	}
-
-	if rev == "" {
-		fmt.Println("has pulled")
-	}
-	report.RepoPath = &vcsDir
-
 	if err == nil && has {
-		report.Status = 1
-		_, err = Engine.Id(id).Cols("status").Update(report)
+		err = ChangeReportsStatusByRepo(id, 1)
 	}
-	return page, err
+	return err
 }
 
 func CancelReportById(id int64) (page int, err error) {
