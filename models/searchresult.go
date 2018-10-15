@@ -273,3 +273,13 @@ func CancelReportsByRepo(id int64) (err error) {
 	}
 	return err
 }
+
+func ChangeReportsStatusByRepo(id int64, status int) (err error) {
+	var repo string
+	has, err := Engine.Table("code_result").Where("id=?", id).Cols("repo_name").Get(&repo)
+	if err == nil && has {
+		_, err = Engine.Table("code_result").Exec("update code_result set status=? where repo_name=?",
+			status, repo)
+	}
+	return err
+}
