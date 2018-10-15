@@ -85,8 +85,9 @@ func ConfirmReportById(ctx *macaron.Context, sess session.Store) {
 	if sess.Get("admin") != nil {
 		id := ctx.Params(":id")
 		Id, _ := strconv.Atoi(id)
-		models.ConfirmReportById(int64(Id))
-		ctx.Redirect(getRefer(ctx))
+		models.ConfirmResultById(int64(Id))
+		// redirect to reports which have been confirmed
+		ctx.Redirect("/admin/reports/github/query/1")
 	} else {
 		ctx.Redirect("/admin/login/")
 	}
