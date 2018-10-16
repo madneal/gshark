@@ -54,7 +54,7 @@ GLOBAL OPTIONS:
    --version, -v           print the version
 ```
 
-### Start the service
+### Start the web service
 
 `main web`
 
