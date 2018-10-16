@@ -47,7 +47,8 @@ func GetFilterRulesPage(page int) ([]FilterRule, int, error) {
 		page = 1
 	}
 
-	err = Engine.Table("filter_rule").Limit(vars.PAGE_SIZE, (page - 1) * vars.PAGE_SIZE).Desc("rule_type").Find(&rules)
+	err = Engine.Table("filter_rule").Limit(vars.PAGE_SIZE, (page-1)*vars.PAGE_SIZE).
+		Desc("rule_type").Find(&rules)
 	return rules, pages, err
 }
 

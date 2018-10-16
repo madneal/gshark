@@ -9,6 +9,6 @@ import (
 func TestAuth(t *testing.T) {
 	//fmt.Println(134)
 	NewDbEngine()
-	_, role, _ := Auth("admin", "spdb@admin")
+	_, role, _ := Auth("admin", "123@admin")
 	assert.Equal(t, "admin", role)
 }
