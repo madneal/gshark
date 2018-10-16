@@ -25,10 +25,10 @@ THE SOFTWARE.
 package main
 
 import (
-	"x-patrol/cmd"
 	"github.com/urfave/cli"
 	"os"
 	"runtime"
+	"x-patrol/cmd"
 )
 
 func init() {
