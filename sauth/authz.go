@@ -6,7 +6,6 @@ import (
 	"net/http"
 )
 
-
 func Authorizer(e *casbin.Enforcer) macaron.Handler {
 	return func(res http.ResponseWriter, req *http.Request, c *macaron.Context) {
 		user := c.GetCookie("user")

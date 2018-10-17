@@ -27,7 +27,6 @@ package web
 import (
 	"fmt"
 	"github.com/casbin/casbin"
-	"x-patrol/sauth"
 	"github.com/go-macaron/cache"
 	"github.com/go-macaron/csrf"
 	"github.com/go-macaron/session"
@@ -38,6 +37,7 @@ import (
 	"runtime"
 	"strings"
 	"x-patrol/logger"
+	"x-patrol/sauth"
 	"x-patrol/vars"
 	"x-patrol/web/routers"
 )

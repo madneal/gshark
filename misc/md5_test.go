@@ -1,8 +1,8 @@
 package misc
 
 import (
-	"testing"
 	"fmt"
+	"testing"
 )
 
 func TestMakeMd5(t *testing.T) {

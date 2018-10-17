@@ -25,9 +25,9 @@ THE SOFTWARE.
 package githubsearch_test
 
 import (
+	"fmt"
 	"testing"
 	"x-patrol/util/githubsearch"
-	"fmt"
 )
 
 func TestSearchCode(t *testing.T) {

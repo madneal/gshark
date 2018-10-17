@@ -27,11 +27,11 @@ package models
 import (
 	"x-patrol/vars"
 
-	"os"
-	"encoding/json"
 	"bufio"
-	"io/ioutil"
+	"encoding/json"
 	"gopkg.in/yaml.v2"
+	"io/ioutil"
+	"os"
 )
 
 type Rule struct {
@@ -44,7 +44,7 @@ type Rule struct {
 	Status      int    `xorm:"int default 0 notnull"`
 }
 
-func NewRules(part, ruleType, pat, caption, desc string, status int) (*Rule) {
+func NewRules(part, ruleType, pat, caption, desc string, status int) *Rule {
 	return &Rule{Part: part, Type: ruleType, Pattern: pat, Caption: caption, Description: desc, Status: status}
 }
 
@@ -64,10 +64,10 @@ func GetRulesPage(page int) ([]Rule, int, error) {
 	totalPages, err := Engine.Table("rule").Count()
 	var pages int
 
-	if int(totalPages) % vars.PAGE_SIZE == 0 {
+	if int(totalPages)%vars.PAGE_SIZE == 0 {
 		pages = int(totalPages) / vars.PAGE_SIZE
 	} else {
-		pages = int(totalPages) / vars.PAGE_SIZE + 1
+		pages = int(totalPages)/vars.PAGE_SIZE + 1
 	}
 
 	if page >= pages {
@@ -87,7 +87,7 @@ func GetRuleById(id int64) (*Rule, bool, error) {
 	return rule, has, err
 }
 
-func EditRuleById(id int64, part, ruleType, pat, caption, desc string, status int) (error) {
+func EditRuleById(id int64, part, ruleType, pat, caption, desc string, status int) error {
 	rule := new(Rule)
 	_, has, err := GetRuleById(id)
 	if err == nil && has {
@@ -156,7 +156,7 @@ func LoadBlackListRuleFromFile(filename string) ([]FilterRule, error) {
 	return rules, err
 }
 
-func InsertBlacklistRules(filename string) (error) {
+func InsertBlacklistRules(filename string) error {
 	rules, err := LoadBlackListRuleFromFile(filename)
 	if err == nil {
 		for _, rule := range rules {
@@ -166,7 +166,7 @@ func InsertBlacklistRules(filename string) (error) {
 	return err
 }
 
-func InsertRules(filename string) (error) {
+func InsertRules(filename string) error {
 	rules, err := LoadRuleFromFile(filename)
 	if err == nil {
 		for _, rule := range rules {

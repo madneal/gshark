@@ -25,18 +25,18 @@ THE SOFTWARE.
 package models
 
 import (
-	"x-patrol/settings"
 	"x-patrol/logger"
+	"x-patrol/settings"
 
-	_ "github.com/mattn/go-sqlite3"
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/lib/pq"
+	_ "github.com/mattn/go-sqlite3"
 
-	"github.com/go-xorm/xorm"
 	"github.com/go-xorm/core"
+	"github.com/go-xorm/xorm"
 
-	"path/filepath"
 	"fmt"
+	"path/filepath"
 )
 
 var (
@@ -123,7 +123,7 @@ func NewDbEngine() (err error) {
 	return err
 }
 
-func InitRules() () {
+func InitRules() {
 	cur, _ := filepath.Abs(".")
 	ruleFile := fmt.Sprintf("%v/conf/gitrob.json", cur)
 	rules, err := GetRules()

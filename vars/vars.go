@@ -32,7 +32,6 @@ const (
 	DefaultBaseUrl               = "{url}/blob/master/{path}{anchor}"
 	DefaultAnchor                = "#L{line}"
 	PageStep                     = 5
-
 )
 
 var (
@@ -47,5 +46,4 @@ var (
 	DEBUG_MODE bool
 
 	PAGE_SIZE = 10
-
 )

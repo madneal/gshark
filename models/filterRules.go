@@ -6,16 +6,16 @@ import (
 
 type FilterRule struct {
 	Id        int64
-	RuleType  int     // 0: blacklist rule, 1: whitelist rule
+	RuleType  int // 0: blacklist rule, 1: whitelist rule
 	RuleKey   string
 	RuleValue string `xorm:"text"`
 }
 
-func NewFilterRule(ruleType int, ruleKey, ruleValue string) (*FilterRule) {
+func NewFilterRule(ruleType int, ruleKey, ruleValue string) *FilterRule {
 	return &FilterRule{RuleType: ruleType, RuleKey: ruleKey, RuleValue: ruleValue}
 }
 
-func (r *FilterRule) Insert()(err error) {
+func (r *FilterRule) Insert() (err error) {
 	_, err = Engine.Insert(r)
 	return err
 }
@@ -33,10 +33,10 @@ func GetFilterRulesPage(page int) ([]FilterRule, int, error) {
 	var pages int
 	pageSize := int64(vars.PAGE_SIZE)
 
-	if totalPages % pageSize == 0 {
+	if totalPages%pageSize == 0 {
 		pages = int(totalPages / pageSize)
 	} else {
-		pages = int(totalPages / pageSize) + 1
+		pages = int(totalPages/pageSize) + 1
 	}
 
 	if page >= pages {
@@ -58,7 +58,7 @@ func GetFilterRuleById(id int64) (*FilterRule, bool, error) {
 	return rule, has, err
 }
 
-func EditFilterRuleById(id int64, ruleType int, ruleKey, ruleValue string) (error) {
+func EditFilterRuleById(id int64, ruleType int, ruleKey, ruleValue string) error {
 	rule := new(FilterRule)
 	_, has, err := GetFilterRuleById(id)
 	if err == nil && has {
@@ -85,5 +85,3 @@ func ConvertRuleType(id int64) (err error) {
 	}
 	return err
 }
-
-
