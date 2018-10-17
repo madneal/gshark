@@ -1,4 +1,4 @@
-# x-patrol
+# x-patrol [![Go Report Card](https://goreportcard.com/badge/github.com/neal1991/x-patrol)](https://goreportcard.com/report/github.com/neal1991/x-patrol)
 
 This project is based on [x-patrol](https://github.com/MiSecurity/x-patrol). It is utilize to scan sensitive information in github or local repos.
 
