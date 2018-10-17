@@ -25,10 +25,10 @@ THE SOFTWARE.
 package githubsearch
 
 import (
-	"x-patrol/models"
-	"x-patrol/logger"
 	"github.com/google/go-github/github"
 	"strings"
+	"x-patrol/logger"
+	"x-patrol/models"
 )
 
 const (

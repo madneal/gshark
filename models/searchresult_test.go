@@ -1,9 +1,9 @@
 package models
 
 import (
-	"testing"
 	"fmt"
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func TestGetCodeResultDetailById(t *testing.T) {
@@ -12,7 +12,7 @@ func TestGetCodeResultDetailById(t *testing.T) {
 	fmt.Println(detail)
 }
 
-func TestChangeReportsStatusByRepo(t *testing.T)  {
+func TestChangeReportsStatusByRepo(t *testing.T) {
 	var codeResult CodeResult
 	has, err := Engine.Table("code_result").Cols("id", "status").Get(&codeResult)
 	if err == nil && has {

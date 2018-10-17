@@ -28,17 +28,17 @@ func GetPreAndNext(p int) (p_ int, pre int, next int) {
 	return p_, pre, next
 }
 
-func GetPageList(p, step, pages int) ([]int) {
+func GetPageList(p, step, pages int) []int {
 	pageList := make([]int, 0)
 	startIndex := p - step
 	endIndex := p + step
 
 	if startIndex < 1 && endIndex <= pages {
 		startIndex = 1
-		endIndex = startIndex + 2 * step
+		endIndex = startIndex + 2*step
 	} else if startIndex >= 1 && endIndex > pages {
 		endIndex = pages
-		startIndex = pages - 2 * step
+		startIndex = pages - 2*step
 	} else if startIndex < 1 && endIndex > pages {
 		startIndex = 1
 		endIndex = pages

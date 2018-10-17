@@ -25,9 +25,9 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"x-patrol/web"
-	"x-patrol/util"
 	"github.com/urfave/cli"
+	"x-patrol/util"
+	"x-patrol/web"
 )
 
 var Web = cli.Command{

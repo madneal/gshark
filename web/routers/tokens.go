@@ -25,14 +25,14 @@ THE SOFTWARE.
 package routers
 
 import (
-	"x-patrol/models"
 	"gopkg.in/macaron.v1"
+	"x-patrol/models"
 
-	"github.com/go-macaron/session"
 	"github.com/go-macaron/csrf"
+	"github.com/go-macaron/session"
 
-	"strings"
 	"strconv"
+	"strings"
 )
 
 func ListTokens(ctx *macaron.Context, sess session.Store) {

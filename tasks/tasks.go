@@ -25,16 +25,16 @@ THE SOFTWARE.
 package tasks
 
 import (
+	"x-patrol/logger"
+	"x-patrol/models"
 	"x-patrol/util/index"
 	"x-patrol/util/searcher"
-	"x-patrol/models"
 	"x-patrol/vars"
-	"x-patrol/logger"
 
-	"time"
 	"os"
-	"sync"
 	"strings"
+	"sync"
+	"time"
 	"x-patrol/util/githubsearch"
 )
 
@@ -157,19 +157,19 @@ func DoSearch(reposConfig []models.RepoConfig, rules models.Rule) (map[string]*i
 }
 
 // 分割任务为map形式，key为批次，value为一批models.RepoConfig
-func SegmentationTask(reposConfig []models.RepoConfig) (map[int][]models.RepoConfig) {
+func SegmentationTask(reposConfig []models.RepoConfig) map[int][]models.RepoConfig {
 	tasks := make(map[int][]models.RepoConfig)
 	totalRepos := len(reposConfig)
 	scanBatch := totalRepos / vars.MAX_Concurrency_REPOS
 
 	for i := 0; i < scanBatch; i++ {
-		curTask := reposConfig[vars.MAX_Concurrency_REPOS*i:vars.MAX_Concurrency_REPOS*(i+1)]
+		curTask := reposConfig[vars.MAX_Concurrency_REPOS*i : vars.MAX_Concurrency_REPOS*(i+1)]
 		tasks[i] = curTask
 	}
 
 	if totalRepos%vars.MAX_Concurrency_REPOS > 0 {
 		n := len(tasks)
-		tasks[n] = reposConfig[vars.MAX_Concurrency_REPOS*scanBatch:totalRepos]
+		tasks[n] = reposConfig[vars.MAX_Concurrency_REPOS*scanBatch : totalRepos]
 	}
 	return tasks
 }
@@ -185,7 +185,7 @@ func DistributionTask(tasksMap map[int][]models.RepoConfig, rules []models.Rule)
 
 func Run(reposConfig []models.RepoConfig, rule models.Rule) {
 	var wg sync.WaitGroup
-	 wg.Add(len(reposConfig))
+	wg.Add(len(reposConfig))
 	for _, rConfig := range reposConfig {
 		// wg.Add(1)
 		reposCfg := make([]models.RepoConfig, 0)
@@ -197,10 +197,10 @@ func Run(reposConfig []models.RepoConfig, rule models.Rule) {
 		}(reposCfg, rule)
 		// wg.Wait()
 	}
-	 wg.Wait()
+	wg.Wait()
 }
 
-func SaveSearchResult(responses map[string]*index.SearchResponse, rule models.Rule, err error, ) {
+func SaveSearchResult(responses map[string]*index.SearchResponse, rule models.Rule, err error) {
 	if err == nil {
 		for repo, resp := range responses {
 			result := models.NewSearchResult(resp.Matches,
@@ -210,14 +210,14 @@ func SaveSearchResult(responses map[string]*index.SearchResponse, rule models.Ru
 				resp.Revision, rule)
 
 			has, _ := result.Exist()
-			if ! has {
+			if !has {
 				result.Insert()
 			}
 		}
 	}
 }
 
-func ScheduleTasks(duration time.Duration) () {
+func ScheduleTasks(duration time.Duration) {
 	for {
 		// insert repos from inputInfo
 		githubsearch.InsertAllRepos()

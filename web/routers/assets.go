@@ -25,14 +25,14 @@ THE SOFTWARE.
 package routers
 
 import (
-	"x-patrol/models"
-	"x-patrol/vars"
-	"github.com/go-macaron/session"
 	"github.com/go-macaron/csrf"
+	"github.com/go-macaron/session"
 	"gopkg.in/macaron.v1"
-	"x-patrol/util/common"
 	"strconv"
 	"strings"
+	"x-patrol/models"
+	"x-patrol/util/common"
+	"x-patrol/vars"
 )
 
 func ListAssets(ctx *macaron.Context, sess session.Store) {
