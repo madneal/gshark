@@ -25,13 +25,13 @@ THE SOFTWARE.
 package tasks_test
 
 import (
-	"x-patrol/tasks"
 	"x-patrol/models"
-	"x-patrol/vars"
+	"x-patrol/tasks"
 	"x-patrol/util/index"
+	"x-patrol/vars"
 
-	"testing"
 	"encoding/json"
+	"testing"
 )
 
 func TestGenerateSearcher(t *testing.T) {

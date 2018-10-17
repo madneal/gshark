@@ -85,4 +85,3 @@ func Auth(username, password string) (bool, string, error) {
 	}
 	return has, role, err
 }
-

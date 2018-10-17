@@ -25,16 +25,16 @@ THE SOFTWARE.
 package routers
 
 import (
+	"gopkg.in/macaron.v1"
 	"x-patrol/models"
 	"x-patrol/util/common"
 	"x-patrol/vars"
-	"gopkg.in/macaron.v1"
 
-	"github.com/go-macaron/session"
 	"github.com/go-macaron/csrf"
+	"github.com/go-macaron/session"
 
-	"strings"
 	"strconv"
+	"strings"
 )
 
 func ListRules(ctx *macaron.Context, sess session.Store) {

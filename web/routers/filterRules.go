@@ -1,14 +1,14 @@
 package routers
 
 import (
-	"gopkg.in/macaron.v1"
+	"github.com/go-macaron/csrf"
 	"github.com/go-macaron/session"
+	"gopkg.in/macaron.v1"
 	"strconv"
-	"x-patrol/vars"
+	"strings"
 	"x-patrol/models"
 	"x-patrol/util/common"
-	"strings"
-	"github.com/go-macaron/csrf"
+	"x-patrol/vars"
 )
 
 func ListFilterRules(ctx *macaron.Context, sess session.Store) {
@@ -19,7 +19,6 @@ func ListFilterRules(ctx *macaron.Context, sess session.Store) {
 	}
 	p := page
 	p, pre, next := common.GetPreAndNext(p)
-
 
 	if sess.Get("admin") != nil {
 		rules, pages, _ := models.GetFilterRulesPage(p)
@@ -113,4 +112,3 @@ func ChangeRuleType(ctx *macaron.Context, sess session.Store) {
 		ctx.Redirect("/admin/login/")
 	}
 }
-

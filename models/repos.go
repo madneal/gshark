@@ -85,7 +85,7 @@ func ListEnableRepos() ([]Repo, error) {
 	return repos, err
 }
 
-func EnableRepoById(id int64) (error) {
+func EnableRepoById(id int64) error {
 	repo := new(Repo)
 	has, err := Engine.ID(id).Get(repo)
 	if err == nil && has {
@@ -95,7 +95,7 @@ func EnableRepoById(id int64) (error) {
 	return err
 }
 
-func DisableRepoById(id int64) (error) {
+func DisableRepoById(id int64) error {
 	repo := new(Repo)
 	has, err := Engine.ID(id).Get(repo)
 	if err == nil && has {
@@ -105,13 +105,13 @@ func DisableRepoById(id int64) (error) {
 	return err
 }
 
-func DeleteAllRepos() (error) {
+func DeleteAllRepos() error {
 	sqlCmd := "delete from repos"
 	_, err := Engine.Exec(sqlCmd)
 	return err
 }
 
-func DisableRepoByUrl(repoUrl string) (error) {
+func DisableRepoByUrl(repoUrl string) error {
 	repo := new(Repo)
 	has, err := Engine.Table("repo").Where("url=?", repoUrl).Get(repo)
 	if err == nil && has {

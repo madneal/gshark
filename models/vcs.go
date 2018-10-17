@@ -37,7 +37,7 @@ type UrlPattern struct {
 	Vcs     string `json:"vcs"`
 }
 
-func NewUrlParttern(baseUrl, anchor, vcs string) (*UrlPattern) {
+func NewUrlParttern(baseUrl, anchor, vcs string) *UrlPattern {
 	return &UrlPattern{BaseUrl: baseUrl, Anchor: anchor, Vcs: vcs}
 }
 
@@ -49,7 +49,7 @@ func (u *UrlPattern) Insert() (int64, error) {
 	return Engine.Insert(u)
 }
 
-func InitUrlPattern() () {
+func InitUrlPattern() {
 	u := NewUrlParttern(vars.DefaultBaseUrl, vars.DefaultAnchor, "git")
 	has, err := u.Exist()
 	if err == nil && !has {
@@ -80,9 +80,9 @@ func NewRepoConfig(name string,
 	vcs string,
 	urlPat UrlPattern,
 	isPull bool,
-	isExclude bool) (*RepoConfig) {
+	isExclude bool) *RepoConfig {
 	return &RepoConfig{Name: name, Url: url, PollInterval: interval, Vcs: vcs, UrlPattern: urlPat,
-		AutoPullUpdate: isPull,
+		AutoPullUpdate:  isPull,
 		ExcludeDotFiles: isExclude}
 }
 
@@ -123,7 +123,7 @@ func InsertReposConfig() {
 	}
 }
 
-func ClearReposConfig() (error) {
+func ClearReposConfig() error {
 	_, err := Engine.Exec("delete from repo_config")
 	return err
 }
