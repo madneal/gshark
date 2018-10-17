@@ -35,7 +35,7 @@ import (
 	"x-patrol/logger"
 )
 
-func Scan(ctx *cli.Context) () {
+func Scan(ctx *cli.Context) {
 	var ScanMode = "github"
 	var Interval time.Duration = 900
 

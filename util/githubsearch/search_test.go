@@ -3,7 +3,6 @@ package githubsearch
 import "testing"
 import "x-patrol/models"
 
-
 func TestFiltetString(t *testing.T) {
 	codeResult := new(models.CodeResult)
 	id := 1

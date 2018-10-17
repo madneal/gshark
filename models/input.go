@@ -59,7 +59,7 @@ func GetInputInfoById(id int64) (*InputInfo, bool, error) {
 	return &input, has, err
 }
 
-func EditInputInfoById(id int64, inputType, content, desc string) (error) {
+func EditInputInfoById(id int64, inputType, content, desc string) error {
 	input := new(InputInfo)
 	var err error
 	has, err := Engine.ID(id).Get(input)
@@ -72,13 +72,13 @@ func EditInputInfoById(id int64, inputType, content, desc string) (error) {
 	return err
 }
 
-func DeleteInputInfoById(id int64) (error) {
+func DeleteInputInfoById(id int64) error {
 	input := new(InputInfo)
 	_, err := Engine.Table("input_info").ID(id).Delete(input)
 	return err
 }
 
-func DeleteAllInputInfo() (error) {
+func DeleteAllInputInfo() error {
 	sqlCMD := "delete from input_info;"
 	_, err := Engine.Exec(sqlCMD)
 	return err

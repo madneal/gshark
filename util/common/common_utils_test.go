@@ -1,9 +1,9 @@
 package common
 
 import (
-	"testing"
-	"fmt"
 	"./.."
+	"fmt"
+	"testing"
 )
 
 func TestGetPageList(t *testing.T) {

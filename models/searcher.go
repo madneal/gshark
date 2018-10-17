@@ -36,11 +36,11 @@ type SearchResult struct {
 	Repo           string
 	Matches        []*index.FileMatch `xorm:"LONGBLOB"`
 	FilesWithMatch int
-	FilesOpened    int                `json:"-"`
-	Duration       time.Duration      `json:"-"`
+	FilesOpened    int           `json:"-"`
+	Duration       time.Duration `json:"-"`
 	Revision       string
 	Rule           Rule
-	Status         int                `xorm:"int default 0 notnull"`
+	Status         int `xorm:"int default 0 notnull"`
 }
 
 func NewSearchResult(
@@ -50,7 +50,7 @@ func NewSearchResult(
 	FilesOpened int,
 	duration time.Duration,
 	revision string,
-	rule Rule) (*SearchResult) {
+	rule Rule) *SearchResult {
 	return &SearchResult{Matches: matches, Repo: repo, FilesWithMatch: FilesWithMatch,
 		FilesOpened: FilesOpened, Duration: duration, Revision: revision, Rule: rule}
 }
@@ -121,7 +121,7 @@ func CancelSearchResultById(id int64) (err error) {
 }
 
 func CancelSearchResultByFileName(filename string) (err error) {
-	_, err = Engine.Table("search_result").Exec("update search_result set status = 2 where filename=?",filename)
+	_, err = Engine.Table("search_result").Exec("update search_result set status = 2 where filename=?", filename)
 	return err
 }
 
@@ -130,7 +130,7 @@ func CancelSearchResultByRepo(repo string) (err error) {
 	return err
 }
 
-func GetRepoUrlById(id int64) (string) {
+func GetRepoUrlById(id int64) string {
 	result := new(SearchResult)
 	Engine.ID(id).Get(result)
 	return result.Repo

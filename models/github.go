@@ -41,7 +41,7 @@ type GithubToken struct {
 	Reset time.Time `json:"reset"`
 }
 
-func NewGithubToken(token, desc string) (*GithubToken) {
+func NewGithubToken(token, desc string) *GithubToken {
 	return &GithubToken{Token: token, Desc: desc, Limit: 5000, Remaining: 5000}
 }
 
@@ -71,7 +71,7 @@ func GetTokenById(id int64) (*GithubToken, bool, error) {
 	return token, has, err
 }
 
-func EditTokenById(id int64, token, desc string) (error) {
+func EditTokenById(id int64, token, desc string) error {
 	githubToken := new(GithubToken)
 	has, err := Engine.ID(id).Get(githubToken)
 	if err == nil && has {
@@ -82,13 +82,13 @@ func EditTokenById(id int64, token, desc string) (error) {
 	return err
 }
 
-func DeleteTokenById(id int64) (error) {
+func DeleteTokenById(id int64) error {
 	token := new(GithubToken)
 	_, err := Engine.ID(id).Delete(token)
 	return err
 }
 
-func UpdateRate(token string, response *github.Response) (error) {
+func UpdateRate(token string, response *github.Response) error {
 	githubToken := new(GithubToken)
 	has, err := Engine.Table("github_token").Where("token=?", token).Get(githubToken)
 	if err == nil && has {

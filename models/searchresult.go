@@ -25,10 +25,10 @@ THE SOFTWARE.
 package models
 
 import (
-	"x-patrol/vars"
+	"fmt"
 	"github.com/google/go-github/github"
 	"time"
-	"fmt"
+	"x-patrol/vars"
 )
 
 type Match struct {
@@ -50,14 +50,14 @@ type TextMatch struct {
 // CodeResult represents a single search result.
 type CodeResult struct {
 	Id          int64
-	Name        *string            `json:"name,omitempty"`
-	Path        *string            `json:"path,omitempty"`
+	Name        *string `json:"name,omitempty"`
+	Path        *string `json:"path,omitempty"`
 	RepoName    string
 	SHA         *string            `json:"sha,omitempty" xorm:"sha"`
 	HTMLURL     *string            `json:"html_url,omitempty" xorm:"html_url"`
 	Repository  *github.Repository `json:"repository,omitempty" xorm:"json"`
 	TextMatches []TextMatch        `json:"text_matches,omitempty" xorm:"LONGBLOB"`
-	Status      int                 // 1 confirmed 2 ignored
+	Status      int                // 1 confirmed 2 ignored
 	Version     int                `xorm:"version"`
 	CreatedTime time.Time          `xorm:"created"`
 	UpdatedTime time.Time          `xorm:"updated"`
@@ -66,14 +66,14 @@ type CodeResult struct {
 }
 
 type MatchedText struct {
-	Keyword       *string
-	StartIndex    int
-	EndIndex      int
-	Text          *string
+	Keyword    *string
+	StartIndex int
+	EndIndex   int
+	Text       *string
 }
 
 type CodeResultDetail struct {
-	Id           int64
+	Id int64
 	// owner
 	OwnerName      *string
 	OwnerURl       *string
@@ -84,14 +84,14 @@ type CodeResultDetail struct {
 	OwnerCreatedAt *github.Timestamp
 	Type           *string
 	// repo
-	RepoName       *string
-	RepoUrl        *string
-	Lang           *string
-	RepoCreatedAt  *github.Timestamp
-	RepoUpdatedAt  *github.Timestamp
+	RepoName      *string
+	RepoUrl       *string
+	Lang          *string
+	RepoCreatedAt *github.Timestamp
+	RepoUpdatedAt *github.Timestamp
 
-	Status         int
-	MatchedTexts   []*MatchedText
+	Status       int
+	MatchedTexts []*MatchedText
 }
 
 // CodeSearchResult represents the result of a code search.
@@ -110,16 +110,15 @@ func (r *CodeResult) Exist() (bool, error) {
 	return Engine.Table("code_result").Where("name=? and sha=?", r.Name, r.SHA).Get(&c)
 }
 
-func
-ListGithubSearchResultPage(page int, status int) ([]CodeResult, int, int) {
+func ListGithubSearchResultPage(page int, status int) ([]CodeResult, int, int) {
 	results := make([]CodeResult, 0)
 	totalPages, err := Engine.Table("code_result").Where("status=?", status).Count()
 	var pages int
 
-	if int(totalPages) % vars.PAGE_SIZE == 0 {
+	if int(totalPages)%vars.PAGE_SIZE == 0 {
 		pages = int(totalPages) / vars.PAGE_SIZE
 	} else {
-		pages = int(totalPages) / vars.PAGE_SIZE + 1
+		pages = int(totalPages)/vars.PAGE_SIZE + 1
 	}
 
 	if page >= pages {
@@ -155,7 +154,6 @@ func GetPageById(id int64) (int, error) {
 	return page, err
 }
 
-
 func GetCodeResultDetailById(id int64) (*CodeResultDetail, error) {
 	codeResultDetail := CodeResultDetail{Id: id}
 	has, err := Engine.Table("code_result_detail").ID(id).Get(&codeResultDetail)
@@ -168,7 +166,7 @@ func GetCodeResultDetailById(id int64) (*CodeResultDetail, error) {
 	return &codeResultDetail, err
 }
 
-func setCodeResultDetail(codeResult *CodeResult) CodeResultDetail{
+func setCodeResultDetail(codeResult *CodeResult) CodeResultDetail {
 	detail := CodeResultDetail{}
 	repo := *codeResult.Repository
 	owner := *codeResult.Repository.Owner

@@ -25,22 +25,22 @@ THE SOFTWARE.
 package searcher
 
 import (
-	"x-patrol/models"
 	"x-patrol/logger"
-	"x-patrol/vars"
+	"x-patrol/models"
 	"x-patrol/util/common"
+	"x-patrol/vars"
 
-    "x-patrol/util/index"
-    "x-patrol/util/vcs"
+	"x-patrol/util/index"
+	"x-patrol/util/vcs"
 
+	"fmt"
+	"io/ioutil"
+	"math/rand"
+	"os"
+	"path/filepath"
+	"runtime"
 	"sync"
 	"time"
-	"path/filepath"
-	"io/ioutil"
-	"runtime"
-	"os"
-	"fmt"
-	"math/rand"
 )
 
 type empty struct{}
@@ -241,7 +241,7 @@ func findExistingRefs(dbpath string) (*foundRefs, error) {
 // one will be built.
 func buildAndOpenIndex(
 	opt *index.IndexOptions,
-/*dbpath,*/
+	/*dbpath,*/
 	vcsDir,
 	idxDir,
 	url,
