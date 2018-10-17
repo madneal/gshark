@@ -41,14 +41,17 @@ type GithubToken struct {
 	Reset time.Time `json:"reset"`
 }
 
+// create a GithubToken with limit and remain
 func NewGithubToken(token, desc string) *GithubToken {
 	return &GithubToken{Token: token, Desc: desc, Limit: 5000, Remaining: 5000}
 }
 
+// insert a GithubToken into database
 func (g *GithubToken) Insert() (int64, error) {
 	return Engine.Insert(g)
 }
 
+// detect if the GithubToken exists
 func (g *GithubToken) Exist() (bool, error) {
 	return Engine.Get(g)
 }
