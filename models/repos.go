@@ -106,7 +106,7 @@ func DisableRepoById(id int64) error {
 }
 
 func DeleteAllRepos() error {
-	sqlCmd := "delete from repos"
+	sqlCmd := "delete from repo"
 	_, err := Engine.Exec(sqlCmd)
 	return err
 }
