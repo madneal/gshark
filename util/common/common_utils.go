@@ -12,11 +12,11 @@ func HashFor(name string) string {
 	return hex.EncodeToString(h.Sum(nil))
 }
 
-func GetPreAndNext(p int) (p_ int, pre int, next int) {
+func GetPreAndNext(p int) (currentPage int, pre int, next int) {
 	if p < 1 {
-		p_ = 1
+		currentPage = 1
 	} else {
-		p_ = p
+		currentPage = p
 	}
 
 	if p <= 1 {
@@ -25,7 +25,7 @@ func GetPreAndNext(p int) (p_ int, pre int, next int) {
 		pre = p - 1
 	}
 	next = p + 1
-	return p_, pre, next
+	return currentPage, pre, next
 }
 
 func GetPageList(p, step, pages int) []int {
