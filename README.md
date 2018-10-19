@@ -4,7 +4,7 @@
    <p align="center">Scan for sensitive information in Github easily and effectively.</p>
 </p>
 
-# x-patrol [![Go Report Card](https://goreportcard.com/badge/github.com/neal1991/x-patrol)](https://goreportcard.com/report/github.com/neal1991/x-patrol)
+# GShark [![Go Report Card](https://goreportcard.com/badge/github.com/neal1991/x-patrol)](https://goreportcard.com/report/github.com/neal1991/x-patrol)
 
 This project is based on [x-patrol](https://github.com/MiSecurity/x-patrol). It is utilize to scan sensitive information in github or local repos.
 
@@ -54,7 +54,6 @@ GLOBAL OPTIONS:
    --debug, -d             Debug Mode
    --host value, -H value  web listen address (default: "0.0.0.0")
    --port value, -p value  web listen port (default: 8000)
-   --mode value, -m value  scan mode: github, local, all (default: "github")
    --time value, -t value  scan interval(second) (default: 900)
    --help, -h              show help
    --version, -v           print the version
