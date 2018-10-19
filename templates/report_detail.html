@@ -67,15 +67,6 @@
                 <label>状态</label>
                 <span>{{if eq 0 .detailed_report.Status}}未确认{{else if eq 1 .detailed_report.Status}}已确认{{else}}已忽略{{end}}</span>
             </div>
-            <div class="info">
-                <span>
-                {{if eq 0 .detailed_report.Status}}
-                    <a href="/admin/reports/github/confirm/{{.Id}}"><img src="/img/confirm.png" alt="确认" /></a>
-                    <a href="/admin/reports/github/cancel/{{.Id}}"><img src="/img/file.png" alt="忽略文件" /></a>
-                    <a href="/admin/reports/github/disable_repo/{{.Id }}"><img src="/img/repo.png" alt="忽略仓库" /></a>
-                {{end}}
-                </span>
-            </div>
         </section>
         <title>匹配内容</title>
         <div class="info">
