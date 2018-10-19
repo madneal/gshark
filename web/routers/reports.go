@@ -9,6 +9,8 @@ import (
 	"net/url"
 	"strconv"
 	"x-patrol/util/common"
+	"x-patrol/util/githubsearch"
+	"fmt"
 )
 
 func GetDetailedReportById(ctx *macaron.Context, sess session.Store) {
@@ -16,10 +18,26 @@ func GetDetailedReportById(ctx *macaron.Context, sess session.Store) {
 		id := ctx.Params(":id")
 		Id, _ := strconv.Atoi(id)
 		codeResultDetail, _ := models.GetCodeResultDetailById(int64(Id))
+		setUserInfoOfCodeResultDetail(codeResultDetail)
 		ctx.Data["detailed_report"] = codeResultDetail
 		ctx.HTML(200, "report_detail")
 	} else {
 		ctx.Redirect("/admin/login/")
+	}
+}
+
+func setUserInfoOfCodeResultDetail(detail *models.CodeResultDetail)  {
+	gitClient, _, _ := githubsearch.GetGithubClient()
+	user, resp, err := gitClient.GetUserInfo(*detail.OwnerName)
+	if err == nil && resp.StatusCode == 200 {
+		detail.OwnerURl = user.HTMLURL
+		detail.Blog = user.Blog
+		detail.Company = user.Company
+		detail.Email = user.Email
+		detail.OwnerCreatedAt = user.CreatedAt
+		detail.Type = user.Type
+	} else {
+		fmt.Println(err)
 	}
 }
 

@@ -148,13 +148,6 @@ func setCodeResultDetail(codeResult *CodeResult) CodeResultDetail {
 	owner := *codeResult.Repository.Owner
 
 	detail.OwnerName = owner.Login
-	detail.OwnerURl = owner.HTMLURL
-	detail.Blog = owner.Blog
-	detail.Company = owner.Company
-	detail.Email = owner.Email
-	detail.OwnerCreatedAt = owner.CreatedAt
-	detail.Type = owner.Type
-
 	detail.RepoName = repo.FullName
 	detail.RepoUrl = repo.HTMLURL
 	detail.Lang = repo.Language
