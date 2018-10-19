@@ -137,12 +137,12 @@ func GetCodeResultDetailById(id int64) (*CodeResultDetail, error) {
 	if err == nil && !has {
 		omitRepo := false
 		_, codeResult, _ := GetReportById(id, omitRepo)
-		codeResultDetail = setCodeResultDetail(codeResult)
+		codeResultDetail = getCodeResultDetail(codeResult)
 	}
 	return &codeResultDetail, err
 }
 
-func setCodeResultDetail(codeResult *CodeResult) CodeResultDetail {
+func getCodeResultDetail(codeResult *CodeResult) CodeResultDetail {
 	detail := CodeResultDetail{}
 	repo := *codeResult.Repository
 	owner := *codeResult.Repository.Owner
