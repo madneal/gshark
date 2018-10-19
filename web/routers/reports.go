@@ -34,7 +34,7 @@ func setUserInfoOfCodeResultDetail(detail *models.CodeResultDetail)  {
 		detail.Blog = user.Blog
 		detail.Company = user.Company
 		detail.Email = user.Email
-		detail.OwnerCreatedAt = user.CreatedAt
+		detail.OwnerCreatedAt = user.CreatedAt.Format("2006-01-02 15:04:05")
 		detail.Type = user.Type
 	} else {
 		fmt.Println(err)
