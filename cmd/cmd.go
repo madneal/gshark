@@ -24,7 +24,6 @@ var Scan = cli.Command{
 	Description: "start to scan github leak info",
 	Action:      util.Scan,
 	Flags: []cli.Flag{
-		stringFlag("mode, m", "github", "scan mode: github, local, all"),
 		intFlag("time, t", 900, "scan interval(second)"),
 	},
 }
