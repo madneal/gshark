@@ -95,19 +95,3 @@ func CancelSearchResultById(id int64) (err error) {
 	}
 	return err
 }
-
-func CancelSearchResultByFileName(filename string) (err error) {
-	_, err = Engine.Table("search_result").Exec("update search_result set status = 2 where filename=?", filename)
-	return err
-}
-
-func CancelSearchResultByRepo(repo string) (err error) {
-	_, err = Engine.Table("search_result").Exec("update search_result set status=2 where repo=?", repo)
-	return err
-}
-
-func GetRepoUrlById(id int64) string {
-	result := new(SearchResult)
-	Engine.ID(id).Get(result)
-	return result.Repo
-}
