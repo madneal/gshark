@@ -13,6 +13,7 @@ import (
 
 func Scan(ctx *cli.Context) {
 	var ScanMode = "github"
+	// seconds
 	var Interval time.Duration = 900
 
 	if ctx.IsSet("mode") {
