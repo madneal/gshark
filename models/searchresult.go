@@ -63,11 +63,12 @@ type CodeResultDetail struct {
 	RepoName      *string
 	RepoUrl       *string
 	Lang          *string
+	Keyword       *string
 	RepoCreatedAt *github.Timestamp
 	RepoUpdatedAt *github.Timestamp
 
 	Status       int
-	MatchedTexts []*MatchedText
+	MatchedTexts []string
 }
 
 // CodeSearchResult represents the result of a code search.
@@ -154,6 +155,8 @@ func getCodeResultDetail(codeResult *CodeResult) CodeResultDetail {
 	detail.RepoCreatedAt = repo.CreatedAt
 	detail.RepoUpdatedAt = repo.UpdatedAt
 	detail.Status = codeResult.Status
+	detail.Keyword = codeResult.Keyword
+
 	setMatchedTexts(&detail, codeResult)
 	return detail
 }
