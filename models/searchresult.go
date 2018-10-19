@@ -57,7 +57,7 @@ type CodeResultDetail struct {
 	Location       *string
 	Email          *string
 	Blog           *string
-	OwnerCreatedAt *github.Timestamp
+	OwnerCreatedAt string
 	Type           *string
 	// repo
 	RepoName      *string
