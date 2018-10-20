@@ -20,7 +20,7 @@ var Web = cli.Command{
 
 var Scan = cli.Command{
 	Name:        "scan",
-	Usage:       "start to scan github leak info",
+	Usage:       "Start to scan github leak info",
 	Description: "start to scan github leak info",
 	Action:      util.Scan,
 	Flags: []cli.Flag{
