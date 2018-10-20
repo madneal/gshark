@@ -1,10 +1,10 @@
 package tasks_test
 
 import (
-	"x-patrol/models"
-	"x-patrol/tasks"
-	"x-patrol/util/index"
-	"x-patrol/vars"
+	"gshark/models"
+	"gshark/tasks"
+	"gshark/util/index"
+	"gshark/vars"
 
 	"encoding/json"
 	"testing"

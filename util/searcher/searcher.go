@@ -1,13 +1,13 @@
 package searcher
 
 import (
-	"x-patrol/logger"
-	"x-patrol/models"
-	"x-patrol/util/common"
-	"x-patrol/vars"
+	"gshark/logger"
+	"gshark/models"
+	"gshark/util/common"
+	"gshark/vars"
 
-	"x-patrol/util/index"
-	"x-patrol/util/vcs"
+	"gshark/util/index"
+	"gshark/util/vcs"
 
 	"fmt"
 	"io/ioutil"

@@ -9,8 +9,8 @@ import (
 	"strings"
 	"sync"
 	"time"
-	"x-patrol/logger"
-	"x-patrol/models"
+	"gshark/logger"
+	"gshark/models"
 )
 
 var (
