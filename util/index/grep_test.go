@@ -273,22 +273,22 @@ func assertContextTest(t *testing.T, buf []byte, exp string, ctx int, expectsBef
 func TestContext(t *testing.T) {
 	assertContextTest(t, subjA, "third", 2,
 		[][]string{
-			[]string{"first", "second"},
+			{"first", "second"},
 		}, [][]string{
-			[]string{"fourth", "fifth"},
+			{"fourth", "fifth"},
 		})
 
 	assertContextTest(t, subjA, "third", 3,
 		[][]string{
-			[]string{"first", "second"},
+			{"first", "second"},
 		}, [][]string{
-			[]string{"fourth", "fifth", "sixth"},
+			{"fourth", "fifth", "sixth"},
 		})
 
 	assertContextTest(t, subjA, "first", 2,
 		[][]string{
-			[]string{},
+			{},
 		}, [][]string{
-			[]string{"second", "third"},
+			{"second", "third"},
 		})
 }
