@@ -3,6 +3,7 @@ package models
 import (
 	"fmt"
 	"github.com/stretchr/testify/assert"
+	"strings"
 	"testing"
 )
 
@@ -10,6 +11,13 @@ func TestGetCodeResultDetailById(t *testing.T) {
 	id := int64(321)
 	detail, _ := GetCodeResultDetailById(id)
 	fmt.Println(detail)
+}
+
+func TestGetMatchedTests(t *testing.T) {
+	_, codeResult, _ := GetReportById(321, true)
+	var texts []*string
+	texts = getMatchedTests(codeResult)
+	assert.True(t, strings.Contains(*texts[0], "spdb"))
 }
 
 func TestChangeReportsStatusByRepo(t *testing.T) {

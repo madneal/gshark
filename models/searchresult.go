@@ -68,7 +68,7 @@ type CodeResultDetail struct {
 	RepoUpdatedAt *github.Timestamp
 
 	Status       int
-	MatchedTexts []string
+	MatchedTexts []*string
 }
 
 // CodeSearchResult represents the result of a code search.
@@ -157,25 +157,17 @@ func getCodeResultDetail(codeResult *CodeResult) CodeResultDetail {
 	detail.Status = codeResult.Status
 	detail.Keyword = codeResult.Keyword
 
-	setMatchedTexts(&detail, codeResult)
+	detail.MatchedTexts = getMatchedTests(codeResult)
 	return detail
 }
 
-func setMatchedTexts(detail *CodeResultDetail, codeResult *CodeResult) {
-	textMatches := codeResult.TextMatches
-	matchedTexts := make([]*MatchedText, 0)
+func getMatchedTests(result *CodeResult) []*string {
+	textMatches := result.TextMatches
+	matchedTexts := make([]*string, 0)
 	for _, textMatch := range textMatches {
-		matchedText := MatchedText{}
-		match := Match{}
-		if textMatch.Matches != nil && len(textMatch.Matches) != 0 {
-			match = textMatch.Matches[0]
-			matchedText.Keyword = match.Text
-			matchedText.StartIndex = match.Indices[0]
-			matchedText.EndIndex = match.Indices[1]
-			matchedTexts = append(matchedTexts, &matchedText)
-		}
+		matchedTexts = append(matchedTexts, textMatch.Fragment)
 	}
-	detail.MatchedTexts = matchedTexts
+	return matchedTexts
 }
 
 func GetReportById(id int64, omitRepo bool) (bool, *CodeResult, error) {
