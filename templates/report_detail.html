@@ -70,10 +70,10 @@
         </section>
         <title>匹配内容</title>
         <div class="info">
+        <label>关键字</label>
+        <span>{{ .detailed_report.Keyword}}</span>
         {{range .detailed_report.MatchedTexts}}
-            <label>关键字</label>
-            <span>{{.Keyword}}</span>
-            <code class="w3-code">{{.Text}}</code>
+            <code class="w3-code">{{.}}</code>
         {{end}}
         </div>
     </article>
