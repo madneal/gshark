@@ -3,8 +3,8 @@ package models
 import (
 	"fmt"
 	"github.com/google/go-github/github"
-	"time"
 	"gshark/vars"
+	"time"
 )
 
 type Match struct {

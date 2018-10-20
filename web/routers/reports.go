@@ -5,12 +5,12 @@ import (
 	"gshark/models"
 	"gshark/vars"
 
+	"fmt"
 	"github.com/go-macaron/session"
-	"net/url"
-	"strconv"
 	"gshark/util/common"
 	"gshark/util/githubsearch"
-	"fmt"
+	"net/url"
+	"strconv"
 )
 
 func GetDetailedReportById(ctx *macaron.Context, sess session.Store) {
@@ -26,7 +26,7 @@ func GetDetailedReportById(ctx *macaron.Context, sess session.Store) {
 	}
 }
 
-func setUserInfoOfCodeResultDetail(detail *models.CodeResultDetail)  {
+func setUserInfoOfCodeResultDetail(detail *models.CodeResultDetail) {
 	gitClient, _, _ := githubsearch.GetGithubClient()
 	user, resp, err := gitClient.GetUserInfo(*detail.OwnerName)
 	if err == nil && resp.StatusCode == 200 {
