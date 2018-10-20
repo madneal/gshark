@@ -6,9 +6,9 @@ import (
 	"gopkg.in/macaron.v1"
 	"strconv"
 	"strings"
-	"x-patrol/models"
-	"x-patrol/util/common"
-	"x-patrol/vars"
+	"gshark/models"
+	"gshark/util/common"
+	"gshark/vars"
 )
 
 func ListFilterRules(ctx *macaron.Context, sess session.Store) {

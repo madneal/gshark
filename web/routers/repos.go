@@ -1,9 +1,9 @@
 package routers
 
 import (
-	"x-patrol/models"
-	"x-patrol/util/common"
-	"x-patrol/vars"
+	"gshark/models"
+	"gshark/util/common"
+	"gshark/vars"
 
 	"gopkg.in/macaron.v1"
 

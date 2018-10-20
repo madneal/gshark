@@ -1,17 +1,17 @@
 package tasks
 
 import (
-	"x-patrol/logger"
-	"x-patrol/models"
-	"x-patrol/util/index"
-	"x-patrol/util/searcher"
-	"x-patrol/vars"
+	"gshark/logger"
+	"gshark/models"
+	"gshark/util/index"
+	"gshark/util/searcher"
+	"gshark/vars"
 
 	"os"
 	"strings"
 	"sync"
 	"time"
-	"x-patrol/util/githubsearch"
+	"gshark/util/githubsearch"
 )
 
 const (

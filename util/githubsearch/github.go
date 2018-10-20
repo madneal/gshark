@@ -3,8 +3,8 @@ package githubsearch
 import (
 	"github.com/google/go-github/github"
 	"strings"
-	"x-patrol/logger"
-	"x-patrol/models"
+	"gshark/logger"
+	"gshark/models"
 )
 
 const (

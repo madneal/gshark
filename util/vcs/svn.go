@@ -1,7 +1,7 @@
 package vcs
 
 import (
-	"x-patrol/logger"
+	"gshark/logger"
 
 	"bytes"
 	"encoding/json"

@@ -2,14 +2,14 @@ package routers
 
 import (
 	"gopkg.in/macaron.v1"
-	"x-patrol/models"
-	"x-patrol/vars"
+	"gshark/models"
+	"gshark/vars"
 
 	"github.com/go-macaron/session"
 	"net/url"
 	"strconv"
-	"x-patrol/util/common"
-	"x-patrol/util/githubsearch"
+	"gshark/util/common"
+	"gshark/util/githubsearch"
 	"fmt"
 )
 

@@ -12,10 +12,10 @@ import (
 	"net/http"
 	"runtime"
 	"strings"
-	"x-patrol/logger"
-	"x-patrol/sauth"
-	"x-patrol/vars"
-	"x-patrol/web/routers"
+	"gshark/logger"
+	"gshark/sauth"
+	"gshark/vars"
+	"gshark/web/routers"
 )
 
 func init() {

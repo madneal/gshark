@@ -1,7 +1,7 @@
 package models
 
 import (
-	"x-patrol/vars"
+	"gshark/vars"
 )
 
 type FilterRule struct {

@@ -1,8 +1,8 @@
 package models
 
 import (
-	"x-patrol/util/index"
-	"x-patrol/vars"
+	"gshark/util/index"
+	"gshark/vars"
 
 	"time"
 )

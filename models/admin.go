@@ -1,7 +1,7 @@
 package models
 
 import (
-	"x-patrol/misc"
+	"gshark/misc"
 )
 
 type Admin struct {
