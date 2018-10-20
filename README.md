@@ -39,12 +39,6 @@ You should build the `main.go` file firstly with the command `go build main.go`.
 USAGE:
    main [global options] command [command options] [arguments...]
 
-VERSION:
-   20180131
-
-AUTHOR:
-   netxfly <x@xsec.io>
-
 COMMANDS:
      web      Startup a web Service
      scan     start to scan github leak info
