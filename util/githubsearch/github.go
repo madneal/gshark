@@ -2,9 +2,9 @@ package githubsearch
 
 import (
 	"github.com/google/go-github/github"
-	"strings"
 	"gshark/logger"
 	"gshark/models"
+	"strings"
 )
 
 const (

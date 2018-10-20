@@ -4,8 +4,8 @@ import (
 	"gshark/models"
 	"gshark/vars"
 
-	"testing"
 	"gshark/util/searcher"
+	"testing"
 )
 
 func TestMakeAll(t *testing.T) {

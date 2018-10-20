@@ -5,12 +5,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/go-github/github"
+	"gshark/logger"
+	"gshark/models"
 	"regexp"
 	"strings"
 	"sync"
 	"time"
-	"gshark/logger"
-	"gshark/models"
 )
 
 var (

@@ -4,11 +4,11 @@ import (
 	"github.com/go-macaron/csrf"
 	"github.com/go-macaron/session"
 	"gopkg.in/macaron.v1"
-	"strconv"
-	"strings"
 	"gshark/models"
 	"gshark/util/common"
 	"gshark/vars"
+	"strconv"
+	"strings"
 )
 
 func ListFilterRules(ctx *macaron.Context, sess session.Store) {

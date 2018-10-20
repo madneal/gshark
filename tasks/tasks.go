@@ -7,11 +7,11 @@ import (
 	"gshark/util/searcher"
 	"gshark/vars"
 
+	"gshark/util/githubsearch"
 	"os"
 	"strings"
 	"sync"
 	"time"
-	"gshark/util/githubsearch"
 )
 
 const (
