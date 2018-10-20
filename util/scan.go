@@ -5,8 +5,8 @@ import (
 
 	"github.com/urfave/cli"
 
-	"time"
 	"gshark/logger"
+	"time"
 )
 
 func Scan(ctx *cli.Context) {

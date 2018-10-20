@@ -2,9 +2,9 @@ package main
 
 import (
 	"github.com/urfave/cli"
+	"gshark/cmd"
 	"os"
 	"runtime"
-	"gshark/cmd"
 )
 
 func init() {

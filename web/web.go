@@ -8,14 +8,14 @@ import (
 	"github.com/go-macaron/session"
 	"github.com/urfave/cli"
 	"gopkg.in/macaron.v1"
-	"html/template"
-	"net/http"
-	"runtime"
-	"strings"
 	"gshark/logger"
 	"gshark/sauth"
 	"gshark/vars"
 	"gshark/web/routers"
+	"html/template"
+	"net/http"
+	"runtime"
+	"strings"
 )
 
 func init() {
