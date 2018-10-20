@@ -156,7 +156,6 @@ func getCodeResultDetail(codeResult *CodeResult) CodeResultDetail {
 	detail.RepoUpdatedAt = repo.UpdatedAt
 	detail.Status = codeResult.Status
 	detail.Keyword = codeResult.Keyword
-
 	detail.MatchedTexts = getMatchedTests(codeResult)
 	return detail
 }
