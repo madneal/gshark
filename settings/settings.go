@@ -1,8 +1,8 @@
 package settings
 
 import (
-	"x-patrol/logger"
-	"x-patrol/vars"
+	"gshark/logger"
+	"gshark/vars"
 
 	"gopkg.in/ini.v1"
 	"os"
@@ -16,11 +16,11 @@ var (
 func init() {
 	var err error
 	dirName, _ := os.Getwd()
-	endIndex := strings.Index(dirName, "x-patrol")
+	endIndex := strings.Index(dirName, "gshark")
 	var source string
 
 	if endIndex > 0 {
-		source = dirName[:endIndex] + "x-patrol/conf/app.ini"
+		source = dirName[:endIndex] + "gshark/conf/app.ini"
 	} else {
 		source = "conf/app.ini"
 	}

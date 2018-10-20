@@ -4,7 +4,7 @@ import (
 	"github.com/urfave/cli"
 	"os"
 	"runtime"
-	"x-patrol/cmd"
+	"gshark/cmd"
 )
 
 func init() {
