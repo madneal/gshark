@@ -1,12 +1,12 @@
 package util
 
 import (
-	"x-patrol/util/githubsearch"
+	"gshark/util/githubsearch"
 
 	"github.com/urfave/cli"
 
 	"time"
-	"x-patrol/logger"
+	"gshark/logger"
 )
 
 func Scan(ctx *cli.Context) {

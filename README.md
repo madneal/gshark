@@ -4,7 +4,7 @@
    <p align="center">Scan for sensitive information in Github easily and effectively.</p>
 </p>
 
-# GShark [![Go Report Card](https://goreportcard.com/badge/github.com/neal1991/x-patrol)](https://goreportcard.com/report/github.com/neal1991/x-patrol)
+# GShark [![Go Report Card](https://goreportcard.com/badge/github.com/neal1991/gshark)](https://goreportcard.com/report/github.com/neal1991/gshark)
 
 This project is based on [x-patrol](https://github.com/MiSecurity/x-patrol). It is utilize to scan sensitive information in github or local repos.
 

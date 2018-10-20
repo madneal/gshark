@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/google/go-github/github"
 	"time"
-	"x-patrol/vars"
+	"gshark/vars"
 )
 
 type Match struct {

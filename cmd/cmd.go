@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"github.com/urfave/cli"
-	"x-patrol/util"
-	"x-patrol/web"
+	"gshark/util"
+	"gshark/web"
 )
 
 var Web = cli.Command{

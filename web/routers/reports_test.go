@@ -2,7 +2,7 @@ package routers
 
 import (
 	"testing"
-	"x-patrol/models"
+	"gshark/models"
 	"fmt"
 )
 

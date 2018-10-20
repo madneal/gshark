@@ -1,11 +1,11 @@
 package searcher_test
 
 import (
-	"x-patrol/models"
-	"x-patrol/vars"
+	"gshark/models"
+	"gshark/vars"
 
 	"testing"
-	"x-patrol/util/searcher"
+	"gshark/util/searcher"
 )
 
 func TestMakeAll(t *testing.T) {
