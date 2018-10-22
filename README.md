@@ -6,11 +6,11 @@
 
 # GShark [![Go Report Card](https://goreportcard.com/badge/github.com/neal1991/gshark)](https://goreportcard.com/report/github.com/neal1991/gshark)
 
-This project is based on [x-patrol](https://github.com/MiSecurity/x-patrol). It is utilize to scan sensitive information in github or local repos.
+This project is based on [x-patrol](https://github.com/MiSecurity/x-patrol). It can be utilized to detect the sensitive information based on keywords with custome rules.
 
 ## Config
 
-The configuration can be set according to app.ini. Hence, it is suggested the rename app-template.ini file to app.ini.
+The configuration can be set according to app-template.ini. You should rename it to app.ini to config the project.
 
 ```
 HTTP_HOST = 127.0.0.1
@@ -41,8 +41,8 @@ USAGE:
 
 COMMANDS:
      web      Startup a web Service
-     scan     start to scan github leak info
-     help, h  Shows a list of commands or help for one command
+     scan     Start to scan github leak info
+     help, h  Show a list of commands or help for one command
 
 GLOBAL OPTIONS:
    --debug, -d             Debug Mode
@@ -52,9 +52,3 @@ GLOBAL OPTIONS:
    --help, -h              show help
    --version, -v           print the version
 ```
-
-### Start the web service
-
-`main web`
-
-*Note: If you wish your service can be accessed from outer network, the service should bind to 0.0.0.0 instead of 127.0.0.1. The host can be configed in app.ini file.*
