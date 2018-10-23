@@ -47,7 +47,6 @@ func init() {
 	} else {
 		Engine.Sync2(new(RepoConfig))
 		Engine.Sync2(new(Rule))
-		Engine.Sync2(new(SearchResult))
 		Engine.Sync2(new(InputInfo))
 		Engine.Sync2(new(Admin))
 		Engine.Sync2(new(Repo))
