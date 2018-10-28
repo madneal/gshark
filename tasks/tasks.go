@@ -1,16 +1,12 @@
 package tasks
 
 import (
-	"gshark/logger"
 	"gshark/models"
 	"gshark/util/index"
 	"gshark/util/searcher"
 	"gshark/vars"
 
-	"gshark/util/githubsearch"
 	"os"
-	"strings"
-	"sync"
 	"time"
 )
 
@@ -102,115 +98,3 @@ func SearchRepos(
 	return res, nil
 }
 
-func DoSearch(reposConfig []models.RepoConfig, rules models.Rule) (map[string]*index.SearchResponse, models.Rule, error) {
-	searchers, errors, _, err := GenerateSearcher(reposConfig)
-	respSearch := make(map[string]*index.SearchResponse)
-	if err == nil {
-		repos := make([]string, 0)
-		for _, repoCfg := range reposConfig {
-			repo := repoCfg.Name
-			if !errors[repo] {
-				repos = append(repos, repoCfg.Name)
-			}
-		}
-
-		opts := index.SearchOptions{IgnoreCase: true, LinesOfContext: DefaultLinesOfContext}
-		if strings.ToLower(rules.Part) == "keyword" {
-			// search keyword from all files
-			opts.FileRegexp = ""
-		} else {
-			// when rules.Part in ("filename", "path", "extension"), only search filename, and set rules.Pattern = "\\."
-			opts.FileRegexp = rules.Pattern
-			rules.Pattern = "\\."
-		}
-
-		var filesOpened int
-		var durationMs int
-
-		respSearch, err = SearchRepos(rules, &opts, repos, searchers, &filesOpened, &durationMs)
-	}
-	return respSearch, rules, err
-}
-
-// 分割任务为map形式，key为批次，value为一批models.RepoConfig
-func SegmentationTask(reposConfig []models.RepoConfig) map[int][]models.RepoConfig {
-	tasks := make(map[int][]models.RepoConfig)
-	totalRepos := len(reposConfig)
-	scanBatch := totalRepos / vars.MAX_Concurrency_REPOS
-
-	for i := 0; i < scanBatch; i++ {
-		curTask := reposConfig[vars.MAX_Concurrency_REPOS*i : vars.MAX_Concurrency_REPOS*(i+1)]
-		tasks[i] = curTask
-	}
-
-	if totalRepos%vars.MAX_Concurrency_REPOS > 0 {
-		n := len(tasks)
-		tasks[n] = reposConfig[vars.MAX_Concurrency_REPOS*scanBatch : totalRepos]
-	}
-	return tasks
-}
-
-// 按批次分发、执行任务
-func DistributionTask(tasksMap map[int][]models.RepoConfig, rules []models.Rule) {
-	for _, rule := range rules {
-		for _, reposConf := range tasksMap {
-			Run(reposConf, rule)
-		}
-	}
-}
-
-func Run(reposConfig []models.RepoConfig, rule models.Rule) {
-	var wg sync.WaitGroup
-	wg.Add(len(reposConfig))
-	for _, rConfig := range reposConfig {
-		// wg.Add(1)
-		reposCfg := make([]models.RepoConfig, 0)
-		reposCfg = append(reposCfg, rConfig)
-
-		go func(config []models.RepoConfig, rule models.Rule) {
-			defer wg.Done()
-			SaveSearchResult(DoSearch(reposCfg, rule))
-		}(reposCfg, rule)
-		// wg.Wait()
-	}
-	wg.Wait()
-}
-
-func SaveSearchResult(responses map[string]*index.SearchResponse, rule models.Rule, err error) {
-	if err == nil {
-		for repo, resp := range responses {
-			result := models.NewSearchResult(resp.Matches,
-				repo,
-				resp.FilesWithMatch,
-				resp.FilesOpened, resp.Duration,
-				resp.Revision, rule)
-
-			has, _ := result.Exist()
-			if !has {
-				result.Insert()
-			}
-		}
-	}
-}
-
-func ScheduleTasks(duration time.Duration) {
-	for {
-		// insert repos from inputInfo
-		githubsearch.InsertAllRepos()
-
-		// insert all enable repos to repos config table
-		models.InsertReposConfig()
-
-		rules, err := models.GetRules()
-		if err == nil {
-			reposConfig, err := models.ListRepoConfig()
-			if err == nil {
-				mapTasks := SegmentationTask(reposConfig)
-				DistributionTask(mapTasks, rules)
-			}
-		}
-
-		logger.Log.Infof("Complete the scan local repos, start to sleep %v seconds", duration*time.Second)
-		time.Sleep(duration * time.Second)
-	}
-}
