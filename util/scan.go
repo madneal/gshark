@@ -19,5 +19,5 @@ func Scan(ctx *cli.Context) {
 
 	logger.Log.Println("scan github code ")
 	// use go keyword or not
-	go githubsearch.ScheduleTasks(Interval)
+	githubsearch.ScheduleTasks(Interval)
 }
