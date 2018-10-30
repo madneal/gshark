@@ -26,12 +26,6 @@ func (r *Repo) Exist() (bool, error) {
 	return Engine.Table("repo").Get(repo)
 }
 
-func ListRepos() ([]Repo, error) {
-	repos := make([]Repo, 0)
-	err := Engine.Find(&repos)
-	return repos, err
-}
-
 func ListReposPage(page int) ([]Repo, int, error) {
 	repos := make([]Repo, 0)
 	totalPages, err := Engine.Table("repo").Count()
