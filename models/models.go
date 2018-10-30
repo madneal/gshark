@@ -45,19 +45,16 @@ func init() {
 	if err != nil {
 		logger.Log.Panicln(err)
 	} else {
-		Engine.Sync2(new(RepoConfig))
 		Engine.Sync2(new(Rule))
 		Engine.Sync2(new(InputInfo))
 		Engine.Sync2(new(Admin))
 		Engine.Sync2(new(Repo))
-		Engine.Sync(new(UrlPattern))
 		Engine.Sync2(new(GithubToken))
 		Engine.Sync2(new(CodeResult))
 		Engine.Sync2(new(FilterRule))
 		Engine.Sync2(new(CodeResultDetail))
 		InitRules()
 		InitAdmin()
-		InitUrlPattern()
 	}
 }
 
@@ -120,9 +117,9 @@ func InitRules() {
 func InitAdmin() {
 	admins, err := ListAdmins()
 	if err == nil && len(admins) == 0 {
-		username := "xsec"
-		password := "x@xsec.io"
-		role := "user"
+		username := "gshark"
+		password := "gshark"
+		role := "admin"
 		admin := NewAdmin(username, password, role)
 		admin.Insert()
 	}
