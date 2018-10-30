@@ -26,7 +26,7 @@ func InsertAllRepos() {
 			case CONST_REPO, CONST_REPOS:
 				repos := strings.Split(name, ",")
 				for _, item := range repos {
-					r := models.NewRepo(item, item, &asset)
+					r := models.NewRepo(item, item)
 					has, err := r.Exist()
 					if err == nil && !has {
 						r.Insert()
@@ -51,7 +51,7 @@ func InsertAllRepos() {
 				}
 
 				for _, repo := range orgsRepos {
-					r := models.NewRepo(*repo.Name, *repo.HTMLURL, &asset)
+					r := models.NewRepo(*repo.Name, *repo.HTMLURL)
 					has, err := r.Exist()
 					if err == nil && !has {
 						r.Insert()
@@ -66,7 +66,7 @@ func InsertAllRepos() {
 					usersRepos = append(usersRepos, rs...)
 				}
 				for _, repo := range usersRepos {
-					r := models.NewRepo(*repo.Name, *repo.HTMLURL, &asset)
+					r := models.NewRepo(*repo.Name, *repo.HTMLURL)
 					has, err := r.Exist()
 					if err == nil && !has {
 						r.Insert()
