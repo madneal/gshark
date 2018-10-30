@@ -44,7 +44,6 @@
                                 <tr align="center">
                                     <th>ID</th>
                                     <th>Url</th>
-                                    <th>Src</th>
                                     <th>状态</th>
                                     <th colspan="2">管理</th>
                                 </tr>
@@ -52,7 +51,6 @@
                                 <tr>
                                     <td>{{.Id}}</td>
                                     <td>{{.Url}}</td>
-                                    <td>{{.Src.Type}}: {{.Src.Content}}</td>
                                     <td>{{.Status}}</td>
                                     <td><a href="/admin/repos/enable/{{.Id}}">enable</a></td>
                                     <td><a href="/admin/repos/disable/{{.Id}}">disable</a></td>
