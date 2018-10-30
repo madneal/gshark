@@ -8,12 +8,11 @@ type Repo struct {
 	Id     int64
 	Name   string
 	Url    string
-	Src    *InputInfo
 	Status int `xorm:"int notnull default(1)"`
 }
 
-func NewRepo(name, repoUrl string, src *InputInfo) (repo *Repo) {
-	return &Repo{Name: name, Url: repoUrl, Src: src, Status: 1}
+func NewRepo(name, repoUrl string) (repo *Repo) {
+	return &Repo{Name: name, Url: repoUrl, Status: 1}
 }
 
 func (r *Repo) Insert() (int64, error) {
@@ -45,7 +44,7 @@ func ListReposPage(page int) ([]Repo, int, error) {
 		page = 1
 	}
 
-	err = Engine.Limit(vars.PAGE_SIZE, (page-1)*vars.PAGE_SIZE).Find(&repos)
+	err = Engine.Table("repo").Limit(vars.PAGE_SIZE, (page-1)*vars.PAGE_SIZE).Find(&repos)
 	return repos, pages, err
 }
 
