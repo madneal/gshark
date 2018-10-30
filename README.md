@@ -13,7 +13,6 @@ This project is based on [x-patrol](https://github.com/MiSecurity/x-patrol). It 
 * go version 1.10+
 * the project should be placed in GOPATH
 
-
 ## Config
 
 The configuration can be set according to app-template.ini. You should rename it to app.ini to config the project.
@@ -58,3 +57,13 @@ GLOBAL OPTIONS:
    --help, -h              show help
    --version, -v           print the version
 ```
+
+### Initial Running
+
+If it's the first time to run, there are some [initial works](https://github.com/neal1991/gshark/blob/0ea3365f88e012df3fef1079df04a4f4b266319d/models/models.go#L31) will be finished automatically.
+
+* [Init Rules](https://github.com/neal1991/gshark/blob/0ea3365f88e012df3fef1079df04a4f4b266319d/models/models.go#L98)
+* [Init admin](https://github.com/neal1991/gshark/blob/0ea3365f88e012df3fef1079df04a4f4b266319d/models/models.go#L117)
+* [Init database](https://github.com/neal1991/gshark/blob/0ea3365f88e012df3fef1079df04a4f4b266319d/models/models.go#L47)
+
+
