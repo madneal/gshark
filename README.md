@@ -8,6 +8,12 @@
 
 This project is based on [x-patrol](https://github.com/MiSecurity/x-patrol). It can be utilized to detect the sensitive information based on keywords with custome rules.
 
+## Requirements
+
+* go version 1.10+
+* the project should be placed in GOPATH
+
+
 ## Config
 
 The configuration can be set according to app-template.ini. You should rename it to app.ini to config the project.
