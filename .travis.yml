@@ -5,4 +5,3 @@ go:
 
 script:
   - go build -v
-  - go test -v 
