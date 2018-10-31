@@ -4,9 +4,9 @@ import (
 	"github.com/go-macaron/csrf"
 	"github.com/go-macaron/session"
 	"gopkg.in/macaron.v1"
-	"gshark/models"
-	"gshark/util/common"
-	"gshark/vars"
+	"github.com/neal1991/gshark/models"
+	"github.com/neal1991/gshark/util/common"
+	"github.com/neal1991/gshark/vars"
 	"strconv"
 	"strings"
 )

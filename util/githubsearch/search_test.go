@@ -1,7 +1,7 @@
 package githubsearch
 
 import "testing"
-import "gshark/models"
+import "github.com/neal1991/gshark/models"
 
 func TestFiltetString(t *testing.T) {
 	codeResult := new(models.CodeResult)

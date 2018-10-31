@@ -2,7 +2,7 @@ package routers
 
 import (
 	"gopkg.in/macaron.v1"
-	"gshark/models"
+	"github.com/neal1991/gshark/models"
 
 	"github.com/go-macaron/csrf"
 	"github.com/go-macaron/session"

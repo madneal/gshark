@@ -2,13 +2,13 @@ package routers
 
 import (
 	"gopkg.in/macaron.v1"
-	"gshark/models"
-	"gshark/vars"
+	"github.com/neal1991/gshark/models"
+	"github.com/neal1991/gshark/vars"
 
 	"fmt"
 	"github.com/go-macaron/session"
-	"gshark/util/common"
-	"gshark/util/githubsearch"
+	"github.com/neal1991/gshark/util/common"
+	"github.com/neal1991/gshark/util/githubsearch"
 	"net/url"
 	"strconv"
 )

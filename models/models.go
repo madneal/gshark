@@ -1,8 +1,8 @@
 package models
 
 import (
-	"gshark/logger"
-	"gshark/settings"
+	"github.com/neal1991/gshark/logger"
+	"github.com/neal1991/gshark/settings"
 
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/lib/pq"
