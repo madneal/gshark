@@ -3,6 +3,7 @@ package common
 import (
 	"crypto/sha1"
 	"encoding/hex"
+	"time"
 )
 
 // Utility function for producing a hex encoded sha1 hash for a string.
@@ -58,3 +59,8 @@ func GetPageList(p, step, pages int) []int {
 
 	return pageList
 }
+
+func FormatTimeStamp(t time.Time) string {
+	return t.Format("2006-01-02 15:04:05")
+}
+
