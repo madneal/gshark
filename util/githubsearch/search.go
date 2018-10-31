@@ -83,7 +83,7 @@ func SaveResult(results []*github.CodeSearchResult, err error, keyword *string) 
 					repoUrl := codeResult.Repository.GetHTMLURL()
 					codeResult.RepoName = fullName
 
-					inputInfo := models.NewInputInfo("repo", repoUrl, fullName)
+					inputInfo := models.NewInputInfo(CONST_REPO, repoUrl, fullName)
 					has, err := inputInfo.Exist(repoUrl)
 
 					if err == nil && !has {
