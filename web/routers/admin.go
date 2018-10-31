@@ -1,7 +1,7 @@
 package routers
 
 import (
-	"gshark/models"
+	"github.com/neal1991/gshark/models"
 
 	"gopkg.in/macaron.v1"
 
