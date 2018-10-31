@@ -7,6 +7,7 @@ import (
 	"strings"
 	"fmt"
 	"strconv"
+	"gshark/util/common"
 )
 
 const (
@@ -42,7 +43,7 @@ func InsertAllRepos() {
 			case CONST_REPO, CONST_REPOS:
 				repos := strings.Split(name, ",")
 				for _, item := range repos {
-					r := models.NewRepo(item, item)
+					r := models.NewRepo(common.GetRepoNameByUrl(item), item)
 					has, err := r.Exist()
 					if err == nil && !has {
 						r.Insert()
