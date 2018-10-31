@@ -6,7 +6,7 @@
 
 # GShark [![Go Report Card](https://goreportcard.com/badge/github.com/neal1991/gshark)](https://goreportcard.com/report/github.com/neal1991/gshark)
 
-This project is based on [x-patrol](https://github.com/MiSecurity/x-patrol). It can be utilized to detect the sensitive information based on keywords with custome rules.
+The project is based on golang with AdminLTE to build a management system to manage the Github search results. Github API is utilized to scawl the related results according to key words and some rules. It proves to be a proper way to detect the information related to your company.:rocket::rocket::rocket:
 
 ## Requirements
 
