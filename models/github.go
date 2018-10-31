@@ -70,11 +70,11 @@ func DeleteTokenById(id int64) error {
 func UpdateRate(token string, response *github.Response) error {
 	githubToken := new(GithubToken)
 	has, err := Engine.Table("github_token").Where("token=?", token).Get(githubToken)
-	if err == nil && has && response != nil {
+	if err == nil && has  {
 		id := githubToken.Id
-		githubToken.Remaining = response.Remaining
-		githubToken.Reset = response.Reset.Time
-		githubToken.Limit = response.Limit
+		githubToken.Remaining = response.Rate.Remaining
+		githubToken.Reset = response.Rate.Reset.Time
+		githubToken.Limit = response.Rate.Limit
 		Engine.ID(id).Update(githubToken)
 	}
 	return err
