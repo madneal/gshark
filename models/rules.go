@@ -1,7 +1,7 @@
 package models
 
 import (
-	"gshark/vars"
+	"github.com/neal1991/gshark/vars"
 
 	"bufio"
 	"encoding/json"

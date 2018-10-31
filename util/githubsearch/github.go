@@ -2,12 +2,12 @@ package githubsearch
 
 import (
 	"github.com/google/go-github/github"
-	"gshark/logger"
-	"gshark/models"
+	"github.com/neal1991/gshark/logger"
+	"github.com/neal1991/gshark/models"
 	"strings"
 	"fmt"
 	"strconv"
-	"gshark/util/common"
+	"github.com/neal1991/gshark/util/common"
 )
 
 const (
