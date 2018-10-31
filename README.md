@@ -8,6 +8,8 @@
 
 The project is based on golang with AdminLTE to build a management system to manage the Github search results. Github API is utilized to scawl the related results according to key words and some rules. It proves to be a proper way to detect the information related to your company.:rocket::rocket::rocket:
 
+[![iRzxMt.md.gif](https://s1.ax1x.com/2018/10/31/iRzxMt.md.gif)](https://imgchr.com/i/iRzxMt)
+
 ## Requirements
 
 * go version 1.10+
