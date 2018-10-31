@@ -5,6 +5,8 @@ import (
 	"gshark/logger"
 	"gshark/models"
 	"strings"
+	"fmt"
+	"strconv"
 )
 
 const (
@@ -13,6 +15,20 @@ const (
 	CONST_ORGS  = "organizations"
 	CONST_USER  = "user"
 )
+
+func GetGithubUserInfo(client *Client, ownerName *string)  *github.User{
+	user, resp, err := client.GetUserInfo(*ownerName)
+	if err == nil {
+		if resp.StatusCode == 200 {
+			return user
+		} else {
+			fmt.Println("The status is:" + strconv.Itoa(resp.StatusCode))
+		}
+	} else {
+		fmt.Println(err)
+	}
+	return nil
+}
 
 func InsertAllRepos() {
 	gitClient, _, _ := GetGithubClient()
