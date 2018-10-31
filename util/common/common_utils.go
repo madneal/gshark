@@ -4,6 +4,7 @@ import (
 	"crypto/sha1"
 	"encoding/hex"
 	"time"
+	"strings"
 )
 
 // Utility function for producing a hex encoded sha1 hash for a string.
@@ -63,4 +64,15 @@ func GetPageList(p, step, pages int) []int {
 func FormatTimeStamp(t time.Time) string {
 	return t.Format("2006-01-02 15:04:05")
 }
+
+// Get the repoName By the url of the repository
+func GetRepoNameByUrl(url string) string {
+	length := len(strings.Split(url, "/"))
+	if length > 1 {
+		return strings.Split(url, "/")[length - 1]
+	} else {
+		return ""
+	}
+}
+
 
