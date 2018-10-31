@@ -4,7 +4,7 @@
    <p align="center">Scan for sensitive information in Github easily and effectively.</p>
 </p>
 
-# GShark [![Go Report Card](https://goreportcard.com/badge/github.com/neal1991/gshark)](https://goreportcard.com/report/github.com/neal1991/gshark)[![Travis](https://travis-ci.org/neal1991/gshark.svg?branch=master)](https://travis-ci.org/neal1991/gshark.svg?branch=master)
+# GShark [![Go Report Card](https://goreportcard.com/badge/github.com/neal1991/gshark)](https://goreportcard.com/report/github.com/neal1991/gshark)   [![Travis](https://travis-ci.org/neal1991/gshark.svg?branch=master)](https://travis-ci.org/neal1991/gshark.svg?branch=master)
 
 The project is based on golang with AdminLTE to build a management system to manage the Github search results. Github API is utilized to scawl the related results according to key words and some rules. It proves to be a proper way to detect the information related to your company.:rocket::rocket::rocket:
 
