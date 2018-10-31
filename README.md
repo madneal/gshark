@@ -66,6 +66,12 @@ If it's the first time to run, there are some [initial works](https://github.com
 * [Init admin](https://github.com/neal1991/gshark/blob/0ea3365f88e012df3fef1079df04a4f4b266319d/models/models.go#L117)
 * [Init database](https://github.com/neal1991/gshark/blob/0ea3365f88e012df3fef1079df04a4f4b266319d/models/models.go#L47)
 
+### Add Token
+
+To execute `main scan`, you need to add a Github token for crawl information in github. You can generate a token in [tokens](https://github.com/settings/tokens). Most aceess scopes are enough.
+
+[![iR2TMt.md.png](https://s1.ax1x.com/2018/10/31/iR2TMt.md.png)](https://imgchr.com/i/iR2TMt)
+
 ## Reference
 
 * [x-patrol](https://github.com/MiSecurity/x-patrol)
