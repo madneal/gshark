@@ -66,4 +66,9 @@ If it's the first time to run, there are some [initial works](https://github.com
 * [Init admin](https://github.com/neal1991/gshark/blob/0ea3365f88e012df3fef1079df04a4f4b266319d/models/models.go#L117)
 * [Init database](https://github.com/neal1991/gshark/blob/0ea3365f88e012df3fef1079df04a4f4b266319d/models/models.go#L47)
 
+## Reference
+
+* [x-patrol](https://github.com/MiSecurity/x-patrol)
+* [authz](https://github.com/go-macaron/authz)
+
 
