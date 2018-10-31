@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/google/go-github/github"
 	"golang.org/x/oauth2"
-	"gshark/models"
+	"github.com/neal1991/gshark/models"
 )
 
 var (

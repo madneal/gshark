@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/urfave/cli"
-	"gshark/cmd"
+	"github.com/neal1991/gshark/cmd"
 	"os"
 	"runtime"
 )

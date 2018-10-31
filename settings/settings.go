@@ -1,8 +1,8 @@
 package settings
 
 import (
-	"gshark/logger"
-	"gshark/vars"
+	"github.com/neal1991/gshark/logger"
+	"github.com/neal1991/gshark/vars"
 
 	"gopkg.in/ini.v1"
 	"os"
@@ -20,7 +20,7 @@ func init() {
 	var source string
 
 	if endIndex > 0 {
-		source = dirName[:endIndex] + "gshark/conf/app.ini"
+		source = dirName[:endIndex] + "github.com/neal1991/gshark/conf/app.ini"
 	} else {
 		source = "conf/app.ini"
 	}

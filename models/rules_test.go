@@ -1,18 +1,18 @@
 package models_test
 
 import (
-	"gshark/models"
+	"github.com/neal1991/gshark/models"
 
 	"testing"
 )
 
 func TestLoadRuleFromFile(t *testing.T) {
-	filename := "/data/code/golang/src/gshark/conf/gitrob.json"
+	filename := "/data/code/golang/src/github.com/neal1991/gshark/conf/gitrob.json"
 	t.Log(models.LoadRuleFromFile(filename))
 }
 
 func TestInsertRules(t *testing.T) {
-	filename := "/data/code/golang/src/gshark/conf/gitrob.json"
+	filename := "/data/code/golang/src/github.com/neal1991/gshark/conf/gitrob.json"
 	rules, err := models.GetRules()
 	t.Log(rules, err)
 	if err == nil && len(rules) == 0 {

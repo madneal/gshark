@@ -1,11 +1,11 @@
 package util
 
 import (
-	"gshark/util/githubsearch"
+	"github.com/neal1991/gshark/util/githubsearch"
 
 	"github.com/urfave/cli"
 
-	"gshark/logger"
+	"github.com/neal1991/gshark/logger"
 	"time"
 )
 

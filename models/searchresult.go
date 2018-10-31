@@ -3,7 +3,7 @@ package models
 import (
 	"fmt"
 	"github.com/google/go-github/github"
-	"gshark/vars"
+	"github.com/neal1991/gshark/vars"
 	"time"
 )
 

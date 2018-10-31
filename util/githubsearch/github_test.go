@@ -3,7 +3,7 @@ package githubsearch
 import (
 	"testing"
 	"github.com/stretchr/testify/assert"
-	"gshark/models"
+	"github.com/neal1991/gshark/models"
 	"fmt"
 	"strconv"
 	"strings"
