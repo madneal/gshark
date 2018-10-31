@@ -20,7 +20,7 @@ func init() {
 	var source string
 
 	if endIndex > 0 {
-		source = dirName[:endIndex] + "github.com/neal1991/gshark/conf/app.ini"
+		source = dirName[:endIndex] + "gshark/conf/app.ini"
 	} else {
 		source = "conf/app.ini"
 	}
