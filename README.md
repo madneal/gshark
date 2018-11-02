@@ -78,6 +78,7 @@ To execute `main scan`, you need to add a Github token for crawl information in 
 
 * [x-patrol](https://github.com/MiSecurity/x-patrol)
 * [authz](https://github.com/go-macaron/authz)
+* [macaron](https://github.com/go-macaron/macaron)
 
 ## License
 
