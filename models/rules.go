@@ -16,12 +16,14 @@ type Rule struct {
 	Type        string
 	Pattern     string
 	Caption     string
+	Position    string
 	Description string `xorm:"text"`
 	Status      int    `xorm:"int default 0 notnull"`
 }
 
-func NewRules(part, ruleType, pat, caption, desc string, status int) *Rule {
-	return &Rule{Part: part, Type: ruleType, Pattern: pat, Caption: caption, Description: desc, Status: status}
+func NewRule(part, ruleType, pat, caption, pos, desc string, status int) *Rule {
+	return &Rule{Part: part, Type: ruleType, Pattern: pat, Caption: caption,
+		Position: pos, Description: desc, Status: status}
 }
 
 func (r *Rule) Insert() (err error) {
