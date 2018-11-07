@@ -1,10 +1,10 @@
 package routers
 
 import (
-	"gopkg.in/macaron.v1"
 	"github.com/neal1991/gshark/models"
 	"github.com/neal1991/gshark/util/common"
 	"github.com/neal1991/gshark/vars"
+	"gopkg.in/macaron.v1"
 
 	"github.com/go-macaron/csrf"
 	"github.com/go-macaron/session"
@@ -49,10 +49,11 @@ func DoNewRules(ctx *macaron.Context, sess session.Store) {
 		Type := strings.TrimSpace(ctx.Req.Form.Get("type"))
 		content := strings.TrimSpace(ctx.Req.Form.Get("content"))
 		caption := strings.TrimSpace(ctx.Req.Form.Get("caption"))
+		pos := strings.TrimSpace(ctx.Req.Form.Get("position"))
 		desc := strings.TrimSpace(ctx.Req.Form.Get("desc"))
 		status := strings.TrimSpace(ctx.Req.Form.Get("status"))
 		intStatus, _ := strconv.Atoi(status)
-		rule := models.NewRules(part, Type, content, caption, desc, intStatus)
+		rule := models.NewRule(part, Type, content, caption, pos, desc, intStatus)
 		rule.Insert()
 		ctx.Redirect("/admin/rules/list/")
 	} else {
