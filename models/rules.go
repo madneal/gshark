@@ -64,11 +64,11 @@ func GetRuleById(id int64) (*Rule, bool, error) {
 	return rule, has, err
 }
 
-func EditRuleById(id int64, part, ruleType, pat, caption, desc string, status int) error {
+func EditRuleById(id int64, position, ruleType, pat, caption, desc string, status int) error {
 	rule := new(Rule)
 	_, has, err := GetRuleById(id)
 	if err == nil && has {
-		rule.Part = part
+		rule.Position = position
 		rule.Type = ruleType
 		rule.Pattern = pat
 		rule.Caption = caption
