@@ -12,7 +12,6 @@ import (
 
 type Rule struct {
 	Id          int64
-	Part        string
 	Type        string
 	Pattern     string
 	Caption     string
@@ -21,8 +20,8 @@ type Rule struct {
 	Status      int    `xorm:"int default 0 notnull"`
 }
 
-func NewRule(part, ruleType, pat, caption, pos, desc string, status int) *Rule {
-	return &Rule{Part: part, Type: ruleType, Pattern: pat, Caption: caption,
+func NewRule(ruleType, pat, caption, pos, desc string, status int) *Rule {
+	return &Rule{Type: ruleType, Pattern: pat, Caption: caption,
 		Position: pos, Description: desc, Status: status}
 }
 
