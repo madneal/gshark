@@ -79,14 +79,14 @@ func DoEditRules(ctx *macaron.Context, sess session.Store) {
 	if sess.Get("admin") != nil {
 		id := ctx.Params(":id")
 		Id, _ := strconv.Atoi(id)
-		part := strings.TrimSpace(ctx.Req.Form.Get("part"))
+		position := strings.TrimSpace(ctx.Req.Form.Get("position"))
 		Type := strings.TrimSpace(ctx.Req.Form.Get("type"))
 		content := strings.TrimSpace(ctx.Req.Form.Get("content"))
 		caption := strings.TrimSpace(ctx.Req.Form.Get("caption"))
 		desc := strings.TrimSpace(ctx.Req.Form.Get("desc"))
 		status := strings.TrimSpace(ctx.Req.Form.Get("status"))
 		intStatus, _ := strconv.Atoi(status)
-		models.EditRuleById(int64(Id), part, Type, content, caption, desc, intStatus)
+		models.EditRuleById(int64(Id), position, Type, content, caption, desc, intStatus)
 		ctx.Redirect("/admin/rules/list/")
 	} else {
 		ctx.Redirect("/admin/login/")
