@@ -45,7 +45,6 @@ func NewRules(ctx *macaron.Context, sess session.Store) {
 func DoNewRules(ctx *macaron.Context, sess session.Store) {
 	ctx.Req.ParseForm()
 	if sess.Get("admin") != nil {
-		part := strings.TrimSpace(ctx.Req.Form.Get("part"))
 		Type := strings.TrimSpace(ctx.Req.Form.Get("type"))
 		content := strings.TrimSpace(ctx.Req.Form.Get("content"))
 		caption := strings.TrimSpace(ctx.Req.Form.Get("caption"))
@@ -53,7 +52,7 @@ func DoNewRules(ctx *macaron.Context, sess session.Store) {
 		desc := strings.TrimSpace(ctx.Req.Form.Get("desc"))
 		status := strings.TrimSpace(ctx.Req.Form.Get("status"))
 		intStatus, _ := strconv.Atoi(status)
-		rule := models.NewRule(part, Type, content, caption, pos, desc, intStatus)
+		rule := models.NewRule(Type, content, caption, pos, desc, intStatus)
 		rule.Insert()
 		ctx.Redirect("/admin/rules/list/")
 	} else {
