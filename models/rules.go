@@ -12,10 +12,10 @@ import (
 
 type Rule struct {
 	Id          int64
+	Position    string
 	Type        string
 	Pattern     string
 	Caption     string
-	Position    string
 	Description string `xorm:"text"`
 	Status      int    `xorm:"int default 0 notnull"`
 }
