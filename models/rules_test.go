@@ -4,6 +4,8 @@ import (
 	"github.com/neal1991/gshark/models"
 
 	"testing"
+	"fmt"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestLoadRuleFromFile(t *testing.T) {
@@ -18,5 +20,12 @@ func TestInsertRules(t *testing.T) {
 	if err == nil && len(rules) == 0 {
 		t.Logf("Init rules, err: %v", models.InsertRules(filename))
 	}
+}
 
+func TestGetRulesPage(t *testing.T) {
+	rules, _, err := models.GetRulesPage(0)
+	fmt.Println("The length of rules shoulbe larger than 0")
+	assert.True(t, len(rules) > 0)
+	fmt.Println("There should be no err")
+	assert.True(t, err == nil)
 }
