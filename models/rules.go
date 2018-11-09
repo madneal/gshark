@@ -155,6 +155,6 @@ func InsertRules(filename string) error {
 
 func GetGithubKeywords() ([]Rule, error) {
 	rules := make([]Rule, 0)
-	err := Engine.Table("rule").Where("part='github' and status=1").Find(&rules)
+	err := Engine.Table("rule").Where("status=1").Find(&rules)
 	return rules, err
 }
