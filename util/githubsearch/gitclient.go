@@ -3,8 +3,8 @@ package githubsearch
 import (
 	"context"
 	"github.com/google/go-github/github"
-	"golang.org/x/oauth2"
 	"github.com/neal1991/gshark/models"
+	"golang.org/x/oauth2"
 )
 
 var (

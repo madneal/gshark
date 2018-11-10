@@ -3,8 +3,8 @@ package common
 import (
 	"crypto/sha1"
 	"encoding/hex"
-	"time"
 	"strings"
+	"time"
 )
 
 // Utility function for producing a hex encoded sha1 hash for a string.
@@ -69,10 +69,8 @@ func FormatTimeStamp(t time.Time) string {
 func GetRepoNameByUrl(url string) string {
 	length := len(strings.Split(url, "/"))
 	if length > 1 {
-		return strings.Split(url, "/")[length - 1]
+		return strings.Split(url, "/")[length-1]
 	} else {
 		return ""
 	}
 }
-
-
