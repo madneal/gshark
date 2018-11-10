@@ -3,9 +3,9 @@ package models_test
 import (
 	"github.com/neal1991/gshark/models"
 
-	"testing"
 	"fmt"
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func TestLoadRuleFromFile(t *testing.T) {

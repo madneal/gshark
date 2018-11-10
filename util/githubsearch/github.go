@@ -1,13 +1,13 @@
 package githubsearch
 
 import (
+	"fmt"
 	"github.com/google/go-github/github"
 	"github.com/neal1991/gshark/logger"
 	"github.com/neal1991/gshark/models"
-	"strings"
-	"fmt"
-	"strconv"
 	"github.com/neal1991/gshark/util/common"
+	"strconv"
+	"strings"
 )
 
 const (
@@ -17,7 +17,7 @@ const (
 	CONST_USER  = "user"
 )
 
-func GetGithubUserInfo(client *Client, ownerName *string)  *github.User{
+func GetGithubUserInfo(client *Client, ownerName *string) *github.User {
 	user, resp, err := client.GetUserInfo(*ownerName)
 	if err == nil {
 		if resp.StatusCode == 200 {

@@ -1,12 +1,12 @@
 package githubsearch
 
 import (
-	"testing"
-	"github.com/stretchr/testify/assert"
-	"github.com/neal1991/gshark/models"
 	"fmt"
+	"github.com/neal1991/gshark/models"
+	"github.com/stretchr/testify/assert"
 	"strconv"
 	"strings"
+	"testing"
 )
 
 func TestGetUserInfo(t *testing.T) {
@@ -23,7 +23,7 @@ func TestInsertAllRepos(t *testing.T) {
 			fmt.Println("index:" + strconv.Itoa(index))
 			fmt.Println(asset.Content)
 			length := len(strings.Split(asset.Content, "/"))
-			fmt.Println(strings.Split(asset.Content, "/")[length - 1])
+			fmt.Println(strings.Split(asset.Content, "/")[length-1])
 		}
 	}
 }
