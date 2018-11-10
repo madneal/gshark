@@ -2,8 +2,8 @@ package routers
 
 import (
 	"github.com/neal1991/gshark/models"
-	"testing"
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func TestSetUserInfoOfCodeResultDetail(t *testing.T) {
