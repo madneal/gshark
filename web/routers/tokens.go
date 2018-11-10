@@ -1,8 +1,8 @@
 package routers
 
 import (
-	"gopkg.in/macaron.v1"
 	"github.com/neal1991/gshark/models"
+	"gopkg.in/macaron.v1"
 
 	"github.com/go-macaron/csrf"
 	"github.com/go-macaron/session"

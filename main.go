@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/urfave/cli"
 	"github.com/neal1991/gshark/cmd"
+	"github.com/urfave/cli"
 	"os"
 	"runtime"
 )
