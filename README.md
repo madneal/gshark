@@ -36,6 +36,7 @@ NAME = misec
 USER = root
 PASSWD = 
 SSL_MODE = disable
+;the path to store the database file of sqlite3
 PATH = 
 ```
 
