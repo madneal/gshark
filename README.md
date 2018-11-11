@@ -40,6 +40,12 @@ SSL_MODE = disable
 PATH = 
 ```
 
+## Before Running
+
+* Make sure you have installed dependencies
+* Make sure the app.ini in config folder, you can rename app-template.ini to app.ini
+* Make sure that you have config and set database correctly
+
 ## Run
 
 You should build the `main.go` file firstly with the command `go build main.go`.
