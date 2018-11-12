@@ -38,7 +38,7 @@ func init() {
 	USERNAME = sec.Key("USER").MustString("username")
 	PASSWORD = sec.Key("PASSWD").MustString("password")
 	SSL_MODE = sec.Key("SSL_MODE").MustString("disable")
-	DATA_PATH = sec.Key("PATH").MustString("db")
+	DATA_PATH = sec.Key("PATH").MustString("conf")
 	DATA_NAME = sec.Key("NAME").MustString("xsec")
 
 	err := NewDbEngine()
