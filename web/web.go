@@ -35,7 +35,6 @@ func RunWeb(ctx *cli.Context) {
 	}
 
 	m := macaron.Classic()
-	//m.Use(auth.Basic("admin", ""))
 	e := casbin.NewEnforcer("./conf/auth_model.conf", "./conf/policy.csv")
 	m.Use(sauth.Authorizer(e))
 
