@@ -39,6 +39,7 @@ type CodeResult struct {
 	UpdatedTime time.Time          `xorm:"updated"`
 	RepoPath    *string
 	Keyword     *string
+	Score       float32
 }
 
 type MatchedText struct {
