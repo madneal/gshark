@@ -36,3 +36,12 @@ func TestChangeReportsStatusByRepo(t *testing.T) {
 	}
 
 }
+
+func TestGetMatchesTexts(t *testing.T)  {
+	repoName := "ralf-yin/lms"
+	textMatches := GetMatchedTexts(repoName)
+	for index, text := range textMatches {
+		fmt.Println(index)
+		fmt.Println(*text.Fragment)
+	}
+}
