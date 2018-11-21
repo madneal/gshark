@@ -70,5 +70,6 @@ title {
     background-color:#fff;
     padding:8px 12px;
     border-left:4px solid #4CAF50;
-    word-wrap:break-word
+    word-wrap:break-word;
+    border-bottom: 2px solid #eee;
 }
