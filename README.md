@@ -45,6 +45,7 @@ PATH =
 * Make sure you have installed dependencies
 * Make sure the app.ini in config folder, you can rename app-template.ini to app.ini
 * Make sure that you have config and set database correctly
+* Make sure that you have config [policy](https://github.com/neal1991/gshark/blob/master/conf/policy.csv) properly
 
 ## Run
 
