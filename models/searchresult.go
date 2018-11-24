@@ -162,15 +162,6 @@ func getCodeResultDetail(codeResult *CodeResult) CodeResultDetail {
 	return detail
 }
 
-func getMatchedTests(result *CodeResult) []*string {
-	textMatches := result.TextMatches
-	matchedTexts := make([]*string, 0)
-	for _, textMatch := range textMatches {
-		matchedTexts = append(matchedTexts, textMatch.Fragment)
-	}
-	return matchedTexts
-}
-
 func GetMatchedTexts(repoName string) []TextMatch {
 	textMatches := make([]TextMatch, 0)
 	var codeResults []CodeResult
@@ -181,7 +172,7 @@ func GetMatchedTexts(repoName string) []TextMatch {
 	if err != nil {
 		fmt.Println(err)
 	}
-	return  textMatches
+	return textMatches
 }
 
 func GetReportById(id int64, omitRepo bool) (bool, *CodeResult, error) {

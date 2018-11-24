@@ -12,13 +12,6 @@ func TestGetCodeResultDetailById(t *testing.T) {
 	fmt.Println(detail)
 }
 
-func TestGetMatchedTests(t *testing.T) {
-	_, codeResult, _ := GetReportById(321, true)
-	var texts []*string
-	texts = getMatchedTests(codeResult)
-	assert.True(t, len(texts) > 0)
-}
-
 func TestChangeReportsStatusByRepo(t *testing.T) {
 	var codeResult CodeResult
 	has, err := Engine.Table("code_result").Cols("id", "status").Get(&codeResult)
@@ -37,7 +30,7 @@ func TestChangeReportsStatusByRepo(t *testing.T) {
 
 }
 
-func TestGetMatchesTexts(t *testing.T)  {
+func TestGetMatchesTexts(t *testing.T) {
 	repoName := "ralf-yin/lms"
 	textMatches := GetMatchedTexts(repoName)
 	for index, text := range textMatches {
