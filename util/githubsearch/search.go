@@ -63,10 +63,23 @@ func RunSearchTask(mapRules map[int][]models.Rule, err error) {
 	}
 }
 
-func PassFilters(codeResult *models.CodeResult) bool {
+// The filters are utilized to filter the codeResult
+func PassFilters(codeResult *models.CodeResult, fullName string) bool {
+	// detect if the Repository url exist in input_info
+	repoUrl := codeResult.Repository.GetHTMLURL()
+	inputInfo := models.NewInputInfo(CONST_REPO, repoUrl, fullName)
+	has, err := inputInfo.Exist(repoUrl)
+	if err != nil {
+		fmt.Print(err)
+	} else if err == nil && !has {
+		inputInfo.Insert()
+	}
+	// detect if the codeResult exist
+	exist, err := codeResult.Exist()
+	// detect if there are any random characters in text matches
 	textMatches := codeResult.TextMatches[0].Fragment
 	reg := regexp.MustCompile(`[A-Za-z0-9_+]{50,}`)
-	return !reg.MatchString(*textMatches)
+	return !reg.MatchString(*textMatches) && !has && !exist
 }
 
 func SaveResult(results []*github.CodeSearchResult, err error, keyword *string) {
@@ -80,17 +93,9 @@ func SaveResult(results []*github.CodeSearchResult, err error, keyword *string) 
 					err = json.Unmarshal(ret, &codeResult)
 					codeResult.Keyword = keyword
 					fullName := codeResult.Repository.GetFullName()
-					repoUrl := codeResult.Repository.GetHTMLURL()
 					codeResult.RepoName = fullName
 
-					inputInfo := models.NewInputInfo(CONST_REPO, repoUrl, fullName)
-					has, err := inputInfo.Exist(repoUrl)
-
-					if err == nil && !has {
-						inputInfo.Insert()
-					}
-					exist, err := codeResult.Exist()
-					if err == nil && !exist && PassFilters(codeResult) {
+					if err == nil && PassFilters(codeResult, fullName) {
 						insertCount++
 						logger.Log.Infoln(codeResult.Insert())
 					}
