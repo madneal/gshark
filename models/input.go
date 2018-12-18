@@ -11,6 +11,7 @@ type InputInfo struct {
 	Type        string    `xorm:"varchar(255) notnull"`
 	Content     string    `xorm:"text notnull"`
 	Desc        string    `xorm:"text notnull"`
+	Developer   string    `xorm:"text"`
 	Version     int       `xorm:"version"`
 	CreatedTime time.Time `xorm:"created"`
 	UpdatedTime time.Time `xorm:"updated"`
