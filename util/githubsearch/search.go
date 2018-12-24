@@ -19,7 +19,7 @@ var (
 
 func GenerateSearchCodeTask() (map[int][]models.Rule, error) {
 	result := make(map[int][]models.Rule)
-	rules, err := models.GetGithubKeywords()
+	rules, err := models.GetValidRules()
 	ruleNum := len(rules)
 	batch := ruleNum / SEARCH_NUM
 
