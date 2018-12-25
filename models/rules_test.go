@@ -33,7 +33,7 @@ func TestGetRulesPage(t *testing.T) {
 func TestGetValidRulesByType(t *testing.T) {
 	rules, err := models.GetValidRulesByType("github")
 	assert.True(t, err == nil, "There should be no error for GetValidRulesByType of github")
-	for rule := range rules {
-		fmt.Println(rule)
+	for _, rule := range rules {
+		fmt.Println(rule.Pattern)
 	}
 }

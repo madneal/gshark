@@ -155,7 +155,7 @@ func InsertRules(filename string) error {
 
 func GetValidRulesByType(Type string) ([]Rule, error) {
 	rules := make([]Rule, 0)
-	err := Engine.Table("rule").Where("status=1 and type=?", "").Find(&rules)
+	err := Engine.Table("rule").Where("status=1 and type=?", Type).Find(&rules)
 	return rules, err
 }
 
