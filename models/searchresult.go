@@ -42,6 +42,20 @@ type CodeResult struct {
 	Score       float32
 }
 
+// APPSearchResult represents a single search result for app market search
+type APPSearchResult struct {
+	Id          int64
+	Name        *string `json:"name,omitempty"`
+	Description *string
+	Market      *string `json:"market,omitempty"`
+	CreatedTime time.Time
+	UpdatedTime time.Time
+	Developer   *string
+	Version     *string
+	DeployDate  *string
+	Status      int
+}
+
 type MatchedText struct {
 	Keyword    *string
 	StartIndex int
