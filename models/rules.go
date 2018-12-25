@@ -153,7 +153,13 @@ func InsertRules(filename string) error {
 	return err
 }
 
-func GetGithubKeywords() ([]Rule, error) {
+func GetValidRulesByType(Type string) ([]Rule, error) {
+	rules := make([]Rule, 0)
+	err := Engine.Table("rule").Where("status=1 and type=?","").Find(&rules)
+	return rules, err
+}
+
+func GetValidRules() ([]Rule, error) {
 	rules := make([]Rule, 0)
 	err := Engine.Table("rule").Where("status=1").Find(&rules)
 	return rules, err
