@@ -37,7 +37,7 @@ func SearchForApp(rule models.Rule)  *models.APPSearchResult{
 	var appSearchResult *models.APPSearchResult
 	if rule.Caption == "HUAWEI" {
 		baseUrl := "http://appstore.huawei.com"
-		url := baseUrl + "/search/" + rule.Pattern
+		url := baseUrl + "/search/" + rule.Pattern + "/2"
 		c := colly.NewCollector()
 		c.OnHTML("body", func(e *colly.HTMLElement) {
 			appSearchResult = saveAppSearchResult(baseUrl, e)
@@ -69,5 +69,12 @@ func saveAppSearchResult(baseUrl string, e *colly.HTMLElement)  *models.APPSearc
 		fmt.Println(*appSearchResult.DeployDate)
 		fmt.Println(*appSearchResult.APPUrl)
 	})
+	fmt.Println(e.DOM.Find("#searchListPage").Children().Get(-1))
+
+	//fmt.Println(e.DOM.Find(".page-ctrl.ctrl-app").Text())
+	fmt.Println(e.DOM.Find("#searchListPage:nth-child(1)").Text())
+	fmt.Println(e.DOM.Find("#searchListPage:nth-child(-1)").Text())
+	nextUrl, _ := e.DOM.Find("#searchListPage:nth-child(-2)").Attr("href")
+	fmt.Println(nextUrl)
 	return appSearchResult
 }
