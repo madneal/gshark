@@ -53,6 +53,7 @@ type APPSearchResult struct {
 	Developer   *string
 	Version     *string
 	DeployDate  *string
+	APPUrl      *string
 	Status      int
 }
 
