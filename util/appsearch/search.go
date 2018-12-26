@@ -6,6 +6,8 @@ import (
 	"github.com/neal1991/gshark/vars"
 	"time"
 	"github.com/gocolly/colly"
+	"fmt"
+	"strings"
 )
 
 func ScheduleTasks(duration time.Duration) {
@@ -31,21 +33,41 @@ func GenerateSearchCodeTask() (map[int][]models.Rule, error) {
 	return result, err
 }
 
-func SearchForApp(rule models.Rule)  {
-	appSearchResult := new(models.APPSearchResult)
+func SearchForApp(rule models.Rule)  *models.APPSearchResult{
+	var appSearchResult *models.APPSearchResult
 	if rule.Caption == "HUAWEI" {
-		url := "http://appstore.huawei.com/search/"
-		url = url + rule.Pattern
+		baseUrl := "http://appstore.huawei.com"
+		url := baseUrl + "/search/" + rule.Pattern
 		c := colly.NewCollector()
 		c.OnHTML("body", func(e *colly.HTMLElement) {
-			e.ForEach(".list-game-app", func(i int, element *colly.HTMLElement) {
-				*appSearchResult.Name = element.ChildText(".title")
-				*appSearchResult.Description = element.ChildText(".content")
-				*appSearchResult.DeployDate = element.ChildText("")
-			})
+			appSearchResult = saveAppSearchResult(baseUrl, e)
 		})
 		c.Visit(url)
+		// todo
+		// other app market
 	} else {
 
 	}
+	return appSearchResult
+}
+
+func saveAppSearchResult(baseUrl string, e *colly.HTMLElement)  *models.APPSearchResult{
+	appSearchResult := new(models.APPSearchResult)
+	e.ForEach(".list-game-app.dotline-btn.nofloat", func(i int, element *colly.HTMLElement) {
+		var title = element.ChildText(".title")
+		var content = element.ChildText(".content")
+		var deployDate = strings.Replace(element.ChildText(".date"),
+			"发布时间： ", "", -1)
+		var appUrl = baseUrl + element.ChildAttr(".title a", "href")
+		appSearchResult.Name = &title
+		appSearchResult.Description = &content
+		appSearchResult.DeployDate = &deployDate
+		appSearchResult.APPUrl = &appUrl
+		appSearchResult.Status = 0
+		fmt.Println(*appSearchResult.Name)
+		fmt.Println(*appSearchResult.Description)
+		fmt.Println(*appSearchResult.DeployDate)
+		fmt.Println(*appSearchResult.APPUrl)
+	})
+	return appSearchResult
 }
