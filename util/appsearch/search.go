@@ -8,6 +8,7 @@ import (
 	"github.com/gocolly/colly"
 	"fmt"
 	"strings"
+	"strconv"
 )
 
 func ScheduleTasks(duration time.Duration) {
@@ -37,12 +38,20 @@ func SearchForApp(rule models.Rule)  *models.APPSearchResult{
 	var appSearchResult *models.APPSearchResult
 	if rule.Caption == "HUAWEI" {
 		baseUrl := "http://appstore.huawei.com"
-		url := baseUrl + "/search/" + rule.Pattern + "/2"
-		c := colly.NewCollector()
-		c.OnHTML("body", func(e *colly.HTMLElement) {
-			appSearchResult = saveAppSearchResult(baseUrl, e)
-		})
-		c.Visit(url)
+		url := baseUrl + "/search/" + rule.Pattern
+		for i := 1; i < 99; i++ {
+			c := colly.NewCollector()
+			url_ := url + "/" + strconv.Itoa(i)
+			c.OnResponse(func(response *colly.Response) {
+				if response.StatusCode != 200 {
+					return
+				}
+			})
+			c.OnHTML("body", func(e *colly.HTMLElement) {
+				appSearchResult = saveAppSearchResult(baseUrl, e)
+			})
+			c.Visit(url_)
+		}
 		// todo
 		// other app market
 	} else {
@@ -69,12 +78,12 @@ func saveAppSearchResult(baseUrl string, e *colly.HTMLElement)  *models.APPSearc
 		fmt.Println(*appSearchResult.DeployDate)
 		fmt.Println(*appSearchResult.APPUrl)
 	})
-	fmt.Println(e.DOM.Find("#searchListPage").Children().Get(-1))
-
-	//fmt.Println(e.DOM.Find(".page-ctrl.ctrl-app").Text())
-	fmt.Println(e.DOM.Find("#searchListPage:nth-child(1)").Text())
-	fmt.Println(e.DOM.Find("#searchListPage:nth-child(-1)").Text())
-	nextUrl, _ := e.DOM.Find("#searchListPage:nth-child(-2)").Attr("href")
-	fmt.Println(nextUrl)
+	//fmt.Println(e.DOM.Find("#searchListPage").Children().Get(-1))
+	//
+	////fmt.Println(e.DOM.Find(".page-ctrl.ctrl-app").Text())
+	//fmt.Println(e.DOM.Find("#searchListPage:nth-child(1)").Text())
+	//fmt.Println(e.DOM.Find("#searchListPage:nth-child(-1)").Text())
+	//nextUrl, _ := e.DOM.Find("#searchListPage:nth-child(-2)").Attr("href")
+	//fmt.Println(nextUrl)
 	return appSearchResult
 }
