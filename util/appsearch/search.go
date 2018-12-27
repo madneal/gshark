@@ -34,34 +34,42 @@ func GenerateSearchCodeTask() (map[int][]models.Rule, error) {
 	return result, err
 }
 
-func SearchForApp(rule models.Rule)  *models.APPSearchResult{
-	var appSearchResult *models.APPSearchResult
+func SaveResults(results []*models.APPSearchResult) {
+	for _, result := range results {
+		result.Insert()
+	}
+}
+
+func SearchForApp(rule models.Rule) []*models.APPSearchResult {
+	appSearchResults := make([]*models.APPSearchResult, 0)
 	if rule.Caption == "HUAWEI" {
 		baseUrl := "http://appstore.huawei.com"
 		url := baseUrl + "/search/" + rule.Pattern
 		for i := 1; i < 99; i++ {
 			c := colly.NewCollector()
-			url_ := url + "/" + strconv.Itoa(i)
-			c.OnResponse(func(response *colly.Response) {
-				if response.StatusCode != 200 {
+			linkUrl := url + "/" + strconv.Itoa(i)
+			c.OnHTML("body", func(e *colly.HTMLElement) {
+				hasNext, appSearchResult := saveAppSearchResult(baseUrl, e)
+				appSearchResults = append(appSearchResults, appSearchResult)
+				if !hasNext {
 					return
 				}
+				fmt.Println(linkUrl)
 			})
-			c.OnHTML("body", func(e *colly.HTMLElement) {
-				appSearchResult = saveAppSearchResult(baseUrl, e)
-			})
-			c.Visit(url_)
+			c.Visit(linkUrl)
 		}
 		// todo
 		// other app market
 	} else {
 
 	}
-	return appSearchResult
+	return appSearchResults
 }
 
-func saveAppSearchResult(baseUrl string, e *colly.HTMLElement)  *models.APPSearchResult{
+func saveAppSearchResult(baseUrl string, e *colly.HTMLElement)  (bool, *models.APPSearchResult){
 	appSearchResult := new(models.APPSearchResult)
+	count := 0
+	var hasNext bool
 	e.ForEach(".list-game-app.dotline-btn.nofloat", func(i int, element *colly.HTMLElement) {
 		var title = element.ChildText(".title")
 		var content = element.ChildText(".content")
@@ -77,6 +85,12 @@ func saveAppSearchResult(baseUrl string, e *colly.HTMLElement)  *models.APPSearc
 		fmt.Println(*appSearchResult.Description)
 		fmt.Println(*appSearchResult.DeployDate)
 		fmt.Println(*appSearchResult.APPUrl)
+		count++
 	})
-	return appSearchResult
+	if count < 2 {
+		hasNext = false
+	} else {
+		hasNext = true
+	}
+	return hasNext, appSearchResult
 }
