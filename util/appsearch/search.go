@@ -34,14 +34,21 @@ func GenerateSearchCodeTask() (map[int][]models.Rule, error) {
 	return result, err
 }
 
-func SaveResults(results []*models.APPSearchResult) {
+func SaveResults(results []*models.AppSearchResult) {
 	for _, result := range results {
-		result.Insert()
+		count, err := result.Insert()
+		fmt.Println("The name of the result:")
+		fmt.Println(*result.Name)
+		fmt.Println(count)
+		if err != nil {
+			fmt.Println(err)
+		}
 	}
 }
 
-func SearchForApp(rule models.Rule) []*models.APPSearchResult {
-	appSearchResults := make([]*models.APPSearchResult, 0)
+func SearchForApp(rule models.Rule) []*models.AppSearchResult {
+	appSearchResults := make([]*models.AppSearchResult, 0)
+	var hasNext bool
 	if rule.Caption == "HUAWEI" {
 		baseUrl := "http://appstore.huawei.com"
 		url := baseUrl + "/search/" + rule.Pattern
@@ -49,14 +56,22 @@ func SearchForApp(rule models.Rule) []*models.APPSearchResult {
 			c := colly.NewCollector()
 			linkUrl := url + "/" + strconv.Itoa(i)
 			c.OnHTML("body", func(e *colly.HTMLElement) {
-				hasNext, appSearchResult := saveAppSearchResult(baseUrl, e)
-				appSearchResults = append(appSearchResults, appSearchResult)
-				if !hasNext {
-					return
+				var results []*models.AppSearchResult
+				hasNext, results = saveAppSearchResult(baseUrl, e)
+				//if !hasNext {
+				//	return appSearchResults
+				//}
+				if hasNext {
+					appSearchResults = append(appSearchResults, results...)
 				}
 				fmt.Println(linkUrl)
 			})
+			//if !hasNext {
+			//	break
+			//}
 			c.Visit(linkUrl)
+			fmt.Println("the length of appSearchResults")
+			fmt.Println(len(appSearchResults))
 		}
 		// todo
 		// other app market
@@ -66,31 +81,37 @@ func SearchForApp(rule models.Rule) []*models.APPSearchResult {
 	return appSearchResults
 }
 
-func saveAppSearchResult(baseUrl string, e *colly.HTMLElement)  (bool, *models.APPSearchResult){
-	appSearchResult := new(models.APPSearchResult)
-	count := 0
+func saveAppSearchResult(baseUrl string, e *colly.HTMLElement) (bool, []*models.AppSearchResult) {
 	var hasNext bool
+	appSearchResults := make([]*models.AppSearchResult, 0)
 	e.ForEach(".list-game-app.dotline-btn.nofloat", func(i int, element *colly.HTMLElement) {
+		appSearchResult := new(models.AppSearchResult)
 		var title = element.ChildText(".title")
 		var content = element.ChildText(".content")
 		var deployDate = strings.Replace(element.ChildText(".date"),
 			"发布时间： ", "", -1)
 		var appUrl = baseUrl + element.ChildAttr(".title a", "href")
+		var market = "HUAWEI"
+		if &title == nil {
+			fmt.Println(13412341234)
+		}
 		appSearchResult.Name = &title
 		appSearchResult.Description = &content
 		appSearchResult.DeployDate = &deployDate
-		appSearchResult.APPUrl = &appUrl
+		appSearchResult.AppUrl = &appUrl
+		appSearchResult.Market = &market
 		appSearchResult.Status = 0
 		fmt.Println(*appSearchResult.Name)
 		fmt.Println(*appSearchResult.Description)
 		fmt.Println(*appSearchResult.DeployDate)
-		fmt.Println(*appSearchResult.APPUrl)
-		count++
+		fmt.Println(*appSearchResult.AppUrl)
+		appSearchResults = append(appSearchResults, appSearchResult)
 	})
-	if count < 2 {
-		hasNext = false
-	} else {
+	fmt.Println(e.DOM.Find(".list-game-app.dotline-btn.nofloat").Length())
+	if e.DOM.Find(".list-game-app.dotline-btn.nofloat").Length() > 1 {
 		hasNext = true
+	} else {
+		hasNext = false
 	}
-	return hasNext, appSearchResult
+	return hasNext, appSearchResults
 }
