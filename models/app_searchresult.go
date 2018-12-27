@@ -2,21 +2,21 @@ package models
 
 import "time"
 
-// APPSearchResult represents a single search result for app market search
-type APPSearchResult struct {
+// AppSearchResult represents a single search result for app market search
+type AppSearchResult struct {
 	Id          int64
 	Name        *string `json:"name,omitempty"`
 	Description *string
 	Market      *string `json:"market,omitempty"`
-	CreatedTime time.Time
-	UpdatedTime time.Time
 	Developer   *string
 	Version     *string
 	DeployDate  *string
-	APPUrl      *string
+	AppUrl      *string
 	Status      int
+	CreatedTime time.Time
+	UpdatedTime time.Time
 }
 
-func (r *APPSearchResult) Insert() (int64, error) {
+func (r *AppSearchResult) Insert() (int64, error) {
 	return Engine.Insert(r)
 }
