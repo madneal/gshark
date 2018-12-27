@@ -36,10 +36,18 @@ func GenerateSearchCodeTask() (map[int][]models.Rule, error) {
 
 func SaveResults(results []*models.AppSearchResult) {
 	for _, result := range results {
-		count, err := result.Insert()
+		isExist, err := result.Exist()
+		if err != nil {
+			fmt.Println(err)
+		}
+		if !isExist {
+			_, err := result.Insert()
+			if err != nil {
+				fmt.Println(err)
+			}
+		}
 		fmt.Println("The name of the result:")
 		fmt.Println(*result.Name)
-		fmt.Println(count)
 		if err != nil {
 			fmt.Println(err)
 		}

@@ -20,3 +20,8 @@ type AppSearchResult struct {
 func (r *AppSearchResult) Insert() (int64, error) {
 	return Engine.Insert(r)
 }
+
+func (r *AppSearchResult) Exist() (bool, error) {
+	return Engine.Table("app_search_result").Where("name=? and market=?",
+		r.Name, r.Market).Exist()
+}
