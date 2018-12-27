@@ -78,12 +78,5 @@ func saveAppSearchResult(baseUrl string, e *colly.HTMLElement)  *models.APPSearc
 		fmt.Println(*appSearchResult.DeployDate)
 		fmt.Println(*appSearchResult.APPUrl)
 	})
-	//fmt.Println(e.DOM.Find("#searchListPage").Children().Get(-1))
-	//
-	////fmt.Println(e.DOM.Find(".page-ctrl.ctrl-app").Text())
-	//fmt.Println(e.DOM.Find("#searchListPage:nth-child(1)").Text())
-	//fmt.Println(e.DOM.Find("#searchListPage:nth-child(-1)").Text())
-	//nextUrl, _ := e.DOM.Find("#searchListPage:nth-child(-2)").Attr("href")
-	//fmt.Println(nextUrl)
 	return appSearchResult
 }
