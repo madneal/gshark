@@ -150,6 +150,13 @@ func RunWeb(ctx *cli.Context) {
 			m.Get("/github/disable_repo/:id", routers.DisableRepoById)
 			m.Get("/github/report_detail/:id", routers.GetDetailedReportById)
 			m.Get("/github/query/:status", routers.ListGithubSearchResultByStatus)
+			m.Get("/app/", routers.ListAppSearchResult)
+			m.Get("/app/:page", routers.ListGithubSearchResult)
+			m.Get("/app/confirm/:id", routers.ConfirmReportById)
+			m.Get("/app/cancel/:id", routers.CancelReportById)
+			m.Get("/app/disable_repo/:id", routers.DisableRepoById)
+			m.Get("/app/report_detail/:id", routers.GetDetailedReportById)
+			m.Get("/app/query/:status", routers.ListGithubSearchResultByStatus)
 		})
 	})
 
