@@ -133,8 +133,8 @@ func renderDataForAppSearchResult(ctx *macaron.Context, sess session.Store, p, s
 	}
 }
 
-func getRefer(ctx *macaron.Context) string {
-	refer := "/admin/reports/github/"
+func getRefer(refer string, ctx *macaron.Context) string {
+	//refer := "/admin/reports/github/"
 	if _, ok := ctx.Req.Header["Referer"]; len(ctx.Req.Header["Referer"]) > 0 && ok {
 		u := ctx.Req.Header["Referer"][0]
 		urlParsed, err := url.Parse(u)
@@ -152,22 +152,31 @@ func ConfirmReportById(ctx *macaron.Context, sess session.Store) {
 		path := strings.Split(ctx.Req.URL.Path, "/")
 		if "github" == path[3] {
 			models.ConfirmResultById(int64(Id))
+			// redirect to reports which have been confirmed
+			ctx.Redirect("/admin/reports/github/query/1")
 		} else {
-
+			models.ConfirmAppResult(int64(Id))
+			ctx.Redirect("/admin/reports/app/query/1")
 		}
-		// redirect to reports which have been confirmed
-		ctx.Redirect("/admin/reports/github/query/1")
 	} else {
 		ctx.Redirect("/admin/login/")
 	}
 }
 
 func CancelReportById(ctx *macaron.Context, sess session.Store) {
+	var refer string
 	if sess.Get("admin") != nil {
 		id := ctx.Params(":id")
 		Id, _ := strconv.Atoi(id)
-		models.CancelReportById(int64(Id))
-		ctx.Redirect(getRefer(ctx))
+		path := strings.Split(ctx.Req.URL.Path, "/")
+		if "github" == path[3] {
+			models.CancelReportById(int64(Id))
+			refer = "/admin/reports/github/"
+		} else {
+			models.IgnoreAppSearchResult(int64(Id))
+			refer = "/admin/reports/app/"
+		}
+		ctx.Redirect(getRefer(refer, ctx))
 	} else {
 		ctx.Redirect("/admin/login/")
 	}
@@ -184,7 +193,7 @@ func DisableRepoById(ctx *macaron.Context, sess session.Store) {
 			models.CancelReportsByRepo(int64(Id))
 		}
 		models.CancelReportById(int64(Id))
-		ctx.Redirect(getRefer(ctx))
+		ctx.Redirect(getRefer("/admin/reports/github/", ctx))
 	} else {
 		ctx.Redirect("/admin/login/")
 	}
