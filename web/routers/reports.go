@@ -11,6 +11,7 @@ import (
 	"github.com/neal1991/gshark/util/githubsearch"
 	"net/url"
 	"strconv"
+	"strings"
 )
 
 func GetDetailedReportById(ctx *macaron.Context, sess session.Store) {
@@ -148,7 +149,12 @@ func ConfirmReportById(ctx *macaron.Context, sess session.Store) {
 	if sess.Get("admin") != nil {
 		id := ctx.Params(":id")
 		Id, _ := strconv.Atoi(id)
-		models.ConfirmResultById(int64(Id))
+		path := strings.Split(ctx.Req.URL.Path, "/")
+		if "github" == path[3] {
+			models.ConfirmResultById(int64(Id))
+		} else {
+
+		}
 		// redirect to reports which have been confirmed
 		ctx.Redirect("/admin/reports/github/query/1")
 	} else {
