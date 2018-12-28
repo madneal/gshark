@@ -60,6 +60,17 @@ func ListGithubSearchResult(ctx *macaron.Context, sess session.Store) {
 	renderDataForGithubSearchResult(ctx, sess, p, status)
 }
 
+func ListAppSearchResult(ctx *macaron.Context, sess session.Store)  {
+	page := ctx.Params(":page")
+	p, _ := strconv.Atoi(page)
+	status := 0
+
+	if ctx.GetCookie("status") != "" {
+		status, _ = strconv.Atoi(ctx.GetCookie("status"))
+	}
+	renderDataForAppSearchResult(ctx, sess, p, status)
+}
+
 func renderDataForGithubSearchResult(ctx *macaron.Context, sess session.Store, p, status int) {
 
 	if sess.Get("admin") != nil {
@@ -82,6 +93,33 @@ func renderDataForGithubSearchResult(ctx *macaron.Context, sess session.Store, p
 		ctx.Data["lastPage"] = lastPage
 		ctx.Data["role"] = sess.Get("user").(string)
 		ctx.HTML(200, "report_github")
+	} else {
+		ctx.Redirect("/admin/login/")
+	}
+}
+
+func renderDataForAppSearchResult(ctx *macaron.Context, sess session.Store, p, status int) {
+
+	if sess.Get("admin") != nil {
+		p, pre, next := common.GetPreAndNext(p)
+		reports, pages, count := models.ListAppSearchResultByPage(p, status)
+		pageList := common.GetPageList(p, vars.PageStep, pages)
+		lastPage := 0
+		if len(pageList) >= 1 {
+			lastPage = pageList[len(pageList)-1]
+		}
+
+		ctx.Data["reports"] = reports
+		ctx.Data["pages"] = pages
+		ctx.Data["page"] = p
+		ctx.Data["pre"] = pre
+		ctx.Data["next"] = next
+		ctx.Data["pageList"] = pageList
+		ctx.Data["status"] = status
+		ctx.Data["count"] = count
+		ctx.Data["lastPage"] = lastPage
+		ctx.Data["role"] = sess.Get("user").(string)
+		ctx.HTML(200, "report_app")
 	} else {
 		ctx.Redirect("/admin/login/")
 	}

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Github leaked patrol</title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/lib/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/lib/font-awesome-4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/lib/adminLET2/css/AdminLTE.min.css">
+    <link rel="stylesheet" href="/lib/adminLET2/css/skins/skin-blue.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/lib/code_prettify/prettify.css">
+    <script src="/lib/code_prettify/prettify.js"></script>
+</head>
+<body class="hold-transition skin-blue sidebar-collapse" onload="prettyPrint()">
+<div class="wrapper">
+{{template "header"}}
+    <aside class="main-sidebar">
+        <section class="sidebar">
+            <ul class="sidebar-menu tree" data-widget="tree">
+                <li class="header">检测报告</li>
+                <li class="active"><a href="/admin/reports/github/"><i class="fa fa-dashboard"></i>
+                    <span>APP 搜索报告</span></a></li>
+            {{if .role}}
+            {{if eq .role "admin"}}
+                <li class="header">后台管理</li>
+                <li><a href="/admin/assets/"><i class="fa fa-rmb"></i> <span>资产管理</span></a></li>
+                <li><a href="/admin/repos/"><i class="fa fa-link"></i> <span>仓库管理</span></a></li>
+                <li class="treeview">
+                    <a>
+                        <i class="fa fa-link"></i>
+                        <span>规则管理</span>
+                        <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li><a href="/admin/rules/"><i class="fa fa-link"></i> <span>普通规则</span></a></li>
+                        <li><a href="/admin/filterrules/"><i class="fa fa-link"></i> <span>过滤规则</span></a></li>
+                    </ul>
+                </li>
+                <li><a href="/admin/tokens/"><i class="fa fa-users"></i> <span>token管理</span></a></li>
+                <li><a href="/admin/users/"><i class="fa fa-users"></i> <span>用户管理</span></a></li>
+            {{end}}
+            {{end}}
+            </ul>
+        </section>
+    </aside>
+    <div class="content-wrapper">
+        <section class="content-header">
+            <h1>
+                检测结果
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="/admin/reports/github/" class="btn btn-success c-add-btn"> 主页</a></li>
+                <li class="btn btn-success c-add-btn">检测结果</li>
+            </ol>
+        </section>
+        <section class="content">
+            <div class="row c-manager">
+                <div class="col-xs-12">
+                    <div class="box">
+                        <div class="box-body">
+                            <div class="filter">
+                                <div class="row">
+                                    <div class="col-xs-8">
+                                        <div class="col-xs-2">
+                                            <label>状态：</label>
+                                        </div>
+                                        <div class="form-group col-xs-6">
+                                            <div class="status">
+                                                <input name="status" type="radio" id="unhandled" value="unhandled"
+                                                       {{if eq 0 .status}}checked{{end}}></input>
+                                                <label>未处理</label>
+                                                <input name="status" type="radio" id="confirmed" value="confirmed"
+                                                       {{if eq 1 .status}}checked{{end}}></input>
+                                                <label>已确认</label>
+                                                <input name="status" type="radio" id="ignored" value="ignored"
+                                                       {{if eq 2 .status}}checked{{end}}></input>
+                                                <label>已忽略</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-6"></div>
+                                </div>
+                            </div>
+                            <table class="table table-striped table-bordered table-hover">
+                                <thead>
+                                <tr align="center">
+                                    <th>ID</th>
+                                    <th>App Name</th>
+                                    <th>Market</th>
+                                    <th>Description</th>
+                                {{if eq 0 .status}}
+                                    <th colspan="2">Review</th>
+                                {{else}}
+                                    <th>Status</th>
+                                {{end}}
+                                </tr>
+                                {{range .reports}}
+                                <tr>
+                                    <td>{{.Id}}</td>
+                                    <td><a href="{{.AppUrl}}" target="_blank">{{.Name}}</a></td>
+                                    <td>{{ .Market}}</td>
+                                    <td>{{.Description}}</td>
+                                {{if eq 0 .Status}}
+                                    <td><a href="/admin/reports/app/confirm/{{.Id}}"><img src="/img/confirm.png" alt="确认" title="确认"/></a></td>
+                                    <td><a href="/admin/reports/app/cancel/{{.Id}}"><img src="/img/file.png" alt="忽略文件" title="忽略"/></a></td>
+                                {{else}}
+                                    <td>{{if eq 1 .Status}}Confirmed{{else}}Ignored{{end}}</td>
+                                {{end}}
+                                </tr>
+                                {{end}}
+                                </thead>
+                            </table>
+                            <div class="page-arear">
+                                <ul class="pagination">
+                                    <li><a href="/admin/reports/github/1">第一页</a></li>
+                                    <li><a href="/admin/reports/github/{{.pre}}">上一页</a></li>
+                                {{ range $i, $v := .pageList }}
+                                {{ if eq $v $.page }}
+                                    <li class="active"><a href="/admin/reports/github/{{$v}}">{{$v}}</a></li>
+                                {{ else }}
+                                    <li><a href="/admin/reports/github/{{$v}}">{{$v}}</a></li>
+                                {{ end }}
+                                {{ end }}
+                                {{ if eq $.page $.lastPage}}
+                                    <li><a class="disabled" href="/admin/reports/github/{{.next}}">下一页</a></li>
+                                    <li><a class="disabled" href="/admin/reports/github/{{.pages}}">最后一页</a></li>
+                                {{ else }}
+                                    <li><a href="/admin/reports/github/{{.next}}">下一页</a></li>
+                                    <li><a href="/admin/reports/github/{{.pages}}">最后一页</a></li>
+                                {{ end }}
+                                </ul>
+                                <div class="count">共 {{.count}} 条</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+<script src="/lib/jQuery/jquery-2.2.3.min.js"></script>
+<script src="/lib/bootstrap/js/bootstrap.min.js"></script>
+<script src="/lib/datatables/jquery.dataTables.min.js"></script>
+<script src="/lib/datatables/dataTables.bootstrap.min.js"></script>
+<script src="/lib/adminLET2/js/app.min.js"></script>
+<script src="/js/common.js"></script>
+</body>
+</html>
