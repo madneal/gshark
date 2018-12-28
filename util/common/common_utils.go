@@ -62,9 +62,8 @@ func GetPageList(p, step, pages int) []int {
 	return pageList
 }
 
-func GetPageAndPagesByTotalPages(totalPages int) (int, int) {
+func GetPageAndPagesByTotalPages(page, totalPages int) (int, int) {
 	var pages int
-	var page int
 	if int(totalPages)%vars.PAGE_SIZE == 0 {
 		pages = int(totalPages) / vars.PAGE_SIZE
 	} else {
