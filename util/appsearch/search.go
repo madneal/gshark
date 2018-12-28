@@ -1,18 +1,19 @@
 package appsearch
 
 import (
+	"fmt"
+	"github.com/gocolly/colly"
 	"github.com/neal1991/gshark/logger"
 	"github.com/neal1991/gshark/models"
 	"github.com/neal1991/gshark/vars"
-	"time"
-	"github.com/gocolly/colly"
-	"fmt"
-	"strings"
 	"strconv"
+	"strings"
+	"time"
 )
 
 func ScheduleTasks(duration time.Duration) {
 	for {
+		RunSearchTask(GenerateSearchCodeTask())
 		logger.Log.Infof("Complete the scan of APP, start to sleep %v seconds", duration*time.Second)
 		time.Sleep(duration * time.Second)
 	}
@@ -20,7 +21,7 @@ func ScheduleTasks(duration time.Duration) {
 
 func GenerateSearchCodeTask() (map[int][]models.Rule, error) {
 	result := make(map[int][]models.Rule)
-	rules, err := models.GetValidRules()
+	rules, err := models.GetValidRulesByType("app")
 	ruleNum := len(rules)
 	batch := ruleNum / vars.SearchNum
 
@@ -32,6 +33,17 @@ func GenerateSearchCodeTask() (map[int][]models.Rule, error) {
 		result[batch] = rules[vars.SearchNum*batch : ruleNum]
 	}
 	return result, err
+}
+
+func RunSearchTask(mapRules map[int][]models.Rule, err error) {
+	if err == nil {
+		for _, rules := range mapRules {
+			for _, rule := range rules {
+				results := SearchForApp(rule)
+				SaveResults(results)
+			}
+		}
+	}
 }
 
 func SaveResults(results []*models.AppSearchResult) {
