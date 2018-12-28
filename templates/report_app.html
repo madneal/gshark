@@ -21,7 +21,7 @@
         <section class="sidebar">
             <ul class="sidebar-menu tree" data-widget="tree">
                 <li class="header">检测报告</li>
-                <li class="active"><a href="/admin/reports/github/"><i class="fa fa-dashboard"></i>
+                <li class="active"><a href="/admin/reports/app/"><i class="fa fa-dashboard"></i>
                     <span>APP 搜索报告</span></a></li>
             {{if .role}}
             {{if eq .role "admin"}}
@@ -54,7 +54,7 @@
                 检测结果
             </h1>
             <ol class="breadcrumb">
-                <li><a href="/admin/reports/github/" class="btn btn-success c-add-btn"> 主页</a></li>
+                <li><a href="/admin/reports/app/" class="btn btn-success c-add-btn"> 主页</a></li>
                 <li class="btn btn-success c-add-btn">检测结果</li>
             </ol>
         </section>
@@ -117,21 +117,21 @@
                             </table>
                             <div class="page-arear">
                                 <ul class="pagination">
-                                    <li><a href="/admin/reports/github/1">第一页</a></li>
-                                    <li><a href="/admin/reports/github/{{.pre}}">上一页</a></li>
+                                    <li><a href="/admin/reports/app/1">第一页</a></li>
+                                    <li><a href="/admin/reports/app/{{.pre}}">上一页</a></li>
                                 {{ range $i, $v := .pageList }}
                                 {{ if eq $v $.page }}
-                                    <li class="active"><a href="/admin/reports/github/{{$v}}">{{$v}}</a></li>
+                                    <li class="active"><a href="/admin/reports/app/{{$v}}">{{$v}}</a></li>
                                 {{ else }}
-                                    <li><a href="/admin/reports/github/{{$v}}">{{$v}}</a></li>
+                                    <li><a href="/admin/reports/app/{{$v}}">{{$v}}</a></li>
                                 {{ end }}
                                 {{ end }}
                                 {{ if eq $.page $.lastPage}}
-                                    <li><a class="disabled" href="/admin/reports/github/{{.next}}">下一页</a></li>
-                                    <li><a class="disabled" href="/admin/reports/github/{{.pages}}">最后一页</a></li>
+                                    <li><a class="disabled" href="/admin/reports/app/{{.next}}">下一页</a></li>
+                                    <li><a class="disabled" href="/admin/reports/app/{{.pages}}">最后一页</a></li>
                                 {{ else }}
-                                    <li><a href="/admin/reports/github/{{.next}}">下一页</a></li>
-                                    <li><a href="/admin/reports/github/{{.pages}}">最后一页</a></li>
+                                    <li><a href="/admin/reports/app/{{.next}}">下一页</a></li>
+                                    <li><a href="/admin/reports/app/{{.pages}}">最后一页</a></li>
                                 {{ end }}
                                 </ul>
                                 <div class="count">共 {{.count}} 条</div>
