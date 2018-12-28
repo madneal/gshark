@@ -53,6 +53,7 @@ func init() {
 		Engine.Sync2(new(CodeResult))
 		Engine.Sync2(new(FilterRule))
 		Engine.Sync2(new(CodeResultDetail))
+		Engine.Sync2(new(AppSearchResult))
 		InitRules()
 		InitAdmin()
 	}
