@@ -156,7 +156,7 @@ func RunWeb(ctx *cli.Context) {
 			m.Get("/app/cancel/:id", routers.CancelReportById)
 			m.Get("/app/disable_repo/:id", routers.DisableRepoById)
 			m.Get("/app/report_detail/:id", routers.GetDetailedReportById)
-			m.Get("/app/query/:status", routers.ListGithubSearchResultByStatus)
+			m.Get("/app/query/:status", routers.ListAppSearchResultByStatus)
 		})
 	})
 

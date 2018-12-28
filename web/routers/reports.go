@@ -49,6 +49,13 @@ func ListGithubSearchResultByStatus(ctx *macaron.Context, sess session.Store) {
 	renderDataForGithubSearchResult(ctx, sess, p, status)
 }
 
+func ListAppSearchResultByStatus(ctx *macaron.Context, sess session.Store)  {
+	status, _ := strconv.Atoi(ctx.Params(":status"))
+	ctx.SetCookie("status", strconv.Itoa(status))
+	p := 0
+	renderDataForAppSearchResult(ctx, sess, p, status)
+}
+
 func ListGithubSearchResult(ctx *macaron.Context, sess session.Store) {
 	page := ctx.Params(":page")
 	p, _ := strconv.Atoi(page)
