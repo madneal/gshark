@@ -7,7 +7,11 @@ $('input[type=radio][name=status]').change(function() {
     } else {
 	    status = 2;
     }
-    window.location.href = ('/admin/reports/github/query/' + status);
+    if (window.location.pathname.indexOf("query") == -1) {
+	    window.location.href = window.location.href + "query/" + status;
+    } else {
+        window.location.href = window.location.origin + window.location.pathname.replace(/\d/, status);
+    }
 })
 var url = window.location;
 // for sidebar menu but not for treeview submenu
