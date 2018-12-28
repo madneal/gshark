@@ -190,11 +190,7 @@ func GetReportById(id int64, omitRepo bool) (bool, *CodeResult, error) {
 
 // confirm the whole repository by id
 func ConfirmResultById(id int64) (err error) {
-	report := new(CodeResult)
-	has, err := Engine.Id(id).Get(report)
-	if err == nil && has {
-		err = ChangeReportsStatusByRepo(id, 1)
-	}
+	err = ChangeReportsStatusByRepo(id, 1)
 	return err
 }
 
