@@ -103,7 +103,7 @@
                                 <tr>
                                     <td>{{.Id}}</td>
                                     <td><a href="{{.AppUrl}}" target="_blank">{{.Name}}</a></td>
-                                    <td>{{ .Market}}</td>
+                                    <td>{{if (.Market) and eq "HUAWEI" .Market }}华为应用市场{{end}}</td>
                                     <td>{{.Description}}</td>
                                 {{if eq 0 .Status}}
                                     <td><a href="/admin/reports/app/confirm/{{.Id}}"><img src="/img/confirm.png" alt="确认" title="确认"/></a></td>
