@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"strings"
 	"time"
+	"github.com/neal1991/gshark/vars"
 )
 
 // Utility function for producing a hex encoded sha1 hash for a string.
@@ -59,6 +60,25 @@ func GetPageList(p, step, pages int) []int {
 	}
 
 	return pageList
+}
+
+func GetPageAndPagesByTotalPages(totalPages int) (int, int) {
+	var pages int
+	var page int
+	if int(totalPages)%vars.PAGE_SIZE == 0 {
+		pages = int(totalPages) / vars.PAGE_SIZE
+	} else {
+		pages = int(totalPages)/vars.PAGE_SIZE + 1
+	}
+
+	if page >= pages {
+		page = pages
+	}
+
+	if page < 1 {
+		page = 1
+	}
+	return page,pages
 }
 
 func FormatTimeStamp(t time.Time) string {
