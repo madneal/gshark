@@ -47,3 +47,19 @@ func ListAppSearchResultByPage(page int, status int) ([]AppSearchResult, int, in
 
 	return results, pages, int(totalPages)
 }
+
+func ConfirmAppResult(id int64) (err error) {
+	err = changeAppResultStatus(1, id)
+	return err
+}
+
+func IgnoreAppSearchResult(id int64)  (err error){
+	err = changeAppResultStatus(2, id)
+	return err
+}
+
+func changeAppResultStatus(status int, id int64)  (err error) {
+	_, err = Engine.Table("app_search_result").Exec("update app_search_result set status=?  " +
+		"where id=?", status, id)
+	return err
+}
