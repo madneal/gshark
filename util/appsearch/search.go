@@ -78,17 +78,13 @@ func SearchForApp(rule models.Rule) []*models.AppSearchResult {
 			c.OnHTML("body", func(e *colly.HTMLElement) {
 				var results []*models.AppSearchResult
 				hasNext, results = saveAppSearchResult(baseUrl, e)
-				//if !hasNext {
-				//	return appSearchResults
-				//}
 				if hasNext {
 					appSearchResults = append(appSearchResults, results...)
+				} else {
+					return
 				}
 				fmt.Println(linkUrl)
 			})
-			//if !hasNext {
-			//	break
-			//}
 			c.Visit(linkUrl)
 			fmt.Println("the length of appSearchResults")
 			fmt.Println(len(appSearchResults))
