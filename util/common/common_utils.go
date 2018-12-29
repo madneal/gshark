@@ -3,9 +3,9 @@ package common
 import (
 	"crypto/sha1"
 	"encoding/hex"
+	"github.com/neal1991/gshark/vars"
 	"strings"
 	"time"
-	"github.com/neal1991/gshark/vars"
 )
 
 // Utility function for producing a hex encoded sha1 hash for a string.
@@ -77,7 +77,7 @@ func GetPageAndPagesByTotalPages(page, totalPages int) (int, int) {
 	if page < 1 {
 		page = 1
 	}
-	return page,pages
+	return page, pages
 }
 
 func FormatTimeStamp(t time.Time) string {
