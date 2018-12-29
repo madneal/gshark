@@ -1,10 +1,10 @@
 package models
 
 import (
-	"time"
-	"github.com/neal1991/gshark/vars"
 	"fmt"
 	"github.com/neal1991/gshark/util/common"
+	"github.com/neal1991/gshark/vars"
+	"time"
 )
 
 // AppSearchResult represents a single search result for app market search
@@ -18,8 +18,8 @@ type AppSearchResult struct {
 	DeployDate  *string
 	AppUrl      *string
 	Status      int
-	CreatedTime time.Time
-	UpdatedTime time.Time
+	CreatedTime time.Time `xorm:"created"`
+	UpdatedTime time.Time `xorm:"updated"`
 }
 
 func (r *AppSearchResult) Insert() (int64, error) {
@@ -53,13 +53,13 @@ func ConfirmAppResult(id int64) (err error) {
 	return err
 }
 
-func IgnoreAppSearchResult(id int64)  (err error){
+func IgnoreAppSearchResult(id int64) (err error) {
 	err = changeAppResultStatus(2, id)
 	return err
 }
 
-func changeAppResultStatus(status int, id int64)  (err error) {
-	_, err = Engine.Table("app_search_result").Exec("update app_search_result set status=?  " +
+func changeAppResultStatus(status int, id int64) (err error) {
+	_, err = Engine.Table("app_search_result").Exec("update app_search_result set status=?  "+
 		"where id=?", status, id)
 	return err
 }

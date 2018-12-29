@@ -1,22 +1,22 @@
 package models
 
 import (
-	"testing"
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func TestAppSearchResult_Exist(t *testing.T) {
 	var name = "借条贷"
 	var market = "HUAWEI"
 	appSearchReult := AppSearchResult{
-		Name: &name,
+		Name:   &name,
 		Market: &market,
 	}
 	has, _ := appSearchReult.Exist()
 	assert.True(t, has, "The result should exist!!!")
 }
 
-func TestChangeAppResultStatus(t *testing.T)  {
+func TestChangeAppResultStatus(t *testing.T) {
 	id := int64(1)
 	err := changeAppResultStatus(1, id)
 	assert.True(t, err == nil)

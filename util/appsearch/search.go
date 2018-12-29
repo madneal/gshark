@@ -58,8 +58,6 @@ func SaveResults(results []*models.AppSearchResult) {
 				fmt.Println(err)
 			}
 		}
-		fmt.Println("The name of the result:")
-		fmt.Println(*result.Name)
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -108,9 +106,6 @@ func saveAppSearchResult(baseUrl string, e *colly.HTMLElement) (bool, []*models.
 			"发布时间： ", "", -1)
 		var appUrl = baseUrl + element.ChildAttr(".title a", "href")
 		var market = "HUAWEI"
-		if &title == nil {
-			fmt.Println(13412341234)
-		}
 		appSearchResult.Name = &title
 		appSearchResult.Description = &content
 		appSearchResult.DeployDate = &deployDate
