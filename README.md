@@ -10,6 +10,11 @@ The project is based on golang with AdminLTE to build a management system to man
 
 ![ezgif com-optimize](https://user-images.githubusercontent.com/12164075/47776907-72db2a00-dd2e-11e8-9862-db4aa5c458ff.gif)
 
+# Features
+
+* Scan for related keywords in github
+* Scan for related keywords APP of Huawei APP market
+
 ## Requirements
 
 * go version 1.10+
