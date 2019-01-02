@@ -93,6 +93,10 @@ To execute `main scan`, you need to add a Github token for crawl information in 
 * [authz](https://github.com/go-macaron/authz)
 * [macaron](https://github.com/go-macaron/macaron)
 
+## Wechat
+
+![FItEfU.png](https://s2.ax1x.com/2019/01/02/FItEfU.png)
+
 ## License
 
 [Apache License 2.0](https://github.com/neal1991/gshark/blob/master/LICENSE)
