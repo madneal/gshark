@@ -95,7 +95,9 @@ To execute `main scan`, you need to add a Github token for crawl information in 
 
 ## Wechat
 
-![FItEfU.png](https://s2.ax1x.com/2019/01/02/FItEfU.png)
+<p align="center">
+   <img alt="wechat" src="https://s2.ax1x.com/2019/01/02/FItEfU.png" width="320" height="400"/>
+</p>
 
 ## License
 
