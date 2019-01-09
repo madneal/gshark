@@ -8,14 +8,14 @@ import (
 
 func TestSearchForApp(t *testing.T) {
 	rule := new(models.Rule)
-	rule.Pattern = "浦发 "
+	rule.Pattern = "abc "
 	rule.Caption = "HUAWEI"
 	SearchForApp(*rule)
 }
 
 func TestSaveResults(t *testing.T) {
 	rule := new(models.Rule)
-	rule.Pattern = "浦发 "
+	rule.Pattern = "abc "
 	rule.Caption = "HUAWEI"
 	SaveResults(SearchForApp(*rule))
 }
