@@ -18,7 +18,7 @@ The project is based on golang with AdminLTE to build a management system to man
 ## Requirements
 
 * go version 1.10+
-* the project is suggested to be placed in GOPATH/src/github.com/neal1991/
+* the project is suggested to be placed in `GOPATH/src/github.com/neal1991/` if you are going to develop on the basis of this project
 
 ## Config
 
