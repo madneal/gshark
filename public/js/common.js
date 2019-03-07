@@ -7,11 +7,12 @@ $('input[type=radio][name=status]').change(function() {
     } else {
 	    status = 2;
     }
-    if (window.location.pathname.indexOf("query") == -1) {
-	    window.location.href = window.location.href + "query/" + status;
-    } else {
-        window.location.href = window.location.origin + window.location.pathname.replace(/\d/, status);
-    }
+    window.location.href = window.location.origin + '/admin/reports/github/query/' + status
+    // if (window.location.pathname.indexOf("query") == -1) {
+	 //    window.location.href = window.location.href + "query/" + status;
+    // } else {
+    //     window.location.href = window.location.origin + window.location.pathname.replace(/\d/, status);
+    // }
 })
 var url = window.location;
 // for sidebar menu but not for treeview submenu
