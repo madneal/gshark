@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+{{template "head"}}
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+{{template "header"}}
+{{template "menu"}}
+    <div class="content-wrapper">
+        <section class="content-header">
+            <h1>
+                APP 资产
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="/admin/index/"><i class="fa fa-dashboard"></i> 主页</a></li>
+                <li class="active">资产管理</li>
+            </ol>
+        </section>
+
+        <section class="content">
+            <form class="app-asset-detail">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">APP 名称：</label>
+                    <div>{{if.appAsset.Name}} {{.appAsset.Name}} {{else}} {{end}}</div>
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword1">描述：</label>
+                    <div>{{if.appAsset.Description}} {{.appAsset.Description}} {{else}} {{end}}</div>
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword1">应用市场：</label>
+                    <div>{{if.appAsset.Market}} {{.appAsset.Market}} {{else}} {{end}}</div>
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword1">开发者：</label>
+                    <div>{{if.appAsset.Developer}} {{.appAsset.Developer}} {{else}} {{end}}</div>
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword1">版本号：</label>
+                    <div>{{if.appAsset.Version}} {{.appAsset.Version}} {{else}} {{end}}</div>
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword1">发布日期：</label>
+                    <div>{{if.appAsset.DeployDate}} {{.appAsset.DeployDate}} {{else}} {{end}}</div>
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword1">URL：</label>
+                    <div>{{if.appAsset.Url}} {{.appAsset.Url}} {{else}} {{end}}</div>
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword1">MA5 哈希值：</label>
+                    <div>{{if.appAsset.Hash}} {{.appAsset.Hash}} {{else}} {{end}}</div>
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword1">状态：</label>
+                    <div>{{if.appAsset.Status}} {{.appAsset.Status}} {{else}} {{end}}</div>
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword1">描述</label>
+                    <div>{{if.appAsset.Description}} {{.appAsset.Description}} {{else}} {{end}}</div>
+                </div>
+
+            </form>
+        </section>
+    </div>
+</div>
+<script src="/lib/jQuery/jquery-2.2.3.min.js"></script>
+<script src="/lib/bootstrap/js/bootstrap.min.js"></script>
+<script src="/lib/datatables/jquery.dataTables.min.js"></script>
+<script src="/lib/datatables/dataTables.bootstrap.min.js"></script>
+<script src="/lib/adminLET2/js/app.min.js"></script>
+<script src="/js/common.js"></script>
+</body>
+</html>

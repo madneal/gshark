@@ -19,13 +19,12 @@ document.querySelector('.file input').addEventListener('change', function () {
             hash = spark.end();
             // alert(hash);
             $.get("/admin/app/detect", {"hash": hash}, function (data) {
-                console.dir(data);
-                console.dir(res)
-                if (data.exits) {
+                if (data.isExist) {
                     alert("该 APP 存在")
-                    window.location.href = "/admin/app/" + data.id;
+                    window.location.href = "/admin/app/appid/?id=" + data.id;
                 } else {
                     alert("该 APP 不存在");
+                    window.location.href = "admin/app/new";
                 }
             })
         }
