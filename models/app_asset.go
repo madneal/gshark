@@ -16,19 +16,30 @@ type AppAsset struct {
 	DeployDate  *string
 	Url         *string
 	// obtain from virustotal
-	Sha256      *string
+	Hash      *string
 	Status       int
 	CreatedTime time.Time `xorm:"created"`
 	UpdatedTime time.Time `xorm:"updated"`
 }
 
 // sha256 is utilized to detect if the app exists
-func Detect(sha256 string) (bool) {
-	result, err := Engine.Table("app_assets").Where("sha256=?", sha256).Exist()
+func Detect(hash string) (bool, int64) {
+	appAsset := new(AppAsset)
+	var id int64
+	has, err := Engine.Table("app_asset").Where("hash=?", hash).Get(appAsset)
 	if err != nil {
 		fmt.Println(err)
 	}
-	return result
+	if !has {
+		id = -1
+	} else {
+		id = appAsset.Id
+	}
+	return has, id
+}
+
+func (r *AppAsset) Insert() (int64, error) {
+	return Engine.Insert(r)
 }
 
 
