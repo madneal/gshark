@@ -16,7 +16,7 @@ func ListAppAssets(ctx *macaron.Context, sess session.Store) {
 	p, pre, next := common.GetPreAndNext(p)
 
 	if sess.Get("admin") != nil {
-		assets, pages, _ := models.ListInputInfoPage(p)
+		assets, pages, _ := models.ListAppAssets(p)
 		pageList := common.GetPageList(p, vars.PageStep, pages)
 
 		ctx.Data["pages"] = pages
@@ -24,7 +24,7 @@ func ListAppAssets(ctx *macaron.Context, sess session.Store) {
 		ctx.Data["pre"] = pre
 		ctx.Data["next"] = next
 		ctx.Data["pageList"] = pageList
-		ctx.Data["assets"] = assets
+		ctx.Data["appAssets"] = assets
 		ctx.HTML(200, "app_assets")
 	} else {
 		ctx.Redirect("/admin/login/")
