@@ -22,7 +22,6 @@ type AppAsset struct {
 	UpdatedTime time.Time `xorm:"updated"`
 }
 
-// sha256 is utilized to detect if the app exists
 func Detect(hash string) (bool, int64) {
 	appAsset := new(AppAsset)
 	var id int64
@@ -36,6 +35,15 @@ func Detect(hash string) (bool, int64) {
 		id = appAsset.Id
 	}
 	return has, id
+}
+
+func GetAppAssetById(id int64)  AppAsset {
+	appAsset := new(AppAsset)
+	_, err := Engine.Table("app_asset").Where("id=?", id).Get(appAsset)
+	if err != nil {
+		fmt.Println(err)
+	}
+	return *appAsset
 }
 
 func (r *AppAsset) Insert() (int64, error) {

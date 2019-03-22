@@ -56,7 +56,7 @@ func RunWeb(ctx *cli.Context) {
 			Charset:         "UTF-8",
 			IndentJSON:      true,
 			IndentXML:       true,
-			PrefixJSON:      []byte("macaron"),
+			//PrefixJSON:      []byte("macaron"),
 			PrefixXML:       []byte("macaron"),
 			HTMLContentType: "text/html",
 		}))
@@ -102,7 +102,8 @@ func RunWeb(ctx *cli.Context) {
 		m.Group("/app/", func() {
 			m.Get("", routers.ListAppAssets)
 			m.Get("/list", routers.ListAppAssets)
-			m.Any("/detect/", routers.DetectApp)
+			m.Get("/detect/", routers.DetectApp)
+			m.Get("/appid/", routers.GetAppAsset)
 		})
 
 		m.Group("/tokens/", func() {
