@@ -99,6 +99,12 @@ func RunWeb(ctx *cli.Context) {
 			m.Get("/del_all/", routers.DeleteAllAssets)
 		})
 
+		m.Group("/app/", func() {
+			m.Get("", routers.ListAppAssets)
+			m.Get("/list", routers.ListAppAssets)
+			m.Get("/detect/", routers.DetectApp)
+		})
+
 		m.Group("/tokens/", func() {
 			m.Get("", routers.ListTokens)
 			m.Get("/list/", routers.ListTokens)
