@@ -10,11 +10,6 @@ import (
 	"github.com/neal1991/gshark/vars"
 )
 
-type AppDetectResult struct {
-	isExist   bool
-	id       int64
-}
-
 func ListAppAssets(ctx *macaron.Context, sess session.Store) {
 	page := ctx.Params(":page")
 	p, _ := strconv.Atoi(page)
@@ -38,14 +33,24 @@ func ListAppAssets(ctx *macaron.Context, sess session.Store) {
 
 func DetectApp(ctx *macaron.Context, sess session.Store)  {
 	if sess.Get("admin") != nil {
-		//hash := ctx.Req.Form.Get("hash")
-		//fmt.Println(hash)
 		hash := ctx.Query("hash")
 		isExist, id := models.Detect(hash)
 		ctx.JSON(200, map[string]interface{} {
 			"isExist": isExist,
 			"id": id,
 		})
+	} else {
+		ctx.Redirect("/admin/login/")
+	}
+}
+
+func GetAppAsset(ctx *macaron.Context, sess session.Store) {
+	if sess.Get("admin") != nil {
+		id_ := ctx.Query("id")
+		id, _ := strconv.ParseInt(id_, 10, 64)
+		appAsset := models.GetAppAssetById(id)
+		ctx.Data["appAsset"] = appAsset
+		ctx.HTML(200, "app_asset_detail")
 	} else {
 		ctx.Redirect("/admin/login/")
 	}
