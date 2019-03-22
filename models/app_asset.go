@@ -51,8 +51,8 @@ func (r *AppAsset) Insert() (int64, error) {
 }
 
 
-func ListAppAssets(page int) ([]InputInfo, int, error) {
-	inputs := make([]InputInfo, 0)
+func ListAppAssets(page int) ([]AppAsset, int, error) {
+	apps := make([]AppAsset, 0)
 
 	totalPages, err := Engine.Table("app_assets").Count()
 	var pages int
@@ -71,8 +71,8 @@ func ListAppAssets(page int) ([]InputInfo, int, error) {
 		page = 1
 	}
 
-	err = Engine.Table("input_info").Limit(vars.PAGE_SIZE, (page-1)*vars.PAGE_SIZE).Find(&inputs)
+	err = Engine.Table("app_asset").Limit(vars.PAGE_SIZE, (page-1)*vars.PAGE_SIZE).Find(&apps)
 
-	return inputs, pages, err
+	return apps, pages, err
 }
 
