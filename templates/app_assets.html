@@ -41,21 +41,31 @@
                                 <thead>
                                 <tr align="center">
                                     <th>ID</th>
-                                    <th>Type</th>
-                                    <th>Content</th>
-                                    <th>Description</th>
-                                    <th>CreateTime</th>
-                                    <th>UpdateTime</th>
-                                    <th colspan="2">管理</th>
+                                    <th>APP 名称</th>
+                                    <th>描述</th>
+                                    <th>应用市场</th>
+                                    <th>开发者</th>
+                                    <th>发布日期</th>
+                                    <th>URL</th>
+                                    <th>MD5 哈希</th>
+                                    <th colspan="3">状态</th>
                                 </tr>
-                                {{range .assets}}
+                                {{range .appAssets}}
                                 <tr>
                                     <td>{{.Id}}</td>
-                                    <td>{{.Type}}</td>
-                                    <td>{{.Content}}</td>
-                                    <td>{{.Desc}}</td>
-                                    <td>{{.CreatedTime}}</td>
-                                    <td>{{.UpdatedTime}}</td>
+                                    <td>{{.Name}}</td>
+                                    <td>{{.Description}}</td>
+                                    <td>{{.Market}}</td>
+                                    <td>{{.Developer}}</td>
+                                    <td>{{.DeployDate}}</td>
+                                    <td>{{.Url}}</td>
+                                    <td>{{.Hash}}</td>
+                                    <td>{{if eq 0 .Status}}未处理{{else if eq 1 .Status}}
+                                    已确认资产
+                                        {{else if eq 2 .Status}}
+                                        已确认仿冒
+                                        {{end}}
+                                </td>
                                     <td><a href="/admin/assets/edit/{{.Id}}">edit</a></td>
                                     <td><a href="/admin/assets/del/{{.Id}}">del</a></td>
                                 </tr>
