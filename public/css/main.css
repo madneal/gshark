@@ -68,6 +68,12 @@
     -moz-opacity: 0.5; /*Firefox私有，透明度50%*/
     opacity: 0.5; /*其他，透明度50%*/
 }
+.app-asset-detail {
+    background-color: #ffffff;
+}
+.app-asset-detai label,div {
+    padding-left: 5px;
+}
 @media (max-width: 991px){
     .navbar-custom-menu>.navbar-nav>li>.dropdown-menu {
         right: 0;
