@@ -11,19 +11,21 @@ document.querySelector('.file input').addEventListener('change', function () {
         console.log('read chunk nr', currentChunk + 1, 'of', chunks);
         spark.append(e.target.result);                   // Append array buffer
         currentChunk++;
+        let hash;
 
         if (currentChunk < chunks) {
             loadNext();
         } else {
-            const hash = spark.end();
-            alert(hash);
+            hash = spark.end();
+            // alert(hash);
             $.get("/admin/app/detect", {"hash": hash}, function (data) {
+                console.dir(data);
+                console.dir(res)
                 if (data.exits) {
                     alert("该 APP 存在")
                     window.location.href = "/admin/app/" + data.id;
                 } else {
-                    alert("该 APP 不存在")
-                    window.location.he
+                    alert("该 APP 不存在");
                 }
             })
         }

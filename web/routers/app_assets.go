@@ -6,17 +6,13 @@ import (
 	"strconv"
 	"github.com/neal1991/gshark/util/common"
 	"github.com/neal1991/gshark/models"
+
 	"github.com/neal1991/gshark/vars"
-	"os"
-	"log"
-	"io"
-	sha2562 "crypto/sha256"
-	"encoding/hex"
-	"fmt"
 )
 
-type HashForm struct {
-	MD5     string
+type AppDetectResult struct {
+	isExist   bool
+	id       int64
 }
 
 func ListAppAssets(ctx *macaron.Context, sess session.Store) {
@@ -42,31 +38,16 @@ func ListAppAssets(ctx *macaron.Context, sess session.Store) {
 
 func DetectApp(ctx *macaron.Context, sess session.Store)  {
 	if sess.Get("admin") != nil {
-		hash := ctx.Req.Form.Get("hash")
-		fmt.Println(hash)
-		ctx.HTML(200, "app_detect")
+		//hash := ctx.Req.Form.Get("hash")
+		//fmt.Println(hash)
+		hash := ctx.Query("hash")
+		isExist, id := models.Detect(hash)
+		ctx.JSON(200, map[string]interface{} {
+			"isExist": isExist,
+			"id": id,
+		})
 	} else {
 		ctx.Redirect("/admin/login/")
 	}
-}
-
-func DetectAppExists(filepath string) bool {
-	hash := GenerateFileHash(filepath)
-	return models.Detect(hash)
-}
-
-//generate sha256 of file
-func GenerateFileHash(filepath string) (hashResult string) {
-	hash := sha2562.New()
-	f, err := os.Open(filepath)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer f.Close()
-	if _, err := io.Copy(hash, f); err != nil {
-		log.Fatal(err)
-	}
-	hashResult = hex.EncodeToString(hash.Sum(nil))
-	return hashResult
 }
 
