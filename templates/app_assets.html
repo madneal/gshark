@@ -25,25 +25,15 @@
                 <div class="col-xs-12">
                     <div class="box">
                         <div class="box-body">
-                            <div class="page-arear">
-                                <ul class="pagination">
-                                    <li><a href="/admin/assets/list/1">第一页</a></li>
-                                    <li><a href="/admin/assets/list/{{.pre}}">上一页</a></li>
-                                {{ range $i, $v := .pageList }}
-                                {{ if eq $v $.page }}
-                                    <li class="active"><a href="/admin/assets/list/{{$v}}">{{$v}}</a></li>
-                                {{ else }}
-                                    <li><a href="/admin/assets/list/{{$v}}">{{$v}}</a></li>
-                                {{ end }}
-                                {{ end }}
-                                    <li><a href="/admin/assets/list/{{.next}}">下一页</a></li>
-                                    <li><a href="/admin/assets/list/{{.pages}}">最后一页</a></li>
-                                </ul>
-                            </div>
                             <div class="row">
-                                <div class="col-xs-12">
+                                <div class="col-xs-2">
                                     <a href="javascript:;" class="file">选择 APP 文件
                                         <input type="file" name="" id="">
+                                    </a>
+                                </div>
+                                <div class="col-xs-1">
+                                    <a href="/admin/app/new" class="btn btn-primary" role="button" aria-pressed="true">
+                                        新增 APP 资产
                                     </a>
                                 </div>
                             </div>
