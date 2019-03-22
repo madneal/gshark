@@ -102,7 +102,7 @@ func RunWeb(ctx *cli.Context) {
 		m.Group("/app/", func() {
 			m.Get("", routers.ListAppAssets)
 			m.Get("/list", routers.ListAppAssets)
-			m.Get("/detect/", routers.DetectApp)
+			m.Any("/detect/", routers.DetectApp)
 		})
 
 		m.Group("/tokens/", func() {
