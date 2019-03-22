@@ -23,4 +23,5 @@ var (
 	DEBUG_MODE bool
 
 	PAGE_SIZE = 10
+	API_TOKEN string
 )

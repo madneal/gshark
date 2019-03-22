@@ -36,5 +36,5 @@ func init() {
 	vars.REPO_PATH = Cfg.Section("").Key("REPO_PATH").MustString("repos")
 	vars.MAX_INDEXERS = Cfg.Section("").Key("MAX_INDEXERS").MustInt(vars.DefaultMaxConcurrentIndexers)
 	vars.MAX_Concurrency_REPOS = Cfg.Section("").Key("MAX_Concurrency_REPOS").MustInt(100)
-
+	vars.API_TOKEN = Cfg.Section("").Key("VIRUS_API_TOKEN").MustString("")
 }
