@@ -56,3 +56,11 @@ func GetAppAsset(ctx *macaron.Context, sess session.Store) {
 	}
 }
 
+func NewAppAsset(ctx *macaron.Context, sess session.Store)  {
+	if sess.Get("admin") != nil {
+		ctx.HTML(200, "app_asset_new")
+	} else {
+		ctx.Redirect("/admin/login/")
+	}
+}
+
