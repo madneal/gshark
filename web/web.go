@@ -107,6 +107,7 @@ func RunWeb(ctx *cli.Context) {
 			m.Get("/new", routers.NewAppAsset)
 			m.Post("/new", routers.DoNewAppAsset)
 			m.Get("/del/", routers.DelAppAsset)
+			m.Get("/edit/", routers.EditAppAsset)
 		})
 
 		m.Group("/tokens/", func() {
