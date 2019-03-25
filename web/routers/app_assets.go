@@ -9,6 +9,7 @@ import (
 
 	"github.com/neal1991/gshark/vars"
 	"github.com/go-macaron/csrf"
+	"fmt"
 )
 
 func ListAppAssets(ctx *macaron.Context, sess session.Store) {
@@ -103,6 +104,31 @@ func EditAppAsset(ctx *macaron.Context, sess session.Store, x csrf.CSRF)  {
 		ctx.Data["csrf_token"] = x.GetToken()
 		ctx.Data["appAsset"] = appAsset
 		ctx.HTML(200, "app_asset_edit")
+	} else {
+		ctx.Redirect("/admin/login/")
+	}
+}
+
+func DoEditAppAsset(ctx *macaron.Context, sess session.Store)  {
+	if sess.Get("admin") != nil {
+		id, _ := strconv.Atoi(ctx.Query("id"))
+		status, _ := strconv.Atoi(ctx.Query("status"))
+		appAsset := models.NewAppAsset(
+			ctx.Query("name"),
+			ctx.Query("description"),
+			ctx.Query("market"),
+			ctx.Query("developer"),
+			ctx.Query("version"),
+			ctx.Query("deployDate"),
+			ctx.Query("url"),
+			ctx.Query("hash"),
+			status,
+		)
+		err := models.EditAppAssetById(int64(id), appAsset)
+		if err != nil {
+			fmt.Println(err)
+		}
+		ctx.Redirect("/admin/app/")
 	} else {
 		ctx.Redirect("/admin/login/")
 	}
