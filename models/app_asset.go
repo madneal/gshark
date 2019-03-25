@@ -62,6 +62,15 @@ func GetAppAssetById(id int64)  AppAsset {
 	return *appAsset
 }
 
+func EditAppAssetById(id int64, asset *AppAsset) error {
+	appAsset := new(AppAsset)
+	has, err := Engine.Id(id).Get(appAsset)
+	if err == nil && has {
+		Engine.Id(id).Update(asset)
+	}
+	return err
+}
+
 func (r *AppAsset) Insert() (int64, error) {
 	return Engine.Insert(r)
 }
