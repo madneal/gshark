@@ -15,6 +15,7 @@ type AppAsset struct {
 	Version     *string
 	DeployDate  *string
 	Url         *string
+	Filename    *string
 	// obtain from virustotal
 	Hash      *string
 	Status       int
@@ -22,7 +23,7 @@ type AppAsset struct {
 	UpdatedTime time.Time `xorm:"updated"`
 }
 
-func NewAppAsset(name, desc, market, developer, version, deployDate, url, hash string, status int) *AppAsset {
+func NewAppAsset(name, desc, market, developer, version, deployDate, url, hash, filename string, status int) *AppAsset {
 	appAsset := AppAsset{
 		Name: &name,
 		Description: &desc,
@@ -32,6 +33,7 @@ func NewAppAsset(name, desc, market, developer, version, deployDate, url, hash s
 		DeployDate: &deployDate,
 		Url: &url,
 		Hash: &hash,
+		Filename: &filename,
 		Status: status,
 	}
 	appAsset.CreatedTime = time.Now().Local()
