@@ -78,6 +78,7 @@ func DoNewAppAsset(ctx *macaron.Context, sess session.Store) {
 			ctx.Query("deployDate"),
 			ctx.Query("url"),
 			ctx.Query("hash"),
+			ctx.Query("filename"),
 			status,
 		)
 		appAsset.Insert()
@@ -122,6 +123,7 @@ func DoEditAppAsset(ctx *macaron.Context, sess session.Store)  {
 			ctx.Query("deployDate"),
 			ctx.Query("url"),
 			ctx.Query("hash"),
+			ctx.Query("filename"),
 			status,
 		)
 		err := models.EditAppAssetById(int64(id), appAsset)
