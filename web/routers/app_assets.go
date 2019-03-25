@@ -64,3 +64,24 @@ func NewAppAsset(ctx *macaron.Context, sess session.Store)  {
 	}
 }
 
+func DoNewAppAsset(ctx *macaron.Context, sess session.Store) {
+	if sess.Get("admin") != nil {
+		status, _ := strconv.Atoi(ctx.Query("status"))
+		appAsset := models.NewAppAsset(
+			ctx.Query("name"),
+			ctx.Query("description"),
+			ctx.Query("market"),
+			ctx.Query("developer"),
+			ctx.Query("version"),
+			ctx.Query("deployDate"),
+			ctx.Query("url"),
+			ctx.Query("hash"),
+			status,
+		)
+		appAsset.Insert()
+		ctx.Redirect("/admin/app/")
+	} else {
+		ctx.Redirect("/admin/login/")
+	}
+}
+
