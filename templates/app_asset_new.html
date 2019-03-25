@@ -10,66 +10,89 @@
             <div class="box-header with-border">
                 <h3 class="box-title">APP 资产</h3>
             </div>
-            <form class="form-horizontal">
+            <form class="form-horizontal" action="/admin/app/new" method="post">
                 <div class="box-body">
                     <div class="form-group">
-                        <label for="Name" class="control-label col-sm-2">APP 名称：</label>
+                        <label for="name" class="control-label col-sm-2">APP 名称：</label>
                         <div class="col-sm-10">
-                            <input type="text" name="Name" id="Name" class="form-control">
+                            <input type="text" name="name" id="name" class="form-control" required>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="Description" class="control-label col-sm-2">描述：</label>
+                        <label for="description" class="control-label col-sm-2">描述：</label>
                         <div class="col-sm-10">
-                            <input type="text" name="Description" id="Description" class="form-control">
+                            <input type="text" name="description" id="description" class="form-control">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="Market" class="control-label col-sm-2">应用市场：</label>
+                        <label for="market" class="control-label col-sm-2">应用市场：</label>
                         <div class="col-sm-10">
-                            <input type="text" name="Market" id="Market" class="form-control">
+                            <input type="text" name="market" id="market" class="form-control">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="Developer" class="control-label col-sm-2">开发者：</label>
+                        <label for="devloper" class="control-label col-sm-2">开发者：</label>
                         <div class="col-sm-10">
-                            <input type="text" name="Developer" id="Developer" class="form-control">
+                            <input type="text" name="devloper" id="devloper" class="form-control">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="Version" class="control-label col-sm-2">版本号：</label>
+                        <label for="version" class="control-label col-sm-2">版本号：</label>
                         <div class="col-sm-10">
-                            <input type="text" name="Version" id="Version" class="form-control">
+                            <input type="text" name="version" id="version" class="form-control">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="DeployDate" class="control-label col-sm-2">发布日期：</label>
-                        <div class="col-sm-10">
-                            <input type="text" name="DeployDate" id="DeployDate" class="form-control">
+                        <label for="deployDate" class="control-label col-sm-2">发布日期：</label>
+                        <div class="input-group date">
+                            <div class="input-group-addon">
+                                <i class="fa fa-calendar"></i>
+                            </div>
+                            <input type="text" class="form-control pull-right" id="deployDate">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="Url" class="control-label col-sm-2">URL：</label>
+                        <label for="url" class="control-label col-sm-2">URL：</label>
                         <div class="col-sm-10">
-                            <input type="text" name="Url" id="Url" class="form-control">
+                            <input type="text" name="url" id="url" class="form-control">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="Hash" class="control-label col-sm-2">MA5 哈希值：</label>
-                        <div class="col-sm-10">
-                            <input type="text" name="Hash" id="Hash" class="form-control">
+                        <label for="hash" class="control-label col-sm-2">MA5 哈希值：</label>
+                        <div class="col-sm-8">
+                            <input type="text" name="hash" id="hash" class="form-control" required>
+                        </div>
+                        <div class="col-sm-2">
+                            <a href="javascript:;" class="file btn btn-primary" id="btn-white">
+                                检测 APP 文件
+                                <input type="file" name="file" id="file" class="gen-hash">
+                            </a>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="Status" class="control-label col-sm-2">状态：</label>
+                        <label for="status" class="control-label col-sm-2">状态：</label>
                         <div class="col-sm-10">
-                            <input type="text" name="Status" id="Status" class="form-control">
+                            <select class="form-control" id="status">
+                                <option value="0">未处理</option>
+                                <option value="1">已确认</option>
+                                <option value="2">已确认仿冒</option>
+                            </select>
+                            {{/*<input type="text" name="status" id="status" class="form-control">*/}}
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="Description" class="control-label col-sm-2">描述：</label>
+                        <label for="description" class="control-label col-sm-2">描述：</label>
                         <div class="col-sm-10">
-                            <input type="text" name="Description" id="Description" class="form-control">
+                            <input type="text" name="description" id="description" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-10"></div>
+                        <div class="col-sm-1">
+                            <input type="submit" value="提交" class="btn btn-primary">
+                        </div>
+                        <div class="col-sm-1">
+                            <a href="/admin/app/" class="btn btn-primary">取消</a>
                         </div>
                     </div>
                 </div>
@@ -82,6 +105,8 @@
 <script src="/lib/datatables/jquery.dataTables.min.js"></script>
 <script src="/lib/datatables/dataTables.bootstrap.min.js"></script>
 <script src="/lib/adminLET2/js/app.min.js"></script>
+<script src="/js/sparkmd5.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.min.js"></script>
 <script src="/js/common.js"></script>
 </body>
 </html>
