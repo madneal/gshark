@@ -85,3 +85,13 @@ func DoNewAppAsset(ctx *macaron.Context, sess session.Store) {
 	}
 }
 
+func DelAppAsset(ctx *macaron.Context, sess session.Store) {
+	if sess.Get("admin") != nil {
+		id, _ := strconv.Atoi(ctx.Query("id"))
+		models.DeleteAppAssetById(int64(id))
+		ctx.Redirect("/admin/app/")
+	} else {
+		ctx.Redirect("/admin/login/")
+	}
+}
+
