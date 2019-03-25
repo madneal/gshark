@@ -13,14 +13,19 @@
                 APP 资产管理
             </h1>
             <ol class="breadcrumb">
-                <li class="btn btn-success"><a href="/admin/index/">主页</a></li>
-                <li class="btn btn-success">APP 资产管理</li>
                 <li>
-                    <a href="/admin/app/new/" class="btn btn-success c-add-btn">新增 APP 资产</a>
+                    <a href="/admin/index/" class="btn btn-primary">主页</a>
                 </li>
                 <li>
-                    <a href="javascript:;" class="file">检测 APP 文件
-                        <input type="file" name="" id="">
+                    <a href="/admin/app/" class="btn btn-primary">APP 资产管理</a>
+                </li>
+                <li>
+                    <a href="/admin/app/new/" target="_blank" class="btn btn-primary" id="btn-white">新增 APP 资产</a>
+                </li>
+                <li>
+                    <a href="javascript:;" class="file btn btn-primary" id="btn-white">
+                        检测 APP 文件
+                        <input type="file" name="file" id="file">
                     </a>
                 </li>
             </ol>
@@ -31,18 +36,6 @@
                 <div class="col-xs-12">
                     <div class="box">
                         <div class="box-body">
-                            <div class="row">
-                                <div class="col-xs-2">
-                                    <a href="javascript:;" class="file">选择 APP 文件
-                                        <input type="file" name="" id="">
-                                    </a>
-                                </div>
-                                <div class="col-xs-1">
-                                    <a href="/admin/app/new" class="btn btn-primary" role="button" aria-pressed="true">
-                                        新增 APP 资产
-                                    </a>
-                                </div>
-                            </div>
                             <table id="dataList" class="table table-striped table-bordered table-hover">
                                 <thead>
                                 <tr align="center">
