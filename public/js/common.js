@@ -56,5 +56,6 @@ document.querySelector('.file .gen-hash').addEventListener('change', function ()
     loadNext();
 });
 
-$('#url').datepicker({
+$('#deployDate').datepicker({
+    autocomplete: true
 });
