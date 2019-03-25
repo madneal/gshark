@@ -43,7 +43,3 @@ document.querySelector('.file input').addEventListener('change', function () {
 
     loadNext();
 });
-
-async function generateHash(files) {
-
-}
