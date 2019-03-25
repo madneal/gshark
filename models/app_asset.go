@@ -66,6 +66,14 @@ func (r *AppAsset) Insert() (int64, error) {
 	return Engine.Insert(r)
 }
 
+func DeleteAppAssetById(id int64) {
+	appAsset := new(AppAsset)
+	_, err := Engine.Id(id).Delete(appAsset)
+	if err != nil {
+		fmt.Println(err)
+	}
+}
+
 
 func ListAppAssets(page int) ([]AppAsset, int, error) {
 	apps := make([]AppAsset, 0)
