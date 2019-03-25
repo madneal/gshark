@@ -24,3 +24,6 @@
     color: #004974;
     text-decoration: none;
 }
+.content-header>.breadcrumb>li>#btn-white {
+    color: #ffffff;!important;
+}
