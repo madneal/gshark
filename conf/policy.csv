@@ -10,4 +10,6 @@ p, user, /admin/logout/*, *
 p, user, /admin/login, *
 p, user, /admin/logout, *
 p, user, /admin/reports/*, GET
+p, user, /admin/app/*, GET
+p, user, /admin/app/*, POST
 p, *, /favicon.ico, GET
