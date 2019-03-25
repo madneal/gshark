@@ -22,6 +22,22 @@ type AppAsset struct {
 	UpdatedTime time.Time `xorm:"updated"`
 }
 
+func NewAppAsset(name, desc, market, developer, version, deployDate, url, hash string, status int) *AppAsset {
+	appAsset := AppAsset{
+		Name: &name,
+		Description: &desc,
+		Market: &market,
+		Developer: &developer,
+		Version: &version,
+		DeployDate: &deployDate,
+		Url: &url,
+		Hash: &hash,
+		Status: status,
+	}
+	appAsset.CreatedTime = time.Now().Local()
+	return &appAsset
+}
+
 func Detect(hash string) (bool, int64) {
 	appAsset := new(AppAsset)
 	var id int64
