@@ -1,9 +1,9 @@
 package models
 
 import (
-	"time"
-	"github.com/neal1991/gshark/vars"
 	"fmt"
+	"github.com/neal1991/gshark/vars"
+	"time"
 )
 
 type AppAsset struct {
@@ -17,24 +17,24 @@ type AppAsset struct {
 	Url         *string
 	Filename    *string
 	// obtain from virustotal
-	Hash      *string
-	Status       int
+	Hash        *string
+	Status      int
 	CreatedTime time.Time `xorm:"created"`
 	UpdatedTime time.Time `xorm:"updated"`
 }
 
 func NewAppAsset(name, desc, market, developer, version, deployDate, url, hash, filename string, status int) *AppAsset {
 	appAsset := AppAsset{
-		Name: &name,
+		Name:        &name,
 		Description: &desc,
-		Market: &market,
-		Developer: &developer,
-		Version: &version,
-		DeployDate: &deployDate,
-		Url: &url,
-		Hash: &hash,
-		Filename: &filename,
-		Status: status,
+		Market:      &market,
+		Developer:   &developer,
+		Version:     &version,
+		DeployDate:  &deployDate,
+		Url:         &url,
+		Hash:        &hash,
+		Filename:    &filename,
+		Status:      status,
 	}
 	appAsset.CreatedTime = time.Now().Local()
 	return &appAsset
@@ -55,7 +55,7 @@ func Detect(hash string) (bool, int64) {
 	return has, id
 }
 
-func GetAppAssetById(id int64)  AppAsset {
+func GetAppAssetById(id int64) AppAsset {
 	appAsset := new(AppAsset)
 	_, err := Engine.Table("app_asset").Where("id=?", id).Get(appAsset)
 	if err != nil {
@@ -85,7 +85,6 @@ func DeleteAppAssetById(id int64) {
 	}
 }
 
-
 func ListAppAssets(page int) ([]AppAsset, int, error) {
 	apps := make([]AppAsset, 0)
 
@@ -110,4 +109,3 @@ func ListAppAssets(page int) ([]AppAsset, int, error) {
 
 	return apps, pages, err
 }
-
