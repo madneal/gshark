@@ -27,6 +27,7 @@ func ListRepos(ctx *macaron.Context, sess session.Store) {
 		ctx.Data["next"] = next
 		ctx.Data["pageList"] = pageList
 		ctx.Data["repos"] = repos
+		ctx.Data["role"] = sess.Get("user").(string)
 		ctx.HTML(200, "repos")
 	} else {
 		ctx.Redirect("/admin/login/")

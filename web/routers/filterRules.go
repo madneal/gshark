@@ -30,6 +30,7 @@ func ListFilterRules(ctx *macaron.Context, sess session.Store) {
 		ctx.Data["next"] = next
 		ctx.Data["pageList"] = pageList
 		ctx.Data["rules"] = rules
+		ctx.Data["role"] = sess.Get("user").(string)
 		ctx.HTML(200, "filterrules")
 	} else {
 		ctx.Redirect("/admin/login/")
@@ -41,6 +42,7 @@ func NewRule(ctx *macaron.Context, sess session.Store) {
 		ctx.Data["type"] = "new"
 		rule := models.NewFilterRule(0, "", "")
 		ctx.Data["rule"] = rule
+		ctx.Data["role"] = sess.Get("user").(string)
 		ctx.HTML(200, "filterrule_new_or_edit")
 	} else {
 		ctx.Redirect("/admin/login/")

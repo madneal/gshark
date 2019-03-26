@@ -51,6 +51,7 @@ func ListUsers(ctx *macaron.Context, sess session.Store) {
 	if sess.Get("admin") != nil {
 		users, _ := models.ListAdmins()
 		ctx.Data["users"] = users
+		ctx.Data["role"] = sess.Get("user").(string)
 		ctx.HTML(200, "users")
 	} else {
 		ctx.Redirect("/admin/login/")
@@ -59,6 +60,7 @@ func ListUsers(ctx *macaron.Context, sess session.Store) {
 
 func NewUser(ctx *macaron.Context, sess session.Store) {
 	if sess.Get("admin") != nil {
+		ctx.Data["role"] = sess.Get("user").(string)
 		ctx.HTML(200, "users_new")
 	} else {
 		ctx.Redirect("/admin/login/")
@@ -87,6 +89,7 @@ func EditUser(ctx *macaron.Context, sess session.Store, x csrf.CSRF) {
 		ctx.Data["csrf_token"] = x.GetToken()
 		ctx.Data["user"] = admin
 		ctx.Data["admin"] = sess.Get("admin")
+		ctx.Data["role"] = sess.Get("user").(string)
 		ctx.HTML(200, "users_edit")
 	} else {
 		ctx.Redirect("/admin/login/")
