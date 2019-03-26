@@ -1,14 +1,14 @@
 package models
 
 import (
-	"testing"
 	"fmt"
+	"testing"
 )
 
 func TestDetect(t *testing.T) {
 	var hash = "123456"
 	var name = "app"
-	appAsset := AppAsset {
+	appAsset := AppAsset{
 		Name: &name,
 		Hash: &hash,
 	}
