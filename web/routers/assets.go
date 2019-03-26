@@ -26,6 +26,7 @@ func ListAssets(ctx *macaron.Context, sess session.Store) {
 		ctx.Data["next"] = next
 		ctx.Data["pageList"] = pageList
 		ctx.Data["assets"] = assets
+		ctx.Data["role"] = sess.Get("user").(string)
 		ctx.HTML(200, "assets")
 	} else {
 		ctx.Redirect("/admin/login/")
@@ -34,6 +35,7 @@ func ListAssets(ctx *macaron.Context, sess session.Store) {
 
 func NewAssets(ctx *macaron.Context, sess session.Store) {
 	if sess.Get("admin") != nil {
+		ctx.Data["role"] = sess.Get("user").(string)
 		ctx.HTML(200, "assets_new")
 	} else {
 		ctx.Redirect("/admin/login/")
@@ -62,6 +64,7 @@ func EditAssets(ctx *macaron.Context, sess session.Store, x csrf.CSRF) {
 		ctx.Data["csrf_token"] = x.GetToken()
 		ctx.Data["assets"] = assets
 		ctx.Data["user"] = sess.Get("admin")
+		ctx.Data["role"] = sess.Get("user").(string)
 		ctx.HTML(200, "assets_edit")
 	} else {
 		ctx.Redirect("/admin/login/")

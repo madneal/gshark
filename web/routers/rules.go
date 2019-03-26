@@ -28,6 +28,7 @@ func ListRules(ctx *macaron.Context, sess session.Store) {
 		ctx.Data["next"] = next
 		ctx.Data["pageList"] = pageList
 		ctx.Data["rules"] = rules
+		ctx.Data["role"] = sess.Get("user").(string)
 		ctx.HTML(200, "rules")
 	} else {
 		ctx.Redirect("/admin/login/")
@@ -36,6 +37,7 @@ func ListRules(ctx *macaron.Context, sess session.Store) {
 
 func NewRules(ctx *macaron.Context, sess session.Store) {
 	if sess.Get("admin") != nil {
+		ctx.Data["role"] = sess.Get("user").(string)
 		ctx.HTML(200, "rules_new")
 	} else {
 		ctx.Redirect("/admin/login/")

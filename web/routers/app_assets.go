@@ -1,15 +1,15 @@
 package routers
 
 import (
-	"gopkg.in/macaron.v1"
 	"github.com/go-macaron/session"
-	"strconv"
-	"github.com/neal1991/gshark/util/common"
 	"github.com/neal1991/gshark/models"
+	"github.com/neal1991/gshark/util/common"
+	"gopkg.in/macaron.v1"
+	"strconv"
 
-	"github.com/neal1991/gshark/vars"
-	"github.com/go-macaron/csrf"
 	"fmt"
+	"github.com/go-macaron/csrf"
+	"github.com/neal1991/gshark/vars"
 )
 
 func ListAppAssets(ctx *macaron.Context, sess session.Store) {
@@ -27,19 +27,20 @@ func ListAppAssets(ctx *macaron.Context, sess session.Store) {
 		ctx.Data["next"] = next
 		ctx.Data["pageList"] = pageList
 		ctx.Data["appAssets"] = assets
+		ctx.Data["role"] = sess.Get("user").(string)
 		ctx.HTML(200, "app_assets")
 	} else {
 		ctx.Redirect("/admin/login/")
 	}
 }
 
-func DetectApp(ctx *macaron.Context, sess session.Store)  {
+func DetectApp(ctx *macaron.Context, sess session.Store) {
 	if sess.Get("admin") != nil {
 		hash := ctx.Query("hash")
 		isExist, id := models.Detect(hash)
-		ctx.JSON(200, map[string]interface{} {
+		ctx.JSON(200, map[string]interface{}{
 			"isExist": isExist,
-			"id": id,
+			"id":      id,
 		})
 	} else {
 		ctx.Redirect("/admin/login/")
@@ -58,8 +59,9 @@ func GetAppAsset(ctx *macaron.Context, sess session.Store) {
 	}
 }
 
-func NewAppAsset(ctx *macaron.Context, sess session.Store)  {
+func NewAppAsset(ctx *macaron.Context, sess session.Store) {
 	if sess.Get("admin") != nil {
+		ctx.Data["role"] = sess.Get("user").(string)
 		ctx.HTML(200, "app_asset_new")
 	} else {
 		ctx.Redirect("/admin/login/")
@@ -98,19 +100,20 @@ func DelAppAsset(ctx *macaron.Context, sess session.Store) {
 	}
 }
 
-func EditAppAsset(ctx *macaron.Context, sess session.Store, x csrf.CSRF)  {
+func EditAppAsset(ctx *macaron.Context, sess session.Store, x csrf.CSRF) {
 	if sess.Get("admin") != nil {
 		id, _ := strconv.Atoi(ctx.Query("id"))
 		appAsset := models.GetAppAssetById(int64(id))
 		ctx.Data["csrf_token"] = x.GetToken()
 		ctx.Data["appAsset"] = appAsset
+		ctx.Data["role"] = sess.Get("user").(string)
 		ctx.HTML(200, "app_asset_edit")
 	} else {
 		ctx.Redirect("/admin/login/")
 	}
 }
 
-func DoEditAppAsset(ctx *macaron.Context, sess session.Store)  {
+func DoEditAppAsset(ctx *macaron.Context, sess session.Store) {
 	if sess.Get("admin") != nil {
 		id, _ := strconv.Atoi(ctx.Query("id"))
 		status, _ := strconv.Atoi(ctx.Query("status"))
@@ -135,4 +138,3 @@ func DoEditAppAsset(ctx *macaron.Context, sess session.Store)  {
 		ctx.Redirect("/admin/login/")
 	}
 }
-
