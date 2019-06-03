@@ -6,7 +6,6 @@ import (
 	"github.com/neal1991/gshark/util/common"
 	"gopkg.in/macaron.v1"
 	"strconv"
-
 	"fmt"
 	"github.com/go-macaron/csrf"
 	"github.com/neal1991/gshark/vars"
