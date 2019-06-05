@@ -34,6 +34,7 @@ type CodeResult struct {
 	Repository  *github.Repository `json:"repository,omitempty" xorm:"json"`
 	TextMatches []TextMatch        `json:"text_matches,omitempty" xorm:"LONGBLOB"`
 	Status      int                // 1 confirmed 2 ignored
+	IsReady     int
 	Version     int                `xorm:"version"`
 	CreatedTime time.Time          `xorm:"created"`
 	UpdatedTime time.Time          `xorm:"updated"`
