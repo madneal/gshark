@@ -1,25 +1,4 @@
-$('input[type=radio][name=status]').change(function() {
-	let status;
-	if (this.value === 'unhandled') {
-	    status = 0;
-    } else if (this.value === 'confirmed') {
-	    status = 1;
-    } else {
-	    status = 2;
-    }
-    window.location.href = window.location.origin + '/admin/reports/github/query/' + status
-})
-var url = window.location;
-// for sidebar menu but not for treeview submenu
-$('ul.sidebar-menu a').filter(function() {
-    return this.href == url;
-}).parent().siblings().removeClass('active').end().addClass('active');
-// for treeview which is like a submenu
-$('ul.treeview-menu a').filter(function() {
-    return this.href == url;
-}).parentsUntil(".sidebar-menu > .treeview-menu").siblings().removeClass('active').end().addClass('active');
-
-document.querySelector('.file .gen-hash').addEventListener('change', function () {
+document.querySelector('.file input').addEventListener('change', function () {
     var blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice,
         file = this.files[0],
         chunkSize = 2097152,                             // Read in chunks of 2MB
@@ -38,7 +17,16 @@ document.querySelector('.file .gen-hash').addEventListener('change', function ()
             loadNext();
         } else {
             hash = spark.end();
-            document.querySelector('#hash').value = hash;
+            // alert(hash);
+            $.get("/admin/app/detect", {"hash": hash}, function (data) {
+                if (data.isExist) {
+                    alert("该 APP 存在")
+                    window.location.href = "/admin/app/appid/?id=" + data.id;
+                } else {
+                    alert("该 APP 不存在");
+                    window.location.href = "admin/app/new";
+                }
+            })
         }
     };
 
@@ -54,8 +42,4 @@ document.querySelector('.file .gen-hash').addEventListener('change', function ()
     }
 
     loadNext();
-});
-
-$('#deployDate').datepicker({
-    autocomplete: true
 });

@@ -53,7 +53,6 @@ func init() {
 		Engine.Sync2(new(CodeResult))
 		Engine.Sync2(new(FilterRule))
 		Engine.Sync2(new(CodeResultDetail))
-		Engine.Sync2(new(AppSearchResult))
 		InitRules()
 		InitAdmin()
 	}
@@ -75,6 +74,9 @@ func NewDbEngine() (err error) {
 			USERNAME, PASSWORD, DATA_HOST, DATA_PORT, DATA_NAME)
 
 		Engine, err = xorm.NewEngine("mysql", dataSourceName)
+		if err != nil {
+			fmt.Println(err)
+		}
 		Engine.Logger().SetLevel(core.LOG_OFF)
 		err = Engine.Ping()
 	case "postgres":

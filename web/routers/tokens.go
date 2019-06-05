@@ -15,6 +15,7 @@ func ListTokens(ctx *macaron.Context, sess session.Store) {
 	if sess.Get("admin") != nil {
 		tokens, _ := models.ListTokens()
 		ctx.Data["tokens"] = tokens
+		ctx.Data["role"] = sess.Get("user").(string)
 		ctx.HTML(200, "tokens")
 	} else {
 		ctx.Redirect("/admin/login/")
@@ -23,6 +24,7 @@ func ListTokens(ctx *macaron.Context, sess session.Store) {
 
 func NewTokens(ctx *macaron.Context, sess session.Store) {
 	if sess.Get("admin") != nil {
+		ctx.Data["role"] = sess.Get("user").(string)
 		ctx.HTML(200, "tokens_new")
 	} else {
 		ctx.Redirect("/admin/login/")
@@ -50,6 +52,7 @@ func EditTokens(ctx *macaron.Context, sess session.Store, x csrf.CSRF) {
 		ctx.Data["csrf_token"] = x.GetToken()
 		ctx.Data["tokens"] = tokens
 		ctx.Data["admin"] = sess.Get("admin")
+		ctx.Data["role"] = sess.Get("user").(string)
 		ctx.HTML(200, "tokens_edit")
 	} else {
 		ctx.Redirect("/admin/login/")

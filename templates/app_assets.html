@@ -4,17 +4,22 @@
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
 {{template "header"}}
-{{template "menu" .  }}
+{{template "menu" . }}
     <div class="content-wrapper">
         <section class="content-header">
             <h1>
-                资产管理
+                APP 资产管理
             </h1>
             <ol class="breadcrumb">
-                <li class="btn btn-success"><a href="/admin/index/">主页</a></li>
-                <li class="btn btn-success">资产管理</li>
-                <a href="/admin/assets/new/" class="btn btn-success c-add-btn">新增资产</a>
-                <a href="/admin/assets/del_all/" class="btn btn-success c-add-btn">清空资产</a>
+                <li>
+                    <a href="/admin/app/new/" target="_blank" class="btn btn-primary" id="btn-white">新增 APP 资产</a>
+                </li>
+                <li>
+                    <a href="javascript:;" class="file btn btn-primary" id="btn-white">
+                        检测 APP 文件
+                        <input type="file" name="file" id="file">
+                    </a>
+                </li>
             </ol>
         </section>
 
@@ -23,42 +28,39 @@
                 <div class="col-xs-12">
                     <div class="box">
                         <div class="box-body">
-                            <div class="page-arear">
-                                <ul class="pagination">
-                                    <li><a href="/admin/assets/list/1">第一页</a></li>
-                                    <li><a href="/admin/assets/list/{{.pre}}">上一页</a></li>
-                                {{ range $i, $v := .pageList }}
-                                {{ if eq $v $.page }}
-                                    <li class="active"><a href="/admin/assets/list/{{$v}}">{{$v}}</a></li>
-                                {{ else }}
-                                    <li><a href="/admin/assets/list/{{$v}}">{{$v}}</a></li>
-                                {{ end }}
-                                {{ end }}
-                                    <li><a href="/admin/assets/list/{{.next}}">下一页</a></li>
-                                    <li><a href="/admin/assets/list/{{.pages}}">最后一页</a></li>
-                                </ul>
-                            </div>
                             <table id="dataList" class="table table-striped table-bordered table-hover">
                                 <thead>
                                 <tr align="center">
                                     <th>ID</th>
-                                    <th>Type</th>
-                                    <th>Content</th>
-                                    <th>Description</th>
-                                    <th>CreateTime</th>
-                                    <th>UpdateTime</th>
-                                    <th colspan="2">管理</th>
+                                    <th>APP 名称</th>
+                                    <th>描述</th>
+                                    <th>应用市场</th>
+                                    <th>开发者</th>
+                                    <th>发布日期</th>
+                                    <th>URL</th>
+                                    <th>MD5 哈希</th>
+                                    <th>APP 文件名</th>
+                                    <th colspan="3">状态</th>
                                 </tr>
-                                {{range .assets}}
+                                {{range .appAssets}}
                                 <tr>
                                     <td>{{.Id}}</td>
-                                    <td>{{.Type}}</td>
-                                    <td>{{.Content}}</td>
-                                    <td>{{.Desc}}</td>
-                                    <td>{{.CreatedTime}}</td>
-                                    <td>{{.UpdatedTime}}</td>
-                                    <td><a href="/admin/assets/edit/{{.Id}}">edit</a></td>
-                                    <td><a href="/admin/assets/del/{{.Id}}">del</a></td>
+                                    <td>{{.Name}}</td>
+                                    <td>{{.Description}}</td>
+                                    <td>{{.Market}}</td>
+                                    <td>{{.Developer}}</td>
+                                    <td>{{.DeployDate}}</td>
+                                    <td>{{.Url}}</td>
+                                    <td>{{.Hash}}</td>
+                                    <td>{{.Filename}}</td>
+                                    <td>{{if eq 0 .Status}}未处理{{else if eq 1 .Status}}
+                                    已确认资产
+                                        {{else if eq 2 .Status}}
+                                        已确认仿冒
+                                        {{end}}
+                                </td>
+                                    <td><a href="/admin/app/edit/?id={{.Id}}">edit</a></td>
+                                    <td><a href="/admin/app/del/?id={{.Id}}">del</a></td>
                                 </tr>
                                 {{end}}
                                 </thead>
@@ -91,5 +93,7 @@
 <script src="/lib/datatables/dataTables.bootstrap.min.js"></script>
 <script src="/lib/adminLET2/js/app.min.js"></script>
 <script src="/js/common.js"></script>
+<script src="/js/sparkmd5.js"></script>
+<script src="/js/upload.js"></script>
 </body>
 </html>

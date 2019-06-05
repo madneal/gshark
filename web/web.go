@@ -52,11 +52,11 @@ func RunWeb(ctx *cli.Context) {
 				},
 				"unescaped": func(x string) interface{} { return template.HTML(x) },
 			}},
-			Delims:          macaron.Delims{"{{", "}}"},
-			Charset:         "UTF-8",
-			IndentJSON:      true,
-			IndentXML:       true,
-			PrefixJSON:      []byte("macaron"),
+			Delims:     macaron.Delims{"{{", "}}"},
+			Charset:    "UTF-8",
+			IndentJSON: true,
+			IndentXML:  true,
+			//PrefixJSON:      []byte("macaron"),
 			PrefixXML:       []byte("macaron"),
 			HTMLContentType: "text/html",
 		}))
@@ -67,7 +67,32 @@ func RunWeb(ctx *cli.Context) {
 		// 最大生存时间，默认和 GC 执行时间间隔相同
 		Maxlifetime: 3600,
 	}))
-	m.Use(csrf.Csrfer())
+	m.Use(csrf.Csrfer(csrf.Options{
+		// 用于生成令牌的全局秘钥，默认为随机字符串
+		Secret: "mysecret",
+		// 用于传递令牌的 HTTP 请求头信息字段，默认为 "X-CSRFToken"
+		Header: "X-CSRFToken",
+		// 用于传递令牌的表单字段名，默认为 "_csrf"
+		Form: "_csrf",
+		// 用于传递令牌的 Cookie 名称，默认为 "_csrf"
+		Cookie: "_csrf",
+		// Cookie 设置路径，默认为 "/"
+		CookiePath: "/",
+		// 用于保存用户 ID 的 session 名称，默认为 "uid"
+		SessionKey: "uid",
+		// 用于指定是否将令牌设置到响应的头信息中，默认为 false
+		SetHeader: false,
+		// 用于指定是否将令牌设置到响应的 Cookie 中，默认为 false
+		SetCookie: false,
+		// 用于指定是否要求只有使用 HTTPS 时才设置 Cookie，默认为 false
+		Secure: false,
+		// 用于禁止请求头信息中包括 Origin 字段，默认为 false
+		Origin: false,
+		// 错误处理函数，默认为简单的错误输出
+		ErrorFunc: func(w http.ResponseWriter) {
+			http.Error(w, "Invalid csrf token.", http.StatusBadRequest)
+		},
+	}))
 	m.Use(cache.Cacher())
 	m.Get("/", routers.Index)
 	m.Group("/admin", func() {
@@ -97,6 +122,18 @@ func RunWeb(ctx *cli.Context) {
 			m.Post("/edit/:id", routers.DoEditAssets)
 			m.Get("/del/:id", routers.DeleteAssets)
 			m.Get("/del_all/", routers.DeleteAllAssets)
+		})
+
+		m.Group("/app/", func() {
+			m.Get("", routers.ListAppAssets)
+			m.Get("/list", routers.ListAppAssets)
+			m.Get("/detect/", routers.DetectApp)
+			m.Get("/appid/", routers.GetAppAsset)
+			m.Get("/new", routers.NewAppAsset)
+			m.Post("/new", routers.DoNewAppAsset)
+			m.Get("/del/", routers.DelAppAsset)
+			m.Get("/edit/", routers.EditAppAsset)
+			m.Post("/edit/", csrf.Validate, routers.DoEditAppAsset)
 		})
 
 		m.Group("/tokens/", func() {

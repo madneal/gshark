@@ -21,6 +21,7 @@ func GetDetailedReportById(ctx *macaron.Context, sess session.Store) {
 		codeResultDetail, _ := models.GetCodeResultDetailById(int64(Id))
 		setUserInfoOfCodeResultDetail(codeResultDetail)
 		ctx.Data["detailed_report"] = codeResultDetail
+		ctx.Data["role"] = sess.Get("user").(string)
 		ctx.HTML(200, "report_detail")
 	} else {
 		ctx.Redirect("/admin/login/")

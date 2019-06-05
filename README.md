@@ -95,9 +95,7 @@ To execute `main scan`, you need to add a Github token for crawl information in 
 
 ## Wechat
 
-<p align="center">
-   <img alt="wechat" src="https://s2.ax1x.com/2019/03/06/kv8Mfx.jpg" width="320" height="400"/>
-</p>
+If you would like to join wechat group, you can add my wechat `Cafery` with the message `gshark`.
 
 ## License
 
