@@ -41,6 +41,7 @@ type CodeResult struct {
 	RepoPath    *string
 	Keyword     *string
 	Score       float32
+	Source      string            // the source of the result, including gshark and gsil
 }
 
 type MatchedText struct {
