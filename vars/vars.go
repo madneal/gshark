@@ -9,6 +9,7 @@ const (
 	DefaultAnchor                = "#L{line}"
 	PageStep                     = 5
 	SearchNum                    = 25
+	Source                       = "gshark"
 )
 
 var (

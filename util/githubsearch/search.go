@@ -7,6 +7,7 @@ import (
 	"github.com/google/go-github/github"
 	"github.com/neal1991/gshark/logger"
 	"github.com/neal1991/gshark/models"
+	"github.com/neal1991/gshark/vars"
 	"regexp"
 	"strings"
 	"sync"
@@ -93,6 +94,7 @@ func SaveResult(results []*github.CodeSearchResult, err error, keyword *string) 
 					var codeResult *models.CodeResult
 					err = json.Unmarshal(ret, &codeResult)
 					codeResult.Keyword = keyword
+					codeResult.Source = vars.Source
 					fullName := codeResult.Repository.GetFullName()
 					codeResult.RepoName = fullName
 
