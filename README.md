@@ -13,7 +13,6 @@ The project is based on golang with AdminLTE to build a management system to man
 # Features
 
 * Scan for related keywords in github
-* Scan for related keywords APP of Huawei APP market
 
 ## Requirements
 
