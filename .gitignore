@@ -14,3 +14,4 @@ main
 test
 
 conf/app.ini
+nohup.out
