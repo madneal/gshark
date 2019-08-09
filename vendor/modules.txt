@@ -1,0 +1,138 @@
+# github.com/Knetic/govaluate v3.0.1-0.20171022003610-9aa49832a739+incompatible
+github.com/Knetic/govaluate
+# github.com/PuerkitoBio/goquery v1.5.0
+github.com/PuerkitoBio/goquery
+# github.com/Unknwon/com v0.0.0-20190214221849-2d12a219ccaf
+github.com/Unknwon/com
+# github.com/andybalholm/cascadia v1.0.0
+github.com/andybalholm/cascadia
+# github.com/antchfx/htmlquery v1.0.0
+github.com/antchfx/htmlquery
+# github.com/antchfx/xmlquery v1.0.0
+github.com/antchfx/xmlquery
+# github.com/antchfx/xpath v1.0.0
+github.com/antchfx/xpath
+# github.com/casbin/casbin v1.9.1
+github.com/casbin/casbin
+github.com/casbin/casbin/effect
+github.com/casbin/casbin/log
+github.com/casbin/casbin/model
+github.com/casbin/casbin/persist
+github.com/casbin/casbin/persist/file-adapter
+github.com/casbin/casbin/rbac
+github.com/casbin/casbin/rbac/default-role-manager
+github.com/casbin/casbin/util
+github.com/casbin/casbin/config
+github.com/casbin/casbin/errors
+# github.com/davecgh/go-spew v1.1.1
+github.com/davecgh/go-spew/spew
+# github.com/go-macaron/cache v0.0.0-20151013081102-561735312776
+github.com/go-macaron/cache
+# github.com/go-macaron/csrf v0.0.0-20190131233648-3751b136073c
+github.com/go-macaron/csrf
+# github.com/go-macaron/inject v0.0.0-20160627170012-d8a0b8677191
+github.com/go-macaron/inject
+# github.com/go-macaron/session v0.0.0-20190131233854-0a0a789bf193
+github.com/go-macaron/session
+# github.com/go-sql-driver/mysql v1.4.1
+github.com/go-sql-driver/mysql
+# github.com/go-xorm/builder v0.3.2
+github.com/go-xorm/builder
+# github.com/go-xorm/core v0.6.2
+github.com/go-xorm/core
+# github.com/go-xorm/xorm v0.7.1
+github.com/go-xorm/xorm
+# github.com/gobwas/glob v0.2.3
+github.com/gobwas/glob
+github.com/gobwas/glob/compiler
+github.com/gobwas/glob/syntax
+github.com/gobwas/glob/match
+github.com/gobwas/glob/syntax/ast
+github.com/gobwas/glob/util/runes
+github.com/gobwas/glob/syntax/lexer
+github.com/gobwas/glob/util/strings
+# github.com/gocolly/colly v1.2.0
+github.com/gocolly/colly
+github.com/gocolly/colly/debug
+github.com/gocolly/colly/storage
+# github.com/golang/protobuf v1.2.0
+github.com/golang/protobuf/proto
+# github.com/google/go-github v17.0.0+incompatible
+github.com/google/go-github/github
+# github.com/google/go-querystring v1.0.0
+github.com/google/go-querystring/query
+# github.com/kennygrant/sanitize v1.2.4
+github.com/kennygrant/sanitize
+# github.com/konsorten/go-windows-terminal-sequences v1.0.1
+github.com/konsorten/go-windows-terminal-sequences
+# github.com/lib/pq v1.0.0
+github.com/lib/pq
+github.com/lib/pq/oid
+# github.com/mattn/go-colorable v0.1.0
+github.com/mattn/go-colorable
+# github.com/mattn/go-isatty v0.0.4
+github.com/mattn/go-isatty
+# github.com/mattn/go-sqlite3 v1.10.0
+github.com/mattn/go-sqlite3
+# github.com/mgutz/ansi v0.0.0-20170206155736-9520e82c474b
+github.com/mgutz/ansi
+# github.com/pmezard/go-difflib v1.0.0
+github.com/pmezard/go-difflib/difflib
+# github.com/saintfish/chardet v0.0.0-20120816061221-3af4cd4741ca
+github.com/saintfish/chardet
+# github.com/sirupsen/logrus v1.3.0
+github.com/sirupsen/logrus
+# github.com/stretchr/testify v1.3.0
+github.com/stretchr/testify/assert
+# github.com/temoto/robotstxt v1.1.1
+github.com/temoto/robotstxt
+# github.com/urfave/cli v1.20.0
+github.com/urfave/cli
+# github.com/x-cray/logrus-prefixed-formatter v0.5.2
+github.com/x-cray/logrus-prefixed-formatter
+# golang.org/x/crypto v0.0.0-20180904163835-0709b304e793
+golang.org/x/crypto/ssh/terminal
+golang.org/x/crypto/pbkdf2
+# golang.org/x/net v0.0.0-20190108225652-1e06a53dbb7e
+golang.org/x/net/html
+golang.org/x/net/html/charset
+golang.org/x/net/html/atom
+golang.org/x/net/context
+golang.org/x/net/context/ctxhttp
+# golang.org/x/oauth2 v0.0.0-20190212230446-3e8b2be13635
+golang.org/x/oauth2
+golang.org/x/oauth2/internal
+# golang.org/x/sys v0.0.0-20180909124046-d0be0721c37e
+golang.org/x/sys/unix
+golang.org/x/sys/windows
+# golang.org/x/text v0.3.0
+golang.org/x/text/encoding
+golang.org/x/text/encoding/charmap
+golang.org/x/text/encoding/htmlindex
+golang.org/x/text/transform
+golang.org/x/text/encoding/internal/identifier
+golang.org/x/text/encoding/internal
+golang.org/x/text/encoding/japanese
+golang.org/x/text/encoding/korean
+golang.org/x/text/encoding/simplifiedchinese
+golang.org/x/text/encoding/traditionalchinese
+golang.org/x/text/encoding/unicode
+golang.org/x/text/language
+golang.org/x/text/internal/utf8internal
+golang.org/x/text/runes
+golang.org/x/text/internal/tag
+# google.golang.org/appengine v1.4.0
+google.golang.org/appengine/cloudsql
+google.golang.org/appengine/urlfetch
+google.golang.org/appengine/internal
+google.golang.org/appengine/internal/urlfetch
+google.golang.org/appengine/internal/base
+google.golang.org/appengine/internal/datastore
+google.golang.org/appengine/internal/log
+google.golang.org/appengine/internal/remote_api
+# gopkg.in/ini.v1 v1.41.0
+gopkg.in/ini.v1
+# gopkg.in/macaron.v1 v1.3.2
+gopkg.in/macaron.v1
+# gopkg.in/yaml.v2 v2.2.1
+gopkg.in/yaml.v2
