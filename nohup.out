@@ -1,0 +1,391 @@
+time="2019-06-05T15:08:30+08:00" level=info msg="Init rules, err: <nil>" prefix=GShark
+2019/06/05 15:08:30 Model:
+2019/06/05 15:08:30 r.r: sub, obj, act
+2019/06/05 15:08:30 p.p: sub, obj, act
+2019/06/05 15:08:30 e.e: some(where (p_eft == allow))
+2019/06/05 15:08:30 m.m: g(r_sub, p_sub) && keyMatch(r_obj, p_obj) && (r_act == p_act || p_act == "*")
+2019/06/05 15:08:30 g.g: _, _
+2019/06/05 15:08:30 Policy:
+2019/06/05 15:08:30 p: sub, obj, act: [[admin /* *] [anonymous /admin/index/* *] [anonymous /admin/login/* *] [anonymous /admin/logout/* *] [anonymous /admin/login *] [anonymous /admin/logout *] [user /admin/index/* *] [user /admin/login/* *] [user /admin/logout/* *] [user /admin/login *] [user /admin/logout *] [user /admin/reports/* GET] [user /admin/app/* GET] [user /admin/app/* POST] [* /favicon.ico GET]]
+2019/06/05 15:08:30 g: _, _: []
+2019/06/05 15:08:30 Role links for: g
+2019/06/05 15:08:30 
+time="2019-06-05T15:08:30+08:00" level=info msg="Server is running on 0.0.0.0:8899" prefix=GShark
+[Macaron] 2019-06-05 15:08:47: Started GET /admin/login for 114.87.237.156
+2019/06/05 15:08:47 Request: anonymous, /admin/login, GET ---> true
+[Macaron] [1;32m2019-06-05 15:08:47: Completed GET /admin/login 200 OK in 14.90647ms[0m
+[Macaron] 2019-06-05 15:08:47: Started GET /lib/bootstrap/css/bootstrap.min.css for 114.87.237.156
+[Macaron] [Static] Serving /lib/bootstrap/css/bootstrap.min.css
+[Macaron] [1;32m2019-06-05 15:08:47: Completed GET /lib/bootstrap/css/bootstrap.min.css 200 OK in 1.092098ms[0m
+[Macaron] 2019-06-05 15:08:47: Started GET /lib/font-awesome-4.7.0/css/font-awesome.min.css for 114.87.237.156
+[Macaron] [Static] Serving /lib/font-awesome-4.7.0/css/font-awesome.min.css
+[Macaron] [1;32m2019-06-05 15:08:47: Completed GET /lib/font-awesome-4.7.0/css/font-awesome.min.css 200 OK in 588.193µs[0m
+[Macaron] 2019-06-05 15:08:47: Started GET /lib/adminLET2/css/AdminLTE.min.css for 114.87.237.156
+[Macaron] [Static] Serving /lib/adminLET2/css/AdminLTE.min.css
+[Macaron] [1;32m2019-06-05 15:08:47: Completed GET /lib/adminLET2/css/AdminLTE.min.css 200 OK in 835.897µs[0m
+[Macaron] 2019-06-05 15:08:47: Started GET /lib/adminLET2/css/skins/skin-blue.css for 114.87.237.156
+[Macaron] [Static] Serving /lib/adminLET2/css/skins/skin-blue.css
+[Macaron] [1;32m2019-06-05 15:08:47: Completed GET /lib/adminLET2/css/skins/skin-blue.css 200 OK in 442.403µs[0m
+[Macaron] 2019-06-05 15:08:47: Started GET /css/main.css for 114.87.237.156
+[Macaron] [Static] Serving /css/main.css
+[Macaron] [1;32m2019-06-05 15:08:47: Completed GET /css/main.css 200 OK in 563.031µs[0m
+[Macaron] 2019-06-05 15:08:47: Started GET /css/upload.css for 114.87.237.156
+[Macaron] [Static] Serving /css/upload.css
+[Macaron] [1;32m2019-06-05 15:08:47: Completed GET /css/upload.css 200 OK in 401.337µs[0m
+[Macaron] 2019-06-05 15:08:48: Started GET /lib/jQuery/jquery-2.2.3.min.js for 114.87.237.156
+[Macaron] [Static] Serving /lib/jQuery/jquery-2.2.3.min.js
+[Macaron] [1;32m2019-06-05 15:08:48: Completed GET /lib/jQuery/jquery-2.2.3.min.js 200 OK in 987.503µs[0m
+[Macaron] 2019-06-05 15:08:48: Started GET /lib/bootstrap/js/bootstrap.min.js for 114.87.237.156
+[Macaron] [Static] Serving /lib/bootstrap/js/bootstrap.min.js
+[Macaron] [1;32m2019-06-05 15:08:48: Completed GET /lib/bootstrap/js/bootstrap.min.js 200 OK in 786.721µs[0m
+[Macaron] 2019-06-05 15:08:50: Started GET /lib/bootstrap/fonts/glyphicons-halflings-regular.woff2 for 114.87.237.156
+[Macaron] [Static] Serving /lib/bootstrap/fonts/glyphicons-halflings-regular.woff2
+[Macaron] [1;32m2019-06-05 15:08:50: Completed GET /lib/bootstrap/fonts/glyphicons-halflings-regular.woff2 200 OK in 466.979µs[0m
+[Macaron] 2019-06-05 15:08:51: Started GET /favicon.ico for 114.87.237.156
+[Macaron] [Static] Serving /favicon.ico
+[Macaron] [1;32m2019-06-05 15:08:51: Completed GET /favicon.ico 200 OK in 831.883µs[0m
+[Macaron] 2019-06-05 15:10:04: Started POST /admin/login/ for 114.87.237.156
+2019/06/05 15:10:04 Request: anonymous, /admin/login/, POST ---> true
+[Macaron] [1;37m2019-06-05 15:10:04: Completed POST /admin/login/ 302 Found in 2.706777ms[0m
+[Macaron] 2019-06-05 15:10:04: Started GET /admin/index/ for 114.87.237.156
+2019/06/05 15:10:04 Request: admin, /admin/index/, GET ---> true
+[Macaron] [1;37m2019-06-05 15:10:04: Completed GET /admin/index/ 302 Found in 4.940496ms[0m
+[Macaron] 2019-06-05 15:10:04: Started GET /admin/reports/github/ for 114.87.237.156
+2019/06/05 15:10:04 Request: admin, /admin/reports/github/, GET ---> true
+[Macaron] [1;32m2019-06-05 15:10:04: Completed GET /admin/reports/github/ 200 OK in 16.422098ms[0m
+[Macaron] 2019-06-05 15:10:04: Started GET /lib/code_prettify/prettify.js for 114.87.237.156
+[Macaron] [Static] Serving /lib/code_prettify/prettify.js
+[Macaron] [1;32m2019-06-05 15:10:04: Completed GET /lib/code_prettify/prettify.js 200 OK in 974.531µs[0m
+[Macaron] 2019-06-05 15:10:04: Started GET /lib/code_prettify/prettify.css for 114.87.237.156
+[Macaron] [Static] Serving /lib/code_prettify/prettify.css
+[Macaron] [1;32m2019-06-05 15:10:04: Completed GET /lib/code_prettify/prettify.css 200 OK in 361.731µs[0m
+[Macaron] 2019-06-05 15:10:04: Started GET /lib/datatables/jquery.dataTables.min.js for 114.87.237.156
+[Macaron] [Static] Serving /lib/datatables/jquery.dataTables.min.js
+[Macaron] [1;32m2019-06-05 15:10:04: Completed GET /lib/datatables/jquery.dataTables.min.js 200 OK in 914.485µs[0m
+[Macaron] 2019-06-05 15:10:04: Started GET /lib/datatables/dataTables.bootstrap.min.js for 114.87.237.156
+[Macaron] [Static] Serving /lib/datatables/dataTables.bootstrap.min.js
+[Macaron] [1;32m2019-06-05 15:10:04: Completed GET /lib/datatables/dataTables.bootstrap.min.js 200 OK in 423.279µs[0m
+[Macaron] 2019-06-05 15:10:04: Started GET /lib/adminLET2/js/app.min.js for 114.87.237.156
+[Macaron] [Static] Serving /lib/adminLET2/js/app.min.js
+[Macaron] [1;32m2019-06-05 15:10:04: Completed GET /lib/adminLET2/js/app.min.js 200 OK in 477.686µs[0m
+[Macaron] 2019-06-05 15:10:04: Started GET /js/common.js for 114.87.237.156
+[Macaron] [Static] Serving /js/common.js
+[Macaron] [1;32m2019-06-05 15:10:04: Completed GET /js/common.js 200 OK in 320.601µs[0m
+[Macaron] 2019-06-05 15:10:04: Started GET /lib/font-awesome-4.7.0/fonts/fontawesome-webfont.woff2?v=4.7.0 for 114.87.237.156
+[Macaron] [Static] Serving /lib/font-awesome-4.7.0/fonts/fontawesome-webfont.woff2
+[Macaron] [1;32m2019-06-05 15:10:04: Completed GET /lib/font-awesome-4.7.0/fonts/fontawesome-webfont.woff2?v=4.7.0 200 OK in 528.916µs[0m
+[Macaron] 2019-06-05 15:10:12: Started GET /admin/tokens/ for 114.87.237.156
+2019/06/05 15:10:12 Request: admin, /admin/tokens/, GET ---> true
+[Macaron] [1;32m2019-06-05 15:10:12: Completed GET /admin/tokens/ 200 OK in 10.437806ms[0m
+[Macaron] 2019-06-05 15:10:15: Started GET /admin/tokens/new/ for 114.87.237.156
+2019/06/05 15:10:15 Request: admin, /admin/tokens/new/, GET ---> true
+[Macaron] [1;32m2019-06-05 15:10:15: Completed GET /admin/tokens/new/ 200 OK in 11.742199ms[0m
+[Macaron] 2019-06-05 15:14:39: Started POST /admin/tokens/new/ for 114.87.237.156
+2019/06/05 15:14:39 Request: admin, /admin/tokens/new/, POST ---> true
+[Macaron] [1;37m2019-06-05 15:14:39: Completed POST /admin/tokens/new/ 302 Found in 18.211242ms[0m
+[Macaron] 2019-06-05 15:14:39: Started GET /admin/tokens/list/ for 114.87.237.156
+2019/06/05 15:14:39 Request: admin, /admin/tokens/list/, GET ---> true
+[Macaron] [1;32m2019-06-05 15:14:39: Completed GET /admin/tokens/list/ 200 OK in 10.192259ms[0m
+[Macaron] 2019-06-05 15:16:19: Started GET /admin/rules/ for 114.87.237.156
+2019/06/05 15:16:19 Request: admin, /admin/rules/, GET ---> true
+[Macaron] [1;32m2019-06-05 15:16:19: Completed GET /admin/rules/ 200 OK in 15.638741ms[0m
+[Macaron] 2019-06-05 15:16:21: Started GET /admin/reports/app/ for 114.87.237.156
+2019/06/05 15:16:21 Request: admin, /admin/reports/app/, GET ---> true
+[Macaron] [1;32m2019-06-05 15:16:21: Completed GET /admin/reports/app/ 200 OK in 16.595373ms[0m
+[Macaron] 2019-06-05 15:16:26: Started GET /admin/tokens/ for 114.87.237.156
+2019/06/05 15:16:26 Request: admin, /admin/tokens/, GET ---> true
+[Macaron] [1;32m2019-06-05 15:16:26: Completed GET /admin/tokens/ 200 OK in 14.412847ms[0m
+[Macaron] 2019-06-05 15:16:30: Started GET /admin/rules/ for 114.87.237.156
+2019/06/05 15:16:30 Request: admin, /admin/rules/, GET ---> true
+[Macaron] [1;32m2019-06-05 15:16:30: Completed GET /admin/rules/ 200 OK in 19.25925ms[0m
+[Macaron] 2019-06-05 15:16:41: Started GET /admin/rules/new/ for 114.87.237.156
+2019/06/05 15:16:41 Request: admin, /admin/rules/new/, GET ---> true
+[Macaron] [1;32m2019-06-05 15:16:41: Completed GET /admin/rules/new/ 200 OK in 10.897027ms[0m
+[Macaron] 2019-06-05 15:17:03: Started POST /admin/rules/new/ for 114.87.237.156
+2019/06/05 15:17:03 Request: admin, /admin/rules/new/, POST ---> true
+[Macaron] [1;37m2019-06-05 15:17:03: Completed POST /admin/rules/new/ 302 Found in 23.366005ms[0m
+[Macaron] 2019-06-05 15:17:04: Started GET /admin/rules/list/ for 114.87.237.156
+2019/06/05 15:17:04 Request: admin, /admin/rules/list/, GET ---> true
+[Macaron] [1;32m2019-06-05 15:17:04: Completed GET /admin/rules/list/ 200 OK in 20.286501ms[0m
+[Macaron] 2019-06-05 15:17:29: Started GET /admin/reports/github/ for 114.87.237.156
+2019/06/05 15:17:29 Request: admin, /admin/reports/github/, GET ---> true
+[Macaron] [1;32m2019-06-05 15:17:29: Completed GET /admin/reports/github/ 200 OK in 20.142891ms[0m
+[Macaron] 2019-06-05 15:17:30: Started GET /img/confirm.png for 114.87.237.156
+[Macaron] [Static] Serving /img/confirm.png
+[Macaron] [1;32m2019-06-05 15:17:30: Completed GET /img/confirm.png 200 OK in 688.271µs[0m
+[Macaron] 2019-06-05 15:17:30: Started GET /img/file.png for 114.87.237.156
+[Macaron] [Static] Serving /img/file.png
+[Macaron] [1;32m2019-06-05 15:17:30: Completed GET /img/file.png 200 OK in 325.63µs[0m
+[Macaron] 2019-06-05 15:17:30: Started GET /img/repo.png for 114.87.237.156
+[Macaron] [Static] Serving /img/repo.png
+[Macaron] [1;32m2019-06-05 15:17:30: Completed GET /img/repo.png 200 OK in 417.622µs[0m
+time="2019-06-05T15:22:40+08:00" level=info msg="scan github code and app results" prefix=GShark
+time="2019-06-05T15:22:40+08:00" level=info msg="Complete the scan of APP, start to sleep 1h0m0s seconds" prefix=GShark
+search with the query:"rmb.pingan.com.cn" +in:file -extension:.ico -extension:.flv -extension:.css -extension:.jpg -extension:.png -extension:.jpeg -extension:.gif -extension:.pdf -extension:.ss3 -extension:.rar -extension:.zip -extension:.avi -extension:.mp4 -extension:.swf -extension:.wmi -extension:.exe -extension:.mpeg -extension:.dll -extension:.pcap -extension:.log -extension:.class -extension:.html -language:html -language:smail -language:jsp
+time="2019-06-05T15:22:42+08:00" level=info msg="remaining: 29, nextPage: 0, lastPage: 0" prefix=GShark
+time="2019-06-05T15:22:45+08:00" level=info msg="Has inserted 0 results into code_result" prefix=GShark
+time="2019-06-05T15:22:45+08:00" level=info msg="Complete the scan of Github, start to sleep 1h0m0s seconds" prefix=GShark
+[Macaron] 2019-06-05 15:25:42: Started GET /admin/login for 222.66.76.194
+2019/06/05 15:25:42 Request: anonymous, /admin/login, GET ---> true
+[Macaron] [1;32m2019-06-05 15:25:42: Completed GET /admin/login 200 OK in 7.118186ms[0m
+[Macaron] 2019-06-05 15:25:43: Started GET /lib/bootstrap/css/bootstrap.min.css for 222.66.76.194
+[Macaron] [Static] Serving /lib/bootstrap/css/bootstrap.min.css
+[Macaron] [1;32m2019-06-05 15:25:43: Completed GET /lib/bootstrap/css/bootstrap.min.css 200 OK in 947.743µs[0m
+[Macaron] 2019-06-05 15:25:43: Started GET /lib/font-awesome-4.7.0/css/font-awesome.min.css for 222.66.76.194
+[Macaron] [Static] Serving /lib/font-awesome-4.7.0/css/font-awesome.min.css
+[Macaron] [1;32m2019-06-05 15:25:43: Completed GET /lib/font-awesome-4.7.0/css/font-awesome.min.css 200 OK in 809.336µs[0m
+[Macaron] 2019-06-05 15:25:43: Started GET /lib/adminLET2/css/skins/skin-blue.css for 222.66.76.194
+[Macaron] [Static] Serving /lib/adminLET2/css/skins/skin-blue.css
+[Macaron] [1;32m2019-06-05 15:25:43: Completed GET /lib/adminLET2/css/skins/skin-blue.css 200 OK in 426.202µs[0m
+[Macaron] 2019-06-05 15:25:43: Started GET /lib/adminLET2/css/AdminLTE.min.css for 222.66.76.194
+[Macaron] [Static] Serving /lib/adminLET2/css/AdminLTE.min.css
+[Macaron] [1;32m2019-06-05 15:25:43: Completed GET /lib/adminLET2/css/AdminLTE.min.css 200 OK in 786.666µs[0m
+[Macaron] 2019-06-05 15:25:43: Started GET /css/main.css for 222.66.76.194
+[Macaron] [Static] Serving /css/main.css
+[Macaron] [1;32m2019-06-05 15:25:43: Completed GET /css/main.css 200 OK in 299.089µs[0m
+[Macaron] 2019-06-05 15:25:43: Started GET /css/upload.css for 222.66.76.194
+[Macaron] [Static] Serving /css/upload.css
+[Macaron] [1;32m2019-06-05 15:25:43: Completed GET /css/upload.css 200 OK in 393.884µs[0m
+[Macaron] 2019-06-05 15:25:43: Started GET /lib/jQuery/jquery-2.2.3.min.js for 222.66.76.194
+[Macaron] [Static] Serving /lib/jQuery/jquery-2.2.3.min.js
+[Macaron] [1;32m2019-06-05 15:25:43: Completed GET /lib/jQuery/jquery-2.2.3.min.js 200 OK in 639.525µs[0m
+[Macaron] 2019-06-05 15:25:43: Started GET /lib/bootstrap/js/bootstrap.min.js for 222.66.76.194
+[Macaron] [Static] Serving /lib/bootstrap/js/bootstrap.min.js
+[Macaron] [1;32m2019-06-05 15:25:43: Completed GET /lib/bootstrap/js/bootstrap.min.js 200 OK in 549.956µs[0m
+[Macaron] 2019-06-05 15:25:44: Started GET /lib/bootstrap/fonts/glyphicons-halflings-regular.woff2 for 222.66.76.194
+[Macaron] [Static] Serving /lib/bootstrap/fonts/glyphicons-halflings-regular.woff2
+[Macaron] [1;32m2019-06-05 15:25:44: Completed GET /lib/bootstrap/fonts/glyphicons-halflings-regular.woff2 200 OK in 564.249µs[0m
+[Macaron] 2019-06-05 15:25:46: Started GET /favicon.ico for 222.66.76.194
+[Macaron] [Static] Serving /favicon.ico
+[Macaron] [1;32m2019-06-05 15:25:46: Completed GET /favicon.ico 200 OK in 408.68µs[0m
+[Macaron] 2019-06-05 15:26:09: Started POST /admin/login/ for 222.66.76.194
+2019/06/05 15:26:09 Request: anonymous, /admin/login/, POST ---> true
+[Macaron] [1;37m2019-06-05 15:26:09: Completed POST /admin/login/ 302 Found in 3.390436ms[0m
+[Macaron] 2019-06-05 15:26:10: Started GET /admin/index/ for 222.66.76.194
+2019/06/05 15:26:10 Request: admin, /admin/index/, GET ---> true
+[Macaron] [1;37m2019-06-05 15:26:10: Completed GET /admin/index/ 302 Found in 858.032µs[0m
+[Macaron] 2019-06-05 15:26:10: Started GET /admin/reports/github/ for 222.66.76.194
+2019/06/05 15:26:10 Request: admin, /admin/reports/github/, GET ---> true
+[Macaron] [1;32m2019-06-05 15:26:10: Completed GET /admin/reports/github/ 200 OK in 26.975304ms[0m
+[Macaron] 2019-06-05 15:26:10: Started GET /lib/code_prettify/prettify.css for 222.66.76.194
+[Macaron] [Static] Serving /lib/code_prettify/prettify.css
+[Macaron] [1;32m2019-06-05 15:26:10: Completed GET /lib/code_prettify/prettify.css 200 OK in 446.844µs[0m
+[Macaron] 2019-06-05 15:26:10: Started GET /lib/code_prettify/prettify.js for 222.66.76.194
+[Macaron] [Static] Serving /lib/code_prettify/prettify.js
+[Macaron] [1;32m2019-06-05 15:26:10: Completed GET /lib/code_prettify/prettify.js 200 OK in 490.183µs[0m
+[Macaron] 2019-06-05 15:26:10: Started GET /img/confirm.png for 222.66.76.194
+[Macaron] [Static] Serving /img/confirm.png
+[Macaron] [1;32m2019-06-05 15:26:10: Completed GET /img/confirm.png 200 OK in 232.16µs[0m
+[Macaron] 2019-06-05 15:26:10: Started GET /img/file.png for 222.66.76.194
+[Macaron] [Static] Serving /img/file.png
+[Macaron] [1;32m2019-06-05 15:26:10: Completed GET /img/file.png 200 OK in 191.44µs[0m
+[Macaron] 2019-06-05 15:26:10: Started GET /lib/datatables/jquery.dataTables.min.js for 222.66.76.194
+[Macaron] [Static] Serving /lib/datatables/jquery.dataTables.min.js
+[Macaron] [1;32m2019-06-05 15:26:10: Completed GET /lib/datatables/jquery.dataTables.min.js 200 OK in 599.613µs[0m
+[Macaron] 2019-06-05 15:26:10: Started GET /lib/datatables/dataTables.bootstrap.min.js for 222.66.76.194
+[Macaron] [Static] Serving /lib/datatables/dataTables.bootstrap.min.js
+[Macaron] [1;32m2019-06-05 15:26:10: Completed GET /lib/datatables/dataTables.bootstrap.min.js 200 OK in 542.854µs[0m
+[Macaron] 2019-06-05 15:26:10: Started GET /lib/adminLET2/js/app.min.js for 222.66.76.194
+[Macaron] [Static] Serving /lib/adminLET2/js/app.min.js
+[Macaron] [1;32m2019-06-05 15:26:10: Completed GET /lib/adminLET2/js/app.min.js 200 OK in 525.855µs[0m
+[Macaron] 2019-06-05 15:26:10: Started GET /js/common.js for 222.66.76.194
+[Macaron] [Static] Serving /js/common.js
+[Macaron] [1;32m2019-06-05 15:26:10: Completed GET /js/common.js 200 OK in 214.237µs[0m
+[Macaron] 2019-06-05 15:26:10: Started GET /img/repo.png for 222.66.76.194
+[Macaron] [Static] Serving /img/repo.png
+[Macaron] [1;32m2019-06-05 15:26:10: Completed GET /img/repo.png 200 OK in 728.176µs[0m
+[Macaron] 2019-06-05 15:26:10: Started GET /lib/font-awesome-4.7.0/fonts/fontawesome-webfont.woff2?v=4.7.0 for 222.66.76.194
+[Macaron] [Static] Serving /lib/font-awesome-4.7.0/fonts/fontawesome-webfont.woff2
+[Macaron] [1;32m2019-06-05 15:26:10: Completed GET /lib/font-awesome-4.7.0/fonts/fontawesome-webfont.woff2?v=4.7.0 200 OK in 769.54µs[0m
+[Macaron] 2019-06-05 15:26:22: Started GET /admin/reports/app/ for 222.66.76.194
+2019/06/05 15:26:22 Request: admin, /admin/reports/app/, GET ---> true
+[Macaron] [1;32m2019-06-05 15:26:22: Completed GET /admin/reports/app/ 200 OK in 12.748011ms[0m
+[Macaron] 2019-06-05 15:26:29: Started GET /admin/rules/ for 222.66.76.194
+2019/06/05 15:26:29 Request: admin, /admin/rules/, GET ---> true
+[Macaron] [1;32m2019-06-05 15:26:29: Completed GET /admin/rules/ 200 OK in 16.884574ms[0m
+[Macaron] 2019-06-05 15:26:41: Started GET /admin/filterrules/ for 222.66.76.194
+2019/06/05 15:26:41 Request: admin, /admin/filterrules/, GET ---> true
+[Macaron] [1;32m2019-06-05 15:26:41: Completed GET /admin/filterrules/ 200 OK in 13.619068ms[0m
+[Macaron] 2019-06-05 15:27:04: Started GET /admin/reports/app/ for 222.66.76.194
+2019/06/05 15:27:04 Request: admin, /admin/reports/app/, GET ---> true
+[Macaron] [1;32m2019-06-05 15:27:04: Completed GET /admin/reports/app/ 200 OK in 20.151913ms[0m
+[Macaron] 2019-06-05 15:27:13: Started GET /admin/reports/github/ for 222.66.76.194
+2019/06/05 15:27:13 Request: admin, /admin/reports/github/, GET ---> true
+[Macaron] [1;32m2019-06-05 15:27:13: Completed GET /admin/reports/github/ 200 OK in 16.910755ms[0m
+[Macaron] 2019-06-05 15:28:15: Started GET /admin/assets/ for 222.66.76.194
+2019/06/05 15:28:15 Request: admin, /admin/assets/, GET ---> true
+[Macaron] [1;32m2019-06-05 15:28:15: Completed GET /admin/assets/ 200 OK in 22.2626ms[0m
+[Macaron] 2019-06-05 15:28:32: Started GET /admin/reports/github/ for 222.66.76.194
+2019/06/05 15:28:32 Request: admin, /admin/reports/github/, GET ---> true
+[Macaron] [1;32m2019-06-05 15:28:32: Completed GET /admin/reports/github/ 200 OK in 15.498957ms[0m
+[Macaron] 2019-06-05 15:28:41: Started GET /admin/reports/github/confirm/7 for 222.66.76.194
+2019/06/05 15:28:41 Request: admin, /admin/reports/github/confirm/7, GET ---> true
+[Macaron] [1;37m2019-06-05 15:28:41: Completed GET /admin/reports/github/confirm/7 302 Found in 21.595733ms[0m
+[Macaron] 2019-06-05 15:28:41: Started GET /admin/reports/github/query/1 for 222.66.76.194
+2019/06/05 15:28:41 Request: admin, /admin/reports/github/query/1, GET ---> true
+[Macaron] [1;32m2019-06-05 15:28:41: Completed GET /admin/reports/github/query/1 200 OK in 16.804631ms[0m
+[Macaron] 2019-06-05 15:59:07: Started GET /admin/login for 103.246.38.196
+2019/06/05 15:59:07 Request: anonymous, /admin/login, GET ---> true
+[Macaron] [1;32m2019-06-05 15:59:07: Completed GET /admin/login 200 OK in 11.365642ms[0m
+[Macaron] 2019-06-05 15:59:07: Started GET / for 103.246.38.196
+2019/06/05 15:59:07 Request: anonymous, /, GET ---> false
+[Macaron] [4;31m2019-06-05 15:59:07: Completed GET / 403 Forbidden in 894.348µs[0m
+[Macaron] 2019-06-05 15:59:08: Started GET / for 155.64.38.90
+2019/06/05 15:59:08 Request: anonymous, /, GET ---> false
+[Macaron] [4;31m2019-06-05 15:59:08: Completed GET / 403 Forbidden in 1.006159ms[0m
+time="2019-06-05T16:22:40+08:00" level=info msg="Complete the scan of APP, start to sleep 1h0m0s seconds" prefix=GShark
+search with the query:"rmb.pingan.com.cn" +in:file -extension:.ico -extension:.flv -extension:.css -extension:.jpg -extension:.png -extension:.jpeg -extension:.gif -extension:.pdf -extension:.ss3 -extension:.rar -extension:.zip -extension:.avi -extension:.mp4 -extension:.swf -extension:.wmi -extension:.exe -extension:.mpeg -extension:.dll -extension:.pcap -extension:.log -extension:.class -extension:.html -language:html -language:smail -language:jsp
+time="2019-06-05T16:22:46+08:00" level=info msg="remaining: 29, nextPage: 0, lastPage: 0" prefix=GShark
+time="2019-06-05T16:22:49+08:00" level=info msg="Has inserted 0 results into code_result" prefix=GShark
+time="2019-06-05T16:22:49+08:00" level=info msg="Complete the scan of Github, start to sleep 1h0m0s seconds" prefix=GShark
+[Macaron] 2019-06-05 16:47:17: Started GET / for 222.66.76.194
+2019/06/05 16:47:17 Request: anonymous, /, GET ---> false
+[Macaron] [4;31m2019-06-05 16:47:17: Completed GET / 403 Forbidden in 2.625536ms[0m
+[Macaron] 2019-06-05 16:47:17: Started GET /favicon.ico for 222.66.76.194
+[Macaron] [Static] Serving /favicon.ico
+[Macaron] [1;32m2019-06-05 16:47:17: Completed GET /favicon.ico 200 OK in 440.687µs[0m
+[Macaron] 2019-06-05 16:47:35: Started GET /admin/login for 222.66.76.194
+2019/06/05 16:47:35 Request: anonymous, /admin/login, GET ---> true
+[Macaron] [1;32m2019-06-05 16:47:35: Completed GET /admin/login 200 OK in 14.060459ms[0m
+[Macaron] 2019-06-05 16:47:35: Started GET /lib/bootstrap/css/bootstrap.min.css for 222.66.76.194
+[Macaron] [Static] Serving /lib/bootstrap/css/bootstrap.min.css
+[Macaron] 2019-06-05 16:47:35: Started GET /lib/font-awesome-4.7.0/css/font-awesome.min.css for 222.66.76.194
+[Macaron] [Static] Serving /lib/font-awesome-4.7.0/css/font-awesome.min.css
+[Macaron] [1;32m2019-06-05 16:47:35: Completed GET /lib/bootstrap/css/bootstrap.min.css 200 OK in 829.309µs[0m
+[Macaron] [1;32m2019-06-05 16:47:35: Completed GET /lib/font-awesome-4.7.0/css/font-awesome.min.css 200 OK in 1.110292ms[0m
+[Macaron] 2019-06-05 16:47:35: Started GET /lib/adminLET2/css/AdminLTE.min.css for 222.66.76.194
+[Macaron] [Static] Serving /lib/adminLET2/css/AdminLTE.min.css
+[Macaron] [1;32m2019-06-05 16:47:35: Completed GET /lib/adminLET2/css/AdminLTE.min.css 200 OK in 821.721µs[0m
+[Macaron] 2019-06-05 16:47:35: Started GET /lib/adminLET2/css/skins/skin-blue.css for 222.66.76.194
+[Macaron] [Static] Serving /lib/adminLET2/css/skins/skin-blue.css
+[Macaron] [1;32m2019-06-05 16:47:35: Completed GET /lib/adminLET2/css/skins/skin-blue.css 200 OK in 767.5µs[0m
+[Macaron] 2019-06-05 16:47:35: Started GET /css/main.css for 222.66.76.194
+[Macaron] [Static] Serving /css/main.css
+[Macaron] [1;32m2019-06-05 16:47:35: Completed GET /css/main.css 200 OK in 339.143µs[0m
+[Macaron] 2019-06-05 16:47:35: Started GET /css/upload.css for 222.66.76.194
+[Macaron] [Static] Serving /css/upload.css
+[Macaron] [1;32m2019-06-05 16:47:35: Completed GET /css/upload.css 200 OK in 334.444µs[0m
+[Macaron] 2019-06-05 16:47:35: Started GET /lib/jQuery/jquery-2.2.3.min.js for 222.66.76.194
+[Macaron] [Static] Serving /lib/jQuery/jquery-2.2.3.min.js
+[Macaron] [1;32m2019-06-05 16:47:35: Completed GET /lib/jQuery/jquery-2.2.3.min.js 200 OK in 723.732µs[0m
+[Macaron] 2019-06-05 16:47:35: Started GET /lib/bootstrap/js/bootstrap.min.js for 222.66.76.194
+[Macaron] [Static] Serving /lib/bootstrap/js/bootstrap.min.js
+[Macaron] [1;32m2019-06-05 16:47:35: Completed GET /lib/bootstrap/js/bootstrap.min.js 200 OK in 620.063µs[0m
+[Macaron] 2019-06-05 16:47:36: Started GET /lib/bootstrap/fonts/glyphicons-halflings-regular.woff2 for 222.66.76.194
+[Macaron] [Static] Serving /lib/bootstrap/fonts/glyphicons-halflings-regular.woff2
+[Macaron] [1;32m2019-06-05 16:47:36: Completed GET /lib/bootstrap/fonts/glyphicons-halflings-regular.woff2 200 OK in 693.451µs[0m
+time="2019-06-05T17:22:40+08:00" level=info msg="Complete the scan of APP, start to sleep 1h0m0s seconds" prefix=GShark
+search with the query:"rmb.pingan.com.cn" +in:file -extension:.ico -extension:.flv -extension:.css -extension:.jpg -extension:.png -extension:.jpeg -extension:.gif -extension:.pdf -extension:.ss3 -extension:.rar -extension:.zip -extension:.avi -extension:.mp4 -extension:.swf -extension:.wmi -extension:.exe -extension:.mpeg -extension:.dll -extension:.pcap -extension:.log -extension:.class -extension:.html -language:html -language:smail -language:jsp
+time="2019-06-05T17:22:51+08:00" level=info msg="remaining: 29, nextPage: 0, lastPage: 0" prefix=GShark
+time="2019-06-05T17:22:54+08:00" level=info msg="Has inserted 0 results into code_result" prefix=GShark
+time="2019-06-05T17:22:54+08:00" level=info msg="Complete the scan of Github, start to sleep 1h0m0s seconds" prefix=GShark
+time="2019-06-05T18:22:40+08:00" level=info msg="Complete the scan of APP, start to sleep 1h0m0s seconds" prefix=GShark
+search with the query:"rmb.pingan.com.cn" +in:file -extension:.ico -extension:.flv -extension:.css -extension:.jpg -extension:.png -extension:.jpeg -extension:.gif -extension:.pdf -extension:.ss3 -extension:.rar -extension:.zip -extension:.avi -extension:.mp4 -extension:.swf -extension:.wmi -extension:.exe -extension:.mpeg -extension:.dll -extension:.pcap -extension:.log -extension:.class -extension:.html -language:html -language:smail -language:jsp
+time="2019-06-05T18:22:55+08:00" level=info msg="remaining: 29, nextPage: 0, lastPage: 0" prefix=GShark
+time="2019-06-05T18:22:58+08:00" level=info msg="Has inserted 0 results into code_result" prefix=GShark
+time="2019-06-05T18:22:58+08:00" level=info msg="Complete the scan of Github, start to sleep 1h0m0s seconds" prefix=GShark
+time="2019-06-05T19:22:40+08:00" level=info msg="Complete the scan of APP, start to sleep 1h0m0s seconds" prefix=GShark
+search with the query:"rmb.pingan.com.cn" +in:file -extension:.ico -extension:.flv -extension:.css -extension:.jpg -extension:.png -extension:.jpeg -extension:.gif -extension:.pdf -extension:.ss3 -extension:.rar -extension:.zip -extension:.avi -extension:.mp4 -extension:.swf -extension:.wmi -extension:.exe -extension:.mpeg -extension:.dll -extension:.pcap -extension:.log -extension:.class -extension:.html -language:html -language:smail -language:jsp
+time="2019-06-05T19:22:59+08:00" level=info msg="remaining: 29, nextPage: 0, lastPage: 0" prefix=GShark
+time="2019-06-05T19:23:02+08:00" level=info msg="Has inserted 0 results into code_result" prefix=GShark
+time="2019-06-05T19:23:02+08:00" level=info msg="Complete the scan of Github, start to sleep 1h0m0s seconds" prefix=GShark
+time="2019-06-05T20:22:40+08:00" level=info msg="Complete the scan of APP, start to sleep 1h0m0s seconds" prefix=GShark
+search with the query:"rmb.pingan.com.cn" +in:file -extension:.ico -extension:.flv -extension:.css -extension:.jpg -extension:.png -extension:.jpeg -extension:.gif -extension:.pdf -extension:.ss3 -extension:.rar -extension:.zip -extension:.avi -extension:.mp4 -extension:.swf -extension:.wmi -extension:.exe -extension:.mpeg -extension:.dll -extension:.pcap -extension:.log -extension:.class -extension:.html -language:html -language:smail -language:jsp
+time="2019-06-05T20:23:04+08:00" level=info msg="remaining: 29, nextPage: 0, lastPage: 0" prefix=GShark
+time="2019-06-05T20:23:07+08:00" level=info msg="Has inserted 0 results into code_result" prefix=GShark
+time="2019-06-05T20:23:07+08:00" level=info msg="Complete the scan of Github, start to sleep 1h0m0s seconds" prefix=GShark
+time="2019-06-05T21:22:40+08:00" level=info msg="Complete the scan of APP, start to sleep 1h0m0s seconds" prefix=GShark
+search with the query:"rmb.pingan.com.cn" +in:file -extension:.ico -extension:.flv -extension:.css -extension:.jpg -extension:.png -extension:.jpeg -extension:.gif -extension:.pdf -extension:.ss3 -extension:.rar -extension:.zip -extension:.avi -extension:.mp4 -extension:.swf -extension:.wmi -extension:.exe -extension:.mpeg -extension:.dll -extension:.pcap -extension:.log -extension:.class -extension:.html -language:html -language:smail -language:jsp
+time="2019-06-05T21:23:17+08:00" level=info msg="remaining: 29, nextPage: 0, lastPage: 0" prefix=GShark
+time="2019-06-05T21:23:20+08:00" level=info msg="Has inserted 0 results into code_result" prefix=GShark
+time="2019-06-05T21:23:20+08:00" level=info msg="Complete the scan of Github, start to sleep 1h0m0s seconds" prefix=GShark
+time="2019-06-05T22:22:40+08:00" level=info msg="Complete the scan of APP, start to sleep 1h0m0s seconds" prefix=GShark
+search with the query:"rmb.pingan.com.cn" +in:file -extension:.ico -extension:.flv -extension:.css -extension:.jpg -extension:.png -extension:.jpeg -extension:.gif -extension:.pdf -extension:.ss3 -extension:.rar -extension:.zip -extension:.avi -extension:.mp4 -extension:.swf -extension:.wmi -extension:.exe -extension:.mpeg -extension:.dll -extension:.pcap -extension:.log -extension:.class -extension:.html -language:html -language:smail -language:jsp
+time="2019-06-05T22:23:22+08:00" level=info msg="remaining: 29, nextPage: 0, lastPage: 0" prefix=GShark
+time="2019-06-05T22:23:25+08:00" level=info msg="Has inserted 0 results into code_result" prefix=GShark
+time="2019-06-05T22:23:25+08:00" level=info msg="Complete the scan of Github, start to sleep 1h0m0s seconds" prefix=GShark
+time="2019-06-05T23:22:40+08:00" level=info msg="Complete the scan of APP, start to sleep 1h0m0s seconds" prefix=GShark
+search with the query:"rmb.pingan.com.cn" +in:file -extension:.ico -extension:.flv -extension:.css -extension:.jpg -extension:.png -extension:.jpeg -extension:.gif -extension:.pdf -extension:.ss3 -extension:.rar -extension:.zip -extension:.avi -extension:.mp4 -extension:.swf -extension:.wmi -extension:.exe -extension:.mpeg -extension:.dll -extension:.pcap -extension:.log -extension:.class -extension:.html -language:html -language:smail -language:jsp
+time="2019-06-05T23:23:27+08:00" level=info msg="remaining: 29, nextPage: 0, lastPage: 0" prefix=GShark
+time="2019-06-05T23:23:30+08:00" level=info msg="Has inserted 0 results into code_result" prefix=GShark
+time="2019-06-05T23:23:30+08:00" level=info msg="Complete the scan of Github, start to sleep 1h0m0s seconds" prefix=GShark
+time="2019-06-06T00:22:40+08:00" level=info msg="Complete the scan of APP, start to sleep 1h0m0s seconds" prefix=GShark
+search with the query:"rmb.pingan.com.cn" +in:file -extension:.ico -extension:.flv -extension:.css -extension:.jpg -extension:.png -extension:.jpeg -extension:.gif -extension:.pdf -extension:.ss3 -extension:.rar -extension:.zip -extension:.avi -extension:.mp4 -extension:.swf -extension:.wmi -extension:.exe -extension:.mpeg -extension:.dll -extension:.pcap -extension:.log -extension:.class -extension:.html -language:html -language:smail -language:jsp
+time="2019-06-06T00:23:31+08:00" level=info msg="remaining: 29, nextPage: 0, lastPage: 0" prefix=GShark
+time="2019-06-06T00:23:34+08:00" level=info msg="Has inserted 0 results into code_result" prefix=GShark
+time="2019-06-06T00:23:34+08:00" level=info msg="Complete the scan of Github, start to sleep 1h0m0s seconds" prefix=GShark
+time="2019-06-06T01:22:40+08:00" level=info msg="Complete the scan of APP, start to sleep 1h0m0s seconds" prefix=GShark
+search with the query:"rmb.pingan.com.cn" +in:file -extension:.ico -extension:.flv -extension:.css -extension:.jpg -extension:.png -extension:.jpeg -extension:.gif -extension:.pdf -extension:.ss3 -extension:.rar -extension:.zip -extension:.avi -extension:.mp4 -extension:.swf -extension:.wmi -extension:.exe -extension:.mpeg -extension:.dll -extension:.pcap -extension:.log -extension:.class -extension:.html -language:html -language:smail -language:jsp
+time="2019-06-06T01:23:35+08:00" level=info msg="remaining: 29, nextPage: 0, lastPage: 0" prefix=GShark
+time="2019-06-06T01:23:38+08:00" level=info msg="Has inserted 0 results into code_result" prefix=GShark
+time="2019-06-06T01:23:38+08:00" level=info msg="Complete the scan of Github, start to sleep 1h0m0s seconds" prefix=GShark
+time="2019-06-06T02:22:40+08:00" level=info msg="Complete the scan of APP, start to sleep 1h0m0s seconds" prefix=GShark
+search with the query:"rmb.pingan.com.cn" +in:file -extension:.ico -extension:.flv -extension:.css -extension:.jpg -extension:.png -extension:.jpeg -extension:.gif -extension:.pdf -extension:.ss3 -extension:.rar -extension:.zip -extension:.avi -extension:.mp4 -extension:.swf -extension:.wmi -extension:.exe -extension:.mpeg -extension:.dll -extension:.pcap -extension:.log -extension:.class -extension:.html -language:html -language:smail -language:jsp
+time="2019-06-06T02:23:40+08:00" level=info msg="remaining: 29, nextPage: 0, lastPage: 0" prefix=GShark
+time="2019-06-06T02:23:43+08:00" level=info msg="Has inserted 0 results into code_result" prefix=GShark
+time="2019-06-06T02:23:43+08:00" level=info msg="Complete the scan of Github, start to sleep 1h0m0s seconds" prefix=GShark
+time="2019-06-06T03:22:40+08:00" level=info msg="Complete the scan of APP, start to sleep 1h0m0s seconds" prefix=GShark
+search with the query:"rmb.pingan.com.cn" +in:file -extension:.ico -extension:.flv -extension:.css -extension:.jpg -extension:.png -extension:.jpeg -extension:.gif -extension:.pdf -extension:.ss3 -extension:.rar -extension:.zip -extension:.avi -extension:.mp4 -extension:.swf -extension:.wmi -extension:.exe -extension:.mpeg -extension:.dll -extension:.pcap -extension:.log -extension:.class -extension:.html -language:html -language:smail -language:jsp
+time="2019-06-06T03:23:44+08:00" level=info msg="remaining: 29, nextPage: 0, lastPage: 0" prefix=GShark
+time="2019-06-06T03:23:47+08:00" level=info msg="Has inserted 0 results into code_result" prefix=GShark
+time="2019-06-06T03:23:47+08:00" level=info msg="Complete the scan of Github, start to sleep 1h0m0s seconds" prefix=GShark
+time="2019-06-06T04:22:40+08:00" level=info msg="Complete the scan of APP, start to sleep 1h0m0s seconds" prefix=GShark
+search with the query:"rmb.pingan.com.cn" +in:file -extension:.ico -extension:.flv -extension:.css -extension:.jpg -extension:.png -extension:.jpeg -extension:.gif -extension:.pdf -extension:.ss3 -extension:.rar -extension:.zip -extension:.avi -extension:.mp4 -extension:.swf -extension:.wmi -extension:.exe -extension:.mpeg -extension:.dll -extension:.pcap -extension:.log -extension:.class -extension:.html -language:html -language:smail -language:jsp
+time="2019-06-06T04:23:48+08:00" level=info msg="remaining: 29, nextPage: 0, lastPage: 0" prefix=GShark
+time="2019-06-06T04:23:51+08:00" level=info msg="Has inserted 0 results into code_result" prefix=GShark
+time="2019-06-06T04:23:51+08:00" level=info msg="Complete the scan of Github, start to sleep 1h0m0s seconds" prefix=GShark
+time="2019-06-06T05:22:40+08:00" level=info msg="Complete the scan of APP, start to sleep 1h0m0s seconds" prefix=GShark
+search with the query:"rmb.pingan.com.cn" +in:file -extension:.ico -extension:.flv -extension:.css -extension:.jpg -extension:.png -extension:.jpeg -extension:.gif -extension:.pdf -extension:.ss3 -extension:.rar -extension:.zip -extension:.avi -extension:.mp4 -extension:.swf -extension:.wmi -extension:.exe -extension:.mpeg -extension:.dll -extension:.pcap -extension:.log -extension:.class -extension:.html -language:html -language:smail -language:jsp
+time="2019-06-06T05:23:53+08:00" level=info msg="remaining: 29, nextPage: 0, lastPage: 0" prefix=GShark
+time="2019-06-06T05:23:56+08:00" level=info msg="Has inserted 0 results into code_result" prefix=GShark
+time="2019-06-06T05:23:56+08:00" level=info msg="Complete the scan of Github, start to sleep 1h0m0s seconds" prefix=GShark
+time="2019-06-06T06:22:40+08:00" level=info msg="Complete the scan of APP, start to sleep 1h0m0s seconds" prefix=GShark
+search with the query:"rmb.pingan.com.cn" +in:file -extension:.ico -extension:.flv -extension:.css -extension:.jpg -extension:.png -extension:.jpeg -extension:.gif -extension:.pdf -extension:.ss3 -extension:.rar -extension:.zip -extension:.avi -extension:.mp4 -extension:.swf -extension:.wmi -extension:.exe -extension:.mpeg -extension:.dll -extension:.pcap -extension:.log -extension:.class -extension:.html -language:html -language:smail -language:jsp
+time="2019-06-06T06:23:57+08:00" level=info msg="remaining: 29, nextPage: 0, lastPage: 0" prefix=GShark
+time="2019-06-06T06:24:00+08:00" level=info msg="Has inserted 0 results into code_result" prefix=GShark
+time="2019-06-06T06:24:00+08:00" level=info msg="Complete the scan of Github, start to sleep 1h0m0s seconds" prefix=GShark
+time="2019-06-06T07:22:40+08:00" level=info msg="Complete the scan of APP, start to sleep 1h0m0s seconds" prefix=GShark
+search with the query:"rmb.pingan.com.cn" +in:file -extension:.ico -extension:.flv -extension:.css -extension:.jpg -extension:.png -extension:.jpeg -extension:.gif -extension:.pdf -extension:.ss3 -extension:.rar -extension:.zip -extension:.avi -extension:.mp4 -extension:.swf -extension:.wmi -extension:.exe -extension:.mpeg -extension:.dll -extension:.pcap -extension:.log -extension:.class -extension:.html -language:html -language:smail -language:jsp
+time="2019-06-06T07:24:02+08:00" level=info msg="remaining: 27, nextPage: 0, lastPage: 0" prefix=GShark
+time="2019-06-06T07:24:05+08:00" level=info msg="Has inserted 0 results into code_result" prefix=GShark
+time="2019-06-06T07:24:05+08:00" level=info msg="Complete the scan of Github, start to sleep 1h0m0s seconds" prefix=GShark
+time="2019-06-06T08:22:40+08:00" level=info msg="Complete the scan of APP, start to sleep 1h0m0s seconds" prefix=GShark
+search with the query:"rmb.pingan.com.cn" +in:file -extension:.ico -extension:.flv -extension:.css -extension:.jpg -extension:.png -extension:.jpeg -extension:.gif -extension:.pdf -extension:.ss3 -extension:.rar -extension:.zip -extension:.avi -extension:.mp4 -extension:.swf -extension:.wmi -extension:.exe -extension:.mpeg -extension:.dll -extension:.pcap -extension:.log -extension:.class -extension:.html -language:html -language:smail -language:jsp
+time="2019-06-06T08:24:06+08:00" level=info msg="remaining: 29, nextPage: 0, lastPage: 0" prefix=GShark
+time="2019-06-06T08:24:09+08:00" level=info msg="Has inserted 0 results into code_result" prefix=GShark
+time="2019-06-06T08:24:09+08:00" level=info msg="Complete the scan of Github, start to sleep 1h0m0s seconds" prefix=GShark
+time="2019-06-06T09:22:40+08:00" level=info msg="Complete the scan of APP, start to sleep 1h0m0s seconds" prefix=GShark
+search with the query:"rmb.pingan.com.cn" +in:file -extension:.ico -extension:.flv -extension:.css -extension:.jpg -extension:.png -extension:.jpeg -extension:.gif -extension:.pdf -extension:.ss3 -extension:.rar -extension:.zip -extension:.avi -extension:.mp4 -extension:.swf -extension:.wmi -extension:.exe -extension:.mpeg -extension:.dll -extension:.pcap -extension:.log -extension:.class -extension:.html -language:html -language:smail -language:jsp
+time="2019-06-06T09:24:10+08:00" level=info msg="remaining: 29, nextPage: 0, lastPage: 0" prefix=GShark
+time="2019-06-06T09:24:13+08:00" level=info msg="Has inserted 0 results into code_result" prefix=GShark
+time="2019-06-06T09:24:13+08:00" level=info msg="Complete the scan of Github, start to sleep 1h0m0s seconds" prefix=GShark
+time="2019-06-06T10:22:40+08:00" level=info msg="Complete the scan of APP, start to sleep 1h0m0s seconds" prefix=GShark
+search with the query:"rmb.pingan.com.cn" +in:file -extension:.ico -extension:.flv -extension:.css -extension:.jpg -extension:.png -extension:.jpeg -extension:.gif -extension:.pdf -extension:.ss3 -extension:.rar -extension:.zip -extension:.avi -extension:.mp4 -extension:.swf -extension:.wmi -extension:.exe -extension:.mpeg -extension:.dll -extension:.pcap -extension:.log -extension:.class -extension:.html -language:html -language:smail -language:jsp
+time="2019-06-06T10:24:14+08:00" level=info msg="remaining: 29, nextPage: 0, lastPage: 0" prefix=GShark
+time="2019-06-06T10:24:17+08:00" level=info msg="Has inserted 0 results into code_result" prefix=GShark
+time="2019-06-06T10:24:17+08:00" level=info msg="Complete the scan of Github, start to sleep 1h0m0s seconds" prefix=GShark
+time="2019-06-06T11:22:40+08:00" level=info msg="Complete the scan of APP, start to sleep 1h0m0s seconds" prefix=GShark
+search with the query:"rmb.pingan.com.cn" +in:file -extension:.ico -extension:.flv -extension:.css -extension:.jpg -extension:.png -extension:.jpeg -extension:.gif -extension:.pdf -extension:.ss3 -extension:.rar -extension:.zip -extension:.avi -extension:.mp4 -extension:.swf -extension:.wmi -extension:.exe -extension:.mpeg -extension:.dll -extension:.pcap -extension:.log -extension:.class -extension:.html -language:html -language:smail -language:jsp
+time="2019-06-06T11:24:19+08:00" level=info msg="remaining: 29, nextPage: 0, lastPage: 0" prefix=GShark
+time="2019-06-06T11:24:22+08:00" level=info msg="Has inserted 0 results into code_result" prefix=GShark
+time="2019-06-06T11:24:22+08:00" level=info msg="Complete the scan of Github, start to sleep 1h0m0s seconds" prefix=GShark
+time="2019-06-06T12:22:40+08:00" level=info msg="Complete the scan of APP, start to sleep 1h0m0s seconds" prefix=GShark
+search with the query:"rmb.pingan.com.cn" +in:file -extension:.ico -extension:.flv -extension:.css -extension:.jpg -extension:.png -extension:.jpeg -extension:.gif -extension:.pdf -extension:.ss3 -extension:.rar -extension:.zip -extension:.avi -extension:.mp4 -extension:.swf -extension:.wmi -extension:.exe -extension:.mpeg -extension:.dll -extension:.pcap -extension:.log -extension:.class -extension:.html -language:html -language:smail -language:jsp
+time="2019-06-06T12:24:23+08:00" level=info msg="remaining: 29, nextPage: 0, lastPage: 0" prefix=GShark
+time="2019-06-06T12:24:26+08:00" level=info msg="Has inserted 0 results into code_result" prefix=GShark
+time="2019-06-06T12:24:26+08:00" level=info msg="Complete the scan of Github, start to sleep 1h0m0s seconds" prefix=GShark
+time="2019-06-06T13:22:40+08:00" level=info msg="Complete the scan of APP, start to sleep 1h0m0s seconds" prefix=GShark
+search with the query:"rmb.pingan.com.cn" +in:file -extension:.ico -extension:.flv -extension:.css -extension:.jpg -extension:.png -extension:.jpeg -extension:.gif -extension:.pdf -extension:.ss3 -extension:.rar -extension:.zip -extension:.avi -extension:.mp4 -extension:.swf -extension:.wmi -extension:.exe -extension:.mpeg -extension:.dll -extension:.pcap -extension:.log -extension:.class -extension:.html -language:html -language:smail -language:jsp
+time="2019-06-06T13:24:27+08:00" level=info msg="remaining: 29, nextPage: 0, lastPage: 0" prefix=GShark
+time="2019-06-06T13:24:30+08:00" level=info msg="Has inserted 0 results into code_result" prefix=GShark
+time="2019-06-06T13:24:30+08:00" level=info msg="Complete the scan of Github, start to sleep 1h0m0s seconds" prefix=GShark
+time="2019-06-06T14:22:40+08:00" level=info msg="Complete the scan of APP, start to sleep 1h0m0s seconds" prefix=GShark
+search with the query:"rmb.pingan.com.cn" +in:file -extension:.ico -extension:.flv -extension:.css -extension:.jpg -extension:.png -extension:.jpeg -extension:.gif -extension:.pdf -extension:.ss3 -extension:.rar -extension:.zip -extension:.avi -extension:.mp4 -extension:.swf -extension:.wmi -extension:.exe -extension:.mpeg -extension:.dll -extension:.pcap -extension:.log -extension:.class -extension:.html -language:html -language:smail -language:jsp
+time="2019-06-06T14:24:31+08:00" level=info msg="remaining: 29, nextPage: 0, lastPage: 0" prefix=GShark
+time="2019-06-06T14:24:34+08:00" level=info msg="Has inserted 0 results into code_result" prefix=GShark
+time="2019-06-06T14:24:34+08:00" level=info msg="Complete the scan of Github, start to sleep 1h0m0s seconds" prefix=GShark
+time="2019-06-06T15:22:40+08:00" level=info msg="Complete the scan of APP, start to sleep 1h0m0s seconds" prefix=GShark
+search with the query:"rmb.pingan.com.cn" +in:file -extension:.ico -extension:.flv -extension:.css -extension:.jpg -extension:.png -extension:.jpeg -extension:.gif -extension:.pdf -extension:.ss3 -extension:.rar -extension:.zip -extension:.avi -extension:.mp4 -extension:.swf -extension:.wmi -extension:.exe -extension:.mpeg -extension:.dll -extension:.pcap -extension:.log -extension:.class -extension:.html -language:html -language:smail -language:jsp
+time="2019-06-06T15:24:35+08:00" level=info msg="remaining: 29, nextPage: 0, lastPage: 0" prefix=GShark
+time="2019-06-06T15:24:38+08:00" level=info msg="Has inserted 0 results into code_result" prefix=GShark
+time="2019-06-06T15:24:38+08:00" level=info msg="Complete the scan of Github, start to sleep 1h0m0s seconds" prefix=GShark
