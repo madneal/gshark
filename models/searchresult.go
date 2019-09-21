@@ -35,13 +35,13 @@ type CodeResult struct {
 	TextMatches []TextMatch        `json:"text_matches,omitempty" xorm:"LONGBLOB"`
 	Status      int                // 1 confirmed 2 ignored
 	IsReady     int
-	Version     int                `xorm:"version"`
-	CreatedTime time.Time          `xorm:"created"`
-	UpdatedTime time.Time          `xorm:"updated"`
+	Version     int       `xorm:"version"`
+	CreatedTime time.Time `xorm:"created"`
+	UpdatedTime time.Time `xorm:"updated"`
 	RepoPath    *string
 	Keyword     *string
 	Score       float32
-	Source      string            // the source of the result, including gshark and gsil
+	Source      string // the source of the result, including gshark and gsil
 }
 
 type MatchedText struct {
@@ -205,6 +205,11 @@ func CancelReportById(id int64) (page int, err error) {
 		_, err = Engine.Id(id).Cols("status").Update(report)
 	}
 	return page, err
+}
+
+func CancelAllReport() (err error) {
+	_, err = Engine.Table("code_result").Exec("update code_result set status = 2 where status = 0")
+	return err
 }
 
 func CancelReportsByRepo(id int64) (err error) {
