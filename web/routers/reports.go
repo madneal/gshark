@@ -183,6 +183,18 @@ func CancelReportById(ctx *macaron.Context, sess session.Store) {
 	}
 }
 
+func CancelAllResults(ctx *macaron.Context, sess session.Store) {
+	if sess.Get("admin") != nil {
+		err := models.CancelAllReport()
+		if err != nil {
+			fmt.Println(err)
+		}
+		ctx.Redirect("/admin/reposrts/github/")
+	} else {
+		ctx.Redirect("/admin/login/")
+	}
+}
+
 func DisableRepoById(ctx *macaron.Context, sess session.Store) {
 	if sess.Get("admin") != nil {
 		id := ctx.Params(":id")
