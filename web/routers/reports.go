@@ -189,7 +189,7 @@ func CancelAllResults(ctx *macaron.Context, sess session.Store) {
 		if err != nil {
 			fmt.Println(err)
 		}
-		ctx.Redirect("/admin/reposrts/github/")
+		ctx.Redirect("/admin/reports/github/")
 	} else {
 		ctx.Redirect("/admin/login/")
 	}
