@@ -10,14 +10,15 @@ The project is based on golang with AdminLTE to build a management system to man
 
 ![ezgif com-optimize](https://user-images.githubusercontent.com/12164075/47776907-72db2a00-dd2e-11e8-9862-db4aa5c458ff.gif)
 
-# Features
+## Quick start
 
-* Scan for related keywords in github
+```
+git clone https://github.com/neal1991/gshark
 
-## Requirements
+go get ./...
 
-* go version 1.11+ (suggest for 1.12)
-* the project is suggested to be placed in `GOPATH/src/github.com/neal1991/` if you are going to develop on the basis of this project
+go build main.go
+```
 
 ## Config
 
