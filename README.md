@@ -18,6 +18,15 @@ git clone https://github.com/neal1991/gshark
 go get ./...
 
 go build main.go
+
+# check the config
+mv app-template.ini app.ini 
+
+# start web service
+./main web 
+
+# start crawler
+./main scan
 ```
 
 ## Config
