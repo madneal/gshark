@@ -6,6 +6,6 @@ import (
 )
 
 func TestMakeMd5(t *testing.T) {
-	pass := "admin"
+	pass := "gshark"
 	fmt.Println(MakeMd5(pass))
 }
