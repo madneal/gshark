@@ -7,13 +7,15 @@ import (
 	"github.com/neal1991/gshark/models"
 	"github.com/neal1991/gshark/vars"
 	"github.com/parnurzeal/gorequest"
+	"strconv"
+	"strings"
 	"time"
 )
 
 func ScheduleTasks(duration time.Duration) {
 	for {
 		RunSearchTask(GenerateSearchCodeTask())
-		logger.Log.Infof("Complete the scan of APP, start to sleep %v seconds", duration*time.Second)
+		logger.Log.Infof("Complete the scan of searchcode, start to sleep %v seconds", duration*time.Second)
 		time.Sleep(duration * time.Second)
 	}
 }
@@ -39,20 +41,48 @@ func RunSearchTask(mapRules map[int][]models.Rule, err error) {
 	if err == nil {
 		for _, rules := range mapRules {
 			for _, rule := range rules {
-				SearchForSearchCode(rule, request)
-				//SaveResults(results)
+				codeResults := SearchForSearchCode(rule, request)
+				SaveResults(codeResults, &rule.Pattern)
 			}
 		}
 	}
 }
 
-func SearchForSearchCode(rule models.Rule, request *gorequest.SuperAgent)  {
-	keyword := rule.Pattern
-	url := "https://searchcode.com/api/codesearch_I/?q=" + keyword + "&p=0&per_page=100"
-	GetResult(request, url)
+func SaveResults(results []*models.CodeResult, keyword *string) {
+	insertCount := 0
+	for _, result := range results {
+		if result != nil {
+			exist, err := result.Exist()
+			result.Keyword = keyword
+			if err != nil {
+				fmt.Println(err)
+			}
+			if !exist {
+				result.Insert()
+				insertCount++
+			}
+		}
+		logger.Log.Infof("Has inserted %d results into code_result", insertCount)
+	}
 }
 
-func GetResult(request *gorequest.SuperAgent, url string)  []*models.CodeResult{
+func SearchForSearchCode(rule models.Rule, request *gorequest.SuperAgent) []*models.CodeResult {
+	keyword := rule.Pattern
+	totalCodeResults := make([]*models.CodeResult, 0)
+	page := 0
+	for {
+		url := "https://searchcode.com/api/codesearch_I/?q=" + keyword + "&p=" + strconv.Itoa(page) + "&per_page=100"
+		codeResults, total := GetResult(request, url)
+		totalCodeResults = append(totalCodeResults, codeResults...)
+		page++
+		if page == total {
+			break
+		}
+	}
+	return totalCodeResults
+}
+
+func GetResult(request *gorequest.SuperAgent, url string) ([]*models.CodeResult, int) {
 	codeResults := make([]*models.CodeResult, 0)
 	resp, body, err := request.Get(url).End()
 	if err != nil {
@@ -65,21 +95,36 @@ func GetResult(request *gorequest.SuperAgent, url string)  []*models.CodeResult{
 	fmt.Println(body)
 	json.Unmarshal([]byte(body), &result)
 	total := result.Total
-	fmt.Println(total)
+	//fmt.Println(total)
 	results := result.Results
-	fmt.Println(results)
+	//fmt.Println(results)
 	for _, val := range results {
-		fmt.Println(val.Filename)
+		if strings.Contains(val.Repo, "github") {
+			continue
+		}
+		//fmt.Println(val.Filename)
 		var lines string
 		for _, line := range val.Lines {
 			lines += fmt.Sprint(line) + "\n"
 		}
-		fmt.Println(lines)
+		//fmt.Println(lines)
+		repoPath := val.Repo
+		fmt.Println(val.Id)
+		textMatch := new(models.TextMatch)
+		textMatch.Fragment = &lines
+		textMatchs := make([]models.TextMatch, 0)
+		textMatchs = append(textMatchs, *textMatch)
 		codeResult := models.CodeResult{
-			Name: &val.Name,
-			Status: 0,
-
+			Name:        &val.Name,
+			Status:      0,
+			HTMLURL:     &val.Url,
+			RepoPath:    &repoPath,
+			TextMatches: textMatchs,
 		}
+		//fmt.Println(*codeResult.HTMLURL)
+		//fmt.Println(*codeResult.RepoPath)
+		//fmt.Println(*codeResult.TextMatches[0].Fragment)
+		codeResults = append(codeResults, &codeResult)
 	}
-	return codeResults
+	return codeResults, total
 }
