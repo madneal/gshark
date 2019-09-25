@@ -33,14 +33,14 @@ require (
 	github.com/parnurzeal/gorequest v0.2.15
 	github.com/saintfish/chardet v0.0.0-20120816061221-3af4cd4741ca // indirect
 	github.com/sirupsen/logrus v1.3.0
-	github.com/stretchr/testify v1.3.0
+	github.com/stretchr/testify v1.4.0
 	github.com/temoto/robotstxt v1.1.1 // indirect
 	github.com/urfave/cli v1.20.0
 	github.com/x-cray/logrus-prefixed-formatter v0.5.2
 	golang.org/x/oauth2 v0.0.0-20190212230446-3e8b2be13635
 	gopkg.in/ini.v1 v1.41.0
 	gopkg.in/macaron.v1 v1.3.2
-	gopkg.in/yaml.v2 v2.2.1
+	gopkg.in/yaml.v2 v2.2.2
 )
 
 go 1.13

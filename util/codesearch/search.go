@@ -92,7 +92,7 @@ func GetResult(request *gorequest.SuperAgent, url string) ([]*models.CodeResult,
 		fmt.Printf("Request to %s error, status code: %d", url, resp.StatusCode)
 	}
 	var result models.SearchCodeRes
-	fmt.Println(body)
+	//fmt.Println(body)
 	json.Unmarshal([]byte(body), &result)
 	total := result.Total
 	//fmt.Println(total)
@@ -107,23 +107,19 @@ func GetResult(request *gorequest.SuperAgent, url string) ([]*models.CodeResult,
 		for _, line := range val.Lines {
 			lines += fmt.Sprint(line) + "\n"
 		}
-		//fmt.Println(lines)
 		repoPath := val.Repo
-		fmt.Println(val.Id)
 		textMatch := new(models.TextMatch)
 		textMatch.Fragment = &lines
 		textMatchs := make([]models.TextMatch, 0)
 		textMatchs = append(textMatchs, *textMatch)
 		codeResult := models.CodeResult{
-			Name:        &val.Name,
+			Name:        &val.Filename,
+			RepoName:    val.Location,
 			Status:      0,
 			HTMLURL:     &val.Url,
 			RepoPath:    &repoPath,
 			TextMatches: textMatchs,
 		}
-		//fmt.Println(*codeResult.HTMLURL)
-		//fmt.Println(*codeResult.RepoPath)
-		//fmt.Println(*codeResult.TextMatches[0].Fragment)
 		codeResults = append(codeResults, &codeResult)
 	}
 	return codeResults, total
