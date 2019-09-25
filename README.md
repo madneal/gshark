@@ -106,6 +106,11 @@ Access to http://127.0.0.1/admin/login
 
 gshark/gshark
 
+3. `# github.com/mattn/go-sqlite3
+exec: "gcc": executable file not found in %PATH%`
+
+https://github.com/mattn/go-sqlite3/issues/435#issuecomment-314247676
+
 ## Reference
 
 * [x-patrol](https://github.com/MiSecurity/x-patrol)
