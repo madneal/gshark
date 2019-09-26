@@ -37,10 +37,10 @@ func Scan(ctx *cli.Context) {
 		logger.Log.Println("scan searchcode results")
 		codesearch.ScheduleTasks(Interval)
 	case "all":
-		logger.Log.Println("scan github code and app results")
+		logger.Log.Println("all scan mode")
+		codesearch.ScheduleTasks(Interval)
 		go githubsearch.ScheduleTasks(Interval)
 		appsearch.ScheduleTasks(Interval)
-		codesearch.ScheduleTasks(Interval)
 	default:
 		logger.Log.Println("default scan mode")
 		go githubsearch.ScheduleTasks(Interval)
