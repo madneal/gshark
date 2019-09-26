@@ -9,7 +9,6 @@ require (
 	github.com/casbin/casbin v1.9.1
 	github.com/elazarl/goproxy v0.0.0-20190911111923-ecfe977594f1 // indirect
 	github.com/go-macaron/cache v0.0.0-20151013081102-561735312776
-	github.com/go-macaron/captcha v0.0.0-20180716114251-d2857f392769 // indirect
 	github.com/go-macaron/csrf v0.0.0-20190131233648-3751b136073c
 	github.com/go-macaron/inject v0.0.0-20160627170012-d8a0b8677191 // indirect
 	github.com/go-macaron/session v0.0.0-20190131233854-0a0a789bf193

@@ -22,7 +22,7 @@ func ScheduleTasks(duration time.Duration) {
 
 func GenerateSearchCodeTask() (map[int][]models.Rule, error) {
 	result := make(map[int][]models.Rule)
-	rules, err := models.GetValidRulesByType("app")
+	rules, err := models.GetValidRulesByType("searchcode")
 	ruleNum := len(rules)
 	batch := ruleNum / vars.SearchNum
 
