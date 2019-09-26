@@ -87,10 +87,9 @@ func (r *CodeResult) Insert() (int64, error) {
 }
 
 func (r *CodeResult) Exist() (bool, error) {
-	var c CodeResult
-	fmt.Println(*r.HTMLURL)
-	//return Engine.SQL("select * from code_result where html_url = ?", *c.HTMLURL).Exist()
-	return Engine.Table("code_result").Where("html_url", *r.HTMLURL).Get(&c)
+	return Engine.Exist(&CodeResult{
+		HTMLURL: r.HTMLURL,
+	})
 }
 
 func ListGithubSearchResultPage(page int, status int) ([]CodeResult, int, int) {
