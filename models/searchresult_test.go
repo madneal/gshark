@@ -12,7 +12,7 @@ func TestGetCodeResultDetailById(t *testing.T) {
 }
 
 func TestCodeResult_Exist(t *testing.T) {
-	url := "034397bb"
+	url := "https://searchcode.com/codesearch/view/16616612/"
 	codeResult := CodeResult{
 		HTMLURL: &url,
 	}
