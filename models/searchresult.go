@@ -1,5 +1,6 @@
 package models
 
+import "C"
 import (
 	"fmt"
 	"github.com/google/go-github/github"
@@ -86,8 +87,9 @@ func (r *CodeResult) Insert() (int64, error) {
 }
 
 func (r *CodeResult) Exist() (bool, error) {
-	var c CodeResult
-	return Engine.Table("code_result").Where("name=? and sha=?", r.Name, r.SHA).Get(&c)
+	return Engine.Exist(&CodeResult{
+		HTMLURL: r.HTMLURL,
+	})
 }
 
 func ListGithubSearchResultPage(page int, status int) ([]CodeResult, int, int) {

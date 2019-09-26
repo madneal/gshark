@@ -1,6 +1,7 @@
 package util
 
 import (
+	"github.com/neal1991/gshark/util/codesearch"
 	"github.com/neal1991/gshark/util/githubsearch"
 
 	"github.com/urfave/cli"
@@ -36,9 +37,11 @@ func Scan(ctx *cli.Context) {
 		logger.Log.Println("scan github code and app results")
 		go githubsearch.ScheduleTasks(Interval)
 		appsearch.ScheduleTasks(Interval)
+		codesearch.ScheduleTasks(Interval)
 	default:
-		logger.Log.Println("scan github code and app results")
+		logger.Log.Println("default scan mode")
 		go githubsearch.ScheduleTasks(Interval)
 		appsearch.ScheduleTasks(Interval)
+		codesearch.ScheduleTasks(Interval)
 	}
 }
