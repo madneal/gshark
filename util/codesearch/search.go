@@ -41,6 +41,7 @@ func RunSearchTask(mapRules map[int][]models.Rule, err error) {
 	if err == nil {
 		for _, rules := range mapRules {
 			for _, rule := range rules {
+				logger.Log.Infof("Search for %s in searchcode", rule.Pattern)
 				codeResults := SearchForSearchCode(rule, request)
 				SaveResults(codeResults, &rule.Pattern)
 			}
