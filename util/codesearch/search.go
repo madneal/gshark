@@ -72,18 +72,19 @@ func SearchForSearchCode(rule models.Rule, request *gorequest.SuperAgent) []*mod
 	totalCodeResults := make([]*models.CodeResult, 0)
 	page := 0
 	for {
-		url := "https://searchcode.com/api/codesearch_I/?q=" + keyword + "&p=" + strconv.Itoa(page) + "&per_page=100"
-		codeResults, total := GetResult(request, url)
+		url := "https://searchcode.com/api/codesearch_I/?q=" + keyword + "&p=" + strconv.Itoa(page)
+		codeResults, hasResult := GetResult(request, url)
 		totalCodeResults = append(totalCodeResults, codeResults...)
 		page++
-		if page == total {
+		if !hasResult {
 			break
 		}
 	}
 	return totalCodeResults
 }
 
-func GetResult(request *gorequest.SuperAgent, url string) ([]*models.CodeResult, int) {
+func GetResult(request *gorequest.SuperAgent, url string) ([]*models.CodeResult, bool) {
+	hasResult := true
 	codeResults := make([]*models.CodeResult, 0)
 	resp, body, err := request.Get(url).End()
 	if err != nil {
@@ -95,10 +96,11 @@ func GetResult(request *gorequest.SuperAgent, url string) ([]*models.CodeResult,
 	var result models.SearchCodeRes
 	//fmt.Println(body)
 	json.Unmarshal([]byte(body), &result)
-	total := result.Total
 	//fmt.Println(total)
 	results := result.Results
-	//fmt.Println(results)
+	if len(results) == 0 {
+		hasResult = false
+	}
 	for _, val := range results {
 		if strings.Contains(val.Repo, "github") {
 			continue
@@ -123,5 +125,5 @@ func GetResult(request *gorequest.SuperAgent, url string) ([]*models.CodeResult,
 		}
 		codeResults = append(codeResults, &codeResult)
 	}
-	return codeResults, total
+	return codeResults, hasResult
 }
