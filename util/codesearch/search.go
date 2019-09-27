@@ -12,12 +12,10 @@ import (
 	"time"
 )
 
-func ScheduleTasks(duration time.Duration) {
-	for {
-		RunSearchTask(GenerateSearchCodeTask())
-		logger.Log.Infof("Complete the scan of searchcode, start to sleep %v seconds", duration*time.Second)
-		time.Sleep(duration * time.Second)
-	}
+func RunTask(duration time.Duration) {
+	RunSearchTask(GenerateSearchCodeTask())
+	logger.Log.Infof("Complete the scan of searchcode, start to sleep %v seconds", duration*time.Second)
+	time.Sleep(duration * time.Second)
 }
 
 func GenerateSearchCodeTask() (map[int][]models.Rule, error) {
