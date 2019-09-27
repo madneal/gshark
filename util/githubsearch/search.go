@@ -109,16 +109,14 @@ func SaveResult(results []*github.CodeSearchResult, err error, keyword *string) 
 	}
 }
 
-func ScheduleTasks(duration time.Duration) {
-	for {
-		RunSearchTask(GenerateSearchCodeTask())
+func RunTask(duration time.Duration) {
+	RunSearchTask(GenerateSearchCodeTask())
 
-		// insert repos from inputInfo
-		InsertAllRepos()
+	// insert repos from inputInfo
+	InsertAllRepos()
 
-		logger.Log.Infof("Complete the scan of Github, start to sleep %v seconds", duration*time.Second)
-		time.Sleep(duration * time.Second)
-	}
+	logger.Log.Infof("Complete the scan of Github, start to sleep %v seconds", duration*time.Second)
+	time.Sleep(duration * time.Second)
 }
 
 func (c *Client) SearchCode(keyword string) ([]*github.CodeSearchResult, error) {
