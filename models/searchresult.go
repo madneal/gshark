@@ -33,7 +33,7 @@ type CodeResult struct {
 	SHA         *string            `json:"sha,omitempty" xorm:"sha"`
 	HTMLURL     *string            `json:"html_url,omitempty" xorm:"html_url"`
 	Repository  *github.Repository `json:"repository,omitempty" xorm:"json"`
-	TextMatches []TextMatch        `json:"text_matches,omitempty" xorm:"LONGBLOB"`
+	TextMatches []TextMatch        `json:"text_matches,omitempty" xorm:"LONGBLOB unique"`
 	Status      int                // 1 confirmed 2 ignored
 	IsReady     int
 	Version     int       `xorm:"version"`
