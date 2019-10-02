@@ -49,7 +49,7 @@ func init() {
 		Engine.Sync2(new(InputInfo))
 		Engine.Sync2(new(Admin))
 		Engine.Sync2(new(Repo))
-		Engine.Sync2(new(GithubToken))
+		Engine.Sync2(new(GitToken))
 		Engine.Sync2(new(CodeResult))
 		Engine.Sync2(new(FilterRule))
 		Engine.Sync2(new(CodeResultDetail))
