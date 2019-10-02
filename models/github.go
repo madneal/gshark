@@ -5,10 +5,11 @@ import (
 	"time"
 )
 
-type GithubToken struct {
+type GitToken struct {
 	Id    int64
 	Token string
 	Desc  string
+	Type  string
 	// The number of requests per hour the client is currently limited to.
 	Limit int `json:"limit"`
 	// The number of remaining requests the client can make this hour.
@@ -17,41 +18,41 @@ type GithubToken struct {
 	Reset time.Time `json:"reset"`
 }
 
-// create a GithubToken with limit and remain
-func NewGithubToken(token, desc string) *GithubToken {
-	return &GithubToken{Token: token, Desc: desc, Limit: 5000, Remaining: 5000}
+// create a GitToken with limit and remain
+func NewGithubToken(token, desc string) *GitToken {
+	return &GitToken{Token: token, Desc: desc, Limit: 5000, Remaining: 5000}
 }
 
-// insert a GithubToken into database
-func (g *GithubToken) Insert() (int64, error) {
+// insert a GitToken into database
+func (g *GitToken) Insert() (int64, error) {
 	return Engine.Insert(g)
 }
 
-// detect if the GithubToken exists
-func (g *GithubToken) Exist() (bool, error) {
+// detect if the GitToken exists
+func (g *GitToken) Exist() (bool, error) {
 	return Engine.Get(g)
 }
 
-func ListTokens() ([]GithubToken, error) {
-	tokens := make([]GithubToken, 0)
+func ListTokens() ([]GitToken, error) {
+	tokens := make([]GitToken, 0)
 	err := Engine.Find(&tokens)
 	return tokens, err
 }
 
-func ListValidTokens() ([]GithubToken, error) {
-	tokens := make([]GithubToken, 0)
-	err := Engine.Table("github_token").Where("remaining>50").Find(&tokens)
+func ListValidTokens() ([]GitToken, error) {
+	tokens := make([]GitToken, 0)
+	err := Engine.Table("git_token").Where("remaining>50 and type = 'github'").Find(&tokens)
 	return tokens, err
 }
 
-func GetTokenById(id int64) (*GithubToken, bool, error) {
-	token := new(GithubToken)
+func GetTokenById(id int64) (*GitToken, bool, error) {
+	token := new(GitToken)
 	has, err := Engine.ID(id).Get(token)
 	return token, has, err
 }
 
 func EditTokenById(id int64, token, desc string) error {
-	githubToken := new(GithubToken)
+	githubToken := new(GitToken)
 	has, err := Engine.ID(id).Get(githubToken)
 	if err == nil && has {
 		githubToken.Token = token
@@ -62,14 +63,14 @@ func EditTokenById(id int64, token, desc string) error {
 }
 
 func DeleteTokenById(id int64) error {
-	token := new(GithubToken)
+	token := new(GitToken)
 	_, err := Engine.ID(id).Delete(token)
 	return err
 }
 
 func UpdateRate(token string, response *github.Response) error {
-	githubToken := new(GithubToken)
-	has, err := Engine.Table("github_token").Where("token=?", token).Get(githubToken)
+	githubToken := new(GitToken)
+	has, err := Engine.Table("git_token").Where("token=? and type = 'github'", token).Get(githubToken)
 	if err == nil && has {
 		id := githubToken.Id
 		githubToken.Remaining = response.Rate.Remaining
