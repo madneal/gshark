@@ -24,7 +24,7 @@ func init() {
 
 func InitGithubClients() (map[string]*Client, error) {
 	githubClients := make(map[string]*Client)
-	tokens, err := models.ListValidTokens()
+	tokens, err := models.ListValidTokens("github")
 	if err == nil {
 		for _, token := range tokens {
 			githubToken := token.Token

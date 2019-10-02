@@ -39,9 +39,9 @@ func ListTokens() ([]GitToken, error) {
 	return tokens, err
 }
 
-func ListValidTokens() ([]GitToken, error) {
+func ListValidTokens(tokenType string) ([]GitToken, error) {
 	tokens := make([]GitToken, 0)
-	err := Engine.Table("git_token").Where("remaining>50 and type = 'github'").Find(&tokens)
+	err := Engine.Table("git_token").Where("remaining>50 and type = ?", tokenType).Find(&tokens)
 	return tokens, err
 }
 
