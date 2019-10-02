@@ -17,9 +17,9 @@ require (
 	github.com/go-xorm/xorm v0.7.1
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/gocolly/colly v1.2.0
+	github.com/golang/protobuf v1.3.2 // indirect
 	github.com/google/go-cmp v0.2.0 // indirect
 	github.com/google/go-github v17.0.0+incompatible
-	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/kennygrant/sanitize v1.2.4 // indirect
 	github.com/lib/pq v1.0.0
 	github.com/mattn/go-colorable v0.1.0 // indirect
@@ -36,7 +36,10 @@ require (
 	github.com/temoto/robotstxt v1.1.1 // indirect
 	github.com/urfave/cli v1.20.0
 	github.com/x-cray/logrus-prefixed-formatter v0.5.2
-	golang.org/x/oauth2 v0.0.0-20190212230446-3e8b2be13635
+	github.com/xanzy/go-gitlab v0.20.1
+	golang.org/x/net v0.0.0-20191002035440-2ec189313ef0 // indirect
+	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
+	google.golang.org/appengine v1.6.4 // indirect
 	gopkg.in/ini.v1 v1.41.0
 	gopkg.in/macaron.v1 v1.3.2
 	gopkg.in/yaml.v2 v2.2.2
