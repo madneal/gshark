@@ -102,7 +102,7 @@ func SearchCode(keyword string, project models.InputInfo, client *gitlab.Client)
 	}
 	for _, result := range results {
 		url := project.Url + result.Basename + result.Filename
-		textMatches := make([]models.TextMatch, 1)
+		textMatches := make([]models.TextMatch, 0)
 		textMatch := models.TextMatch{
 			Fragment: &result.Data,
 		}
@@ -118,13 +118,29 @@ func SearchCode(keyword string, project models.InputInfo, client *gitlab.Client)
 			Keyword:     &keyword,
 			Source:      vars.Source,
 		}
-		codeResults = append(codeResults, &codeResult)
-		err := models.UpdateStatusById(1, result.ProjectID)
-		if err != nil {
-			logger.Log.Error(err)
+		if !mergeTextMatches(codeResults, result.Filename, textMatch) {
+			codeResults = append(codeResults, &codeResult)
 		}
 	}
+	err = models.UpdateStatusById(1, project.ProjectId)
+	if err != nil {
+		logger.Log.Error(err)
+	}
 	return codeResults
+}
+
+// mergeTextMatches is utilized to merge multi textMatches in the same file
+// return: if has merged
+func mergeTextMatches(codeResults []*models.CodeResult, filename string, textMatch models.TextMatch) bool {
+	flag := false
+	for index, result := range codeResults {
+		if *result.Name == filename {
+			flag = true
+			codeResults[index].TextMatches = append(codeResults[index].TextMatches, textMatch)
+			return flag
+		}
+	}
+	return flag
 }
 
 func ListValidProjects() []models.InputInfo {
