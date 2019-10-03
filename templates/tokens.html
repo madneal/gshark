@@ -32,6 +32,7 @@
                                     <th>Limit</th>
                                     <th>Remaining</th>
                                     <th>Reset Time</th>
+                                    <th>Type</th>
                                     <th colspan="2">管理</th>
                                 </tr>
                                 {{range .tokens}}
@@ -42,6 +43,7 @@
                                     <td>{{.Limit}}</td>
                                     <td>{{.Remaining}}</td>
                                     <td>{{.Reset}}</td>
+                                    <td>{{.Type}}</td>
                                     <td><a href="/admin/tokens/edit/{{.Id}}">edit</a></td>
                                     <td><a href="/admin/tokens/del/{{.Id}}">del</a></td>
                                 </tr>
