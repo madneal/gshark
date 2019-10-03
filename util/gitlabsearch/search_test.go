@@ -50,5 +50,11 @@ func TestSearchCode(t *testing.T) {
 	codeResults := SearchCode("pkg", inputInfo, client)
 	for _, result := range codeResults {
 		fmt.Println(*result.Name)
+		for index, text := range result.TextMatches {
+			fmt.Println("==================")
+			fmt.Println(index)
+			fmt.Println(*text.Fragment)
+		}
 	}
+	fmt.Println(len(codeResults))
 }
