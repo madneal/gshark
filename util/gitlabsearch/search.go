@@ -148,6 +148,10 @@ func GetClient() *gitlab.Client {
 	if err != nil {
 		logger.Log.Error(err)
 	}
+	if len(tokens) == 0 {
+		logger.Log.Warn("There is no valid gitlab token")
+		return nil
+	}
 	return gitlab.NewClient(nil, tokens[0].Token)
 }
 
