@@ -9,25 +9,26 @@ import (
 type InputInfo struct {
 	Id          int64
 	Type        string    `xorm:"varchar(255) notnull"`
-	Content     string    `xorm:"text notnull"`
-	Desc        string    `xorm:"text notnull"`
+	Url         string    `xorm:"text notnull"`
+	Path        string    `xorm:"text notnull"`
 	Developer   string    `xorm:"text"`
 	Version     int       `xorm:"version"`
 	CreatedTime time.Time `xorm:"created"`
 	UpdatedTime time.Time `xorm:"updated"`
 }
 
-func NewInputInfo(inputType, content, desc string) (info *InputInfo) {
-	return &InputInfo{Type: inputType, Content: content, Desc: desc}
+func NewInputInfo(inputType, url, path string) (info *InputInfo) {
+	return &InputInfo{Type: inputType, Url: url, Path: path}
 }
 
 func (i *InputInfo) Insert() (int64, error) {
 	return Engine.Insert(i)
 }
 
-func (i *InputInfo) Exist(repoUrl string) (bool, error) {
-	info := new(InputInfo)
-	return Engine.Table("input_info").Where("content=?", repoUrl).Get(info)
+func (i *InputInfo) Exist() (bool, error) {
+	return Engine.Exist(&InputInfo{
+		Url: i.Url,
+	})
 }
 
 func GetInputInfoById(id int64) (*InputInfo, bool, error) {
@@ -42,8 +43,8 @@ func EditInputInfoById(id int64, inputType, content, desc string) error {
 	has, err := Engine.ID(id).Get(input)
 	if err == nil && has {
 		input.Type = inputType
-		input.Content = content
-		input.Desc = desc
+		input.Url = content
+		input.Path = desc
 		_, err = Engine.ID(id).Update(input)
 	}
 	return err
