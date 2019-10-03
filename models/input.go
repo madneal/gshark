@@ -52,6 +52,11 @@ func EditInputInfoById(id int64, inputType, content, desc string) error {
 	return err
 }
 
+func UpdateStatusById(status, id int) error {
+	_, err := Engine.Exec("update input_info set status = ? where project_id = ?", status, id)
+	return err
+}
+
 func DeleteInputInfoById(id int64) error {
 	input := new(InputInfo)
 	_, err := Engine.Table("input_info").ID(id).Delete(input)

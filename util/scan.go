@@ -8,6 +8,7 @@ import (
 
 	"github.com/neal1991/gshark/logger"
 	"github.com/neal1991/gshark/util/appsearch"
+	"github.com/neal1991/gshark/util/gitlabsearch"
 	"strings"
 	"time"
 )
@@ -42,11 +43,17 @@ func Scan(ctx *cli.Context) {
 		for {
 			codesearch.RunTask(Interval)
 		}
+	case "gitlab":
+		logger.Log.Println("scan gitlab code")
+		for {
+			gitlabsearch.RunTask(Interval)
+		}
 	case "all":
 		logger.Log.Println("all scan mode")
 		for {
 			githubsearch.RunTask(Interval)
 			codesearch.RunTask(Interval)
+			githubsearch.RunTask(Interval)
 			appsearch.RunTask(Interval)
 		}
 	default:

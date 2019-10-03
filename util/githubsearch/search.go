@@ -39,10 +39,9 @@ func Search(rules []models.Rule) {
 		for _, rule := range rules {
 			go func(rule models.Rule) {
 				defer wg.Done()
-
+				results, err := client.SearchCode(rule.Pattern)
+				SaveResult(results, err, &rule.Pattern)
 			}(rule)
-			results, err := client.SearchCode(rule.Pattern)
-			SaveResult(results, err, &rule.Pattern)
 		}
 		wg.Wait()
 	}
