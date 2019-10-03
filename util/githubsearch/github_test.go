@@ -21,9 +21,9 @@ func TestInsertAllRepos(t *testing.T) {
 	if err == nil {
 		for index, asset := range assets {
 			fmt.Println("index:" + strconv.Itoa(index))
-			fmt.Println(asset.Content)
-			length := len(strings.Split(asset.Content, "/"))
-			fmt.Println(strings.Split(asset.Content, "/")[length-1])
+			fmt.Println(asset.Url)
+			length := len(strings.Split(asset.Url, "/"))
+			fmt.Println(strings.Split(asset.Url, "/")[length-1])
 		}
 	}
 }
