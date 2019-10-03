@@ -8,10 +8,12 @@ import (
 
 type InputInfo struct {
 	Id          int64
-	Type        string    `xorm:"varchar(255) notnull"`
-	Url         string    `xorm:"text notnull"`
-	Path        string    `xorm:"text notnull"`
-	Developer   string    `xorm:"text"`
+	Type        string `xorm:"varchar(255) notnull"`
+	Url         string `xorm:"text notnull"`
+	Path        string `xorm:"text notnull"`
+	Developer   string `xorm:"text"`
+	Status      int
+	ProjectId   int
 	Version     int       `xorm:"version"`
 	CreatedTime time.Time `xorm:"created"`
 	UpdatedTime time.Time `xorm:"updated"`
@@ -65,6 +67,12 @@ func DeleteAllInputInfo() error {
 func ListInputInfo() ([]InputInfo, error) {
 	inputs := make([]InputInfo, 0)
 	err := Engine.Table("input_info").Find(&inputs)
+	return inputs, err
+}
+
+func ListInputInfoByType(infoType string) ([]InputInfo, error) {
+	inputs := make([]InputInfo, 0)
+	err := Engine.Table("input_info").Where("type = ?", infoType).Find(&inputs)
 	return inputs, err
 }
 

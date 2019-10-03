@@ -38,7 +38,7 @@ func InsertAllRepos() {
 	if err == nil {
 		for _, asset := range assets {
 			assetType := strings.ToLower(asset.Type)
-			name := asset.Content
+			name := asset.Url
 			switch assetType {
 			case CONST_REPO, CONST_REPOS:
 				repos := strings.Split(name, ",")
