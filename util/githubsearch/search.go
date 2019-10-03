@@ -14,23 +14,19 @@ import (
 	"time"
 )
 
-var (
-	SEARCH_NUM = 25
-)
-
 func GenerateSearchCodeTask() (map[int][]models.Rule, error) {
 	result := make(map[int][]models.Rule)
 	// get rules with the type of github
 	rules, err := models.GetValidRulesByType("github")
 	ruleNum := len(rules)
-	batch := ruleNum / SEARCH_NUM
+	batch := ruleNum / vars.SearchNum
 
 	for i := 0; i < batch; i++ {
-		result[i] = rules[SEARCH_NUM*i : SEARCH_NUM*(i+1)]
+		result[i] = rules[vars.SearchNum*i : vars.SearchNum*(i+1)]
 	}
 
-	if ruleNum%SEARCH_NUM != 0 {
-		result[batch] = rules[SEARCH_NUM*batch : ruleNum]
+	if ruleNum%vars.SearchNum != 0 {
+		result[batch] = rules[vars.SearchNum*batch : ruleNum]
 	}
 	return result, err
 }
@@ -70,7 +66,7 @@ func PassFilters(codeResult *models.CodeResult, fullName string) bool {
 	// detect if the Repository url exist in input_info
 	repoUrl := codeResult.Repository.GetHTMLURL()
 	inputInfo := models.NewInputInfo(CONST_REPO, repoUrl, fullName)
-	has, err := inputInfo.Exist(repoUrl)
+	has, err := inputInfo.Exist()
 	if err != nil {
 		fmt.Print(err)
 	} else if err == nil && !has {
