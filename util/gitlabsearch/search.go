@@ -13,7 +13,7 @@ import (
 func RunTask(duration time.Duration) {
 	RunSearchTask(GenerateSearchCodeTask())
 
-	logger.Log.Infof("Complete the scan of Github, start to sleep %v seconds", duration*time.Second)
+	logger.Log.Infof("Complete the scan of Gitlab, start to sleep %v seconds", duration*time.Second)
 	time.Sleep(duration * time.Second)
 }
 
@@ -92,6 +92,7 @@ func SaveResult(results []*models.CodeResult, keyword *string) {
 
 func SearchCode(keyword string, project models.InputInfo, client *gitlab.Client) []*models.CodeResult {
 	codeResults := make([]*models.CodeResult, 0)
+	logger.Log.Infof("Search inside project %s", project.Url)
 	results, resp, err := client.Search.BlobsByProject(project.ProjectId, keyword, &gitlab.SearchOptions{})
 	if err != nil {
 		fmt.Println(err)
@@ -101,7 +102,7 @@ func SearchCode(keyword string, project models.InputInfo, client *gitlab.Client)
 		return codeResults
 	}
 	for _, result := range results {
-		url := project.Url + result.Basename + result.Filename
+		url := project.Url + result.Basename + "/blob/master/" + result.Filename
 		textMatches := make([]models.TextMatch, 0)
 		textMatch := models.TextMatch{
 			Fragment: &result.Data,
@@ -151,9 +152,9 @@ func ListValidProjects() []models.InputInfo {
 	}
 	for _, p := range projects {
 		// if the project has been searched
-		if p.Status == 1 {
-			continue
-		}
+		//if p.Status == 1 {
+		//	continue
+		//}
 		validProjects = append(validProjects, p)
 	}
 	return validProjects
@@ -179,6 +180,7 @@ func GetProjects(client *gitlab.Client) {
 			Page:    1,
 		},
 	}
+	projectNum := 0
 	for {
 		// Get the first page with projects.
 		ps, resp, err := client.Projects.ListProjects(opt)
@@ -193,13 +195,16 @@ func GetProjects(client *gitlab.Client) {
 				Path:      p.PathWithNamespace,
 				Type:      vars.GITLAB,
 				ProjectId: p.ID,
+				Status:    0,
 			}
 			has, err := inputInfo.Exist()
 			if err != nil {
 				fmt.Println(err)
 			}
 			if !has {
+				logger.Log.Infof("Insert project %s", p.WebURL)
 				inputInfo.Insert()
+				projectNum++
 			}
 		}
 
@@ -215,4 +220,5 @@ func GetProjects(client *gitlab.Client) {
 
 		opt.Page = resp.NextPage
 	}
+	logger.Log.Infof("Has found %d projects", projectNum)
 }

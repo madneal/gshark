@@ -51,7 +51,7 @@ func Scan(ctx *cli.Context) {
 	case "all":
 		logger.Log.Println("all scan mode")
 		for {
-			githubsearch.RunTask(Interval)
+			gitlabsearch.RunTask(Interval)
 			codesearch.RunTask(Interval)
 			githubsearch.RunTask(Interval)
 			appsearch.RunTask(Interval)
