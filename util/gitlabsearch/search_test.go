@@ -9,7 +9,7 @@ import (
 )
 
 func TestGetProjects(t *testing.T) {
-	client := gitlab.NewClient(nil, "J2atZLikgHs1CWhEE_sV")
+	client := GetClient()
 	opt := &gitlab.ListProjectsOptions{
 		ListOptions: gitlab.ListOptions{
 			PerPage: 100,
