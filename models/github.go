@@ -51,12 +51,13 @@ func GetTokenById(id int64) (*GitToken, bool, error) {
 	return token, has, err
 }
 
-func EditTokenById(id int64, token, desc string) error {
+func EditTokenById(id int64, token, desc, tokenType string) error {
 	githubToken := new(GitToken)
 	has, err := Engine.ID(id).Get(githubToken)
 	if err == nil && has {
 		githubToken.Token = token
 		githubToken.Desc = desc
+		githubToken.Type = tokenType
 		Engine.ID(id).Update(githubToken)
 	}
 	return err

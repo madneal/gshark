@@ -66,7 +66,8 @@ func DoEditTokens(ctx *macaron.Context, sess session.Store) {
 		Id, _ := strconv.Atoi(id)
 		tokens := strings.TrimSpace(ctx.Req.Form.Get("tokens"))
 		desc := strings.TrimSpace(ctx.Req.Form.Get("desc"))
-		models.EditTokenById(int64(Id), tokens, desc)
+		tokenType := strings.TrimSpace(ctx.Req.Form.Get("type"))
+		models.EditTokenById(int64(Id), tokens, desc, tokenType)
 		ctx.Redirect("/admin/tokens/list/")
 	} else {
 		ctx.Redirect("/admin/login/")
