@@ -18,8 +18,3 @@ $('ul.sidebar-menu a').filter(function() {
 $('ul.treeview-menu a').filter(function() {
     return this.href == url;
 }).parentsUntil(".sidebar-menu > .treeview-menu").siblings().removeClass('active').end().addClass('active');
-
-
-$('#deployDate').datepicker({
-    autocomplete: true
-});
