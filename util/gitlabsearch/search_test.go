@@ -43,7 +43,7 @@ func TestGetProjects(t *testing.T) {
 }
 
 func TestSearchCode(t *testing.T) {
-	client := gitlab.NewClient(nil, "J2atZLikgHs1CWhEE_sV")
+	client := GetClient()
 	inputInfo := models.InputInfo{
 		ProjectId: 14625899,
 	}
