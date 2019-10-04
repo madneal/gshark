@@ -19,8 +19,8 @@ type GitToken struct {
 }
 
 // create a GitToken with limit and remain
-func NewGithubToken(token, desc string) *GitToken {
-	return &GitToken{Token: token, Desc: desc, Limit: 5000, Remaining: 5000}
+func NewGithubToken(token, desc, tokenType string) *GitToken {
+	return &GitToken{Token: token, Desc: desc, Limit: 5000, Remaining: 5000, Type: tokenType}
 }
 
 // insert a GitToken into database

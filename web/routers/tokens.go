@@ -36,7 +36,8 @@ func DoNewTokens(ctx *macaron.Context, sess session.Store) {
 	if sess.Get("admin") != nil {
 		tokens := strings.TrimSpace(ctx.Req.Form.Get("tokens"))
 		desc := strings.TrimSpace(ctx.Req.Form.Get("desc"))
-		githubToken := models.NewGithubToken(tokens, desc)
+		tokenType := strings.TrimSpace(ctx.Req.Form.Get("type"))
+		githubToken := models.NewGithubToken(tokens, desc, tokenType)
 		githubToken.Insert()
 		ctx.Redirect("/admin/tokens/list/")
 	} else {
