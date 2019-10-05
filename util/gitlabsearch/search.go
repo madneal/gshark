@@ -6,6 +6,7 @@ import (
 	"github.com/neal1991/gshark/models"
 	"github.com/neal1991/gshark/vars"
 	"github.com/xanzy/go-gitlab"
+	"strings"
 	"sync"
 	"time"
 )
@@ -90,10 +91,45 @@ func SaveResult(results []*models.CodeResult, keyword *string) {
 	}
 }
 
+// buildQueryString is utilize to build query string
+// add extension filters
+func BuildQueryString(keyword, key string) string {
+	filterRules, err := models.GetFilterRules()
+	queryString := keyword
+	if err != nil {
+		logger.Log.Error(err)
+	}
+	for _, filterRule := range filterRules {
+		ruleValue := filterRule.RuleValue
+		ruleType := filterRule.RuleType
+		ruleKey := filterRule.RuleKey
+		ruleValueList := strings.Split(ruleValue, ",")
+		if ruleKey != key {
+			continue
+		}
+		for _, value := range ruleValueList {
+			if ruleType == 0 {
+				queryString += " -"
+			} else {
+				queryString += " +"
+			}
+
+			if ruleKey == "ext" {
+				queryString += "extension:"
+			}
+
+			value = strings.TrimSpace(value)
+			queryString += value
+		}
+	}
+	return queryString
+}
+
 func SearchCode(keyword string, project models.InputInfo, client *gitlab.Client) []*models.CodeResult {
 	codeResults := make([]*models.CodeResult, 0)
-	logger.Log.Infof("Search inside project %s", project.Url)
-	results, resp, err := client.Search.BlobsByProject(project.ProjectId, keyword, &gitlab.SearchOptions{})
+	queryString := BuildQueryString(keyword, "ext")
+	//logger.Log.Infof("Search inside project %s", project.Url)
+	results, resp, err := client.Search.BlobsByProject(project.ProjectId, queryString, &gitlab.SearchOptions{})
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -102,7 +138,7 @@ func SearchCode(keyword string, project models.InputInfo, client *gitlab.Client)
 		return codeResults
 	}
 	for _, result := range results {
-		url := project.Url + result.Basename + "/blob/master/" + result.Filename
+		url := project.Url + "/blob/master/" + result.Filename
 		textMatches := make([]models.TextMatch, 0)
 		textMatch := models.TextMatch{
 			Fragment: &result.Data,
@@ -202,7 +238,7 @@ func GetProjects(client *gitlab.Client) {
 				fmt.Println(err)
 			}
 			if !has {
-				logger.Log.Infof("Insert project %s", p.WebURL)
+				//logger.Log.Infof("Insert project %s", p.WebURL)
 				inputInfo.Insert()
 				projectNum++
 			}
