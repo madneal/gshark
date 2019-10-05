@@ -135,6 +135,9 @@ func SearchCode(keyword string, project models.InputInfo, client *gitlab.Client)
 	}
 	if resp.StatusCode != 200 {
 		fmt.Printf("request error: %d", resp.StatusCode)
+		if resp.StatusCode == 404 {
+			project.DeleteByProjectId()
+		}
 		return codeResults
 	}
 	for _, result := range results {
