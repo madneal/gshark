@@ -12,3 +12,10 @@ func TestInputInfo_Exist(t *testing.T) {
 	result, _ := inputInfo.Exist()
 	assert.True(t, result)
 }
+
+func TestInputInfo_DeleteByProjectId(t *testing.T) {
+	inputInfo := InputInfo{
+		ProjectId: 14644963,
+	}
+	inputInfo.DeleteByProjectId()
+}
