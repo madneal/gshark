@@ -88,7 +88,8 @@ func (r *CodeResult) Insert() (int64, error) {
 
 func (r *CodeResult) Exist() (bool, error) {
 	return Engine.Exist(&CodeResult{
-		HTMLURL: r.HTMLURL,
+		HTMLURL:     r.HTMLURL,
+		TextMatches: r.TextMatches,
 	})
 }
 
