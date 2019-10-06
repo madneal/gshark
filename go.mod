@@ -43,7 +43,6 @@ require (
 	gopkg.in/ini.v1 v1.41.0
 	gopkg.in/macaron.v1 v1.3.2
 	gopkg.in/yaml.v2 v2.2.2
-	xorm.io/core v0.7.2 // indirect
 )
 
 go 1.13
