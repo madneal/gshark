@@ -127,14 +127,14 @@ func BuildQueryString(keyword, key string) string {
 
 func SearchCode(keyword string, project models.InputInfo, client *gitlab.Client) []*models.CodeResult {
 	codeResults := make([]*models.CodeResult, 0)
-	queryString := BuildQueryString(keyword, "ext")
+	//queryString := BuildQueryString(keyword, "ext")
 	//logger.Log.Infof("Search inside project %s", project.Url)
-	results, resp, err := client.Search.BlobsByProject(project.ProjectId, queryString, &gitlab.SearchOptions{})
+	results, resp, err := client.Search.BlobsByProject(project.ProjectId, keyword, &gitlab.SearchOptions{})
 	if err != nil {
 		fmt.Println(err)
 	}
 	if resp.StatusCode != 200 {
-		fmt.Printf("request error: %d", resp.StatusCode)
+		fmt.Printf("request error for projectId-%d: %d", project.ProjectId, resp.StatusCode)
 		if resp.StatusCode == 404 {
 			project.DeleteByProjectId()
 		}

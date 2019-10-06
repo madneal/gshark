@@ -45,9 +45,9 @@ func TestGetProjects(t *testing.T) {
 func TestSearchCode(t *testing.T) {
 	client := GetClient()
 	inputInfo := models.InputInfo{
-		ProjectId: 14645628,
+		ProjectId: 14539946,
 	}
-	codeResults := SearchCode("baidu -extension:js", inputInfo, client)
+	codeResults := SearchCode("baidu", inputInfo, client)
 	for _, result := range codeResults {
 		fmt.Println(*result.Name)
 		for index, text := range result.TextMatches {
@@ -60,5 +60,5 @@ func TestSearchCode(t *testing.T) {
 }
 
 func TestBuildQueryString(t *testing.T) {
-	fmt.Println(BuildQueryString("baidu"))
+	fmt.Println(BuildQueryString("baidu", "ext"))
 }
