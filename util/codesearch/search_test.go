@@ -14,7 +14,7 @@ func TestSearchForSearchCode(t *testing.T) {
 }
 
 func TestGetResult(t *testing.T) {
-	url :=  "https://searchcode.com/api/codesearch_I/?q=spdb&p=0&per_page=100"
+	url := "https://searchcode.com/api/codesearch_I/?q=spdb&p=0&per_page=100"
 	request := gorequest.New()
 	GetResult(request, url)
 }
