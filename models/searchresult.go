@@ -87,10 +87,10 @@ func (r *CodeResult) Insert() (int64, error) {
 }
 
 func (r *CodeResult) Exist() (bool, error) {
-	return Engine.Exist(&CodeResult{
-		HTMLURL:     r.HTMLURL,
-		TextMatches: r.TextMatches,
-	})
+	codeResult := new(CodeResult)
+	has, err := Engine.Table("code_result").Where("html_url = ?",
+		*r.HTMLURL).Get(codeResult)
+	return has, err
 }
 
 func ListGithubSearchResultPage(page int, status int) ([]CodeResult, int, int) {
