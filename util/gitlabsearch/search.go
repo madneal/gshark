@@ -37,6 +37,9 @@ func GenerateSearchCodeTask() (map[int][]models.Rule, error) {
 
 func RunSearchTask(mapRules map[int][]models.Rule, err error) {
 	client := GetClient()
+	if client == nil {
+		return
+	}
 	// get all public projects
 	GetProjects(client)
 	if err == nil {
