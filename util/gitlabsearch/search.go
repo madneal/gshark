@@ -228,6 +228,7 @@ func GetProjects(client *gitlab.Client) {
 		ps, resp, err := client.Projects.ListProjects(opt)
 		if err != nil {
 			fmt.Println(err)
+			break
 		}
 
 		// List all the projects we've found so far.
