@@ -13,12 +13,9 @@ require (
 	github.com/go-macaron/inject v0.0.0-20160627170012-d8a0b8677191 // indirect
 	github.com/go-macaron/session v0.0.0-20190131233854-0a0a789bf193
 	github.com/go-sql-driver/mysql v1.4.1
-	github.com/go-xorm/core v0.6.2
-	github.com/go-xorm/xorm v0.7.1
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/gocolly/colly v1.2.0
 	github.com/golang/protobuf v1.3.2 // indirect
-	github.com/google/go-cmp v0.2.0 // indirect
 	github.com/google/go-github v17.0.0+incompatible
 	github.com/kennygrant/sanitize v1.2.4 // indirect
 	github.com/lib/pq v1.0.0
@@ -27,8 +24,6 @@ require (
 	github.com/mattn/go-sqlite3 v1.10.0
 	github.com/mgutz/ansi v0.0.0-20170206155736-9520e82c474b // indirect
 	github.com/moul/http2curl v1.0.0 // indirect
-	github.com/onsi/ginkgo v1.7.0 // indirect
-	github.com/onsi/gomega v1.4.3 // indirect
 	github.com/parnurzeal/gorequest v0.2.15
 	github.com/saintfish/chardet v0.0.0-20120816061221-3af4cd4741ca // indirect
 	github.com/sirupsen/logrus v1.3.0
@@ -43,6 +38,8 @@ require (
 	gopkg.in/ini.v1 v1.41.0
 	gopkg.in/macaron.v1 v1.3.2
 	gopkg.in/yaml.v2 v2.2.2
+	xorm.io/core v0.7.2
+	xorm.io/xorm v0.8.0
 )
 
 go 1.13

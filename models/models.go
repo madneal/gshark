@@ -8,8 +8,8 @@ import (
 	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
 
-	"github.com/go-xorm/core"
-	"github.com/go-xorm/xorm"
+	"xorm.io/core"
+	"xorm.io/xorm"
 
 	"fmt"
 	"path/filepath"
