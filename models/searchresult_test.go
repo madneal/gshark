@@ -12,10 +12,11 @@ func TestGetCodeResultDetailById(t *testing.T) {
 }
 
 func TestCodeResult_Exist(t *testing.T) {
-	url := "https://searchcode.com/codesearch/view/16616612/"
-	codeResult := CodeResult{
-		HTMLURL: &url,
-	}
+	//url := "https://searchcode.com/codesearch/view/16616612/"
+	//codeResult := CodeResult{
+	//	HTMLURL: &url,
+	//}
+	_, codeResult, _ := GetReportById(int64(9), true)
 	exist, err := codeResult.Exist()
 	if err != nil {
 		fmt.Println(err)

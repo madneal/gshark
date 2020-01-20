@@ -45,7 +45,7 @@ func TestGetProjects(t *testing.T) {
 func TestSearchCode(t *testing.T) {
 	client := GetClient()
 	inputInfo := models.InputInfo{
-		ProjectId: 14539946,
+		ProjectId: 14723410,
 	}
 	codeResults := SearchCode("baidu", inputInfo, client)
 	for _, result := range codeResults {
