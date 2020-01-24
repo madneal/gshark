@@ -60,8 +60,6 @@ func Scan(ctx *cli.Context) {
 		logger.Log.Println("default scan mode")
 		for {
 			githubsearch.RunTask(Interval)
-			appsearch.RunTask(Interval)
-			codesearch.RunTask(Interval)
 		}
 	}
 }
