@@ -62,10 +62,11 @@ PATH =
 
 ## Before Running
 
-* Make sure you have installed dependencies
+* Make sure you have installed dependencies, suggest to use go mod
 * Make sure the app.ini in config folder, you can rename app-template.ini to app.ini
 * Make sure that you have config and set database correctly
 * Make sure that you have config [policy](https://github.com/neal1991/gshark/blob/master/conf/policy.csv) properly
+* Make sure that you have config corresponding tokens for github or gitlab
 
 ## Run
 
