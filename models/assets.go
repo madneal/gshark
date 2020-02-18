@@ -33,3 +33,16 @@ func (asset *Asset) Exists() (bool, error) {
 		Content:   asset.Content,
 	})
 }
+
+func BatchInsert(assets []*Asset) error {
+	for _, asset := range assets {
+		exist, err := asset.Exists()
+		if err != nil {
+			return err
+		}
+		if exist == false {
+			asset.Insert()
+		}
+	}
+	return nil
+}
