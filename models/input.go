@@ -63,8 +63,8 @@ func DeleteInputInfoById(id int64) error {
 	return err
 }
 
-func (inputInfo InputInfo) DeleteByProjectId() error {
-	_, err := Engine.Table("input_info").Where("project_id = ?", inputInfo.ProjectId).Delete(&inputInfo)
+func (i InputInfo) DeleteByProjectId() error {
+	_, err := Engine.Table("input_info").Where("project_id = ?", i.ProjectId).Delete(&i)
 	return err
 }
 
