@@ -7,6 +7,7 @@ import (
 	"github.com/google/go-github/github"
 	"github.com/neal1991/gshark/logger"
 	"github.com/neal1991/gshark/models"
+	"github.com/neal1991/gshark/util/common"
 	"github.com/neal1991/gshark/vars"
 	"regexp"
 	"strings"
@@ -35,16 +36,19 @@ func Search(rules []models.Rule) {
 	var wg sync.WaitGroup
 	wg.Add(len(rules))
 	client, token, err := GetGithubClient()
+	var content string
 	if err == nil && token != "" {
 		for _, rule := range rules {
 			go func(rule models.Rule) {
 				defer wg.Done()
 				results, err := client.SearchCode(rule.Pattern)
-				SaveResult(results, err, &rule.Pattern)
+				counts := SaveResult(results, err, &rule.Pattern)
+				content += fmt.Sprintf("%s: %d条", rule.Pattern, counts)
 			}(rule)
 		}
 		wg.Wait()
 	}
+	common.SendMessage(vars.SCKEY, "扫描结果", content)
 }
 
 func RunSearchTask(mapRules map[int][]models.Rule, err error) {
@@ -79,7 +83,7 @@ func PassFilters(codeResult *models.CodeResult, fullName string) bool {
 	return !reg.MatchString(*textMatches) && !has && !exist
 }
 
-func SaveResult(results []*github.CodeSearchResult, err error, keyword *string) {
+func SaveResult(results []*github.CodeSearchResult, err error, keyword *string) int {
 	insertCount := 0
 	for _, result := range results {
 		if err == nil && result != nil && len(result.CodeResults) > 0 {
@@ -102,6 +106,7 @@ func SaveResult(results []*github.CodeSearchResult, err error, keyword *string) 
 		}
 		logger.Log.Infof("Has inserted %d results into code_result", insertCount)
 	}
+	return insertCount
 }
 
 func RunTask(duration time.Duration) {
