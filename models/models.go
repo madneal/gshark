@@ -1,12 +1,13 @@
 package models
 
+import "C"
 import (
-	"github.com/neal1991/gshark/logger"
-	"github.com/neal1991/gshark/settings"
-
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/neal1991/gshark/logger"
+	"github.com/neal1991/gshark/settings"
+	"github.com/neal1991/gshark/vars"
 
 	"xorm.io/core"
 	"xorm.io/xorm"
@@ -40,6 +41,7 @@ func init() {
 	SSL_MODE = sec.Key("SSL_MODE").MustString("disable")
 	DATA_PATH = sec.Key("PATH").MustString("conf")
 	DATA_NAME = sec.Key("NAME").MustString("xsec")
+	vars.SCKEY = cfg.Section("").Key("SCKEY").MustString("")
 
 	err := NewDbEngine()
 	if err != nil {

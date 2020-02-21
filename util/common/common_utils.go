@@ -3,7 +3,10 @@ package common
 import (
 	"crypto/sha1"
 	"encoding/hex"
+	"fmt"
+	"github.com/neal1991/gshark/logger"
 	"github.com/neal1991/gshark/vars"
+	"net/http"
 	"strings"
 	"time"
 )
@@ -91,5 +94,14 @@ func GetRepoNameByUrl(url string) string {
 		return strings.Split(url, "/")[length-1]
 	} else {
 		return ""
+	}
+}
+
+// Send message to server 酱
+func SendMessage(key, title, msg string) {
+	url := fmt.Sprintf("https://sc.ftqq.com/%s.send?text=%s&desp=%s", key, title, msg)
+	_, err := http.Get(url)
+	if err != nil {
+		logger.Log.Error(err)
 	}
 }
