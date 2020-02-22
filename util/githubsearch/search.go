@@ -43,7 +43,7 @@ func Search(rules []models.Rule) {
 				defer wg.Done()
 				results, err := client.SearchCode(rule.Pattern)
 				counts := SaveResult(results, err, &rule.Pattern)
-				content += fmt.Sprintf("%s: %d条", rule.Pattern, counts)
+				content += fmt.Sprintf("%s: %d条\n", rule.Pattern, counts)
 			}(rule)
 		}
 		wg.Wait()
