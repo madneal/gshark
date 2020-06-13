@@ -14,7 +14,7 @@ func init() {
 func main() {
 	app := cli.NewApp()
 	app.Name = "GShark"
-	app.Author = "neal"
+	app.Author = "madneal"
 	app.Email = "bing.ecnu@gmail.com"
 	app.Version = "20180131"
 	app.Usage = "Scan for sensitive information in Github easily and effectively."
