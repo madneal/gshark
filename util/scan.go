@@ -14,7 +14,7 @@ import (
 )
 
 func Scan(ctx *cli.Context) {
-	scanMode := "all"
+	scanMode := "github"
 	// seconds
 	var Interval time.Duration = 900
 
