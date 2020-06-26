@@ -54,7 +54,7 @@ func Auth(username, password string) (bool, string, error) {
 	admin := new(Admin)
 	encryptPass := misc.MakeMd5(password)
 	has, err := Engine.Table("admin").
-		Where("username=? and password=?", username, encryptPass).Get(admin)
+		Where("username = ? and password = ?", username, encryptPass).Get(admin)
 	var role string
 	if has {
 		role = admin.Role
