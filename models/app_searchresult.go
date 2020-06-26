@@ -1,7 +1,7 @@
 package models
 
 import (
-	"fmt"
+	"github.com/neal1991/gshark/logger"
 	"github.com/neal1991/gshark/util/common"
 	"github.com/neal1991/gshark/vars"
 	"time"
@@ -42,7 +42,7 @@ func ListAppSearchResultByPage(page int, status int) ([]AppSearchResult, int, in
 		Limit(vars.PAGE_SIZE, (page-1)*vars.PAGE_SIZE).Desc("id").Find(&results)
 
 	if err != nil {
-		fmt.Errorf("search failed:%s", err)
+		logger.Log.Errorf("search failed:%s", err)
 	}
 
 	return results, pages, int(totalPages)
