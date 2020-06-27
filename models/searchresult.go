@@ -170,7 +170,7 @@ func getCodeResultDetail(codeResult *CodeResult) CodeResultDetail {
 func GetMatchedTexts(repoName string) []TextMatch {
 	textMatches := make([]TextMatch, 0)
 	var codeResults []CodeResult
-	err := Engine.Table("code_result").Where("repo_name=?", repoName).Find(&codeResults)
+	err := Engine.Table("code_result").Where("repo_name = ?", repoName).Find(&codeResults)
 	for _, codeResult := range codeResults {
 		textMatches = append(textMatches, codeResult.TextMatches[0])
 	}
@@ -217,9 +217,9 @@ func CancelAllReport() (err error) {
 
 func CancelReportsByRepo(id int64) (err error) {
 	var repo string
-	has, err := Engine.Table("code_result").Where("id =?", id).Cols("repo_name").Get(&repo)
+	has, err := Engine.Table("code_result").Where("id = ?", id).Cols("repo_name").Get(&repo)
 	if err == nil && has {
-		_, err = Engine.Table("code_result").Exec("update code_result set status = 2 where repo_name=?", repo)
+		_, err = Engine.Table("code_result").Exec("update code_result set status = 2 where repo_name = ?", repo)
 	}
 	return err
 }
@@ -228,7 +228,7 @@ func ChangeReportsStatusByRepo(id int64, status int) (err error) {
 	var repo string
 	has, err := Engine.Table("code_result").Where("id=?", id).Cols("repo_name").Get(&repo)
 	if err == nil && has {
-		_, err = Engine.Table("code_result").Exec("update code_result set status=? where repo_name=?",
+		_, err = Engine.Table("code_result").Exec("update code_result set status = ? where repo_name = ?",
 			status, repo)
 	}
 	return err
