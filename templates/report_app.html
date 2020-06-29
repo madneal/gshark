@@ -74,7 +74,7 @@
                                 <tr>
                                     <td>{{.Id}}</td>
                                     <td><a href="{{.AppUrl}}" target="_blank">{{.Name}}</a></td>
-                                    <td>{{if (.Market)}} {{if eq "HUAWEI" .Market }}华为应用市场{{end}}{{end}}</td>
+                                    <td>{{if eq "HUAWEI" .Market }}华为应用市场{{end}}</td>
                                     <td>{{.DeployDate}}</td>
                                     <td>{{.Description}}</td>
                                 {{if eq 0 .Status}}
