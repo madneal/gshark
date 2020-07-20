@@ -2,9 +2,11 @@ package githubsearch
 
 import (
 	"context"
+	"fmt"
 	"github.com/google/go-github/github"
 	"github.com/neal1991/gshark/models"
 	"golang.org/x/oauth2"
+	"os"
 )
 
 var (
@@ -49,6 +51,10 @@ func GetGithubClient() (*Client, string, error) {
 	for _, client := range clients {
 		c = client
 		break
+	}
+	if c == nil {
+		fmt.Println("Github Client initial failed, please add token")
+		os.Exit(3)
 	}
 	return c, c.Token, err
 }
