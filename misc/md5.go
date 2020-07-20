@@ -10,3 +10,7 @@ func MakeMd5(srcStr string) string {
 	srcStr += salt
 	return fmt.Sprintf("%x", md5.Sum([]byte(srcStr)))
 }
+
+func GenMd5(srcStr string) string {
+	return fmt.Sprintf("%x", md5.Sum([]byte(srcStr)))
+}
