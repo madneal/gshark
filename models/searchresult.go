@@ -26,23 +26,23 @@ type TextMatch struct {
 
 // CodeResult represents a single search result.
 type CodeResult struct {
-	Id          int64
-	Name        *string `json:"name,omitempty"`
-	Path        *string `json:"path,omitempty"`
-	RepoName    string
-	SHA         *string            `json:"sha,omitempty" xorm:"sha"`
-	HTMLURL     *string            `json:"html_url,omitempty" xorm:"html_url"`
-	Repository  *github.Repository `json:"repository,omitempty" xorm:"json"`
-	TextMatches []TextMatch        `json:"text_matches,omitempty" xorm:"LONGBLOB unique"`
-	Status      int                // 1 confirmed 2 ignored
-	IsReady     int
-	Version     int       `xorm:"version"`
-	CreatedTime time.Time `xorm:"created"`
-	UpdatedTime time.Time `xorm:"updated"`
-	RepoPath    *string
-	Keyword     *string
-	Score       float32
-	Source      string // the source of the result, including gshark and gsil
+	Id           int64
+	Name         *string `json:"name,omitempty"`
+	Path         *string `json:"path,omitempty"`
+	RepoName     string
+	Textmatchmd5 *string            `json:"textmatch_md5,omitempty" xorm:"textmatch_md5"`
+	HTMLURL      *string            `json:"html_url,omitempty" xorm:"html_url"`
+	Repository   *github.Repository `json:"repository,omitempty" xorm:"json"`
+	TextMatches  []TextMatch        `json:"text_matches,omitempty" xorm:"LONGBLOB unique"`
+	Status       int                // 1 confirmed 2 ignored
+	IsReady      int
+	Version      int       `xorm:"version"`
+	CreatedTime  time.Time `xorm:"created"`
+	UpdatedTime  time.Time `xorm:"updated"`
+	RepoPath     *string
+	Keyword      *string
+	Score        float32
+	Source       string // the source of the result, including gshark and gsil
 }
 
 type MatchedText struct {
