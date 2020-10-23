@@ -2,6 +2,8 @@ package models
 
 import (
 	"fmt"
+	"github.com/neal1991/gshark/misc"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -12,16 +14,14 @@ func TestGetCodeResultDetailById(t *testing.T) {
 }
 
 func TestCodeResult_Exist(t *testing.T) {
-	//url := "https://searchcode.com/codesearch/view/16616612/"
-	//codeResult := CodeResult{
-	//	HTMLURL: &url,
-	//}
-	_, codeResult, _ := GetReportById(int64(9), true)
-	exist, err := codeResult.Exist()
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(exist)
+	codeResult := new(CodeResult)
+	f := "                                    \\u003cspan class=\\\"views\\\"\\u003e???\\u003cb style=\\\"color: red;\\\"\\u003e64220\\u003c/b\\u003e\\u003c/span\\u003e\\n                                    \\u003cspan class=\\\"name\\\"\\u003e\\u003ca href=\\\"http://www.meituan.com/r/i1186336\\\" target=\\\"_blank\\\"\\u003e??\\u003c/a\\u003e\\u003c/span\\u003e\\n"
+	hash := misc.GenMd5WithSpecificLen(f, 50)
+	codeResult.Textmatchmd5 = &hash
+	html := "www.baidu.com"
+	codeResult.HTMLURL = &html
+	exist, _ := codeResult.Exist()
+	assert.Equal(t, true, exist, "the result should exist")
 }
 
 //func TestChangeReportsStatusByRepo(t *testing.T) {
