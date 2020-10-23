@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/google/go-github/github"
 	"github.com/neal1991/gshark/logger"
+	"github.com/neal1991/gshark/misc"
 	"github.com/neal1991/gshark/models"
 	"github.com/neal1991/gshark/util/common"
 	"github.com/neal1991/gshark/vars"
@@ -68,6 +69,10 @@ func RunSearchTask(mapRules map[int][]models.Rule, err error) {
 func PassFilters(codeResult *models.CodeResult, fullName string) bool {
 	// detect if the Repository url exist in input_info
 	repoUrl := codeResult.Repository.GetHTMLURL()
+	if len(codeResult.TextMatches) > 0 {
+		hash := misc.GenMd5WithSpecificLen(*(codeResult.TextMatches[0].Fragment), 50)
+		codeResult.Textmatchmd5 = &hash
+	}
 	inputInfo := models.NewInputInfo(CONST_REPO, repoUrl, fullName)
 	has, err := inputInfo.Exist()
 	if err != nil {
