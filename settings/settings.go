@@ -1,6 +1,7 @@
 package settings
 
 import (
+	"fmt"
 	"github.com/neal1991/gshark/logger"
 	"github.com/neal1991/gshark/vars"
 
@@ -27,6 +28,7 @@ func init() {
 	Cfg, err = ini.Load(source)
 
 	if err != nil {
+		fmt.Println("Please check the config file app.ini")
 		logger.Log.Panicln(err)
 	}
 
