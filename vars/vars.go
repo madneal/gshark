@@ -5,7 +5,6 @@ const (
 	PageStep                     = 5
 	SearchNum                    = 25
 	Source                       = "gshark"
-	GITHUB                       = "github"
 	GITLAB                       = "gitlab"
 )
 
