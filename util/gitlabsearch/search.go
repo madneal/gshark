@@ -159,7 +159,6 @@ func SearchCode(keyword string, project models.InputInfo, client *gitlab.Client)
 			TextMatches: textMatches,
 			Status:      0,
 			Keyword:     &keyword,
-			Source:      vars.Source,
 		}
 		if !mergeTextMatches(codeResults, result.Filename, textMatch) {
 			codeResults = append(codeResults, &codeResult)
