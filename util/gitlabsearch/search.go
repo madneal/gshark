@@ -233,11 +233,13 @@ func GetProjects(client *gitlab.Client) {
 		// List all the projects we've found so far.
 		for _, p := range ps {
 			inputInfo := models.InputInfo{
-				Url:       p.WebURL,
-				Path:      p.PathWithNamespace,
-				Type:      vars.GITLAB,
-				ProjectId: p.ID,
-				Status:    0,
+				Url:         p.WebURL,
+				Path:        p.PathWithNamespace,
+				Type:        vars.GITLAB,
+				ProjectId:   p.ID,
+				Status:      2,
+				CreatedTime: time.Now(),
+				UpdatedTime: time.Now(),
 			}
 			has, err := inputInfo.Exist()
 			if err != nil {
@@ -245,7 +247,10 @@ func GetProjects(client *gitlab.Client) {
 			}
 			if !has {
 				//logger.Log.Infof("Insert project %s", p.WebURL)
-				inputInfo.Insert()
+				_, err := inputInfo.Insert()
+				if err != nil {
+					logger.Log.Error(err)
+				}
 				projectNum++
 			}
 		}
