@@ -43,7 +43,11 @@ func Search(rules []models.Rule) {
 			go func(rule models.Rule) {
 				defer wg.Done()
 				results, err := client.SearchCode(rule.Pattern)
-				counts := SaveResult(results, err, &rule.Pattern)
+				if err != nil {
+					logger.Log.Error(err)
+					return
+				}
+				counts := SaveResult(results, &rule.Pattern)
 				content += fmt.Sprintf("%s: %d条\n", rule.Pattern, counts)
 			}(rule)
 		}
@@ -69,15 +73,14 @@ func RunSearchTask(mapRules map[int][]models.Rule, err error) {
 func PassFilters(codeResult *models.CodeResult, fullName string) bool {
 	// detect if the Repository url exist in input_info
 	repoUrl := codeResult.Repository.GetHTMLURL()
-	if len(codeResult.TextMatches) > 0 {
-		hash := misc.GenMd5WithSpecificLen(*(codeResult.TextMatches[0].Fragment), 50)
-		codeResult.Textmatchmd5 = &hash
-	}
+
 	inputInfo := models.NewInputInfo(CONST_REPO, repoUrl, fullName)
 	has, err := inputInfo.Exist()
 	if err != nil {
 		fmt.Print(err)
-	} else if err == nil && !has {
+		return false
+	}
+	if !has {
 		inputInfo.Insert()
 	}
 	// detect if the codeResult exist
@@ -88,19 +91,22 @@ func PassFilters(codeResult *models.CodeResult, fullName string) bool {
 	return !reg.MatchString(*textMatches) && !has && !exist
 }
 
-func SaveResult(results []*github.CodeSearchResult, err error, keyword *string) int {
+func SaveResult(results []*github.CodeSearchResult, keyword *string) int {
 	insertCount := 0
 	for _, result := range results {
-		if err == nil && result != nil && len(result.CodeResults) > 0 {
+		if len(result.CodeResults) > 0 {
 			for _, resultItem := range result.CodeResults {
 				ret, err := json.Marshal(resultItem)
 				if err == nil {
 					var codeResult *models.CodeResult
 					err = json.Unmarshal(ret, &codeResult)
 					codeResult.Keyword = keyword
-					codeResult.Source = vars.Source
 					fullName := codeResult.Repository.GetFullName()
 					codeResult.RepoName = fullName
+					if len(codeResult.TextMatches) > 0 {
+						hash := misc.GenMd5WithSpecificLen(*(codeResult.TextMatches[0].Fragment), 50)
+						codeResult.Textmatchmd5 = &hash
+					}
 
 					if err == nil && PassFilters(codeResult, fullName) {
 						insertCount++
