@@ -1,8 +1,6 @@
 package common
 
 import (
-	"crypto/sha1"
-	"encoding/hex"
 	"fmt"
 	"github.com/neal1991/gshark/logger"
 	"github.com/neal1991/gshark/vars"
@@ -10,13 +8,6 @@ import (
 	"strings"
 	"time"
 )
-
-// Utility function for producing a hex encoded sha1 hash for a string.
-func HashFor(name string) string {
-	h := sha1.New()
-	h.Write([]byte(name))
-	return hex.EncodeToString(h.Sum(nil))
-}
 
 func GetPreAndNext(p int) (currentPage int, pre int, next int) {
 	if p < 1 {
@@ -67,10 +58,10 @@ func GetPageList(p, step, pages int) []int {
 
 func GetPageAndPagesByTotalPages(page, totalPages int) (int, int) {
 	var pages int
-	if int(totalPages)%vars.PAGE_SIZE == 0 {
-		pages = int(totalPages) / vars.PAGE_SIZE
+	if totalPages%vars.PAGE_SIZE == 0 {
+		pages = totalPages / vars.PAGE_SIZE
 	} else {
-		pages = int(totalPages)/vars.PAGE_SIZE + 1
+		pages = totalPages/vars.PAGE_SIZE + 1
 	}
 
 	if page >= pages {
