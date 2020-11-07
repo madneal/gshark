@@ -94,7 +94,7 @@ func PassFilters(codeResult *models.CodeResult, fullName string) bool {
 func SaveResult(results []*github.CodeSearchResult, keyword *string) int {
 	insertCount := 0
 	for _, result := range results {
-		if len(result.CodeResults) > 0 {
+		if result != nil && len(result.CodeResults) > 0 {
 			for _, resultItem := range result.CodeResults {
 				ret, err := json.Marshal(resultItem)
 				if err == nil {
