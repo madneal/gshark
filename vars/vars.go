@@ -4,7 +4,6 @@ const (
 	DefaultMaxConcurrentIndexers = 2
 	PageStep                     = 5
 	SearchNum                    = 25
-	Source                       = "gshark"
 	GITLAB                       = "gitlab"
 )
 
