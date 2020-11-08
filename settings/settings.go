@@ -1,8 +1,9 @@
 package settings
 
 import (
-	"github.com/neal1991/gshark/logger"
-	"github.com/neal1991/gshark/vars"
+	"fmt"
+	"github.com/madneal/gshark/logger"
+	"github.com/madneal/gshark/vars"
 
 	"gopkg.in/ini.v1"
 	"os"
@@ -27,6 +28,7 @@ func init() {
 	Cfg, err = ini.Load(source)
 
 	if err != nil {
+		fmt.Println("Please check the config file app.ini")
 		logger.Log.Panicln(err)
 	}
 
@@ -36,4 +38,5 @@ func init() {
 	vars.REPO_PATH = Cfg.Section("").Key("REPO_PATH").MustString("repos")
 	vars.MAX_INDEXERS = Cfg.Section("").Key("MAX_INDEXERS").MustInt(vars.DefaultMaxConcurrentIndexers)
 	vars.MAX_Concurrency_REPOS = Cfg.Section("").Key("MAX_Concurrency_REPOS").MustInt(100)
+	vars.SCKEY = Cfg.Section("").Key("SCKEY").MustString("")
 }

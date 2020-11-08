@@ -1,14 +1,14 @@
 package util
 
 import (
-	"github.com/neal1991/gshark/util/codesearch"
-	"github.com/neal1991/gshark/util/githubsearch"
+	"github.com/madneal/gshark/util/codesearch"
+	"github.com/madneal/gshark/util/githubsearch"
 
 	"github.com/urfave/cli"
 
-	"github.com/neal1991/gshark/logger"
-	"github.com/neal1991/gshark/util/appsearch"
-	"github.com/neal1991/gshark/util/gitlabsearch"
+	"github.com/madneal/gshark/logger"
+	"github.com/madneal/gshark/util/appsearch"
+	"github.com/madneal/gshark/util/gitlabsearch"
 	"strings"
 	"time"
 )
