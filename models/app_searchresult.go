@@ -1,9 +1,9 @@
 package models
 
 import (
-	"github.com/neal1991/gshark/logger"
-	"github.com/neal1991/gshark/util/common"
-	"github.com/neal1991/gshark/vars"
+	"github.com/madneal/gshark/logger"
+	"github.com/madneal/gshark/util/common"
+	"github.com/madneal/gshark/vars"
 	"time"
 )
 
