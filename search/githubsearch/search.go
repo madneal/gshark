@@ -197,7 +197,7 @@ func searchCodeByOpt(c *Client, ctx context.Context, query string, opt github.Se
 	if err == nil {
 		logger.Log.Infof("remaining: %d, nextPage: %d, lastPage: %d", res.Rate.Remaining, res.NextPage, res.LastPage)
 	} else {
-		logger.Log.Infoln(err)
+		logger.Log.Error(err)
 		return nil, 0
 	}
 	return result, res.NextPage
