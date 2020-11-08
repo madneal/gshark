@@ -4,7 +4,7 @@
    <p align="center">Scan for sensitive information in Github easily and effectively.</p>
 </p>
 
-# GShark [![Go Report Card](https://goreportcard.com/badge/github.com/neal1991/gshark)](https://goreportcard.com/report/github.com/neal1991/gshark)   
+# GShark [![Go Report Card](https://goreportcard.com/badge/github.com/madneal/gshark)](https://goreportcard.com/report/github.com/madneal/gshark)   
 
 The project is based on golang with AdminLTE to build a management system to manage the Github search results. Github API is utilized to crawl the related results according to key words and some rules. It proves to be a proper way to detect the information related to your company.:rocket::rocket::rocket: For a detailed introduction, you can refer [here](https://mp.weixin.qq.com/s?__biz=MzI3MjA3MTY3Mw==&mid=2247483770&idx=1&sn=9f02c2803e1c946e8c23b16ff3eba757&chksm=eb396fecdc4ee6fa2f378e846f354f45acf6e6f540cfd54190e9353df47c7707e3a2aadf714f&token=1263666156&lang=zh_CN#rd).
 
@@ -19,7 +19,7 @@ The project is based on golang with AdminLTE to build a management system to man
 ## Quick start
 
 ```
-git clone https://github.com/neal1991/gshark
+git clone https://github.com/madneal/gshark
 
 go get ./...
 
@@ -65,7 +65,7 @@ PATH =
 * Make sure you have installed dependencies, suggest to use go mod
 * Make sure the app.ini in config folder, you can rename app-template.ini to app.ini
 * Make sure that you have config and set database correctly
-* Make sure that you have config [policy](https://github.com/neal1991/gshark/blob/master/conf/policy.csv) properly
+* Make sure that you have config [policy](https://github.com/madneal/gshark/blob/master/conf/policy.csv) properly
 * Make sure that you have config corresponding tokens for github or gitlab
 
 ## Run
@@ -91,11 +91,11 @@ GLOBAL OPTIONS:
 
 ### Initial Running
 
-If it's the first time to run, there are some [initial works](https://github.com/neal1991/gshark/blob/0ea3365f88e012df3fef1079df04a4f4b266319d/models/models.go#L31) will be finished automatically.
+If it's the first time to run, there are some [initial works](https://github.com/madneal/gshark/blob/0ea3365f88e012df3fef1079df04a4f4b266319d/models/models.go#L31) will be finished automatically.
 
-* [Init Rules](https://github.com/neal1991/gshark/blob/0ea3365f88e012df3fef1079df04a4f4b266319d/models/models.go#L98)
-* [Init admin](https://github.com/neal1991/gshark/blob/0ea3365f88e012df3fef1079df04a4f4b266319d/models/models.go#L117)
-* [Init database](https://github.com/neal1991/gshark/blob/0ea3365f88e012df3fef1079df04a4f4b266319d/models/models.go#L47)
+* [Init Rules](https://github.com/madneal/gshark/blob/0ea3365f88e012df3fef1079df04a4f4b266319d/models/models.go#L98)
+* [Init admin](https://github.com/madneal/gshark/blob/0ea3365f88e012df3fef1079df04a4f4b266319d/models/models.go#L117)
+* [Init database](https://github.com/madneal/gshark/blob/0ea3365f88e012df3fef1079df04a4f4b266319d/models/models.go#L47)
 
 ### Add Token
 
@@ -130,6 +130,6 @@ If you would like to join wechat group, you can add my wechat `Cafery` with the 
 
 ## License
 
-[Apache License 2.0](https://github.com/neal1991/gshark/blob/master/LICENSE)
+[Apache License 2.0](https://github.com/madneal/gshark/blob/master/LICENSE)
 
 

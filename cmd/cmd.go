@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"github.com/neal1991/gshark/util"
-	"github.com/neal1991/gshark/web"
+	"github.com/madneal/gshark/util"
+	"github.com/madneal/gshark/web"
 	"github.com/urfave/cli"
 )
 
