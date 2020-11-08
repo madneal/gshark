@@ -4,11 +4,9 @@ import "C"
 import (
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/lib/pq"
+	"github.com/madneal/gshark/logger"
+	"github.com/madneal/gshark/settings"
 	_ "github.com/mattn/go-sqlite3"
-	"github.com/neal1991/gshark/logger"
-	"github.com/neal1991/gshark/settings"
-	"github.com/neal1991/gshark/vars"
-
 	"xorm.io/core"
 	"xorm.io/xorm"
 
@@ -41,20 +39,22 @@ func init() {
 	SSL_MODE = sec.Key("SSL_MODE").MustString("disable")
 	DATA_PATH = sec.Key("PATH").MustString("conf")
 	DATA_NAME = sec.Key("NAME").MustString("xsec")
-	vars.SCKEY = cfg.Section("").Key("SCKEY").MustString("")
 
 	err := NewDbEngine()
 	if err != nil {
 		logger.Log.Panicln(err)
 	} else {
-		Engine.Sync2(new(Rule))
-		Engine.Sync2(new(InputInfo))
-		Engine.Sync2(new(Admin))
-		Engine.Sync2(new(Repo))
-		Engine.Sync2(new(GitToken))
-		Engine.Sync2(new(CodeResult))
-		Engine.Sync2(new(FilterRule))
-		Engine.Sync2(new(CodeResultDetail))
+		err := Engine.Sync2(new(Rule))
+		err = Engine.Sync2(new(InputInfo))
+		err = Engine.Sync2(new(Admin))
+		err = Engine.Sync2(new(Repo))
+		err = Engine.Sync2(new(GitToken))
+		err = Engine.Sync2(new(CodeResult))
+		err = Engine.Sync2(new(FilterRule))
+		err = Engine.Sync2(new(CodeResultDetail))
+		if err != nil {
+			logger.Log.Error(err)
+		}
 		InitRules()
 		InitAdmin()
 	}

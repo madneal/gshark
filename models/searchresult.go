@@ -4,7 +4,7 @@ import "C"
 import (
 	"fmt"
 	"github.com/google/go-github/github"
-	"github.com/neal1991/gshark/vars"
+	"github.com/madneal/gshark/vars"
 	"time"
 )
 
@@ -42,7 +42,6 @@ type CodeResult struct {
 	RepoPath     *string
 	Keyword      *string
 	Score        float32
-	Source       string // the source of the result, including gshark and gsil
 }
 
 type MatchedText struct {
@@ -88,8 +87,8 @@ func (r *CodeResult) Insert() (int64, error) {
 
 func (r *CodeResult) Exist() (bool, error) {
 	codeResult := new(CodeResult)
-	has, err := Engine.Table("code_result").Where("html_url = ?",
-		*r.HTMLURL).Get(codeResult)
+	has, err := Engine.Table("code_result").Where("html_url = ? or (textmatch_md5 = ? and status = 2)",
+		*r.HTMLURL, *r.Textmatchmd5).Get(codeResult)
 	return has, err
 }
 
