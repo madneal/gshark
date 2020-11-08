@@ -48,12 +48,16 @@ func Search(rules []models.Rule) {
 					return
 				}
 				counts := SaveResult(results, &rule.Pattern)
-				content += fmt.Sprintf("%s: %d条\n", rule.Pattern, counts)
+				if counts > 0 {
+					content += fmt.Sprintf("%s: %d条\n", rule.Pattern, counts)
+				}
 			}(rule)
 		}
 		wg.Wait()
 	}
-	common.SendMessage(vars.SCKEY, "扫描结果", content)
+	if content != "" {
+		common.SendMessage(vars.SCKEY, "扫描结果", content)
+	}
 }
 
 func RunSearchTask(mapRules map[int][]models.Rule, err error) {
