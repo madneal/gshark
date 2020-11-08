@@ -4,7 +4,7 @@ import "C"
 import (
 	"fmt"
 	"github.com/google/go-github/github"
-	"github.com/neal1991/gshark/vars"
+	"github.com/madneal/gshark/vars"
 	"time"
 )
 

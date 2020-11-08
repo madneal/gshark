@@ -5,11 +5,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/go-github/github"
-	"github.com/neal1991/gshark/logger"
-	"github.com/neal1991/gshark/misc"
-	"github.com/neal1991/gshark/models"
-	"github.com/neal1991/gshark/util/common"
-	"github.com/neal1991/gshark/vars"
+	"github.com/madneal/gshark/logger"
+	"github.com/madneal/gshark/misc"
+	"github.com/madneal/gshark/models"
+	"github.com/madneal/gshark/util/common"
+	"github.com/madneal/gshark/vars"
 	"regexp"
 	"strings"
 	"sync"
@@ -81,7 +81,10 @@ func PassFilters(codeResult *models.CodeResult, fullName string) bool {
 		return false
 	}
 	if !has {
-		inputInfo.Insert()
+		_, err = inputInfo.Insert()
+		if err != nil {
+			logger.Log.Error(err)
+		}
 	}
 	// detect if the codeResult exist
 	exist, err := codeResult.Exist()
