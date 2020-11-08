@@ -85,7 +85,10 @@ func SaveResult(results []*models.CodeResult, keyword *string) {
 			}
 			if !has {
 				resultItem.Keyword = keyword
-				resultItem.Insert()
+				_, err := resultItem.Insert()
+				if err != nil {
+					logger.Log.Error(err)
+				}
 				insertCount++
 			}
 
@@ -137,9 +140,12 @@ func SearchCode(keyword string, project models.InputInfo, client *gitlab.Client)
 		fmt.Println(err)
 	}
 	if resp.StatusCode != 200 {
-		fmt.Printf("request error for projectId-%d: %d", project.ProjectId, resp.StatusCode)
+		fmt.Printf("request error for projectId-%d: %d\n", project.ProjectId, resp.StatusCode)
 		if resp.StatusCode == 404 {
-			project.DeleteByProjectId()
+			err = project.DeleteByProjectId()
+			if err != nil {
+				logger.Log.Error(err)
+			}
 		}
 		return codeResults
 	}
