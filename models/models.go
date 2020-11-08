@@ -4,9 +4,9 @@ import "C"
 import (
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/lib/pq"
+	"github.com/madneal/gshark/logger"
+	"github.com/madneal/gshark/settings"
 	_ "github.com/mattn/go-sqlite3"
-	"github.com/neal1991/gshark/logger"
-	"github.com/neal1991/gshark/settings"
 	"xorm.io/core"
 	"xorm.io/xorm"
 

@@ -2,8 +2,8 @@ package common
 
 import (
 	"fmt"
-	"github.com/neal1991/gshark/logger"
-	"github.com/neal1991/gshark/vars"
+	"github.com/madneal/gshark/logger"
+	"github.com/madneal/gshark/vars"
 	"net/http"
 	url2 "net/url"
 	"strings"

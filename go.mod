@@ -1,4 +1,4 @@
-module github.com/neal1991/gshark
+module github.com/madneal/gshark
 
 require (
 	github.com/PuerkitoBio/goquery v1.5.0 // indirect

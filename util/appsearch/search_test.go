@@ -2,7 +2,7 @@ package appsearch
 
 import (
 	"fmt"
-	"github.com/neal1991/gshark/models"
+	"github.com/madneal/gshark/models"
 	"testing"
 )
 
