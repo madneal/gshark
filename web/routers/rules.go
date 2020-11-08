@@ -2,7 +2,7 @@ package routers
 
 import (
 	"github.com/madneal/gshark/models"
-	"github.com/madneal/gshark/util/common"
+	"github.com/madneal/gshark/search/common"
 	"github.com/madneal/gshark/vars"
 	"gopkg.in/macaron.v1"
 
