@@ -91,10 +91,6 @@ func GetRepoNameByUrl(url string) string {
 
 // Send message to server 酱
 func SendMessage(key, title, msg string) {
-	if key == "" {
-		fmt.Println("server 酱 key 为空，请在 app.ini 中配置")
-		return
-	}
 	url := fmt.Sprintf("https://sc.ftqq.com/%s.send?text=%s&desp=%s", key, title, url2.QueryEscape(msg))
 	_, err := http.Get(url)
 	if err != nil {

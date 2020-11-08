@@ -55,7 +55,7 @@ func Search(rules []models.Rule) {
 		}
 		wg.Wait()
 	}
-	if content != "" {
+	if vars.SCKEY != "" && content != "" {
 		common.SendMessage(vars.SCKEY, "扫描结果", content)
 	}
 }
