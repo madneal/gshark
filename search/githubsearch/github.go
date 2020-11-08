@@ -5,7 +5,7 @@ import (
 	"github.com/google/go-github/github"
 	"github.com/madneal/gshark/logger"
 	"github.com/madneal/gshark/models"
-	"github.com/madneal/gshark/util/common"
+	"github.com/madneal/gshark/search/common"
 	"strconv"
 	"strings"
 )

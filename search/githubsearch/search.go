@@ -8,7 +8,7 @@ import (
 	"github.com/madneal/gshark/logger"
 	"github.com/madneal/gshark/misc"
 	"github.com/madneal/gshark/models"
-	"github.com/madneal/gshark/util/common"
+	"github.com/madneal/gshark/search/common"
 	"github.com/madneal/gshark/vars"
 	"regexp"
 	"strings"
