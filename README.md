@@ -103,6 +103,10 @@ To execute `main scan`, you need to add a Github token for crawl information in 
 
 [![iR2TMt.md.png](https://s1.ax1x.com/2018/10/31/iR2TMt.md.png)](https://imgchr.com/i/iR2TMt)
 
+### Add notification
+
+Now support notification by `server 酱`. Set the config of `SCKEY` in `app.ini` file.
+
 ## FAQ
 
 1. Access web service 403 forbidden
@@ -126,7 +130,7 @@ https://github.com/mattn/go-sqlite3/issues/435#issuecomment-314247676
 
 ## Wechat
 
-If you would like to join wechat group, you can add my wechat `Cafery` with the message `gshark`.
+If you would like to join wechat group, you can add my wechat `mmadneal` with the message `gshark`.
 
 ## License
 
