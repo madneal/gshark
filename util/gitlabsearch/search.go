@@ -2,9 +2,9 @@ package gitlabsearch
 
 import (
 	"fmt"
-	"github.com/neal1991/gshark/logger"
-	"github.com/neal1991/gshark/models"
-	"github.com/neal1991/gshark/vars"
+	"github.com/madneal/gshark/logger"
+	"github.com/madneal/gshark/models"
+	"github.com/madneal/gshark/vars"
 	"github.com/xanzy/go-gitlab"
 	"strings"
 	"sync"

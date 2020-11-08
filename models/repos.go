@@ -1,7 +1,7 @@
 package models
 
 import (
-	"github.com/neal1991/gshark/vars"
+	"github.com/madneal/gshark/vars"
 )
 
 type Repo struct {

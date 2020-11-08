@@ -2,8 +2,8 @@ package settings
 
 import (
 	"fmt"
-	"github.com/neal1991/gshark/logger"
-	"github.com/neal1991/gshark/vars"
+	"github.com/madneal/gshark/logger"
+	"github.com/madneal/gshark/vars"
 
 	"gopkg.in/ini.v1"
 	"os"
