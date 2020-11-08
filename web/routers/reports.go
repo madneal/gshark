@@ -7,8 +7,8 @@ import (
 
 	"fmt"
 	"github.com/go-macaron/session"
-	"github.com/madneal/gshark/util/common"
-	"github.com/madneal/gshark/util/githubsearch"
+	"github.com/madneal/gshark/search/common"
+	"github.com/madneal/gshark/search/githubsearch"
 	"net/url"
 	"strconv"
 	"strings"

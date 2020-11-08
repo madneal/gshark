@@ -4,6 +4,7 @@ import "C"
 import (
 	"fmt"
 	"github.com/google/go-github/github"
+	"github.com/madneal/gshark/logger"
 	"github.com/madneal/gshark/vars"
 	"time"
 )
@@ -114,7 +115,7 @@ func ListGithubSearchResultPage(page int, status int) ([]CodeResult, int, int) {
 	err = Engine.Where("status=?", status).Omit("repository").Limit(vars.PAGE_SIZE, (page-1)*vars.PAGE_SIZE).Desc("id").Find(&results)
 
 	if err != nil {
-		fmt.Errorf("search failed:%s", err)
+		logger.Log.Error("search failed:%s", err)
 	}
 
 	return results, pages, int(totalPages)
