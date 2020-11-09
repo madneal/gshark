@@ -42,7 +42,7 @@ func init() {
 
 	err := NewDbEngine()
 	if err != nil {
-		logger.Log.Panicln(err)
+		logger.Log.Error(err)
 	} else {
 		err := Engine.Sync2(new(Rule))
 		err = Engine.Sync2(new(InputInfo))
@@ -126,6 +126,9 @@ func InitAdmin() {
 		password := "gshark"
 		role := "admin"
 		admin := NewAdmin(username, password, role)
-		admin.Insert()
+		_, err := admin.Insert()
+		if err != nil {
+			logger.Log.Error(err)
+		}
 	}
 }
