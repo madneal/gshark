@@ -95,7 +95,7 @@ func PassFilters(codeResult *models.CodeResult, fullName string) bool {
 	// detect if there are any random characters in text matches
 	textMatches := codeResult.TextMatches[0].Fragment
 	reg := regexp.MustCompile(`[A-Za-z0-9_+]{50,}`)
-	return !reg.MatchString(*textMatches) && !has && !exist
+	return !reg.MatchString(*textMatches) && !exist
 }
 
 func SaveResult(results []*github.CodeSearchResult, keyword *string) int {
