@@ -2,13 +2,12 @@ package cmd
 
 import (
 	"fmt"
-	"log"
-
 	"github.com/OJ/gobuster/v3/cli"
 	"github.com/OJ/gobuster/v3/gobusterdir"
 	"github.com/OJ/gobuster/v3/helper"
 	"github.com/OJ/gobuster/v3/libgobuster"
 	"github.com/spf13/cobra"
+	"log"
 )
 
 var cmdDir *cobra.Command
