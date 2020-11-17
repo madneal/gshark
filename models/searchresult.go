@@ -88,7 +88,7 @@ func (r *CodeResult) Insert() (int64, error) {
 
 func (r *CodeResult) Exist() (bool, error) {
 	codeResult := new(CodeResult)
-	has, err := Engine.Table("code_result").Where("html_url = ? or (textmatch_md5 = ? and status = 2)",
+	has, err := Engine.Table("code_result").Where("html_url = ? or (textmatch_md5 = ? and status != 1)",
 		*r.HTMLURL, *r.Textmatchmd5).Get(codeResult)
 	return has, err
 }
