@@ -2,78 +2,91 @@ package gitlabsearch
 
 import (
 	"fmt"
+	"github.com/go-resty/resty/v2"
 	"github.com/madneal/gshark/logger"
 	"github.com/madneal/gshark/models"
 	"github.com/madneal/gshark/vars"
 	"github.com/xanzy/go-gitlab"
 	"strings"
-	"sync"
+	//"sync"
 	"time"
 )
 
 func RunTask(duration time.Duration) {
-	RunSearchTask(GenerateSearchCodeTask())
+	//RunSearchTask(GenerateSearchCodeTask())
 
 	logger.Log.Infof("Complete the scan of Gitlab, start to sleep %v seconds", duration*time.Second)
 	time.Sleep(duration * time.Second)
 }
 
-func GenerateSearchCodeTask() (map[int][]models.Rule, error) {
-	result := make(map[int][]models.Rule)
-	// get rules with the type of github
-	rules, err := models.GetValidRulesByType(vars.GITLAB)
-	ruleNum := len(rules)
-	batch := ruleNum / vars.SearchNum
+//func GenerateSearchCodeTask() (map[int][]models.Rule, error) {
+//	result := make(map[int][]models.Rule)
+//	// get rules with the type of github
+//	rules, err := models.GetValidRulesByType(vars.GITLAB)
+//	ruleNum := len(rules)
+//	batch := ruleNum / vars.SearchNum
+//
+//	for i := 0; i < batch; i++ {
+//		result[i] = rules[vars.SearchNum*i : vars.SearchNum*(i+1)]
+//	}
+//
+//	if ruleNum%vars.SearchNum != 0 {
+//		result[batch] = rules[vars.SearchNum*batch : ruleNum]
+//	}
+//	return result, err
+//}
+//
+//func RunSearchTask(mapRules map[int][]models.Rule, err error) {
+//	client := GetClient()
+//	if client == nil {
+//		return
+//	}
+//	// get all public projects
+//	GetProjects(client)
+//	if err == nil {
+//		for _, rules := range mapRules {
+//			startTime := time.Now()
+//			//Search(rules, client)
+//			usedTime := time.Since(startTime).Seconds()
+//			if usedTime < 60 {
+//				time.Sleep(time.Duration(60 - usedTime))
+//			}
+//		}
+//	}
+//}
 
-	for i := 0; i < batch; i++ {
-		result[i] = rules[vars.SearchNum*i : vars.SearchNum*(i+1)]
-	}
+//func Search(rules []models.Rule, client *gitlab.Client) {
+//	var wg sync.WaitGroup
+//	wg.Add(len(rules))
+//
+//	for _, rule := range rules {
+//		go func(rule models.Rule) {
+//			defer wg.Done()
+//			SearchInsideProjects(rule.Pattern, client)
+//		}(rule)
+//	}
+//	wg.Wait()
+//}
 
-	if ruleNum%vars.SearchNum != 0 {
-		result[batch] = rules[vars.SearchNum*batch : ruleNum]
+func SearchCode(keyword string, client *resty.Client) *resty.Response {
+	res := client.R()
+	res.SetHeader("PRIVATE-TOKEN", vars.GITLAB_TOKEN)
+	url := "https://gitlab.com/api/v4/search?scope=blobs&search=" + keyword
+	response, err := res.Get(url)
+	if err != nil {
+		logger.Log.Error(err)
 	}
-	return result, err
+	fmt.Println(response)
+	return response
 }
 
-func RunSearchTask(mapRules map[int][]models.Rule, err error) {
-	client := GetClient()
-	if client == nil {
-		return
-	}
-	// get all public projects
-	GetProjects(client)
-	if err == nil {
-		for _, rules := range mapRules {
-			startTime := time.Now()
-			Search(rules, client)
-			usedTime := time.Since(startTime).Seconds()
-			if usedTime < 60 {
-				time.Sleep(time.Duration(60 - usedTime))
-			}
-		}
-	}
-}
-
-func Search(rules []models.Rule, client *gitlab.Client) {
-	var wg sync.WaitGroup
-	wg.Add(len(rules))
-
-	for _, rule := range rules {
-		go func(rule models.Rule) {
-			defer wg.Done()
-			SearchInsideProjects(rule.Pattern, client)
-		}(rule)
-	}
-	wg.Wait()
-}
-
-func SearchInsideProjects(keyword string, client *gitlab.Client) {
-	projects := ListValidProjects()
-	for _, project := range projects {
-		results := SearchCode(keyword, project, client)
-		SaveResult(results, &keyword)
-	}
-}
+//func SearchInsideProjects(keyword string, client *gitlab.Client) {
+//	projects := ListValidProjects()
+//	for _, project := range projects {
+//		results := SearchCode(keyword, project, client)
+//		SaveResult(results, &keyword)
+//	}
+//}
 
 func SaveResult(results []*models.CodeResult, keyword *string) {
 	insertCount := 0
@@ -131,51 +144,51 @@ func BuildQueryString(keyword, key string) string {
 	return queryString
 }
 
-func SearchCode(keyword string, project models.InputInfo, client *gitlab.Client) []*models.CodeResult {
-	codeResults := make([]*models.CodeResult, 0)
-	queryString := BuildQueryString(keyword, "ext")
-	//logger.Log.Infof("Search inside project %s", project.Url)
-	results, resp, err := client.Search.BlobsByProject(project.ProjectId, queryString, &gitlab.SearchOptions{})
-	if err != nil {
-		logger.Log.Error(err)
-	}
-	if resp.StatusCode != 200 {
-		fmt.Printf("request error for projectId-%d: %d\n", project.ProjectId, resp.StatusCode)
-		if resp.StatusCode == 404 {
-			err = project.DeleteByProjectId()
-			if err != nil {
-				logger.Log.Error(err)
-			}
-		}
-		return codeResults
-	}
-	for _, result := range results {
-		url := project.Url + "/blob/master/" + result.Filename
-		textMatches := make([]models.TextMatch, 0)
-		textMatch := models.TextMatch{
-			Fragment: &result.Data,
-		}
-		textMatches = append(textMatches, textMatch)
-		codeResult := models.CodeResult{
-			Id:          0,
-			Name:        &result.Filename,
-			Path:        &result.Basename,
-			RepoName:    result.Basename,
-			HTMLURL:     &url,
-			TextMatches: textMatches,
-			Status:      0,
-			Keyword:     &keyword,
-		}
-		if !mergeTextMatches(codeResults, result.Filename, textMatch) {
-			codeResults = append(codeResults, &codeResult)
-		}
-	}
-	err = models.UpdateStatusById(1, project.ProjectId)
-	if err != nil {
-		logger.Log.Error(err)
-	}
-	return codeResults
-}
+//func SearchCode(keyword string, project models.InputInfo, client *gitlab.Client) []*models.CodeResult {
+//	codeResults := make([]*models.CodeResult, 0)
+//	queryString := BuildQueryString(keyword, "ext")
+//	//logger.Log.Infof("Search inside project %s", project.Url)
+//	results, resp, err := client.Search.BlobsByProject(project.ProjectId, queryString, &gitlab.SearchOptions{})
+//	if err != nil {
+//		logger.Log.Error(err)
+//	}
+//	if resp.StatusCode != 200 {
+//		fmt.Printf("request error for projectId-%d: %d\n", project.ProjectId, resp.StatusCode)
+//		if resp.StatusCode == 404 {
+//			err = project.DeleteByProjectId()
+//			if err != nil {
+//				logger.Log.Error(err)
+//			}
+//		}
+//		return codeResults
+//	}
+//	for _, result := range results {
+//		url := project.Url + "/blob/master/" + result.Filename
+//		textMatches := make([]models.TextMatch, 0)
+//		textMatch := models.TextMatch{
+//			Fragment: &result.Data,
+//		}
+//		textMatches = append(textMatches, textMatch)
+//		codeResult := models.CodeResult{
+//			Id:          0,
+//			Name:        &result.Filename,
+//			Path:        &result.Basename,
+//			RepoName:    result.Basename,
+//			HTMLURL:     &url,
+//			TextMatches: textMatches,
+//			Status:      0,
+//			Keyword:     &keyword,
+//		}
+//		if !mergeTextMatches(codeResults, result.Filename, textMatch) {
+//			codeResults = append(codeResults, &codeResult)
+//		}
+//	}
+//	err = models.UpdateStatusById(1, project.ProjectId)
+//	if err != nil {
+//		logger.Log.Error(err)
+//	}
+//	return codeResults
+//}
 
 // mergeTextMatches is utilized to merge multi textMatches in the same file
 // return: if has merged

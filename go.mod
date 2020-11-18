@@ -12,6 +12,7 @@ require (
 	github.com/go-macaron/csrf v0.0.0-20190131233648-3751b136073c
 	github.com/go-macaron/inject v0.0.0-20160627170012-d8a0b8677191 // indirect
 	github.com/go-macaron/session v0.0.0-20190131233854-0a0a789bf193
+	github.com/go-resty/resty/v2 v2.3.0
 	github.com/go-sql-driver/mysql v1.4.1
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/gocolly/colly v1.2.0
@@ -32,7 +33,6 @@ require (
 	github.com/urfave/cli v1.20.0
 	github.com/x-cray/logrus-prefixed-formatter v0.5.2
 	github.com/xanzy/go-gitlab v0.20.1
-	golang.org/x/net v0.0.0-20191002035440-2ec189313ef0 // indirect
 	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
 	google.golang.org/appengine v1.6.4 // indirect
 	gopkg.in/ini.v1 v1.41.0

@@ -2,7 +2,7 @@ package gitlabsearch
 
 import (
 	"fmt"
-	"github.com/madneal/gshark/models"
+	"github.com/go-resty/resty/v2"
 	"github.com/xanzy/go-gitlab"
 	"log"
 	"testing"
@@ -43,20 +43,10 @@ func TestGetProjects(t *testing.T) {
 }
 
 func TestSearchCode(t *testing.T) {
-	client := GetClient()
-	inputInfo := models.InputInfo{
-		ProjectId: 14723410,
-	}
-	codeResults := SearchCode("baidu", inputInfo, client)
-	for _, result := range codeResults {
-		fmt.Println(*result.Name)
-		for index, text := range result.TextMatches {
-			fmt.Println("==================")
-			fmt.Println(index)
-			fmt.Println(*text.Fragment)
-		}
-	}
-	fmt.Println(len(codeResults))
+	client := resty.New()
+	data := SearchCode("installation", client).Body()
+	results := Parse(data)
+	fmt.Println(results[0])
 }
 
 func TestBuildQueryString(t *testing.T) {

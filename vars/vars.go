@@ -16,4 +16,5 @@ var (
 	DEBUG_MODE            bool
 	PAGE_SIZE             = 10
 	SCKEY                 string
+	GITLAB_TOKEN          string
 )

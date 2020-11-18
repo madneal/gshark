@@ -39,4 +39,5 @@ func init() {
 	vars.MAX_INDEXERS = Cfg.Section("").Key("MAX_INDEXERS").MustInt(vars.DefaultMaxConcurrentIndexers)
 	vars.MAX_Concurrency_REPOS = Cfg.Section("").Key("MAX_Concurrency_REPOS").MustInt(100)
 	vars.SCKEY = Cfg.Section("").Key("SCKEY").MustString("")
+	vars.GITLAB_TOKEN = Cfg.Section("").Key("gitlab_token").MustString("")
 }
