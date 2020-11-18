@@ -6,11 +6,19 @@ import (
 	"github.com/OJ/gobuster/v3/gobusterdir"
 	"github.com/OJ/gobuster/v3/helper"
 	"github.com/OJ/gobuster/v3/libgobuster"
+	"github.com/madneal/gshark/logger"
 	"github.com/spf13/cobra"
 	"log"
+	"time"
 )
 
 var cmdDir *cobra.Command
+
+func RunTask(duration time.Duration) {
+
+	logger.Log.Infof("Complete the dir buster, start to sleep %v seconds", duration*time.Second)
+	time.Sleep(duration * time.Second)
+}
 
 func runDir(cmd *cobra.Command, args []string) error {
 	globalopts, pluginopts, err := parseDirOptions()
