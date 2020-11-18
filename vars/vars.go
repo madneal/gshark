@@ -5,6 +5,7 @@ const (
 	PageStep                     = 5
 	SearchNum                    = 25
 	GITLAB                       = "gitlab"
+	GitlabSearchUrl              = "https://gitlab.com/api/v4/search?scope=blobs&search="
 )
 
 var (
