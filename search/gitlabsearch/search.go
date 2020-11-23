@@ -9,13 +9,11 @@ import (
 	"strconv"
 	"strings"
 	"sync"
-
-	//"sync"
 	"time"
 )
 
 func RunTask(duration time.Duration) {
-	//RunSearchTask(GenerateSearchCodeTask())
+	RunSearchTask(GenerateSearchCodeTask())
 
 	logger.Log.Infof("Complete the scan of Gitlab, start to sleep %v seconds", duration*time.Second)
 	time.Sleep(duration * time.Second)
@@ -42,7 +40,7 @@ func RunSearchTask(mapRules map[int][]models.Rule, err error) {
 	if err == nil {
 		for _, rules := range mapRules {
 			startTime := time.Now()
-			//Search(rules, client)
+			Search(rules)
 			usedTime := time.Since(startTime).Seconds()
 			if usedTime < 60 {
 				time.Sleep(time.Duration(60 - usedTime))
