@@ -122,6 +122,15 @@ exec: "gcc": executable file not found in %PATH%`
 
 https://github.com/mattn/go-sqlite3/issues/435#issuecomment-314247676
 
+4. `go get ./... connection error`
+
+It's suggested to enable goproxy:
+
+```
+go env -w GOPROXY=https://goproxy.io,direct
+go env -w GO111MODULE=on
+```
+
 ## Reference
 
 * [x-patrol](https://github.com/MiSecurity/x-patrol)
