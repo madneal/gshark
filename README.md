@@ -127,7 +127,7 @@ https://github.com/mattn/go-sqlite3/issues/435#issuecomment-314247676
 It's suggested to enable goproxy:
 
 ```
-go env -w GOPROXY=https://goproxy.io,direct
+go env -w GOPROXY=https://goproxy.cn,direct
 go env -w GO111MODULE=on
 ```
 
