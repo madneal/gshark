@@ -5,7 +5,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/lib/pq"
 	"github.com/madneal/gshark/logger"
-	"github.com/madneal/gshark/settings"
+	"github.com/madneal/gshark/vars"
 	_ "github.com/mattn/go-sqlite3"
 	"xorm.io/core"
 	"xorm.io/xorm"
@@ -28,7 +28,7 @@ var (
 )
 
 func init() {
-	cfg := settings.Cfg
+	cfg := vars.Cfg
 	sec := cfg.Section("database")
 
 	DATA_TYPE = sec.Key("DB_TYPE").MustString("sqlite")
@@ -52,6 +52,7 @@ func init() {
 		err = Engine.Sync2(new(CodeResult))
 		err = Engine.Sync2(new(FilterRule))
 		err = Engine.Sync2(new(CodeResultDetail))
+		err = Engine.Sync(new(Subdomain))
 		if err != nil {
 			logger.Log.Error(err)
 		}

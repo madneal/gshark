@@ -29,7 +29,3 @@ func TestGenerateSearchCodeTask(t *testing.T) {
 	}
 	fmt.Println(err)
 }
-
-func TestScheduleTasks(t *testing.T) {
-	ScheduleTasks(100)
-}
