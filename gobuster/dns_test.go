@@ -3,6 +3,7 @@ package gobuster
 import (
 	"fmt"
 	"testing"
+	"time"
 )
 
 func TestRunDns(t *testing.T) {
@@ -10,4 +11,8 @@ func TestRunDns(t *testing.T) {
 	if err != nil {
 		fmt.Println(err)
 	}
+}
+
+func TestRunTask(t *testing.T) {
+	RunTask(time.Duration(900))
 }

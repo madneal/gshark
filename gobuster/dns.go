@@ -30,6 +30,8 @@ func RunDNS(domain string) error {
 		if strings.Contains(string(line), "Found") {
 			foundDomian = strings.Replace(string(line), "Found: ", "", 1)
 			foundDomian = strings.ToLower(foundDomian)
+			foundDomian = strings.Replace(foundDomian, "\r", "", -1)
+			foundDomian = strings.TrimSpace(foundDomian)
 			println(foundDomian)
 			subdomain := models.Subdomain{
 				Domain:    &domain,
