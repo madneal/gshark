@@ -46,3 +46,19 @@ func RunDNS(domain string) error {
 	defer cmd.Wait()
 	return err
 }
+
+func RunTask(duration time.Duration) {
+	rules, err := models.GetValidRulesByType("domain")
+	if err != nil {
+		logger.Log.Error(err)
+	}
+	for _, rule := range rules {
+		domain := rule.Pattern
+		err = RunDNS(domain)
+		if err != nil {
+			logger.Log.Error(err)
+		}
+		logger.Log.Infof("Complete the scan of domain %s, start to sleep %v seconds", domain, duration*time.Second)
+		time.Sleep(duration * time.Second)
+	}
+}

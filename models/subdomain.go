@@ -5,7 +5,7 @@ import "time"
 type Subdomain struct {
 	Id        int64
 	Domain    *string
-	Subdomain *string `gorm:"index:subdomain_index,unique"`
+	Subdomain *string `xorm:"unique"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
