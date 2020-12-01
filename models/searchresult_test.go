@@ -2,7 +2,7 @@ package models
 
 import (
 	"fmt"
-	"github.com/neal1991/gshark/misc"
+	"github.com/madneal/gshark/misc"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
