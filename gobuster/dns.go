@@ -11,12 +11,15 @@ import (
 	"time"
 )
 
-func RunDNS(domain string) error {
+func RunDNS(domain string) {
 	cmdLines := vars.GOBUSTER + " dns -d " + domain + " -w " + vars.SUBDOMAIN_WORDLIST
 	cmdArgs := strings.Fields(cmdLines)
 	cmd := exec.Command(cmdArgs[0], cmdArgs[1:len(cmdArgs)]...)
 	stdout, err := cmd.StdoutPipe()
-	cmd.Start()
+	err = cmd.Start()
+	if err != nil {
+		logger.Log.Error(err)
+	}
 	oneByte := make([]byte, 100)
 	var foundDomian string
 	for {
@@ -46,7 +49,6 @@ func RunDNS(domain string) error {
 		}
 	}
 	defer cmd.Wait()
-	return err
 }
 
 func RunTask(duration time.Duration) {
@@ -56,7 +58,7 @@ func RunTask(duration time.Duration) {
 	}
 	for _, rule := range rules {
 		domain := rule.Pattern
-		err = RunDNS(domain)
+		RunDNS(domain)
 		if err != nil {
 			logger.Log.Error(err)
 		}
