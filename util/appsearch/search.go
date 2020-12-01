@@ -3,9 +3,9 @@ package appsearch
 import (
 	"fmt"
 	"github.com/gocolly/colly"
-	"github.com/neal1991/gshark/logger"
-	"github.com/neal1991/gshark/models"
-	"github.com/neal1991/gshark/vars"
+	"github.com/madneal/gshark/logger"
+	"github.com/madneal/gshark/models"
+	"github.com/madneal/gshark/vars"
 	"strconv"
 	"strings"
 	"time"

@@ -2,7 +2,7 @@ package gitlabsearch
 
 import (
 	"fmt"
-	"github.com/neal1991/gshark/models"
+	"github.com/madneal/gshark/models"
 	"github.com/xanzy/go-gitlab"
 	"log"
 	"testing"
