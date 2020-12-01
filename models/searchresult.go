@@ -4,7 +4,7 @@ import "C"
 import (
 	"fmt"
 	"github.com/google/go-github/github"
-	"github.com/neal1991/gshark/vars"
+	"github.com/madneal/gshark/vars"
 	"time"
 )
 
@@ -42,7 +42,6 @@ type CodeResult struct {
 	RepoPath     *string
 	Keyword      *string
 	Score        float32
-	Source       string // the source of the result, including gshark and gsil
 }
 
 type MatchedText struct {

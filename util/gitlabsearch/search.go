@@ -2,9 +2,9 @@ package gitlabsearch
 
 import (
 	"fmt"
-	"github.com/neal1991/gshark/logger"
-	"github.com/neal1991/gshark/models"
-	"github.com/neal1991/gshark/vars"
+	"github.com/madneal/gshark/logger"
+	"github.com/madneal/gshark/models"
+	"github.com/madneal/gshark/vars"
 	"github.com/xanzy/go-gitlab"
 	"strings"
 	"sync"
@@ -85,7 +85,10 @@ func SaveResult(results []*models.CodeResult, keyword *string) {
 			}
 			if !has {
 				resultItem.Keyword = keyword
-				resultItem.Insert()
+				_, err := resultItem.Insert()
+				if err != nil {
+					logger.Log.Error(err)
+				}
 				insertCount++
 			}
 
@@ -137,9 +140,12 @@ func SearchCode(keyword string, project models.InputInfo, client *gitlab.Client)
 		fmt.Println(err)
 	}
 	if resp.StatusCode != 200 {
-		fmt.Printf("request error for projectId-%d: %d", project.ProjectId, resp.StatusCode)
+		fmt.Printf("request error for projectId-%d: %d\n", project.ProjectId, resp.StatusCode)
 		if resp.StatusCode == 404 {
-			project.DeleteByProjectId()
+			err = project.DeleteByProjectId()
+			if err != nil {
+				logger.Log.Error(err)
+			}
 		}
 		return codeResults
 	}
@@ -159,7 +165,6 @@ func SearchCode(keyword string, project models.InputInfo, client *gitlab.Client)
 			TextMatches: textMatches,
 			Status:      0,
 			Keyword:     &keyword,
-			Source:      vars.Source,
 		}
 		if !mergeTextMatches(codeResults, result.Filename, textMatch) {
 			codeResults = append(codeResults, &codeResult)
@@ -234,11 +239,13 @@ func GetProjects(client *gitlab.Client) {
 		// List all the projects we've found so far.
 		for _, p := range ps {
 			inputInfo := models.InputInfo{
-				Url:       p.WebURL,
-				Path:      p.PathWithNamespace,
-				Type:      vars.GITLAB,
-				ProjectId: p.ID,
-				Status:    0,
+				Url:         p.WebURL,
+				Path:        p.PathWithNamespace,
+				Type:        vars.GITLAB,
+				ProjectId:   p.ID,
+				Status:      2,
+				CreatedTime: time.Now(),
+				UpdatedTime: time.Now(),
 			}
 			has, err := inputInfo.Exist()
 			if err != nil {
@@ -246,7 +253,10 @@ func GetProjects(client *gitlab.Client) {
 			}
 			if !has {
 				//logger.Log.Infof("Insert project %s", p.WebURL)
-				inputInfo.Insert()
+				_, err := inputInfo.Insert()
+				if err != nil {
+					logger.Log.Error(err)
+				}
 				projectNum++
 			}
 		}
