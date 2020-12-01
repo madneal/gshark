@@ -2,7 +2,7 @@ package appsearch
 
 import (
 	"fmt"
-	"github.com/neal1991/gshark/models"
+	"github.com/madneal/gshark/models"
 	"testing"
 )
 
@@ -28,8 +28,4 @@ func TestGenerateSearchCodeTask(t *testing.T) {
 		}
 	}
 	fmt.Println(err)
-}
-
-func TestScheduleTasks(t *testing.T) {
-	ScheduleTasks(100)
 }

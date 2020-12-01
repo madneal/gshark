@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/google/go-github/github"
-	"github.com/neal1991/gshark/models"
+	"github.com/madneal/gshark/models"
 	"golang.org/x/oauth2"
 	"os"
 )
