@@ -31,8 +31,8 @@
                                 {{range .reports}}
                                     <tr>
                                         <td>{{.Id}}</td>
-                                        <td>{{.Subdomain}}</td>
-                                        <td>{{.CreatedAt}}</td>
+                                        <td><a href="https://{{.Subdomain}}">{{.Subdomain}} </a></td>
+                                        <td>{{FormatDate .CreatedAt}}</td>
                                         {{if eq 0 .Status}}
                                             <td><a href="/admin/reports/subdomain/disable/{{.Id }}"><img src="/img/repo.png" alt="忽略子域名" title="忽略子域名"/></a></td>
                                         {{end}}
