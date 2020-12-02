@@ -16,6 +16,7 @@ import (
 	"net/http"
 	"runtime"
 	"strings"
+	"time"
 )
 
 func init() {
@@ -57,6 +58,9 @@ func RunWeb(ctx *cli.Context) {
 					return strings.Split(*str, ",")
 				},
 				"unescaped": func(x string) interface{} { return template.HTML(x) },
+				"FormatDate": func(date time.Time) string {
+					return date.Format("2006-01-02 15:04:05")
+				},
 			}},
 			Delims:     macaron.Delims{"{{", "}}"},
 			Charset:    "UTF-8",
