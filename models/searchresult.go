@@ -4,6 +4,8 @@ import "C"
 import (
 	"fmt"
 	"github.com/google/go-github/github"
+	"github.com/madneal/gshark/logger"
+	"github.com/madneal/gshark/util/common"
 	"github.com/madneal/gshark/vars"
 	"time"
 )
@@ -95,26 +97,11 @@ func (r *CodeResult) Exist() (bool, error) {
 func ListGithubSearchResultPage(page int, status int) ([]CodeResult, int, int) {
 	results := make([]CodeResult, 0)
 	totalPages, err := Engine.Table("code_result").Where("status=?", status).Count()
-	var pages int
-
-	if int(totalPages)%vars.PAGE_SIZE == 0 {
-		pages = int(totalPages) / vars.PAGE_SIZE
-	} else {
-		pages = int(totalPages)/vars.PAGE_SIZE + 1
-	}
-
-	if page >= pages {
-		page = pages
-	}
-
-	if page < 1 {
-		page = 1
-	}
-
+	page, pages := common.GetPageAndPagesByCount(page, int(totalPages))
 	err = Engine.Where("status=?", status).Omit("repository").Limit(vars.PAGE_SIZE, (page-1)*vars.PAGE_SIZE).Desc("id").Find(&results)
 
 	if err != nil {
-		fmt.Errorf("search failed:%s", err)
+		logger.Log.Error(err)
 	}
 
 	return results, pages, int(totalPages)

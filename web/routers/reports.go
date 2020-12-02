@@ -211,3 +211,29 @@ func DisableRepoById(ctx *macaron.Context, sess session.Store) {
 		ctx.Redirect("/admin/login/")
 	}
 }
+
+func ListSubdomainResult(ctx *macaron.Context, sess session.Store) {
+	if sess.Get("admin") != nil {
+		page := ctx.Params(":page")
+		p, _ := strconv.Atoi(page)
+		p, pre, next := common.GetPreAndNext(p)
+		reports, pages, count := models.ListSubdomainsByPage(p)
+		pageList := common.GetPageList(p, vars.PageStep, pages)
+		var lastPage int
+		if len(pageList) >= 1 {
+			lastPage = pageList[len(pageList)-1]
+		}
+
+		ctx.Data["reports"] = reports
+		ctx.Data["pages"] = pages
+		ctx.Data["page"] = p
+		ctx.Data["pre"] = pre
+		ctx.Data["next"] = next
+		ctx.Data["pageList"] = pageList
+		ctx.Data["count"] = count
+		ctx.Data["lastPage"] = lastPage
+		ctx.HTML(200, "report_subdomain")
+	} else {
+		ctx.Redirect("/admin/login/")
+	}
+}
