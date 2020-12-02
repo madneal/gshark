@@ -7,7 +7,6 @@ import (
 	"github.com/go-macaron/csrf"
 	"github.com/go-macaron/session"
 	"github.com/madneal/gshark/logger"
-	"github.com/madneal/gshark/models"
 	"github.com/madneal/gshark/sauth"
 	"github.com/madneal/gshark/vars"
 	"github.com/madneal/gshark/web/routers"
@@ -35,12 +34,12 @@ func RunWeb(ctx *cli.Context) {
 		vars.HTTP_PORT = ctx.Int("port")
 	}
 
-	subdomainRulesCount := models.GetRulesCount()
-	if subdomainRulesCount == 0 {
-		vars.ENABLE_SUBDOMAIN = false
-	} else {
-		vars.ENABLE_SUBDOMAIN = true
-	}
+	//subdomainRulesCount := models.GetRulesCount()
+	//if subdomainRulesCount == 0 {
+	//	vars.ENABLE_SUBDOMAIN = false
+	//} else {
+	//	vars.ENABLE_SUBDOMAIN = true
+	//}
 	m := macaron.Classic()
 	e := casbin.NewEnforcer("./conf/auth_model.conf", "./conf/policy.csv")
 	m.Use(sauth.Authorizer(e))
