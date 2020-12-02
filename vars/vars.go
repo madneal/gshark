@@ -26,6 +26,7 @@ var (
 	SCKEY                 string
 	GOBUSTER              string
 	SUBDOMAIN_WORDLIST    string
+	ENABLE_SUBDOMAIN      bool
 )
 
 var (
