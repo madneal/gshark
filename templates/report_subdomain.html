@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+{{template "head"}}
+<body class="hold-transition skin-blue sidebar-collapse" onload="prettyPrint()">
+<div class="wrapper">
+    {{template "header"}}
+    {{template "menu" . }}
+    <div class="content-wrapper">
+        <section class="content-header">
+            <h1>
+                子域名资产
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="/admin/reports/subdomain/" class="btn btn-success c-add-btn"> 主页</a></li>
+                <li class="btn btn-success c-add-btn">检测结果</li>
+            </ol>
+        </section>
+        <section class="content">
+            <div class="row c-manager">
+                <div class="col-xs-12">
+                    <div class="box">
+                        <div class="box-body">
+                            <table class="table table-striped table-bordered table-hover">
+                                <thead>
+                                <tr align="center">
+                                    <th>ID</th>
+                                    <th>Subdomain</th>
+                                    <th>CreatedAt</th>
+                                    <th>Review</th>
+                                </tr>
+                                {{range .reports}}
+                                    <tr>
+                                        <td>{{.Id}}</td>
+                                        <td>{{.Subdomain}}</td>
+                                        <td>{{.CreatedAt}}</td>
+                                        {{if eq 0 .Status}}
+                                            <td><a href="/admin/reports/subdomain/disable/{{.Id }}"><img src="/img/repo.png" alt="忽略子域名" title="忽略子域名"/></a></td>
+                                        {{end}}
+                                    </tr>
+                                {{end}}
+                                </thead>
+                            </table>
+                            <div class="page-arear">
+                                <ul class="pagination">
+                                    <li><a href="/admin/reports/subdomain/1">第一页</a></li>
+                                    <li><a href="/admin/reports/subdomain/{{.pre}}">上一页</a></li>
+                                    {{ range $i, $v := .pageList }}
+                                        {{ if eq $v $.page }}
+                                            <li class="active"><a href="/admin/reports/subdomain/{{$v}}">{{$v}}</a></li>
+                                        {{ else }}
+                                            <li><a href="/admin/reports/subdomain/{{$v}}">{{$v}}</a></li>
+                                        {{ end }}
+                                    {{ end }}
+                                    {{ if eq $.page $.lastPage}}
+                                        <li><a class="disabled" href="/admin/reports/subdomain/{{.next}}">下一页</a></li>
+                                        <li><a class="disabled" href="/admin/reports/subdomain/{{.pages}}">最后一页</a></li>
+                                    {{ else }}
+                                        <li><a href="/admin/reports/subdomain/{{.next}}">下一页</a></li>
+                                        <li><a href="/admin/reports/subdomain/{{.pages}}">最后一页</a></li>
+                                    {{ end }}
+                                </ul>
+                                <div class="count">共 {{.count}} 条</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+<script src="/lib/jQuery/jquery-2.2.3.min.js"></script>
+<script src="/lib/bootstrap/js/bootstrap.min.js"></script>
+<script src="/lib/datatables/jquery.dataTables.min.js"></script>
+<script src="/lib/datatables/dataTables.bootstrap.min.js"></script>
+<script src="/lib/adminLET2/js/app.min.js"></script>
+<script>
+    document.onkeydown = function () {
+        if (event.keyCode === 37) {
+            document.querySelector('.page-arear .pagination li:nth-child(2) a').click();
+        } else if (event.keyCode === 39) {
+            document.querySelector('.page-arear .pagination li:nth-last-child(2) a').click();
+        }
+    }
+</script>
+</body>
+</html>
