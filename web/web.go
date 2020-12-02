@@ -181,6 +181,8 @@ func RunWeb(ctx *cli.Context) {
 			m.Get("/app/confirm/:id", routers.ConfirmReportById)
 			m.Get("/app/cancel/:id", routers.CancelReportById)
 			m.Get("/app/query/:status", routers.ListAppSearchResultByStatus)
+			m.Get("/subdomain/", routers.ListSubdomainResult)
+			m.Get("/subdomain/:page", routers.ListSubdomainResult)
 		})
 	})
 

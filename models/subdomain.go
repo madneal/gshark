@@ -1,10 +1,16 @@
 package models
 
-import "time"
+import (
+	"github.com/madneal/gshark/logger"
+	"github.com/madneal/gshark/util/common"
+	"github.com/madneal/gshark/vars"
+	"time"
+)
 
 type Subdomain struct {
 	Id        int64
 	Domain    *string
+	Status    int
 	Subdomain *string `xorm:"unique"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
@@ -12,4 +18,22 @@ type Subdomain struct {
 
 func (subdomain *Subdomain) Insert() (int64, error) {
 	return Engine.Insert(subdomain)
+}
+
+func ListSubdomains() ([]Subdomain, error) {
+	subdomains := make([]Subdomain, 0)
+	err := Engine.Table("subdomain").Find(&subdomains)
+	return subdomains, err
+}
+
+func ListSubdomainsByPage(page int) ([]Subdomain, int, int) {
+	results := make([]Subdomain, 0)
+	count, err := Engine.Table("subdomain").Where("status = 0").Count()
+	err = Engine.Table("subdomain").Where("status = 0").Limit(vars.PAGE_SIZE, (page-1)*vars.PAGE_SIZE).
+		Desc("id").Find(&results)
+	if err != nil {
+		logger.Log.Error(err)
+	}
+	page, pages := common.GetPageAndPagesByCount(page, int(count))
+	return results, pages, int(count)
 }
