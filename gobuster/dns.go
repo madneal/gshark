@@ -2,7 +2,6 @@ package gobuster
 
 import (
 	"bufio"
-	"fmt"
 	"github.com/madneal/gshark/logger"
 	"github.com/madneal/gshark/models"
 	"github.com/madneal/gshark/vars"
@@ -21,24 +20,25 @@ func RunDNS(domain string) {
 		logger.Log.Error(err)
 	}
 	oneByte := make([]byte, 100)
-	var foundDomian string
+	var foundDomain string
 	for {
 		_, err := stdout.Read(oneByte)
 		if err != nil {
-			fmt.Println(err)
+			logger.Log.Error(err)
 			break
 		}
 		r := bufio.NewReader(stdout)
 		line, _, _ := r.ReadLine()
 		if strings.Contains(string(line), "Found") {
-			foundDomian = strings.Replace(string(line), "Found: ", "", 1)
-			foundDomian = strings.ToLower(foundDomian)
-			foundDomian = strings.Replace(foundDomian, "\r", "", -1)
-			foundDomian = strings.TrimSpace(foundDomian)
-			println(foundDomian)
+			foundDomain = strings.Replace(string(line), "Found: ", "", 1)
+			foundDomain = strings.ToLower(foundDomain)
+			foundDomain = strings.Replace(foundDomain, "\r", "", -1)
+			foundDomain = strings.TrimSpace(foundDomain)
+			println(foundDomain)
 			subdomain := models.Subdomain{
 				Domain:    &domain,
-				Subdomain: &foundDomian,
+				Subdomain: &foundDomain,
+				Status:    0,
 				CreatedAt: time.Now(),
 				UpdatedAt: time.Now(),
 			}
