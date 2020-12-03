@@ -2,6 +2,7 @@ package gobuster
 
 import (
 	"bufio"
+	"fmt"
 	"github.com/madneal/gshark/logger"
 	"github.com/madneal/gshark/models"
 	"github.com/madneal/gshark/vars"
@@ -11,6 +12,14 @@ import (
 )
 
 func RunDNS(domain string) {
+	if vars.GOBUSTER == "" {
+		fmt.Println("Please specify the file path of gobuster!")
+		return
+	}
+	if vars.SUBDOMAIN_WORDLIST == "" {
+		fmt.Println("Please specify the file path of subdomain wordlist file path!")
+		return
+	}
 	cmdLines := vars.GOBUSTER + " dns -d " + domain + " -w " + vars.SUBDOMAIN_WORDLIST
 	cmdArgs := strings.Fields(cmdLines)
 	cmd := exec.Command(cmdArgs[0], cmdArgs[1:len(cmdArgs)]...)
