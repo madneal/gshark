@@ -59,11 +59,9 @@ func Scan(ctx *cli.Context) {
 		}
 	default:
 		logger.Log.Println("default scan mode")
-		// hours
-		var dnsInterval time.Duration = 72
 		for {
 			githubsearch.RunTask(Interval)
-			gobuster.RunTask(dnsInterval)
+			gobuster.RunTask(Interval)
 		}
 	}
 }
