@@ -37,3 +37,10 @@ func ListSubdomainsByPage(page int) ([]Subdomain, int, int) {
 	page, pages := common.GetPageAndPagesByCount(page, int(count))
 	return results, pages, int(count)
 }
+
+func IgnoreSubdomain(id int) error {
+	subdomain := new(Subdomain)
+	subdomain.Status = 1
+	_, err := Engine.ID(int64(id)).Update(subdomain)
+	return err
+}

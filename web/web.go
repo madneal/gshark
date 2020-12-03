@@ -193,6 +193,7 @@ func RunWeb(ctx *cli.Context) {
 			m.Get("/app/query/:status", routers.ListAppSearchResultByStatus)
 			m.Get("/subdomain/", routers.ListSubdomainResult)
 			m.Get("/subdomain/:page", routers.ListSubdomainResult)
+			m.Get("/subdomain/ignore/:id", routers.IgnoreSubdomain)
 		})
 	})
 
