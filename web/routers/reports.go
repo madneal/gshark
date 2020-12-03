@@ -238,3 +238,13 @@ func ListSubdomainResult(ctx *macaron.Context, sess session.Store) {
 		ctx.Redirect("/admin/login/")
 	}
 }
+
+func IgnoreSubdomain(ctx *macaron.Context, sess session.Store) {
+	if sess.Get("admin") != nil {
+		id := ctx.Params(":id")
+		idInt, _ := strconv.Atoi(id)
+		models.IgnoreSubdomain(idInt)
+	} else {
+		ctx.Redirect("/admin/login/")
+	}
+}
