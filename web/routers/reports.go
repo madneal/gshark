@@ -232,6 +232,7 @@ func ListSubdomainResult(ctx *macaron.Context, sess session.Store) {
 		ctx.Data["pageList"] = pageList
 		ctx.Data["count"] = count
 		ctx.Data["lastPage"] = lastPage
+		ctx.Data["role"] = sess.Get("user").(string)
 		ctx.HTML(200, "report_subdomain")
 	} else {
 		ctx.Redirect("/admin/login/")
