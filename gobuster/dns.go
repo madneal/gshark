@@ -62,7 +62,8 @@ func RunTask(duration time.Duration) {
 		if err != nil {
 			logger.Log.Error(err)
 		}
-		logger.Log.Infof("Complete the scan of domain %s, start to sleep %v seconds", domain, duration*time.Second)
+		logger.Log.Infof("Complete the scan of domain %s, start to sleep %v seconds",
+			domain, duration*time.Second)
 		time.Sleep(duration * time.Second)
 	}
 }
