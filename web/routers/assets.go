@@ -27,6 +27,7 @@ func ListAssets(ctx *macaron.Context, sess session.Store) {
 		ctx.Data["pageList"] = pageList
 		ctx.Data["assets"] = assets
 		ctx.Data["role"] = sess.Get("user").(string)
+		ctx.Data["link"] = "/admin/assets/list"
 		ctx.HTML(200, "assets")
 	} else {
 		ctx.Redirect("/admin/login/")

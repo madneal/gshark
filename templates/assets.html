@@ -23,21 +23,7 @@
                 <div class="col-xs-12">
                     <div class="box">
                         <div class="box-body">
-                            <div class="page-arear">
-                                <ul class="pagination">
-                                    <li><a href="/admin/assets/list/1">第一页</a></li>
-                                    <li><a href="/admin/assets/list/{{.pre}}">上一页</a></li>
-                                {{ range $i, $v := .pageList }}
-                                {{ if eq $v $.page }}
-                                    <li class="active"><a href="/admin/assets/list/{{$v}}">{{$v}}</a></li>
-                                {{ else }}
-                                    <li><a href="/admin/assets/list/{{$v}}">{{$v}}</a></li>
-                                {{ end }}
-                                {{ end }}
-                                    <li><a href="/admin/assets/list/{{.next}}">下一页</a></li>
-                                    <li><a href="/admin/assets/list/{{.pages}}">最后一页</a></li>
-                                </ul>
-                            </div>
+                            {{template "page" . }}
                             <table id="dataList" class="table table-striped table-bordered table-hover">
                                 <thead>
                                 <tr align="center">
@@ -63,21 +49,7 @@
                                 {{end}}
                                 </thead>
                             </table>
-                            <div class="page-arear">
-                                <ul class="pagination">
-                                    <li><a href="/admin/assets/list/1">第一页</a></li>
-                                    <li><a href="/admin/assets/list/{{.pre}}">上一页</a></li>
-                                {{ range $i, $v := .pageList }}
-                                {{ if eq $v $.page }}
-                                    <li class="active"><a href="/admin/assets/list/{{$v}}">{{$v}}</a></li>
-                                {{ else }}
-                                    <li><a href="/admin/assets/list/{{$v}}">{{$v}}</a></li>
-                                {{ end }}
-                                {{ end }}
-                                    <li><a href="/admin/assets/list/{{.next}}">下一页</a></li>
-                                    <li><a href="/admin/assets/list/{{.pages}}">最后一页</a></li>
-                                </ul>
-                            </div>
+                            {{template "page" . }}
                         </div>
                     </div>
                 </div>
