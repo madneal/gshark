@@ -100,6 +100,7 @@ func renderDataForGithubSearchResult(ctx *macaron.Context, sess session.Store, p
 		ctx.Data["status"] = status
 		ctx.Data["count"] = count
 		ctx.Data["lastPage"] = lastPage
+		ctx.Data["link"] = "/admin/reports/github"
 		ctx.Data["role"] = sess.Get("user").(string)
 		ctx.HTML(200, "report_github")
 	} else {
