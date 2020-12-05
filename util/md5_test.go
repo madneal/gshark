@@ -1,4 +1,4 @@
-package misc
+package util
 
 import (
 	"fmt"
