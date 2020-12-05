@@ -15,6 +15,7 @@ The project is based on golang with AdminLTE to build a management system to man
 * Support multi platform, including Gitlab, Github, Searchcode
 * Support search keyword in Huawei app store
 * flexible rules
+* utilize gobuster to brute force subdomain
 
 ## Quick start
 
@@ -46,6 +47,13 @@ MAX_INDEXERS = 2
 DEBUG_MODE = true
 REPO_PATH = repos
 MAX_Concurrency_REPOS = 5
+
+; server酱配置口令
+SCKEY =
+; gobuster file path
+gobuster_path =
+; gobuster subdomain wordlist file path
+subdomain_wordlist_file =
 
 [database]
 ;support sqlite3, mysql, postgres
