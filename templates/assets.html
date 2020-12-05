@@ -41,8 +41,8 @@
                                     <td>{{.Type}}</td>
                                     <td>{{.Url}}</td>
                                     <td>{{.Path}}</td>
-                                    <td>{{.CreatedTime}}</td>
-                                    <td>{{.UpdatedTime}}</td>
+                                    <td>{{FormatDate .CreatedTime}}</td>
+                                    <td>{{FormatDate .UpdatedTime}}</td>
                                     <td><a href="/admin/assets/edit/{{.Id}}">edit</a></td>
                                     <td><a href="/admin/assets/del/{{.Id}}">del</a></td>
                                 </tr>
