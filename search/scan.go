@@ -1,20 +1,19 @@
 package search
 
 import (
-	"github.com/madneal/gshark/search/codesearch"
-	"github.com/madneal/gshark/search/githubsearch"
-
-	"github.com/urfave/cli"
-
+	"github.com/madneal/gshark/gobuster"
 	"github.com/madneal/gshark/logger"
 	"github.com/madneal/gshark/search/appsearch"
+	"github.com/madneal/gshark/search/codesearch"
+	"github.com/madneal/gshark/search/githubsearch"
 	"github.com/madneal/gshark/search/gitlabsearch"
+	"github.com/urfave/cli"
 	"strings"
 	"time"
 )
 
 func Scan(ctx *cli.Context) {
-	scanMode := "github"
+	var scanMode string
 	// seconds
 	var Interval time.Duration = 900
 
@@ -60,6 +59,7 @@ func Scan(ctx *cli.Context) {
 		logger.Log.Println("default scan mode")
 		for {
 			githubsearch.RunTask(Interval)
+			gobuster.RunTask(Interval)
 		}
 	}
 }
