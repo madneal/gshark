@@ -66,13 +66,14 @@ func RunTask(duration time.Duration) {
 		logger.Log.Error(err)
 	}
 	for _, rule := range rules {
+		start := time.Now()
 		domain := rule.Pattern
 		RunDNS(domain)
 		if err != nil {
 			logger.Log.Error(err)
 		}
-		logger.Log.Infof("Complete the scan of domain %s, start to sleep %v seconds",
-			domain, duration*time.Second)
+		logger.Log.Infof("Complete the scan of domain %s, cost %v, start to sleep %v seconds",
+			domain, time.Since(start), duration*time.Second)
 		time.Sleep(duration * time.Second)
 	}
 }
