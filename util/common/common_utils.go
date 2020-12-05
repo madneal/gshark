@@ -58,6 +58,14 @@ func GetPageList(p, step, pages int) []int {
 	return pageList
 }
 
+func GetLastPage(pageList *[]int) int {
+	lastPage := 0
+	if len(*pageList) >= 1 {
+		lastPage = (*pageList)[len(*pageList)-1]
+	}
+	return lastPage
+}
+
 func GetPageAndPagesByCount(page, count int) (int, int) {
 	var pages int
 	if count%vars.PAGE_SIZE == 0 {
