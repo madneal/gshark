@@ -16,6 +16,7 @@ import (
 	"net/http"
 	"runtime"
 	"strings"
+	"time"
 )
 
 func init() {
@@ -34,6 +35,12 @@ func RunWeb(ctx *cli.Context) {
 		vars.HTTP_PORT = ctx.Int("port")
 	}
 
+	//subdomainRulesCount := models.GetRulesCount()
+	//if subdomainRulesCount == 0 {
+	//	vars.ENABLE_SUBDOMAIN = false
+	//} else {
+	//	vars.ENABLE_SUBDOMAIN = true
+	//}
 	m := macaron.Classic()
 	e := casbin.NewEnforcer("./conf/auth_model.conf", "./conf/policy.csv")
 	m.Use(sauth.Authorizer(e))
@@ -51,6 +58,9 @@ func RunWeb(ctx *cli.Context) {
 					return strings.Split(*str, ",")
 				},
 				"unescaped": func(x string) interface{} { return template.HTML(x) },
+				"FormatDate": func(date time.Time) string {
+					return date.Format("2006-01-02 15:04:05")
+				},
 			}},
 			Delims:     macaron.Delims{"{{", "}}"},
 			Charset:    "UTF-8",
@@ -181,6 +191,9 @@ func RunWeb(ctx *cli.Context) {
 			m.Get("/app/confirm/:id", routers.ConfirmReportById)
 			m.Get("/app/cancel/:id", routers.CancelReportById)
 			m.Get("/app/query/:status", routers.ListAppSearchResultByStatus)
+			m.Get("/subdomain/", routers.ListSubdomainResult)
+			m.Get("/subdomain/:page", routers.ListSubdomainResult)
+			m.Get("/subdomain/ignore/:id", routers.IgnoreSubdomain)
 		})
 	})
 

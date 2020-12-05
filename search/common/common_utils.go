@@ -13,6 +13,7 @@ import (
 func GetPreAndNext(p int) (currentPage int, pre int, next int) {
 	if p < 1 {
 		currentPage = 1
+		p = 1
 	} else {
 		currentPage = p
 	}
@@ -57,12 +58,20 @@ func GetPageList(p, step, pages int) []int {
 	return pageList
 }
 
-func GetPageAndPagesByTotalPages(page, totalPages int) (int, int) {
+func GetLastPage(pageList *[]int) int {
+	lastPage := 0
+	if len(*pageList) >= 1 {
+		lastPage = (*pageList)[len(*pageList)-1]
+	}
+	return lastPage
+}
+
+func GetPageAndPagesByCount(page, count int) (int, int) {
 	var pages int
-	if totalPages%vars.PAGE_SIZE == 0 {
-		pages = totalPages / vars.PAGE_SIZE
+	if count%vars.PAGE_SIZE == 0 {
+		pages = count / vars.PAGE_SIZE
 	} else {
-		pages = totalPages/vars.PAGE_SIZE + 1
+		pages = count/vars.PAGE_SIZE + 1
 	}
 
 	if page >= pages {
