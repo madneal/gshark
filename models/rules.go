@@ -1,6 +1,7 @@
 package models
 
 import (
+	"github.com/madneal/gshark/logger"
 	"github.com/madneal/gshark/vars"
 
 	"bufio"
@@ -163,4 +164,12 @@ func GetValidRules() ([]Rule, error) {
 	rules := make([]Rule, 0)
 	err := Engine.Table("rule").Where("status=1").Find(&rules)
 	return rules, err
+}
+
+func GetRulesCount() int {
+	count, err := Engine.Table("rule").Where("type = subdomain").Count()
+	if err != nil {
+		logger.Log.Error(err)
+	}
+	return int(count)
 }
