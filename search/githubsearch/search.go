@@ -8,7 +8,7 @@ import (
 	"github.com/madneal/gshark/logger"
 	"github.com/madneal/gshark/misc"
 	"github.com/madneal/gshark/models"
-	"github.com/madneal/gshark/util/common"
+	"github.com/madneal/gshark/search/common"
 	"github.com/madneal/gshark/vars"
 	"regexp"
 	"strings"
@@ -149,7 +149,9 @@ func (c *Client) SearchCode(keyword string) ([]*github.CodeSearchResult, error) 
 	for {
 		result, nextPage := searchCodeByOpt(c, ctx, query, *opt)
 		time.Sleep(time.Second * 3)
-		allSearchResult = append(allSearchResult, result)
+		if result != nil {
+			allSearchResult = append(allSearchResult, result)
+		}
 		if nextPage <= 0 {
 			break
 		}
@@ -197,7 +199,7 @@ func searchCodeByOpt(c *Client, ctx context.Context, query string, opt github.Se
 	if err == nil {
 		logger.Log.Infof("remaining: %d, nextPage: %d, lastPage: %d", res.Rate.Remaining, res.NextPage, res.LastPage)
 	} else {
-		logger.Log.Infoln(err)
+		logger.Log.Error(err)
 		return nil, 0
 	}
 	return result, res.NextPage
