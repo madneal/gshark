@@ -3,6 +3,7 @@ package routers
 import (
 	"github.com/go-macaron/csrf"
 	"github.com/go-macaron/session"
+	"github.com/madneal/gshark/logger"
 	"github.com/madneal/gshark/models"
 	"github.com/madneal/gshark/util/common"
 	"github.com/madneal/gshark/vars"
@@ -45,13 +46,16 @@ func NewAssets(ctx *macaron.Context, sess session.Store) {
 }
 
 func DoNewAssets(ctx *macaron.Context, sess session.Store) {
-	ctx.Req.ParseForm()
 	if sess.Get("admin") != nil {
+		err := ctx.Req.ParseForm()
 		Type := strings.TrimSpace(ctx.Req.Form.Get("type"))
 		content := strings.TrimSpace(ctx.Req.Form.Get("content"))
 		desc := strings.TrimSpace(ctx.Req.Form.Get("desc"))
 		assets := models.NewInputInfo(Type, content, desc)
-		assets.Insert()
+		_, err = assets.Insert()
+		if err != nil {
+			logger.Log.Error(err)
+		}
 		ctx.Redirect("/admin/assets/list/")
 	} else {
 		ctx.Redirect("/admin/login/")
@@ -74,14 +78,17 @@ func EditAssets(ctx *macaron.Context, sess session.Store, x csrf.CSRF) {
 }
 
 func DoEditAssets(ctx *macaron.Context, sess session.Store) {
-	ctx.Req.ParseForm()
 	if sess.Get("admin") != nil {
+		err := ctx.Req.ParseForm()
 		id := ctx.Params(":id")
 		Id, _ := strconv.Atoi(id)
 		Type := strings.TrimSpace(ctx.Req.Form.Get("type"))
 		content := strings.TrimSpace(ctx.Req.Form.Get("content"))
 		desc := strings.TrimSpace(ctx.Req.Form.Get("desc"))
-		models.EditInputInfoById(int64(Id), Type, content, desc)
+		err = models.EditInputInfoById(int64(Id), Type, content, desc)
+		if err != nil {
+			logger.Log.Error(err)
+		}
 		ctx.Redirect("/admin/assets/list/")
 	} else {
 		ctx.Redirect("/admin/login/")
@@ -92,7 +99,10 @@ func DeleteAssets(ctx *macaron.Context, sess session.Store) {
 	if sess.Get("admin") != nil {
 		id := ctx.Params(":id")
 		Id, _ := strconv.Atoi(id)
-		models.DeleteInputInfoById(int64(Id))
+		err := models.DeleteInputInfoById(int64(Id))
+		if err != nil {
+			logger.Log.Error(err)
+		}
 		ctx.Redirect("/admin/assets/list/")
 	} else {
 		ctx.Redirect("/admin/login/")
@@ -101,7 +111,10 @@ func DeleteAssets(ctx *macaron.Context, sess session.Store) {
 
 func DeleteAllAssets(ctx *macaron.Context, sess session.Store) {
 	if sess.Get("admin") != nil {
-		models.DeleteAllInputInfo()
+		err := models.DeleteAllInputInfo()
+		if err != nil {
+			logger.Log.Error(err)
+		}
 		ctx.Redirect("/admin/assets/list/")
 	} else {
 		ctx.Redirect("/admin/login/")
