@@ -1,7 +1,7 @@
 package models
 
 import (
-	"github.com/madneal/gshark/misc"
+	"github.com/madneal/gshark/util"
 )
 
 type Admin struct {
@@ -12,7 +12,7 @@ type Admin struct {
 }
 
 func NewAdmin(username, password, role string) *Admin {
-	encryptPass := misc.MakeMd5(password)
+	encryptPass := util.MakeMd5(password)
 	return &Admin{Username: username, Password: encryptPass, Role: role}
 }
 
@@ -37,7 +37,7 @@ func EditAdminById(id int64, username, password, role string) error {
 	has, err := Engine.ID(id).Get(admin)
 	if err == nil && has {
 		admin.Username = username
-		admin.Password = misc.MakeMd5(password)
+		admin.Password = util.MakeMd5(password)
 		admin.Role = role
 		Engine.ID(id).Update(admin)
 	}
@@ -52,7 +52,7 @@ func DeleteAdminById(id int64) error {
 
 func Auth(username, password string) (bool, string, error) {
 	admin := new(Admin)
-	encryptPass := misc.MakeMd5(password)
+	encryptPass := util.MakeMd5(password)
 	has, err := Engine.Table("admin").
 		Where("username = ? and password = ?", username, encryptPass).Get(admin)
 	var role string

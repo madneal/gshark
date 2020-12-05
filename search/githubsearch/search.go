@@ -6,9 +6,8 @@ import (
 	"fmt"
 	"github.com/google/go-github/github"
 	"github.com/madneal/gshark/logger"
-	"github.com/madneal/gshark/misc"
 	"github.com/madneal/gshark/models"
-	"github.com/madneal/gshark/search/common"
+	"github.com/madneal/gshark/util"
 	"github.com/madneal/gshark/vars"
 	"regexp"
 	"strings"
@@ -56,7 +55,7 @@ func Search(rules []models.Rule) {
 		wg.Wait()
 	}
 	if vars.SCKEY != "" && content != "" {
-		common.SendMessage(vars.SCKEY, "扫描结果", content)
+		util.SendMessage(vars.SCKEY, "扫描结果", content)
 	}
 }
 
@@ -111,7 +110,7 @@ func SaveResult(results []*github.CodeSearchResult, keyword *string) int {
 					fullName := codeResult.Repository.GetFullName()
 					codeResult.RepoName = fullName
 					if len(codeResult.TextMatches) > 0 {
-						hash := misc.GenMd5WithSpecificLen(*(codeResult.TextMatches[0].Fragment), 50)
+						hash := util.GenMd5WithSpecificLen(*(codeResult.TextMatches[0].Fragment), 50)
 						codeResult.Textmatchmd5 = &hash
 					}
 
