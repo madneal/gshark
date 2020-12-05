@@ -1,15 +1,13 @@
-package util
+package search
 
 import (
 	"github.com/madneal/gshark/gobuster"
-	"github.com/madneal/gshark/util/codesearch"
-	"github.com/madneal/gshark/util/githubsearch"
-
-	"github.com/urfave/cli"
-
 	"github.com/madneal/gshark/logger"
-	"github.com/madneal/gshark/util/appsearch"
-	"github.com/madneal/gshark/util/gitlabsearch"
+	"github.com/madneal/gshark/search/appsearch"
+	"github.com/madneal/gshark/search/codesearch"
+	"github.com/madneal/gshark/search/githubsearch"
+	"github.com/madneal/gshark/search/gitlabsearch"
+	"github.com/urfave/cli"
 	"strings"
 	"time"
 )
