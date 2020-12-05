@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/madneal/gshark/util"
+	"github.com/madneal/gshark/search"
 	"github.com/madneal/gshark/web"
 	"github.com/urfave/cli"
 )
@@ -22,7 +22,7 @@ var Scan = cli.Command{
 	Name:        "scan",
 	Usage:       "Start to scan leak info",
 	Description: "start to scan leak info",
-	Action:      util.Scan,
+	Action:      search.Scan,
 	Flags: []cli.Flag{
 		stringFlag("mode, m", "github", "scan mode: github, searchcode, gitlab, all"),
 		intFlag("time, t", 900, "scan interval(second)"),

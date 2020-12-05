@@ -1,6 +1,7 @@
 package routers
 
 import (
+	"github.com/madneal/gshark/logger"
 	"github.com/madneal/gshark/models"
 
 	"gopkg.in/macaron.v1"
@@ -97,14 +98,20 @@ func EditUser(ctx *macaron.Context, sess session.Store, x csrf.CSRF) {
 }
 
 func DoEditUser(ctx *macaron.Context, sess session.Store) {
-	ctx.Req.ParseForm()
+	err := ctx.Req.ParseForm()
+	if err != nil {
+		logger.Log.Error(err)
+	}
 	if sess.Get("admin") != nil {
 		id := ctx.Params(":id")
 		Id, _ := strconv.Atoi(id)
 		username := strings.TrimSpace(ctx.Req.Form.Get("username"))
 		password := strings.TrimSpace(ctx.Req.Form.Get("password"))
 		role := ctx.Req.Form.Get("role")
-		models.EditAdminById(int64(Id), username, password, role)
+		err := models.EditAdminById(int64(Id), username, password, role)
+		if err != nil {
+			logger.Log.Error(err)
+		}
 		ctx.Redirect("/admin/users/list/")
 	} else {
 		ctx.Redirect("/admin/login/")
@@ -115,7 +122,10 @@ func DeleteUser(ctx *macaron.Context, sess session.Store) {
 	if sess.Get("admin") != nil {
 		id := ctx.Params(":id")
 		Id, _ := strconv.Atoi(id)
-		models.DeleteAdminById(int64(Id))
+		err := models.DeleteAdminById(int64(Id))
+		if err != nil {
+			logger.Log.Error(err)
+		}
 		ctx.Redirect("/admin/users/list/")
 	} else {
 		ctx.Redirect("/admin/login/")
