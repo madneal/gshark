@@ -58,8 +58,8 @@ func Scan(ctx *cli.Context) {
 	default:
 		logger.Log.Println("default scan mode")
 		for {
-			githubsearch.RunTask(Interval)
-			gobuster.RunTask(Interval)
+			go githubsearch.RunTask(Interval)
+			go gobuster.RunTask(Interval)
 		}
 	}
 }
