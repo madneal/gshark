@@ -5,7 +5,7 @@ import (
 	"github.com/google/go-github/github"
 	"github.com/madneal/gshark/logger"
 	"github.com/madneal/gshark/models"
-	"github.com/madneal/gshark/util/common"
+	"github.com/madneal/gshark/util"
 	"strconv"
 	"strings"
 )
@@ -43,7 +43,7 @@ func InsertAllRepos() {
 			case CONST_REPO, CONST_REPOS:
 				repos := strings.Split(name, ",")
 				for _, item := range repos {
-					r := models.NewRepo(common.GetRepoNameByUrl(item), item)
+					r := models.NewRepo(util.GetRepoNameByUrl(item), item)
 					has, err := r.Exist()
 					if err == nil && !has {
 						r.Insert()

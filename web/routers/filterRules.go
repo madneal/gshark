@@ -4,7 +4,7 @@ import (
 	"github.com/go-macaron/csrf"
 	"github.com/go-macaron/session"
 	"github.com/madneal/gshark/models"
-	"github.com/madneal/gshark/util/common"
+	"github.com/madneal/gshark/util"
 	"github.com/madneal/gshark/vars"
 	"gopkg.in/macaron.v1"
 	"strconv"
@@ -18,11 +18,11 @@ func ListFilterRules(ctx *macaron.Context, sess session.Store) {
 		page = 1
 	}
 	p := page
-	p, pre, next := common.GetPreAndNext(p)
+	p, pre, next := util.GetPreAndNext(p)
 
 	if sess.Get("admin") != nil {
 		rules, pages, _ := models.GetFilterRulesPage(p)
-		pageList := common.GetPageList(p, vars.PageStep, pages)
+		pageList := util.GetPageList(p, vars.PageStep, pages)
 
 		ctx.Data["pages"] = pages
 		ctx.Data["page"] = page

@@ -2,7 +2,7 @@ package routers
 
 import (
 	"github.com/madneal/gshark/models"
-	"github.com/madneal/gshark/util/common"
+	"github.com/madneal/gshark/util"
 	"github.com/madneal/gshark/vars"
 	"gopkg.in/macaron.v1"
 
@@ -16,11 +16,11 @@ import (
 func ListRules(ctx *macaron.Context, sess session.Store) {
 	page := ctx.Params(":page")
 	p, _ := strconv.Atoi(page)
-	p, pre, next := common.GetPreAndNext(p)
+	p, pre, next := util.GetPreAndNext(p)
 
 	if sess.Get("admin") != nil {
 		rules, pages, _ := models.GetRulesPage(p)
-		pageList := common.GetPageList(p, vars.PageStep, pages)
+		pageList := util.GetPageList(p, vars.PageStep, pages)
 
 		ctx.Data["pages"] = pages
 		ctx.Data["page"] = p
@@ -28,7 +28,7 @@ func ListRules(ctx *macaron.Context, sess session.Store) {
 		ctx.Data["next"] = next
 		ctx.Data["pageList"] = pageList
 		ctx.Data["rules"] = rules
-		ctx.Data["lastPage"] = common.GetLastPage(&pageList)
+		ctx.Data["lastPage"] = util.GetLastPage(&pageList)
 		ctx.Data["link"] = "/admin/rules/list"
 		ctx.Data["role"] = sess.Get("user").(string)
 		ctx.HTML(200, "rules")

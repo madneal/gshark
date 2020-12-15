@@ -1,11 +1,10 @@
 package models
 
-import "C"
 import (
 	"fmt"
 	"github.com/google/go-github/github"
 	"github.com/madneal/gshark/logger"
-	"github.com/madneal/gshark/util/common"
+	"github.com/madneal/gshark/util"
 	"github.com/madneal/gshark/vars"
 	"time"
 )
@@ -89,7 +88,7 @@ func (r *CodeResult) Insert() (int64, error) {
 
 func (r *CodeResult) Exist() (bool, error) {
 	codeResult := new(CodeResult)
-	has, err := Engine.Table("code_result").Where("html_url = ? or (textmatch_md5 = ? and status = 2)",
+	has, err := Engine.Table("code_result").Where("html_url = ? or (textmatch_md5 = ? and status != 1)",
 		*r.HTMLURL, *r.Textmatchmd5).Get(codeResult)
 	return has, err
 }
@@ -97,11 +96,11 @@ func (r *CodeResult) Exist() (bool, error) {
 func ListGithubSearchResultPage(page int, status int) ([]CodeResult, int, int) {
 	results := make([]CodeResult, 0)
 	totalPages, err := Engine.Table("code_result").Where("status=?", status).Count()
-	page, pages := common.GetPageAndPagesByCount(page, int(totalPages))
+	page, pages := util.GetPageAndPagesByCount(page, int(totalPages))
 	err = Engine.Where("status=?", status).Omit("repository").Limit(vars.PAGE_SIZE, (page-1)*vars.PAGE_SIZE).Desc("id").Find(&results)
 
 	if err != nil {
-		logger.Log.Error(err)
+		logger.Log.Error("search failed:%s", err)
 	}
 
 	return results, pages, int(totalPages)

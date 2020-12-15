@@ -2,7 +2,7 @@ package models
 
 import (
 	"github.com/madneal/gshark/logger"
-	"github.com/madneal/gshark/util/common"
+	"github.com/madneal/gshark/util"
 	"github.com/madneal/gshark/vars"
 	"time"
 )
@@ -34,7 +34,7 @@ func ListSubdomainsByPage(page int) ([]Subdomain, int, int) {
 	if err != nil {
 		logger.Log.Error(err)
 	}
-	page, pages := common.GetPageAndPagesByCount(page, int(count))
+	page, pages := util.GetPageAndPagesByCount(page, int(count))
 	return results, pages, int(count)
 }
 

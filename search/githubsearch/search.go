@@ -6,9 +6,8 @@ import (
 	"fmt"
 	"github.com/google/go-github/github"
 	"github.com/madneal/gshark/logger"
-	"github.com/madneal/gshark/misc"
 	"github.com/madneal/gshark/models"
-	"github.com/madneal/gshark/util/common"
+	"github.com/madneal/gshark/util"
 	"github.com/madneal/gshark/vars"
 	"regexp"
 	"strings"
@@ -56,7 +55,7 @@ func Search(rules []models.Rule) {
 		wg.Wait()
 	}
 	if vars.SCKEY != "" && content != "" {
-		common.SendMessage(vars.SCKEY, "扫描结果", content)
+		util.SendMessage(vars.SCKEY, "扫描结果", content)
 	}
 }
 
@@ -111,7 +110,7 @@ func SaveResult(results []*github.CodeSearchResult, keyword *string) int {
 					fullName := codeResult.Repository.GetFullName()
 					codeResult.RepoName = fullName
 					if len(codeResult.TextMatches) > 0 {
-						hash := misc.GenMd5WithSpecificLen(*(codeResult.TextMatches[0].Fragment), 50)
+						hash := util.GenMd5WithSpecificLen(*(codeResult.TextMatches[0].Fragment), 50)
 						codeResult.Textmatchmd5 = &hash
 					}
 
@@ -149,7 +148,9 @@ func (c *Client) SearchCode(keyword string) ([]*github.CodeSearchResult, error) 
 	for {
 		result, nextPage := searchCodeByOpt(c, ctx, query, *opt)
 		time.Sleep(time.Second * 3)
-		allSearchResult = append(allSearchResult, result)
+		if result != nil {
+			allSearchResult = append(allSearchResult, result)
+		}
 		if nextPage <= 0 {
 			break
 		}
@@ -197,7 +198,7 @@ func searchCodeByOpt(c *Client, ctx context.Context, query string, opt github.Se
 	if err == nil {
 		logger.Log.Infof("remaining: %d, nextPage: %d, lastPage: %d", res.Rate.Remaining, res.NextPage, res.LastPage)
 	} else {
-		logger.Log.Infoln(err)
+		logger.Log.Error(err)
 		return nil, 0
 	}
 	return result, res.NextPage

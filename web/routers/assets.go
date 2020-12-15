@@ -5,7 +5,7 @@ import (
 	"github.com/go-macaron/session"
 	"github.com/madneal/gshark/logger"
 	"github.com/madneal/gshark/models"
-	"github.com/madneal/gshark/util/common"
+	"github.com/madneal/gshark/util"
 	"github.com/madneal/gshark/vars"
 	"gopkg.in/macaron.v1"
 	"strconv"
@@ -15,11 +15,11 @@ import (
 func ListAssets(ctx *macaron.Context, sess session.Store) {
 	page := ctx.Params(":page")
 	p, _ := strconv.Atoi(page)
-	p, pre, next := common.GetPreAndNext(p)
+	p, pre, next := util.GetPreAndNext(p)
 
 	if sess.Get("admin") != nil {
 		assets, pages, _ := models.ListInputInfoPage(p)
-		pageList := common.GetPageList(p, vars.PageStep, pages)
+		pageList := util.GetPageList(p, vars.PageStep, pages)
 
 		ctx.Data["pages"] = pages
 		ctx.Data["page"] = p
@@ -28,7 +28,7 @@ func ListAssets(ctx *macaron.Context, sess session.Store) {
 		ctx.Data["pageList"] = pageList
 		ctx.Data["assets"] = assets
 		ctx.Data["role"] = sess.Get("user").(string)
-		ctx.Data["lastPage"] = common.GetLastPage(&pageList)
+		ctx.Data["lastPage"] = util.GetLastPage(&pageList)
 		ctx.Data["link"] = "/admin/assets/list"
 		ctx.HTML(200, "assets")
 	} else {

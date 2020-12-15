@@ -2,7 +2,7 @@ package routers
 
 import (
 	"github.com/madneal/gshark/models"
-	"github.com/madneal/gshark/util/common"
+	"github.com/madneal/gshark/util"
 	"github.com/madneal/gshark/vars"
 
 	"gopkg.in/macaron.v1"
@@ -15,11 +15,11 @@ import (
 func ListRepos(ctx *macaron.Context, sess session.Store) {
 	page := ctx.Params(":page")
 	p, _ := strconv.Atoi(page)
-	p, pre, next := common.GetPreAndNext(p)
+	p, pre, next := util.GetPreAndNext(p)
 
 	if sess.Get("admin") != nil {
 		repos, pages, _ := models.ListReposPage(p)
-		pageList := common.GetPageList(p, vars.PageStep, pages)
+		pageList := util.GetPageList(p, vars.PageStep, pages)
 
 		ctx.Data["pages"] = pages
 		ctx.Data["page"] = p

@@ -5,8 +5,8 @@ import (
 	"github.com/go-macaron/session"
 	"github.com/madneal/gshark/logger"
 	"github.com/madneal/gshark/models"
-	"github.com/madneal/gshark/util/common"
-	"github.com/madneal/gshark/util/githubsearch"
+	"github.com/madneal/gshark/search/githubsearch"
+	"github.com/madneal/gshark/util"
 	"github.com/madneal/gshark/vars"
 	"gopkg.in/macaron.v1"
 	"net/url"
@@ -83,9 +83,9 @@ func ListAppSearchResult(ctx *macaron.Context, sess session.Store) {
 func renderDataForGithubSearchResult(ctx *macaron.Context, sess session.Store, p, status int) {
 
 	if sess.Get("admin") != nil {
-		p, pre, next := common.GetPreAndNext(p)
+		p, pre, next := util.GetPreAndNext(p)
 		reports, pages, count := models.ListGithubSearchResultPage(p, status)
-		pageList := common.GetPageList(p, vars.PageStep, pages)
+		pageList := util.GetPageList(p, vars.PageStep, pages)
 		lastPage := 0
 		if len(pageList) >= 1 {
 			lastPage = pageList[len(pageList)-1]
@@ -111,9 +111,9 @@ func renderDataForGithubSearchResult(ctx *macaron.Context, sess session.Store, p
 func renderDataForAppSearchResult(ctx *macaron.Context, sess session.Store, p, status int) {
 
 	if sess.Get("admin") != nil {
-		p, pre, next := common.GetPreAndNext(p)
+		p, pre, next := util.GetPreAndNext(p)
 		reports, pages, count := models.ListAppSearchResultByPage(p, status)
-		pageList := common.GetPageList(p, vars.PageStep, pages)
+		pageList := util.GetPageList(p, vars.PageStep, pages)
 		lastPage := 0
 		if len(pageList) >= 1 {
 			lastPage = pageList[len(pageList)-1]
@@ -228,9 +228,9 @@ func ListSubdomainResult(ctx *macaron.Context, sess session.Store) {
 	if sess.Get("admin") != nil {
 		page := ctx.Params(":page")
 		p, _ := strconv.Atoi(page)
-		p, pre, next := common.GetPreAndNext(p)
+		p, pre, next := util.GetPreAndNext(p)
 		reports, pages, count := models.ListSubdomainsByPage(p)
-		pageList := common.GetPageList(p, vars.PageStep, pages)
+		pageList := util.GetPageList(p, vars.PageStep, pages)
 		var lastPage int
 		if len(pageList) >= 1 {
 			lastPage = pageList[len(pageList)-1]

@@ -137,7 +137,7 @@ func SearchCode(keyword string, project models.InputInfo, client *gitlab.Client)
 	//logger.Log.Infof("Search inside project %s", project.Url)
 	results, resp, err := client.Search.BlobsByProject(project.ProjectId, queryString, &gitlab.SearchOptions{})
 	if err != nil {
-		fmt.Println(err)
+		logger.Log.Error(err)
 	}
 	if resp.StatusCode != 200 {
 		fmt.Printf("request error for projectId-%d: %d\n", project.ProjectId, resp.StatusCode)

@@ -15,6 +15,7 @@ The project is based on golang with AdminLTE to build a management system to man
 * Support multi platform, including Gitlab, Github, Searchcode
 * Support search keyword in Huawei app store
 * flexible rules
+* utilize gobuster to brute force subdomain
 
 ## Quick start
 
@@ -46,6 +47,13 @@ MAX_INDEXERS = 2
 DEBUG_MODE = true
 REPO_PATH = repos
 MAX_Concurrency_REPOS = 5
+
+; server酱配置口令
+SCKEY =
+; gobuster file path
+gobuster_path =
+; gobuster subdomain wordlist file path
+subdomain_wordlist_file =
 
 [database]
 ;support sqlite3, mysql, postgres
@@ -99,9 +107,13 @@ If it's the first time to run, there are some [initial works](https://github.com
 
 ### Add Token
 
-To execute `main scan`, you need to add a Github token for crawl information in github. You can generate a token in [tokens](https://github.com/settings/tokens). Most access scopes are enough.
+To execute `main scan`, you need to add a Github token for crawl information in github. You can generate a token in [tokens](https://github.com/settings/tokens). Most access scopes are enough. For Gitlab search, remember to add token too.
 
 [![iR2TMt.md.png](https://s1.ax1x.com/2018/10/31/iR2TMt.md.png)](https://imgchr.com/i/iR2TMt)
+
+### Add notification
+
+Now support notification by `server 酱`. Set the config of `SCKEY` in `app.ini` file.
 
 ## FAQ
 
@@ -118,6 +130,15 @@ exec: "gcc": executable file not found in %PATH%`
 
 https://github.com/mattn/go-sqlite3/issues/435#issuecomment-314247676
 
+4. `go get ./... connection error`
+
+It's suggested to enable goproxy(refer this [article](https://madneal.com/post/gproxy/) for golang upgrade):
+
+```
+go env -w GOPROXY=https://goproxy.cn,direct
+go env -w GO111MODULE=on
+```
+
 ## Reference
 
 * [x-patrol](https://github.com/MiSecurity/x-patrol)
@@ -126,7 +147,7 @@ https://github.com/mattn/go-sqlite3/issues/435#issuecomment-314247676
 
 ## Wechat
 
-If you would like to join wechat group, you can add my wechat `Cafery` with the message `gshark`.
+If you would like to join wechat group, you can add my wechat `mmadneal` with the message `gshark`.
 
 ## License
 

@@ -2,7 +2,7 @@ package models
 
 import (
 	"github.com/madneal/gshark/logger"
-	"github.com/madneal/gshark/util/common"
+	"github.com/madneal/gshark/util"
 	"github.com/madneal/gshark/vars"
 	"time"
 )
@@ -36,7 +36,7 @@ func ListAppSearchResultByPage(page int, status int) ([]AppSearchResult, int, in
 	totalPages, err := Engine.Table("app_search_result").Where("status=?", status).Count()
 	var pages int
 
-	page, pages = common.GetPageAndPagesByCount(page, int(totalPages))
+	page, pages = util.GetPageAndPagesByCount(page, int(totalPages))
 
 	err = Engine.Where("status=?", status).
 		Limit(vars.PAGE_SIZE, (page-1)*vars.PAGE_SIZE).Desc("id").Find(&results)
