@@ -153,4 +153,10 @@ If you would like to join wechat group, you can add my wechat `mmadneal` with th
 
 [Apache License 2.0](https://github.com/madneal/gshark/blob/master/LICENSE)
 
+## 404StarLink 2.0 - Galaxy
 
+![](https://github.com/knownsec/404StarLink-Project/raw/master/logo.png)
+
+GShark 是 404Team [星链计划2.0](https://github.com/knownsec/404StarLink2.0-Galaxy)中的一环，如果对 GShark 有任何疑问又或是想要找小伙伴交流，可以参考星链计划的加群方式。
+
+- [https://github.com/knownsec/404StarLink2.0-Galaxy#community](https://github.com/knownsec/404StarLink2.0-Galaxy#community)
