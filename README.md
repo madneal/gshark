@@ -71,14 +71,15 @@ PATH =
 ## Before Running
 
 * Make sure you have installed dependencies, suggest to use go mod
-* Make sure the app.ini in config folder, you can rename app-template.ini to app.ini
-* Make sure that you have config and set database correctly
+* Make sure the `app.ini` in config folder, you can rename app-template.ini to app.ini
+* Make sure that you have config and set database correctly, make sure create the corresponding database when using mysqp or postgresql
 * Make sure that you have config [policy](https://github.com/madneal/gshark/blob/master/conf/policy.csv) properly
-* Make sure that you have config corresponding tokens for github or gitlab
+* Make sure that you have config corresponding tokens for Github or Gitlab
 
 ## Run
 
 You should build the `main.go` file firstly with the command `go build main.go`.
+
 ```
 USAGE:
    main [global options] command [command options] [arguments...]
@@ -96,14 +97,6 @@ GLOBAL OPTIONS:
    --help, -h              show help
    --version, -v           print the version
 ```
-
-### Initial Running
-
-If it's the first time to run, there are some [initial works](https://github.com/madneal/gshark/blob/0ea3365f88e012df3fef1079df04a4f4b266319d/models/models.go#L31) will be finished automatically.
-
-* [Init Rules](https://github.com/madneal/gshark/blob/0ea3365f88e012df3fef1079df04a4f4b266319d/models/models.go#L98)
-* [Init admin](https://github.com/madneal/gshark/blob/0ea3365f88e012df3fef1079df04a4f4b266319d/models/models.go#L117)
-* [Init database](https://github.com/madneal/gshark/blob/0ea3365f88e012df3fef1079df04a4f4b266319d/models/models.go#L47)
 
 ### Add Token
 
