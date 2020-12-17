@@ -1,7 +1,7 @@
 <p align="center">
    <img alt="GgShark logo" src="https://s1.ax1x.com/2018/10/17/idhZvj.png" />
    <h3 align="center">GShark</h3>
-   <p align="center">Scan for sensitive information in Github easily and effectively.</p>
+   <p align="center">Scan for sensitive information easily and effectively.</p>
 </p>
 
 # GShark [![Go Report Card](https://goreportcard.com/badge/github.com/madneal/gshark)](https://goreportcard.com/report/github.com/madneal/gshark)   
