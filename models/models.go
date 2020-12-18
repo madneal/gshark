@@ -51,7 +51,7 @@ func init() {
 		err = Engine.Sync2(new(CodeResult))
 		err = Engine.Sync2(new(FilterRule))
 		err = Engine.Sync2(new(CodeResultDetail))
-		err = Engine.Sync(new(Subdomain))
+		err = Engine.Sync2(new(Subdomain))
 		if err != nil {
 			logger.Log.Error(err)
 		}
@@ -74,7 +74,6 @@ func NewDbEngine() (err error) {
 	case "mysql":
 		dataSourceName := fmt.Sprintf("%v:%v@tcp(%v:%v)/%v?charset=utf8",
 			USERNAME, PASSWORD, DATA_HOST, DATA_PORT, DATA_NAME)
-
 		Engine, err = xorm.NewEngine("mysql", dataSourceName)
 		if err != nil {
 			fmt.Println(err)
