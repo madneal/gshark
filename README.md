@@ -104,7 +104,7 @@ To execute `main scan`, you need to add a Github token for crawl information in 
 
 [![iR2TMt.md.png](https://s1.ax1x.com/2018/10/31/iR2TMt.md.png)](https://imgchr.com/i/iR2TMt)
 
-## Docker support
+## Docker support(not suggested)
 
 Make sure rename `app-docker.ini` to `app.ini`.
 
@@ -116,15 +116,15 @@ Make sure rename `app-docker.ini` to `app.ini`.
 
 ### Run web
 
-`sqlite_database_folder` is the folder for the sqlite database file folder, make sure create `gshark.db` file inside the folder.
+`sqlite_database_folder` is the folder for the sqlite database folder, make sure create `gshark.db` file inside the folder.
 ```
-docker run -e OPTIION=web -p 8000:8000 -v sqlite_database_folder:/data/gshark gshark-docker
+docker run -e OPTION=web -p 8000:8000 -v sqlite_database_folder:/data/gshark gshark-docker
 ```
 
 ### Run Scan 
 
 ```
-docker run -e OPTIION=scan -v sqlite_database_folder:/data/gshark gshark-docker
+docker run -e OPTION=scan -v sqlite_database_folder:/data/gshark gshark-docker
 ```
 
 ### Add notification
