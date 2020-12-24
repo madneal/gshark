@@ -12,12 +12,5 @@
     "pattern": "gsahrk",
     "caption": "Default rule for app",
     "description": null
-  },
-  {
-    "part": "filename",
-    "type": "regex",
-    "pattern": "credential",
-    "caption": "Contains word: credential",
-    "description": null
   }
 ]
