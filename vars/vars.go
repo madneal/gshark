@@ -44,7 +44,7 @@ func init() {
 	} else {
 		source = "conf/app.ini"
 	}
-	Cfg, err = ini.Load(source)
+	Cfg, err = ini.LoadSources(ini.LoadOptions{SpaceBeforeInlineComment: true}, source)
 
 	if err != nil {
 		fmt.Println("Please check the config file app.ini")
