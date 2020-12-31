@@ -90,7 +90,10 @@
                                     <td><a href="/admin/reports/github/cancel/{{.Id}}"><img src="/img/file.png" alt="忽略文件" title="忽略文件"/></a></td>
                                     <td><a href="/admin/reports/github/disable_repo/{{.Id }}"><img src="/img/repo.png" alt="忽略仓库" title="忽略仓库"/></a></td>
                                     {{else}}
-                                            <td>{{if eq 1 .Status}}Confirmed{{else}}Ignored{{end}}</td>
+                                            <td>
+                                                {{if eq 1 .Status}}Confirmed<a href="/admin/reports/github/cancel/{{.Id}}"><img src="/img/file.png" alt="忽略文件" title="忽略文件"/></a>
+                                                {{else}}Ignored<a href="/admin/reports/github/confirm/{{.Id}}"><img src="/img/confirm.png" alt="确认" title="确认该仓库为泄露信息"/></a>{{end}}
+                                            </td>
                                     {{end}}
                                 </tr>
                                 {{end}}
