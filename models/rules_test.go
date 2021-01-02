@@ -37,3 +37,18 @@ func TestGetValidRulesByType(t *testing.T) {
 		fmt.Println(rule.Pattern)
 	}
 }
+
+func TestConvertTextToRules(t *testing.T) {
+	text := "github|keyword \n gitlab|keyword"
+	rules, _ := models.ConvertTextToRules(&text)
+	assert.Equal(t, 2, len(*rules), "the length should be the same")
+	assert.Equal(t, "github", (*rules)[0].Type, "the type of the first element should be github")
+	assert.Equal(t, "keyword", (*rules)[1].Pattern, "the pattern of the second element should be keyword")
+	text1 := "github"
+	_, err := models.ConvertTextToRules(&text1)
+	assert.True(t, err != nil, "there should be least 2 argument")
+	text2 := "github|keyword|name|desc\ngitlab|key|name|desc"
+	rules2, _ := models.ConvertTextToRules(&text2)
+	assert.Equal(t, "desc", (*rules2)[0].Description, "the description should be the same")
+	assert.Equal(t, "desc", (*rules2)[1].Description, "the description should be the same")
+}
