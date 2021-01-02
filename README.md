@@ -14,8 +14,9 @@ The project is based on golang with AdminLTE to build a management system to man
 
 * Support multi platform, including Gitlab, Github, Searchcode
 * Support search keyword in Huawei app store
-* flexible rules
-* utilize gobuster to brute force subdomain
+* Flexible rules
+* Utilize gobuster to brute force subdomain
+* Batch insert rules
 
 ## Quick start
 
