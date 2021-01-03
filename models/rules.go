@@ -1,8 +1,10 @@
 package models
 
 import (
+	"errors"
 	"github.com/madneal/gshark/logger"
 	"github.com/madneal/gshark/vars"
+	"strings"
 
 	"bufio"
 	"encoding/json"
@@ -28,6 +30,42 @@ func NewRule(ruleType, pat, caption, pos, desc string, status int) *Rule {
 
 func (r *Rule) Insert() (err error) {
 	_, err = Engine.Insert(r)
+	return err
+}
+
+func ConvertTextToRules(text *string) (*[]Rule, error) {
+	rules := make([]Rule, 0)
+	newText := strings.ReplaceAll(*text, "\r\n", "\n")
+	lines := strings.Split(newText, "\n")
+	for _, line := range lines {
+		ruleArr := strings.Split(line, "|")
+		if len(ruleArr) < 2 {
+			err := errors.New("there should at least 2 columns")
+			return &rules, err
+		}
+		rule := new(Rule)
+		rule.Type = ruleArr[0]
+		rule.Pattern = ruleArr[1]
+		if len(ruleArr) > 2 {
+			rule.Caption = ruleArr[2]
+		}
+		if len(ruleArr) > 3 {
+			rule.Description = ruleArr[3]
+		}
+		rules = append(rules, *rule)
+	}
+	return &rules, nil
+}
+
+func BatchInsertRules(text *string) error {
+	rules, err := ConvertTextToRules(text)
+	for _, rule := range *rules {
+		rule.Status = 1
+		err = rule.Insert()
+		if err != nil {
+			break
+		}
+	}
 	return err
 }
 
