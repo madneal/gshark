@@ -100,7 +100,7 @@ func ListGithubSearchResultPage(page int, status int) ([]CodeResult, int, int) {
 	err = Engine.Where("status=?", status).Omit("repository").Limit(vars.PAGE_SIZE, (page-1)*vars.PAGE_SIZE).Desc("id").Find(&results)
 
 	if err != nil {
-		logger.Log.Error("search failed:%s", err)
+		logger.Log.Error(err)
 	}
 
 	return results, pages, int(totalPages)
