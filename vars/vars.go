@@ -44,6 +44,11 @@ func init() {
 	} else {
 		source = "conf/app.ini"
 	}
+
+	if _, err := os.Stat(source); os.IsNotExist(err) {
+		source = strings.Replace(source, "app.ini", "app-template.ini", 1)
+	}
+
 	Cfg, err = ini.LoadSources(ini.LoadOptions{SpaceBeforeInlineComment: true}, source)
 
 	if err != nil {
