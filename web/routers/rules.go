@@ -1,13 +1,13 @@
 package routers
 
 import (
+	"github.com/go-macaron/csrf"
+	"github.com/go-macaron/session"
+	"github.com/madneal/gshark/logger"
 	"github.com/madneal/gshark/models"
 	"github.com/madneal/gshark/util"
 	"github.com/madneal/gshark/vars"
 	"gopkg.in/macaron.v1"
-
-	"github.com/go-macaron/csrf"
-	"github.com/go-macaron/session"
 
 	"strconv"
 	"strings"
@@ -57,7 +57,27 @@ func DoNewRules(ctx *macaron.Context, sess session.Store) {
 		status := strings.TrimSpace(ctx.Req.Form.Get("status"))
 		intStatus, _ := strconv.Atoi(status)
 		rule := models.NewRule(Type, content, caption, pos, desc, intStatus)
-		rule.Insert()
+		err := rule.Insert()
+		if err != nil {
+			logger.Log.Error(err)
+		}
+		ctx.Redirect("/admin/rules/list/")
+	} else {
+		ctx.Redirect("/admin/login/")
+	}
+}
+
+func BatchNewRules(ctx *macaron.Context, sess session.Store) {
+	if sess.Get("admin") != nil {
+		err := ctx.Req.ParseForm()
+		if err != nil {
+			logger.Log.Error(err)
+		}
+		rules := ctx.Req.Form.Get("rules")
+		err = models.BatchInsertRules(&rules)
+		if err != nil {
+			logger.Log.Error(err)
+		}
 		ctx.Redirect("/admin/rules/list/")
 	} else {
 		ctx.Redirect("/admin/login/")
