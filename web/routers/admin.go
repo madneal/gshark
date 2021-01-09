@@ -69,13 +69,16 @@ func NewUser(ctx *macaron.Context, sess session.Store) {
 }
 
 func DoNewUser(ctx *macaron.Context, sess session.Store) {
-	ctx.Req.ParseForm()
 	if sess.Get("admin") != nil {
+		err := ctx.Req.ParseForm()
 		username := strings.TrimSpace(ctx.Req.Form.Get("username"))
 		password := strings.TrimSpace(ctx.Req.Form.Get("password"))
 		role := ctx.Req.Form.Get("role")
 		admin := models.NewAdmin(username, password, role)
-		admin.Insert()
+		_, err = admin.Insert()
+		if err != nil {
+			logger.Log.Error(err)
+		}
 		ctx.Redirect("/admin/users/list/")
 	} else {
 		ctx.Redirect("/admin/login/")
