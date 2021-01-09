@@ -13,7 +13,3 @@ func TestFiltetString(t *testing.T) {
 		t.Error("failed to pass the PassFilters function")
 	}
 }
-
-func TestScheduleTasks(t *testing.T) {
-	ScheduleTasks(100)
-}
