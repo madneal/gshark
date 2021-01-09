@@ -37,16 +37,10 @@ func init() {
 	var err error
 	dirName, _ := os.Getwd()
 	endIndex := strings.Index(dirName, "gshark")
-	var source string
+	source := "conf/app.ini"
 
-	if endIndex > 0 {
+	if _, err := os.Stat(source); os.IsNotExist(err) && endIndex > 0 {
 		source = dirName[:endIndex] + "gshark/conf/app.ini"
-	} else {
-		source = "conf/app.ini"
-	}
-
-	if _, err := os.Stat(source); os.IsNotExist(err) {
-		source = strings.Replace(source, "app.ini", "app-template.ini", 1)
 	}
 
 	Cfg, err = ini.LoadSources(ini.LoadOptions{SpaceBeforeInlineComment: true}, source)
