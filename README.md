@@ -39,7 +39,7 @@ mv app-template.ini app.ini
 
 ## Config
 
-The configuration can be set according to app-template.ini. You should rename it to app.ini to config the project.
+The configuration can be set according to `app-template.ini`. You should rename it to `app.ini` to config the project.
 
 ```
 HTTP_HOST = 127.0.0.1
@@ -72,9 +72,8 @@ PATH =
 ## Before Running
 
 * Make sure you have installed dependencies, suggest to use go mod
-* Make sure the `app.ini` in config folder, you can rename app-template.ini to app.ini
+* Make sure the `app.ini` in config folder, you can rename `app-template.ini` to `app.ini`
 * Make sure that you have config and set database correctly, make sure create the corresponding database when using mysqp or postgresql
-* Make sure that you have config [policy](https://github.com/madneal/gshark/blob/master/conf/policy.csv) properly
 * Make sure that you have config corresponding tokens for Github or Gitlab
 
 ## Run
