@@ -11,9 +11,9 @@ import (
 
 func TestGetUserInfo(t *testing.T) {
 	gitClient, _, _ := GetGithubClient()
-	ownerName := "neal1991"
+	ownerName := "madneal"
 	user := GetGithubUserInfo(gitClient, &ownerName)
-	assert.Equal(t, *user.Blog, "https://madneal.com")
+	assert.Equal(t, "https://madneal.com", *user.Blog)
 }
 
 func TestInsertAllRepos(t *testing.T) {
