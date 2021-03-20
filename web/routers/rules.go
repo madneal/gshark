@@ -19,7 +19,7 @@ func ListRules(ctx *macaron.Context, sess session.Store) {
 	p, pre, next := util.GetPreAndNext(p)
 
 	if sess.Get("admin") != nil {
-		rules, pages, _ := models.GetRulesPage(p)
+		rules, pages, count := models.GetRulesPage(p)
 		pageList := util.GetPageList(p, vars.PageStep, pages)
 
 		ctx.Data["pages"] = pages
@@ -31,6 +31,7 @@ func ListRules(ctx *macaron.Context, sess session.Store) {
 		ctx.Data["lastPage"] = util.GetLastPage(&pageList)
 		ctx.Data["link"] = "/admin/rules/list"
 		ctx.Data["role"] = sess.Get("user").(string)
+		ctx.Data["count"] = count
 		ctx.HTML(200, "rules")
 	} else {
 		ctx.Redirect("/admin/login/")
