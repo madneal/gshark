@@ -1,8 +1,8 @@
-cmdcmdcmdpackage cmd
+package cmd
 
 import (
-	"github.com/madneal/gshark/search"
-	"github.com/madneal/gshark/web"
+	"gin-vue-admin/core"
+	"gin-vue-admin/search"
 	"github.com/urfave/cli"
 )
 
@@ -10,7 +10,7 @@ var Web = cli.Command{
 	Name:        "web",
 	Usage:       "Startup a web Service",
 	Description: "Startup a web Service",
-	Action:      web.RunWeb,
+	Action:      core.RunWindowsServer,
 	Flags: []cli.Flag{
 		boolFlag("debug, d", "Debug Mode"),
 		stringFlag("host, H", "0.0.0.0", "web listen address"),
