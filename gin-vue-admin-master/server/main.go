@@ -1,9 +1,12 @@
 package main
 
 import (
+	"gin-vue-admin/cmd"
 	"gin-vue-admin/core"
 	"gin-vue-admin/global"
 	"gin-vue-admin/initialize"
+	"github.com/urfave/cli"
+	"os"
 )
 
 // @title Swagger Example API
@@ -23,5 +26,15 @@ func main() {
 		db, _ := global.GVA_DB.DB()
 		defer db.Close()
 	}
+	app := cli.NewApp()
+	app.Name = "GShark"
+	app.Author = "madneal"
+	app.Email = "bing.ecnu@gmail.com"
+	app.Version = "20201109"
+	app.Usage = "Scan for sensitive information easily and effectively."
+	app.Commands = []cli.Command{cmd.Web, cmd.Scan}
+	app.Flags = append(app.Flags, cmd.Web.Flags...)
+	app.Flags = append(app.Flags, cmd.Scan.Flags...)
+	err := app.Run(os.Args)
 	core.RunWindowsServer()
 }
