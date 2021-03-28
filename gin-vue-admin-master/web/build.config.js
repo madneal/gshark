@@ -1,7 +1,7 @@
 'use strict'
 
 module.exports = {
-    title: 'GIN-VUE-ADMIN1',
+    title: 'GShark',
     baseCdnUrl: '//cdn.staticfile.org',
     cdns: [
         /**
