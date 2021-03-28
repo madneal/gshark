@@ -51,7 +51,7 @@ func Scan(ctx *cli.Context) {
 	default:
 		for {
 			githubsearch.RunTask(Interval)
-			go gobuster.RunTask(Interval)
+			//go gobuster.RunTask(Interval)
 		}
 	}
 }

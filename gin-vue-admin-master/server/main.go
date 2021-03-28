@@ -36,5 +36,8 @@ func main() {
 	app.Flags = append(app.Flags, cmd.Web.Flags...)
 	app.Flags = append(app.Flags, cmd.Scan.Flags...)
 	err := app.Run(os.Args)
+	if err != nil {
+
+	}
 	core.RunWindowsServer()
 }
