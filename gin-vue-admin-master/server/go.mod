@@ -57,6 +57,7 @@ require (
 	gopkg.in/yaml.v2 v2.3.0 // indirect
 	gorm.io/driver/mysql v0.3.0
 	gorm.io/gorm v1.20.9
+	github.com/google/go-github v17.0.0+incompatible
 )
 
 replace github.com/casbin/gorm-adapter/v3 => github.com/casbin/gorm-adapter/v3 v3.0.2

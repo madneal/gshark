@@ -80,7 +80,7 @@ func RunSearchTask(mapRules map[int][]model.Rule, err error) {
 }
 
 // The filters are utilized to filter the codeResult
-func PassFilters(codeResult *model.CodeResult, fullName string) bool {
+func PassFilters(codeResult *model.SearchResult, fullName string) bool {
 	// detect if the Repository url exist in input_info
 	repoUrl := codeResult.Repository.GetHTMLURL()
 
