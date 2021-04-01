@@ -1,9 +1,9 @@
 package service
 
 import (
-	"gin-vue-admin/global"
-	"gin-vue-admin/model"
-	"gin-vue-admin/model/request"
+	"github.com/madneal/gshark/global"
+	"github.com/madneal/gshark/model"
+	"github.com/madneal/gshark/model/request"
 )
 
 //@author: [piexlmax](https://github.com/piexlmax)
@@ -89,4 +89,9 @@ func GetRuleInfoList(info request.RuleSearch) (err error, list interface{}, tota
 	err = db.Count(&total).Error
 	err = db.Limit(limit).Offset(offset).Find(&rules).Error
 	return err, rules, total
+}
+
+func GetValidRulesByType(typeStr string) (err error, list []model.Rule) {
+	err = global.GVA_DB.Select("type = ?", typeStr).Find(&list).Error
+	return err, list
 }

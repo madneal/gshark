@@ -2,10 +2,10 @@ package service
 
 import (
 	"errors"
-	"gin-vue-admin/global"
-	"gin-vue-admin/model"
-	"gin-vue-admin/model/request"
-	"gin-vue-admin/utils/upload"
+	"github.com/madneal/gshark/global"
+	"github.com/madneal/gshark/model"
+	"github.com/madneal/gshark/model/request"
+	"github.com/madneal/gshark/utils/upload"
 	"mime/multipart"
 	"strings"
 )

@@ -1,9 +1,9 @@
 package router
 
 import (
-	"gin-vue-admin/api/v1"
-	"gin-vue-admin/middleware"
 	"github.com/gin-gonic/gin"
+	"github.com/madneal/gshark/api/v1"
+	"github.com/madneal/gshark/middleware"
 )
 
 func InitApiRouter(Router *gin.RouterGroup) {

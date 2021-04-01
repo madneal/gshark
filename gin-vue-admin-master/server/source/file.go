@@ -1,9 +1,9 @@
 package source
 
 import (
-	"gin-vue-admin/global"
-	"gin-vue-admin/model"
 	"github.com/gookit/color"
+	"github.com/madneal/gshark/global"
+	"github.com/madneal/gshark/model"
 	"gorm.io/gorm"
 	"time"
 )

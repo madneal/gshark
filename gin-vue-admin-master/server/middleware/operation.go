@@ -2,11 +2,11 @@ package middleware
 
 import (
 	"bytes"
-	"gin-vue-admin/global"
-	"gin-vue-admin/model"
-	"gin-vue-admin/model/request"
-	"gin-vue-admin/service"
 	"github.com/gin-gonic/gin"
+	"github.com/madneal/gshark/global"
+	"github.com/madneal/gshark/model"
+	"github.com/madneal/gshark/model/request"
+	"github.com/madneal/gshark/service"
 	"go.uber.org/zap"
 	"io/ioutil"
 	"net/http"

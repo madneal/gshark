@@ -2,8 +2,8 @@ package upload
 
 import (
 	"errors"
-	"gin-vue-admin/global"
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
+	"github.com/madneal/gshark/global"
 	"go.uber.org/zap"
 	"mime/multipart"
 	"path/filepath"

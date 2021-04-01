@@ -1,8 +1,8 @@
 package request
 
-import "gin-vue-admin/model"
+import "github.com/madneal/gshark/model"
 
-type SearchResultSearch struct{
-    model.SearchResult
-    PageInfo
+type SearchResultSearch struct {
+	model.SearchResult
+	PageInfo
 }

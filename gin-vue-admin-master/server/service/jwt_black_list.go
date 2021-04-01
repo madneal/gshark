@@ -2,8 +2,8 @@ package service
 
 import (
 	"errors"
-	"gin-vue-admin/global"
-	"gin-vue-admin/model"
+	"github.com/madneal/gshark/global"
+	"github.com/madneal/gshark/model"
 	"gorm.io/gorm"
 	"time"
 )
