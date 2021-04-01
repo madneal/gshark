@@ -1,10 +1,10 @@
 package search
 
 import (
-	"gin-vue-admin/search/appsearch"
-	"gin-vue-admin/search/codesearch"
-	"gin-vue-admin/search/githubsearch"
-	"gin-vue-admin/search/gitlabsearch"
+	"github.com/madneal/gshark/search/appsearch"
+	"github.com/madneal/gshark/search/codesearch"
+	"github.com/madneal/gshark/search/githubsearch"
+	"github.com/madneal/gshark/search/gitlabsearch"
 	"github.com/urfave/cli"
 	"strings"
 	"time"

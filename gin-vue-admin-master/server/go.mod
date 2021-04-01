@@ -1,4 +1,4 @@
-module gin-vue-admin
+module github.com/madneal/gshark
 
 go 1.14
 

@@ -2,7 +2,7 @@
 package model
 
 import (
-	"gin-vue-admin/global"
+	"github.com/madneal/gshark/global"
 )
 
 // 如果含有time.Time 请自行import time包
@@ -17,4 +17,9 @@ type Rule struct {
 
 func (Rule) TableName() string {
 	return "rule"
+}
+
+func (Rule) GetValidRulesByType() *[]Rule {
+	rules := make([]Rule, 0)
+
 }

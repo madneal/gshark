@@ -2,8 +2,8 @@ package core
 
 import (
 	"fmt"
-	"gin-vue-admin/global"
-	"gin-vue-admin/initialize"
+	"github.com/madneal/gshark/global"
+	"github.com/madneal/gshark/initialize"
 	"go.uber.org/zap"
 	"time"
 )

@@ -11,9 +11,9 @@ FROM alpine:latest
 LABEL MAINTAINER="SliverHorn@sliver_horn@qq.com"
 
 WORKDIR /go/src/gin-vue-admin
-COPY --from=0 /go/src/gin-vue-admin/server ./
-COPY --from=0 /go/src/gin-vue-admin/config.yaml ./
-COPY --from=0 /go/src/gin-vue-admin/resource ./resource
+COPY --from=0 /go/src/github.com/madneal/gshark/server ./
+COPY --from=0 /go/src/github.com/madneal/gshark/config.yaml ./
+COPY --from=0 /go/src/github.com/madneal/gshark/resource ./resource
 
 EXPOSE 8888
 

@@ -1,8 +1,9 @@
 package upload
+
 import (
 	"errors"
-	"gin-vue-admin/global"
-	"gin-vue-admin/utils"
+	"github.com/madneal/gshark/global"
+	"github.com/madneal/gshark/utils"
 	"go.uber.org/zap"
 	"io"
 	"mime/multipart"

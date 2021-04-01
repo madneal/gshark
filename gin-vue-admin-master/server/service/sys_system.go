@@ -1,10 +1,10 @@
 package service
 
 import (
-	"gin-vue-admin/config"
-	"gin-vue-admin/global"
-	"gin-vue-admin/model"
-	"gin-vue-admin/utils"
+	"github.com/madneal/gshark/config"
+	"github.com/madneal/gshark/global"
+	"github.com/madneal/gshark/model"
+	"github.com/madneal/gshark/utils"
 	"go.uber.org/zap"
 )
 
@@ -41,19 +41,18 @@ func SetSystemConfig(system model.System) (err error) {
 func GetServerInfo() (server *utils.Server, err error) {
 	var s utils.Server
 	s.Os = utils.InitOS()
-	if s.Cpu, err = utils.InitCPU(); err != nil{
+	if s.Cpu, err = utils.InitCPU(); err != nil {
 		global.GVA_LOG.Error("func utils.InitCPU() Failed!", zap.String("err", err.Error()))
 		return &s, err
 	}
-	if s.Rrm, err = utils.InitRAM(); err != nil{
+	if s.Rrm, err = utils.InitRAM(); err != nil {
 		global.GVA_LOG.Error("func utils.InitRAM() Failed!", zap.String("err", err.Error()))
 		return &s, err
 	}
-	if s.Disk, err = utils.InitDisk(); err != nil{
+	if s.Disk, err = utils.InitDisk(); err != nil {
 		global.GVA_LOG.Error("func utils.InitDisk() Failed!", zap.String("err", err.Error()))
 		return &s, err
 	}
 
 	return &s, nil
 }
-

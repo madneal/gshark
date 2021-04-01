@@ -1,7 +1,7 @@
 package upload
 
 import (
-	"gin-vue-admin/global"
+	"github.com/madneal/gshark/global"
 	"mime/multipart"
 )
 
