@@ -1,9 +1,9 @@
 package initialize
 
 import (
-	"gin-vue-admin/global"
-	"gin-vue-admin/initialize/internal"
-	"gin-vue-admin/model"
+	"github.com/madneal/gshark/global"
+	"github.com/madneal/gshark/initialize/internal"
+	"github.com/madneal/gshark/model"
 	"os"
 
 	"go.uber.org/zap"

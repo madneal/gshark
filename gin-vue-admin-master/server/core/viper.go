@@ -3,9 +3,9 @@ package core
 import (
 	"flag"
 	"fmt"
-	"gin-vue-admin/global"
-	_ "gin-vue-admin/packfile"
-	"gin-vue-admin/utils"
+	"github.com/madneal/gshark/global"
+	_ "github.com/madneal/gshark/packfile"
+	"github.com/madneal/gshark/utils"
 	"os"
 	"path/filepath"
 

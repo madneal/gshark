@@ -5,61 +5,68 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/go-github/github"
-	"github.com/madneal/gshark/logger"
-	"github.com/madneal/gshark/models"
-	"github.com/madneal/gshark/util"
-	"github.com/madneal/gshark/vars"
+	"github.com/madneal/gshark/global"
+	"github.com/madneal/gshark/service"
+
+	//"github.com/madneal/gshark/logger"
+	//"github.com/madneal/gshark/model"
+	//"github.com/madneal/gshark/util"
+	//"github.com/madneal/gshark/vars"
+	"github.com/madneal/gshark/model"
+	//"github.com/madneal/gshark/service"
 	"regexp"
 	"strings"
 	"sync"
 	"time"
 )
 
-func GenerateSearchCodeTask() (map[int][]models.Rule, error) {
-	result := make(map[int][]models.Rule)
+const SearchNum = 10
+
+func GenerateSearchCodeTask() (map[int][]model.Rule, error) {
+	result := make(map[int][]model.Rule)
 	// get rules with the type of github
-	rules, err := models.GetValidRulesByType("github")
+	err, rules := service.GetValidRulesByType("github")
 	ruleNum := len(rules)
-	batch := ruleNum / vars.SearchNum
+	batch := ruleNum / SearchNum
 
 	for i := 0; i < batch; i++ {
-		result[i] = rules[vars.SearchNum*i : vars.SearchNum*(i+1)]
+		result[i] = rules[SearchNum*i : SearchNum*(i+1)]
 	}
 
-	if ruleNum%vars.SearchNum != 0 {
-		result[batch] = rules[vars.SearchNum*batch : ruleNum]
+	if ruleNum%SearchNum != 0 {
+		result[batch] = rules[SearchNum*batch : ruleNum]
 	}
 	return result, err
 }
 
-func Search(rules []models.Rule) {
+func Search(rules []model.Rule) {
 	var wg sync.WaitGroup
 	wg.Add(len(rules))
 	client, token, err := GetGithubClient()
 	var content string
 	if err == nil && token != "" {
 		for _, rule := range rules {
-			go func(rule models.Rule) {
+			go func(rule model.Rule) {
 				defer wg.Done()
-				results, err := client.SearchCode(rule.Pattern)
+				results, err := client.SearchCode(rule.Content)
 				if err != nil {
-					logger.Log.Error(err)
+					//logger.Log.Error(err)
 					return
 				}
-				counts := SaveResult(results, &rule.Pattern)
+				counts := SaveResult(results, &rule.Content)
 				if counts > 0 {
-					content += fmt.Sprintf("%s: %d条\n", rule.Pattern, counts)
+					content += fmt.Sprintf("%s: %d条\n", rule.Content, counts)
 				}
 			}(rule)
 		}
 		wg.Wait()
 	}
-	if vars.SCKEY != "" && content != "" {
-		util.SendMessage(vars.SCKEY, "扫描结果", content)
-	}
+	//if global.GVA_CONFIG.Serverj.SCKEY != "" && content != "" {
+	//	util.SendMessage(global.GVA_CONFIG.Serverj.SCKEY, "扫描结果", content)
+	//}
 }
 
-func RunSearchTask(mapRules map[int][]models.Rule, err error) {
+func RunSearchTask(mapRules map[int][]model.Rule, err error) {
 	if err == nil {
 		for _, rules := range mapRules {
 			startTime := time.Now()
@@ -73,11 +80,11 @@ func RunSearchTask(mapRules map[int][]models.Rule, err error) {
 }
 
 // The filters are utilized to filter the codeResult
-func PassFilters(codeResult *models.CodeResult, fullName string) bool {
+func PassFilters(codeResult *model.CodeResult, fullName string) bool {
 	// detect if the Repository url exist in input_info
 	repoUrl := codeResult.Repository.GetHTMLURL()
 
-	inputInfo := models.NewInputInfo(CONST_REPO, repoUrl, fullName)
+	inputInfo := model.NewInputInfo(CONST_REPO, repoUrl, fullName)
 	has, err := inputInfo.Exist()
 	if err != nil {
 		fmt.Print(err)
@@ -104,7 +111,7 @@ func SaveResult(results []*github.CodeSearchResult, keyword *string) int {
 			for _, resultItem := range result.CodeResults {
 				ret, err := json.Marshal(resultItem)
 				if err == nil {
-					var codeResult *models.CodeResult
+					var codeResult *model.CodeResult
 					err = json.Unmarshal(ret, &codeResult)
 					codeResult.Keyword = keyword
 					fullName := codeResult.Repository.GetFullName()
@@ -160,7 +167,7 @@ func (c *Client) SearchCode(keyword string) ([]*github.CodeSearchResult, error) 
 }
 
 func BuildQuery(query string) (string, error) {
-	filterRules, err := models.GetFilterRules()
+	filterRules, err := model.GetFilterRules()
 	str := ""
 	for _, filterRule := range filterRules {
 		ruleValue := filterRule.RuleValue

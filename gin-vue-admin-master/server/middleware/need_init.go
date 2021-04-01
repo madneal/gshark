@@ -1,9 +1,9 @@
 package middleware
 
 import (
-	"gin-vue-admin/global"
-	"gin-vue-admin/model/response"
 	"github.com/gin-gonic/gin"
+	"github.com/madneal/gshark/global"
+	"github.com/madneal/gshark/model/response"
 )
 
 // 处理跨域请求,支持options访问

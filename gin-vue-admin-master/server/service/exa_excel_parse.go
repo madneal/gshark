@@ -3,37 +3,37 @@ package service
 import (
 	"errors"
 	"fmt"
-	"gin-vue-admin/global"
-	"gin-vue-admin/model"
 	"github.com/360EntSecGroup-Skylar/excelize/v2"
+	"github.com/madneal/gshark/global"
+	"github.com/madneal/gshark/model"
 	"strconv"
 )
 
 func ParseInfoList2Excel(infoList []model.SysBaseMenu, filePath string) error {
 	excel := excelize.NewFile()
-		excel.SetSheetRow("Sheet1","A1",&[]string{"ID","路由Name","路由Path","是否隐藏","父节点","排序","文件名称"})
-    	for i, menu := range infoList {
-    		axis := fmt.Sprintf("A%d",i+2)
-    		excel.SetSheetRow("Sheet1",axis,&[]interface{}{
-    			menu.ID,
-    			menu.Name,
-    			menu.Path,
-    			menu.Hidden,
-    			menu.ParentId,
-    			menu.Sort,
-    			menu.Component,
-    		})
-		}
+	excel.SetSheetRow("Sheet1", "A1", &[]string{"ID", "路由Name", "路由Path", "是否隐藏", "父节点", "排序", "文件名称"})
+	for i, menu := range infoList {
+		axis := fmt.Sprintf("A%d", i+2)
+		excel.SetSheetRow("Sheet1", axis, &[]interface{}{
+			menu.ID,
+			menu.Name,
+			menu.Path,
+			menu.Hidden,
+			menu.ParentId,
+			menu.Sort,
+			menu.Component,
+		})
+	}
 	excel.SaveAs(filePath)
 	return nil
 }
 
 func ParseExcel2InfoList() ([]model.SysBaseMenu, error) {
 	skipHeader := true
-	fixedHeader := []string{"ID","路由Name","路由Path","是否隐藏","父节点","排序","文件名称"}
-	file, err := excelize.OpenFile(global.GVA_CONFIG.Excel.Dir+"ExcelImport.xlsx")
+	fixedHeader := []string{"ID", "路由Name", "路由Path", "是否隐藏", "父节点", "排序", "文件名称"}
+	file, err := excelize.OpenFile(global.GVA_CONFIG.Excel.Dir + "ExcelImport.xlsx")
 	if err != nil {
-        return nil, err
+		return nil, err
 	}
 	menus := make([]model.SysBaseMenu, 0)
 	rows, err := file.Rows("Sheet1")
@@ -63,11 +63,11 @@ func ParseExcel2InfoList() ([]model.SysBaseMenu, error) {
 			GVA_MODEL: global.GVA_MODEL{
 				ID: uint(id),
 			},
-			Name: row[1],
-			Path: row[2],
-			Hidden: hidden,
-			ParentId: row[4],
-			Sort: sort,
+			Name:      row[1],
+			Path:      row[2],
+			Hidden:    hidden,
+			ParentId:  row[4],
+			Sort:      sort,
 			Component: row[6],
 		}
 		menus = append(menus, menu)

@@ -1,6 +1,6 @@
 package response
 
-import "gin-vue-admin/model"
+import "github.com/madneal/gshark/model"
 
 type FilePathResponse struct {
 	FilePath string `json:"filePath"`

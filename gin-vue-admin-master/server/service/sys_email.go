@@ -1,7 +1,7 @@
 package service
 
 import (
-	"gin-vue-admin/utils"
+	"github.com/madneal/gshark/utils"
 )
 
 //@author: [maplepie](https://github.com/maplepie)

@@ -1,8 +1,8 @@
 package request
 
-import "gin-vue-admin/model"
+import "github.com/madneal/gshark/model"
 
-type SysDictionarySearch struct{
-    model.SysDictionary
-    PageInfo
+type SysDictionarySearch struct {
+	model.SysDictionary
+	PageInfo
 }

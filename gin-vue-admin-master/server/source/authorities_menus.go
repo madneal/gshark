@@ -1,8 +1,8 @@
 package source
 
 import (
-	"gin-vue-admin/global"
 	"github.com/gookit/color"
+	"github.com/madneal/gshark/global"
 	"gorm.io/gorm"
 )
 

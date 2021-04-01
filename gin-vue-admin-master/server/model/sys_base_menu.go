@@ -1,7 +1,7 @@
 package model
 
 import (
-	"gin-vue-admin/global"
+	"github.com/madneal/gshark/global"
 )
 
 type SysBaseMenu struct {

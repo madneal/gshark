@@ -1,6 +1,6 @@
 package response
 
-import "gin-vue-admin/config"
+import "github.com/madneal/gshark/config"
 
 type SysConfigResponse struct {
 	Config config.Server `json:"config"`
