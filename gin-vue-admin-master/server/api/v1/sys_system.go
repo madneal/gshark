@@ -1,10 +1,10 @@
 package v1
 
 import (
-	"gin-vue-admin/global"
-	"gin-vue-admin/model"
-	"gin-vue-admin/model/response"
-	"gin-vue-admin/service"
+	"github.com/madneal/gshark/global"
+	"github.com/madneal/gshark/model"
+	"github.com/madneal/gshark/model/response"
+	"github.com/madneal/gshark/service"
 	"os"
 	"os/exec"
 	"runtime"

@@ -1,6 +1,6 @@
 package request
 
-import "gin-vue-admin/model"
+import "github.com/madneal/gshark/model"
 
 // Add menu authority info structure
 type AddMenuAuthorityInfo struct {

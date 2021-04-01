@@ -2,13 +2,13 @@ package service
 
 import (
 	"errors"
-	"gin-vue-admin/global"
-	"gin-vue-admin/model"
-	"gin-vue-admin/model/request"
 	"github.com/casbin/casbin/util"
 	"github.com/casbin/casbin/v2"
 	gormadapter "github.com/casbin/gorm-adapter/v3"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/madneal/gshark/global"
+	"github.com/madneal/gshark/model"
+	"github.com/madneal/gshark/model/request"
 	"strings"
 )
 
@@ -57,7 +57,6 @@ func UpdateCasbinApi(oldPath string, newPath string, oldMethod string, newMethod
 //@description: 获取权限列表
 //@param: authorityId string
 //@return: pathMaps []request.CasbinInfo
-
 
 func GetPolicyPathByAuthorityId(authorityId string) (pathMaps []request.CasbinInfo) {
 	e := Casbin()

@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"gin-vue-admin/core"
-	"gin-vue-admin/search"
+	"github.com/madneal/gshark/core"
+	"github.com/madneal/gshark/search"
 	"github.com/urfave/cli"
 )
 

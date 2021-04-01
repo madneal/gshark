@@ -1,10 +1,10 @@
 package main
 
 import (
-	"gin-vue-admin/cmd"
-	"gin-vue-admin/core"
-	"gin-vue-admin/global"
-	"gin-vue-admin/initialize"
+	"github.com/madneal/gshark/cmd"
+	"github.com/madneal/gshark/core"
+	"github.com/madneal/gshark/global"
+	"github.com/madneal/gshark/initialize"
 	"github.com/urfave/cli"
 	"os"
 )

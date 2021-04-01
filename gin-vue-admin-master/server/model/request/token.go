@@ -1,8 +1,8 @@
 package request
 
-import "gin-vue-admin/model"
+import "github.com/madneal/gshark/model"
 
-type TokenSearch struct{
-    model.Token
-    PageInfo
+type TokenSearch struct {
+	model.Token
+	PageInfo
 }

@@ -3,8 +3,8 @@ package service
 import (
 	"errors"
 	"fmt"
-	"gin-vue-admin/global"
-	"gin-vue-admin/model"
+	"github.com/madneal/gshark/global"
+	"github.com/madneal/gshark/model"
 	"gorm.io/gorm"
 	"io/ioutil"
 	"os"
