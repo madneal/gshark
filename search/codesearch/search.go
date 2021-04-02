@@ -3,7 +3,6 @@ package codesearch
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/madneal/gshark/logger"
 	"github.com/madneal/gshark/models"
 	"github.com/madneal/gshark/vars"
 	"github.com/parnurzeal/gorequest"
