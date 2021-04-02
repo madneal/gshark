@@ -1,10 +1,20 @@
-FROM golang:1.13
+FROM golang:alpine
 
-ENV GOPROXY https://goproxy.cn,direct
-WORKDIR /data/gshark
-WORKDIR $GOPATH/src/github.com/madneal/gshark
-COPY . $GOPATH/src/github.com/madneal/gshark
-RUN go build main.go
+ENV GO111MODULE=on
+ENV GOPROXY=https://goproxy.io,direct
 
-EXPOSE 8000
-CMD ./main $OPTION
+WORKDIR /go/src/gin-vue-admin
+COPY . .
+RUN go env && go build -o server .
+
+FROM alpine:latest
+LABEL MAINTAINER="SliverHorn@sliver_horn@qq.com"
+
+WORKDIR /go/src/gin-vue-admin
+COPY --from=0 /go/src/github.com/madneal/gshark/server ./
+COPY --from=0 /go/src/github.com/madneal/gshark/config.yaml ./
+COPY --from=0 /go/src/github.com/madneal/gshark/resource ./resource
+
+EXPOSE 8888
+
+ENTRYPOINT ./server
