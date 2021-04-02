@@ -1,0 +1,58 @@
+[GIN-VUE-ADMIN]2021/03/27 - 20:52:14.328	[34minfo[0m	/Users/neal/project/gshark/gin-vue-admin-master/server/initialize/router.go:21	use middleware logger
+[GIN-VUE-ADMIN]2021/03/27 - 20:52:14.328	[34minfo[0m	/Users/neal/project/gshark/gin-vue-admin-master/server/initialize/router.go:24	use middleware cors
+[GIN-VUE-ADMIN]2021/03/27 - 20:52:14.329	[34minfo[0m	/Users/neal/project/gshark/gin-vue-admin-master/server/initialize/router.go:26	register swagger handler
+[GIN-VUE-ADMIN]2021/03/27 - 20:52:14.335	[34minfo[0m	/Users/neal/project/gshark/gin-vue-admin-master/server/initialize/router.go:56	router register success
+[GIN-VUE-ADMIN]2021/03/27 - 20:52:14.336	[34minfo[0m	/Users/neal/project/gshark/gin-vue-admin-master/server/core/server.go:28	server run success on 	{"address": ":8888"}
+[GIN-VUE-ADMIN]2021/03/27 - 20:52:14.337	[31merror[0m	/Users/neal/project/gshark/gin-vue-admin-master/server/core/server.go:38	net.Listen error: listen tcp :8888: bind: address already in use
+[GIN-VUE-ADMIN]2021/03/27 - 20:52:31.679	[34minfo[0m	/Users/neal/project/gshark/gin-vue-admin-master/server/initialize/router.go:21	use middleware logger
+[GIN-VUE-ADMIN]2021/03/27 - 20:52:31.680	[34minfo[0m	/Users/neal/project/gshark/gin-vue-admin-master/server/initialize/router.go:24	use middleware cors
+[GIN-VUE-ADMIN]2021/03/27 - 20:52:31.680	[34minfo[0m	/Users/neal/project/gshark/gin-vue-admin-master/server/initialize/router.go:26	register swagger handler
+[GIN-VUE-ADMIN]2021/03/27 - 20:52:31.684	[34minfo[0m	/Users/neal/project/gshark/gin-vue-admin-master/server/initialize/router.go:56	router register success
+[GIN-VUE-ADMIN]2021/03/27 - 20:52:31.684	[34minfo[0m	/Users/neal/project/gshark/gin-vue-admin-master/server/core/server.go:28	server run success on 	{"address": ":8888"}
+[GIN-VUE-ADMIN]2021/03/27 - 20:52:46.292	[34minfo[0m	/Users/neal/project/gshark/gin-vue-admin-master/server/api/v1/sys_initdb.go:52	前往初始化数据库
+[GIN-VUE-ADMIN]2021/03/27 - 21:00:53.690	[34minfo[0m	/Users/neal/project/gshark/gin-vue-admin-master/server/api/v1/sys_initdb.go:46	数据库无需初始化
+[GIN-VUE-ADMIN]2021/03/27 - 21:02:59.888	[34minfo[0m	/Users/neal/project/gshark/gin-vue-admin-master/server/api/v1/sys_initdb.go:46	数据库无需初始化
+[GIN-VUE-ADMIN]2021/03/27 - 21:03:23.624	[34minfo[0m	/Users/neal/project/gshark/gin-vue-admin-master/server/api/v1/sys_initdb.go:46	数据库无需初始化
+[GIN-VUE-ADMIN]2021/03/27 - 21:03:38.783	[34minfo[0m	/Users/neal/project/gshark/gin-vue-admin-master/server/api/v1/sys_initdb.go:46	数据库无需初始化
+[GIN-VUE-ADMIN]2021/03/27 - 21:04:12.412	[34minfo[0m	/Users/neal/project/gshark/gin-vue-admin-master/server/api/v1/sys_initdb.go:46	数据库无需初始化
+[GIN-VUE-ADMIN]2021/03/27 - 21:04:58.782	[34minfo[0m	/Users/neal/project/gshark/gin-vue-admin-master/server/api/v1/sys_initdb.go:46	数据库无需初始化
+[GIN-VUE-ADMIN]2021/03/27 - 21:05:32.957	[34minfo[0m	/Users/neal/project/gshark/gin-vue-admin-master/server/api/v1/sys_initdb.go:46	数据库无需初始化
+[GIN-VUE-ADMIN]2021/03/27 - 21:07:42.104	[34minfo[0m	/Users/neal/project/gshark/gin-vue-admin-master/server/api/v1/sys_initdb.go:46	数据库无需初始化
+[GIN-VUE-ADMIN]2021/03/27 - 21:07:50.165	[34minfo[0m	/Users/neal/project/gshark/gin-vue-admin-master/server/api/v1/sys_initdb.go:46	数据库无需初始化
+[GIN-VUE-ADMIN]2021/03/27 - 21:07:52.277	[34minfo[0m	/Users/neal/project/gshark/gin-vue-admin-master/server/api/v1/sys_initdb.go:46	数据库无需初始化
+[GIN-VUE-ADMIN]2021/03/27 - 21:08:25.296	[31merror[0m	/Users/neal/project/gshark/gin-vue-admin-master/server/core/server.go:38	accept tcp [::]:8888: use of closed network connection
+[GIN-VUE-ADMIN]2021/03/27 - 21:08:35.783	[34minfo[0m	register table success
+[GIN-VUE-ADMIN]2021/03/27 - 21:08:35.784	[34minfo[0m	use middleware logger
+[GIN-VUE-ADMIN]2021/03/27 - 21:08:35.784	[34minfo[0m	use middleware cors
+[GIN-VUE-ADMIN]2021/03/27 - 21:08:35.784	[34minfo[0m	register swagger handler
+[GIN-VUE-ADMIN]2021/03/27 - 21:08:35.786	[34minfo[0m	router register success
+[GIN-VUE-ADMIN]2021/03/27 - 21:08:35.787	[34minfo[0m	server run success on 	{"address": ":8888"}
+[GIN-VUE-ADMIN]2021/03/27 - 21:08:41.114	[34minfo[0m	数据库无需初始化
+[GIN-VUE-ADMIN]2021/03/27 - 21:10:41.777	[34minfo[0m	数据库无需初始化
+[GIN-VUE-ADMIN]2021/03/27 - 21:11:27.082	[34minfo[0m	数据库无需初始化
+[GIN-VUE-ADMIN]2021/03/27 - 21:11:30.578	[34minfo[0m	数据库无需初始化
+[GIN-VUE-ADMIN]2021/03/27 - 21:12:37.198	[34minfo[0m	数据库无需初始化
+[GIN-VUE-ADMIN]2021/03/27 - 21:12:48.544	[34minfo[0m	数据库无需初始化
+[GIN-VUE-ADMIN]2021/03/27 - 21:58:32.011	[34minfo[0m	数据库无需初始化
+[GIN-VUE-ADMIN]2021/03/27 - 22:49:31.699	[34minfo[0m	数据库无需初始化
+[GIN-VUE-ADMIN]2021/03/27 - 22:52:12.041	[34minfo[0m	数据库无需初始化
+[GIN-VUE-ADMIN]2021/03/27 - 22:52:31.916	[31merror[0m	accept tcp [::]:8888: use of closed network connection
+[GIN-VUE-ADMIN]2021/03/27 - 22:54:05.746	[34minfo[0m	register table success
+[GIN-VUE-ADMIN]2021/03/27 - 22:54:05.747	[34minfo[0m	use middleware logger
+[GIN-VUE-ADMIN]2021/03/27 - 22:54:05.747	[34minfo[0m	use middleware cors
+[GIN-VUE-ADMIN]2021/03/27 - 22:54:05.747	[34minfo[0m	register swagger handler
+[GIN-VUE-ADMIN]2021/03/27 - 22:54:05.749	[34minfo[0m	router register success
+[GIN-VUE-ADMIN]2021/03/27 - 22:54:05.749	[34minfo[0m	server run success on 	{"address": ":8888"}
+[GIN-VUE-ADMIN]2021/03/27 - 22:54:10.973	[34minfo[0m	数据库无需初始化
+[GIN-VUE-ADMIN]2021/03/27 - 22:55:57.234	[34minfo[0m	数据库无需初始化
+[GIN-VUE-ADMIN]2021/03/27 - 22:56:16.865	[34minfo[0m	数据库无需初始化
+[GIN-VUE-ADMIN]2021/03/27 - 23:01:35.255	[34minfo[0m	数据库无需初始化
+[GIN-VUE-ADMIN]2021/03/27 - 23:02:56.204	[34minfo[0m	数据库无需初始化
+[GIN-VUE-ADMIN]2021/03/27 - 23:03:04.026	[31merror[0m	accept tcp [::]:8888: use of closed network connection
+[GIN-VUE-ADMIN]2021/03/27 - 23:04:07.673	[34minfo[0m	register table success
+[GIN-VUE-ADMIN]2021/03/27 - 23:04:07.673	[34minfo[0m	use middleware logger
+[GIN-VUE-ADMIN]2021/03/27 - 23:04:07.673	[34minfo[0m	use middleware cors
+[GIN-VUE-ADMIN]2021/03/27 - 23:04:07.673	[34minfo[0m	register swagger handler
+[GIN-VUE-ADMIN]2021/03/27 - 23:04:07.676	[34minfo[0m	router register success
+[GIN-VUE-ADMIN]2021/03/27 - 23:04:07.676	[34minfo[0m	server run success on 	{"address": ":8888"}
+[GIN-VUE-ADMIN]2021/03/27 - 23:04:12.824	[34minfo[0m	数据库无需初始化
