@@ -1,8 +1,6 @@
 package search
 
 import (
-	"github.com/madneal/gshark/gobuster"
-	"github.com/madneal/gshark/logger"
 	"github.com/madneal/gshark/search/appsearch"
 	"github.com/madneal/gshark/search/codesearch"
 	"github.com/madneal/gshark/search/githubsearch"
@@ -28,27 +26,22 @@ func Scan(ctx *cli.Context) {
 	switch scanMode {
 	case "github":
 		// use go keyword or not
-		logger.Log.Println("scan github code")
 		for {
 			githubsearch.RunTask(Interval)
 		}
 	case "app":
-		logger.Log.Println("scan app results")
 		for {
 			appsearch.RunTask(Interval)
 		}
 	case "searchcode":
-		logger.Log.Println("scan searchcode results")
 		for {
 			codesearch.RunTask(Interval)
 		}
 	case "gitlab":
-		logger.Log.Println("scan gitlab code")
 		for {
 			gitlabsearch.RunTask(Interval)
 		}
 	case "all":
-		logger.Log.Println("all scan mode")
 		for {
 			gitlabsearch.RunTask(Interval)
 			codesearch.RunTask(Interval)
@@ -56,10 +49,9 @@ func Scan(ctx *cli.Context) {
 			appsearch.RunTask(Interval)
 		}
 	default:
-		logger.Log.Println("default scan mode")
 		for {
 			githubsearch.RunTask(Interval)
-			go gobuster.RunTask(Interval)
+			//go gobuster.RunTask(Interval)
 		}
 	}
 }
