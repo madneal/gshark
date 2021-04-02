@@ -29,10 +29,6 @@ func Scan(ctx *cli.Context) {
 		for {
 			githubsearch.RunTask(Interval)
 		}
-	case "app":
-		for {
-			appsearch.RunTask(Interval)
-		}
 	case "searchcode":
 		for {
 			codesearch.RunTask(Interval)
