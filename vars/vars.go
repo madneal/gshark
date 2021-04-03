@@ -2,7 +2,7 @@ package vars
 
 import (
 	"fmt"
-	"github.com/madneal/gshark/logger"
+	//"github.com/madneal/gshark/logger"
 	"gopkg.in/ini.v1"
 	"os"
 	"strings"
@@ -47,7 +47,7 @@ func init() {
 
 	if err != nil {
 		fmt.Println("Please check the config file app.ini")
-		logger.Log.Panicln(err)
+		//logger.Log.Panicln(err)
 	}
 
 	HTTP_HOST = Cfg.Section("").Key("HTTP_HOST").MustString("127.0.0.1")
