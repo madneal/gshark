@@ -3,7 +3,7 @@ package cmd
 import (
 	"github.com/madneal/gshark/core"
 	"github.com/madneal/gshark/search"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 )
 
 var Web = cli.Command{
@@ -12,9 +12,16 @@ var Web = cli.Command{
 	Description: "Startup a web Service",
 	Action:      core.RunWindowsServer,
 	Flags: []cli.Flag{
-		boolFlag("debug, d", "Debug Mode"),
-		stringFlag("host, H", "0.0.0.0", "web listen address"),
-		intFlag("port, p", 8000, "web listen port"),
+		&cli.StringFlag{
+			Name:  "host, H",
+			Value: "0.0.0.0",
+			Usage: "web listen address",
+		},
+		&cli.IntFlag{
+			Name:  "post, p",
+			Value: 8000,
+			Usage: "web listen port",
+		},
 	},
 }
 
@@ -24,30 +31,15 @@ var Scan = cli.Command{
 	Description: "start to scan leak info",
 	Action:      search.Scan,
 	Flags: []cli.Flag{
-		stringFlag("mode, m", "github", "scan mode: github, searchcode, gitlab, all"),
-		intFlag("time, t", 900, "scan interval(second)"),
+		&cli.StringFlag{
+			Name:  "mode, m",
+			Value: "github",
+			Usage: "scan mode: github, searchcode, gitlab, all",
+		},
+		&cli.IntFlag{
+			Name:  "time, t",
+			Value: 900,
+			Usage: "scan interval(second)",
+		},
 	},
-}
-
-func stringFlag(name, value, usage string) cli.StringFlag {
-	return cli.StringFlag{
-		Name:  name,
-		Value: value,
-		Usage: usage,
-	}
-}
-
-func boolFlag(name, usage string) cli.BoolFlag {
-	return cli.BoolFlag{
-		Name:  name,
-		Usage: usage,
-	}
-}
-
-func intFlag(name string, value int, usage string) cli.IntFlag {
-	return cli.IntFlag{
-		Name:  name,
-		Value: value,
-		Usage: usage,
-	}
 }

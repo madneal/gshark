@@ -27,7 +27,7 @@ type TextMatch struct {
 	ObjectType *string `json:"object_type,omitempty"`
 	Property   *string `json:"property,omitempty"`
 	Fragment   *string `json:"fragment,omitempty"`
-	//Matches    []Match `gorm:"json"`
+	Matches    []Match `gorm:"json"`
 }
 
 type Match struct {
