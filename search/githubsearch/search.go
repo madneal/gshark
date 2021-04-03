@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/go-github/github"
+	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/service"
 	"github.com/madneal/gshark/utils"
 
@@ -25,6 +26,9 @@ func GenerateSearchCodeTask() (map[int][]model.Rule, error) {
 	result := make(map[int][]model.Rule)
 	// get rules with the type of github
 	err, rules := service.GetValidRulesByType("github")
+	if len(rules) == 0 {
+		global.GVA_LOG.Info("Rules of github is empty, please specify one rule for scan at least")
+	}
 	ruleNum := len(rules)
 	batch := ruleNum / SearchNum
 
