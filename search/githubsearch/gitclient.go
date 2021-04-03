@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/google/go-github/github"
-	"github.com/madneal/gshark/logger"
+	//"github.com/madneal/gshark/logger"
 	"github.com/madneal/gshark/models"
 	"golang.org/x/oauth2"
 	"os"
@@ -54,7 +54,7 @@ func GetGithubClient() (*Client, string, error) {
 		break
 	}
 	if err != nil {
-		logger.Log.Error(err)
+		//logger.Log.Error(err)
 	}
 	if c == nil {
 		fmt.Println("Github Client initial failed, please add token")

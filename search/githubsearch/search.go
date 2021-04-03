@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/go-github/github"
-	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/service"
+	"github.com/madneal/gshark/util"
 
 	//"github.com/madneal/gshark/logger"
 	//"github.com/madneal/gshark/model"
@@ -15,7 +15,6 @@ import (
 	"github.com/madneal/gshark/model"
 	//"github.com/madneal/gshark/service"
 	"regexp"
-	"strings"
 	"sync"
 	"time"
 )
@@ -100,7 +99,7 @@ func PassFilters(codeResult *model.SearchResult, fullName string) bool {
 	// detect if there are any random characters in text matches
 	textMatches := codeResult.TextMatches[0].Fragment
 	reg := regexp.MustCompile(`[A-Za-z0-9_+]{50,}`)
-	return !reg.MatchString(*textMatches) && !has && !exist
+	return !reg.MatchString(*textMatches) && !exist
 }
 
 func SaveResult(results []*github.CodeSearchResult, keyword *string) int {
@@ -110,24 +109,24 @@ func SaveResult(results []*github.CodeSearchResult, keyword *string) int {
 			for _, resultItem := range result.CodeResults {
 				ret, err := json.Marshal(resultItem)
 				if err == nil {
-					var codeResult *model.CodeResult
+					var codeResult *model.SearchResult
 					err = json.Unmarshal(ret, &codeResult)
-					codeResult.Keyword = keyword
+					codeResult.Keyword = *keyword
 					fullName := codeResult.Repository.GetFullName()
-					codeResult.RepoName = fullName
+					codeResult.Repo = fullName
 					if len(codeResult.TextMatches) > 0 {
 						hash := util.GenMd5WithSpecificLen(*(codeResult.TextMatches[0].Fragment), 50)
-						codeResult.Textmatchmd5 = &hash
+						codeResult.TextmatchMd5 = hash
 					}
 
 					if err == nil && PassFilters(codeResult, fullName) {
 						insertCount++
-						logger.Log.Infoln(codeResult.Insert())
+						//logger.Log.Infoln(codeResult.Insert())
 					}
 				}
 			}
 		}
-		logger.Log.Infof("Has inserted %d results into code_result", insertCount)
+		//logger.Log.Infof("Has inserted %d results into code_result", insertCount)
 	}
 	return insertCount
 }
@@ -138,7 +137,7 @@ func RunTask(duration time.Duration) {
 	// insert repos from inputInfo
 	InsertAllRepos()
 
-	logger.Log.Infof("Complete the scan of Github, start to sleep %v seconds", duration*time.Second)
+	//logger.Log.Infof("Complete the scan of Github, start to sleep %v seconds", duration*time.Second)
 	time.Sleep(duration * time.Second)
 }
 
@@ -149,7 +148,7 @@ func (c *Client) SearchCode(keyword string) ([]*github.CodeSearchResult, error) 
 	listOpt := github.ListOptions{PerPage: 100}
 	opt := &github.SearchOptions{Sort: "indexed", Order: "desc", TextMatch: true, ListOptions: listOpt}
 	query := keyword + " +in:file"
-	query, err = BuildQuery(query)
+	//query, err = BuildQuery(query)
 	fmt.Println("search with the query:" + query)
 	for {
 		result, nextPage := searchCodeByOpt(c, ctx, query, *opt)
@@ -165,34 +164,34 @@ func (c *Client) SearchCode(keyword string) ([]*github.CodeSearchResult, error) 
 	return allSearchResult, err
 }
 
-func BuildQuery(query string) (string, error) {
-	filterRules, err := model.GetFilterRules()
-	str := ""
-	for _, filterRule := range filterRules {
-		ruleValue := filterRule.RuleValue
-		ruleType := filterRule.RuleType
-		ruleKey := filterRule.RuleKey
-		ruleValueList := strings.Split(ruleValue, ",")
-		for _, value := range ruleValueList {
-			if ruleType == 0 {
-				str += " -"
-			} else {
-				str += " +"
-			}
-
-			if ruleKey == "ext" {
-				str += "extension:"
-			} else if ruleKey == "lang" {
-				str += "language:"
-			}
-
-			value = strings.TrimSpace(value)
-			str += value
-		}
-	}
-	builtQuery := query + str
-	return builtQuery, err
-}
+//func BuildQuery(query string) (string, error) {
+//	filterRules, err := model.GetFilterRules()
+//	str := ""
+//	for _, filterRule := range filterRules {
+//		ruleValue := filterRule.RuleValue
+//		ruleType := filterRule.RuleType
+//		ruleKey := filterRule.RuleKey
+//		ruleValueList := strings.Split(ruleValue, ",")
+//		for _, value := range ruleValueList {
+//			if ruleType == 0 {
+//				str += " -"
+//			} else {
+//				str += " +"
+//			}
+//
+//			if ruleKey == "ext" {
+//				str += "extension:"
+//			} else if ruleKey == "lang" {
+//				str += "language:"
+//			}
+//
+//			value = strings.TrimSpace(value)
+//			str += value
+//		}
+//	}
+//	builtQuery := query + str
+//	return builtQuery, err
+//}
 
 func searchCodeByOpt(c *Client, ctx context.Context, query string, opt github.SearchOptions) (*github.CodeSearchResult, int) {
 	result, res, err := c.Client.Search.Code(ctx, query, &opt)
@@ -202,9 +201,9 @@ func searchCodeByOpt(c *Client, ctx context.Context, query string, opt github.Se
 	}
 
 	if err == nil {
-		logger.Log.Infof("remaining: %d, nextPage: %d, lastPage: %d", res.Rate.Remaining, res.NextPage, res.LastPage)
+		//logger.Log.Infof("remaining: %d, nextPage: %d, lastPage: %d", res.Rate.Remaining, res.NextPage, res.LastPage)
 	} else {
-		logger.Log.Error(err)
+		//logger.Log.Error(err)
 		return nil, 0
 	}
 	return result, res.NextPage
