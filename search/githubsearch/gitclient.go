@@ -20,10 +20,10 @@ type Client struct {
 	Token  string
 }
 
-func init() {
-	GithubClients = make(map[string]*Client)
-	GithubClients, _ = InitGithubClients()
-}
+//func init() {
+//	GithubClients = make(map[string]*Client)
+//	GithubClients, _ = InitGithubClients()
+//}
 
 func InitGithubClients() (map[string]*Client, error) {
 	githubClients := make(map[string]*Client)
