@@ -4,12 +4,12 @@ import (
 	//"github.com/madneal/gshark/search/codesearch"
 	"github.com/madneal/gshark/search/githubsearch"
 	//"github.com/madneal/gshark/search/gitlabsearch"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 	"strings"
 	"time"
 )
 
-func Scan(ctx *cli.Context) {
+func Scan(ctx *cli.Context) error {
 	var scanMode string
 	// seconds
 	var Interval time.Duration = 900
@@ -48,4 +48,5 @@ func Scan(ctx *cli.Context) {
 			//go gobuster.RunTask(Interval)
 		}
 	}
+	return nil
 }
