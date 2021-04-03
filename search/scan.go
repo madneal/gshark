@@ -1,7 +1,6 @@
 package search
 
 import (
-	"github.com/madneal/gshark/search/appsearch"
 	"github.com/madneal/gshark/search/codesearch"
 	"github.com/madneal/gshark/search/githubsearch"
 	"github.com/madneal/gshark/search/gitlabsearch"
@@ -42,7 +41,6 @@ func Scan(ctx *cli.Context) {
 			gitlabsearch.RunTask(Interval)
 			codesearch.RunTask(Interval)
 			githubsearch.RunTask(Interval)
-			appsearch.RunTask(Interval)
 		}
 	default:
 		for {
