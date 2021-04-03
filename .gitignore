@@ -11,9 +11,10 @@ vendor
 
 .DS_Store
 main
-
+log/
 test
 
 conf/app.ini
 conf/app-pa.ini
 nohup.out
+config.yaml
