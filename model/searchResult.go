@@ -11,11 +11,11 @@ type SearchResult struct {
 	global.GVA_MODEL
 	Repo         string             `json:"repo" form:"repo" gorm:"column:repo;comment:;type:varchar(50);size:50;"`
 	Repository   *github.Repository `json:"repository" gorm:"column:repository;type:json;"`
-	Matches      string             `json:"matches" form:"matches" gorm:"column:matches;comment:;type:blob;"`
+	Matches      string             `json:"matches" form:"matches" gorm:"column:matches;comment:;type:text;"`
 	Keyword      string             `json:"keyword" form:"keyword" gorm:"column:keyword;comment:;type:varchar(100);size:100;"`
 	Path         string             `json:"path" form:"path" gorm:"column:path;comment:;type:varchar(100);size:100;"`
 	Url          string             `json:"url" form:"url" gorm:"column:url;comment:;type:varchar(500);size:500;"`
-	TextmatchMd5 string             `json:"textmatchMd5" form:"textmatchMd5" gorm:"column:textmatch_md5;comment:;type:varchar(100);size:100;"`
+	TextmatchMd5 string             `json:"textmatchMd5" gorm:"column:textmatch_md5;comment:;type:varchar(100);size:100;"`
 	Status       int                `json:"status" form:"status" gorm:"column:status;comment:;type:int;size:3;"`
 	TextMatches  []TextMatch        `json:"text_matches,omitempty" gorm:"json;-"`
 }
