@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"github.com/google/go-github/github"
 	"github.com/madneal/gshark/service"
-	"github.com/madneal/gshark/util"
+	"github.com/madneal/gshark/utils"
 
 	//"github.com/madneal/gshark/logger"
 	//"github.com/madneal/gshark/model"
@@ -115,7 +115,7 @@ func SaveResult(results []*github.CodeSearchResult, keyword *string) int {
 					fullName := codeResult.Repository.GetFullName()
 					codeResult.Repo = fullName
 					if len(codeResult.TextMatches) > 0 {
-						hash := util.GenMd5WithSpecificLen(*(codeResult.TextMatches[0].Fragment), 50)
+						hash := utils.GenMd5WithSpecificLen(*(codeResult.TextMatches[0].Fragment), 50)
 						codeResult.TextmatchMd5 = hash
 					}
 
