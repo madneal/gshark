@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/initialize"
+	"github.com/urfave/cli/v2"
 	"go.uber.org/zap"
 	"time"
 )
@@ -12,7 +13,7 @@ type server interface {
 	ListenAndServe() error
 }
 
-func RunWindowsServer() {
+func RunWindowsServer(ctx *cli.Context) error {
 	if global.GVA_CONFIG.System.UseMultipoint {
 		// 初始化redis服务
 		initialize.Redis()
@@ -28,4 +29,5 @@ func RunWindowsServer() {
 	global.GVA_LOG.Info("server run success on ", zap.String("address", address))
 
 	global.GVA_LOG.Error(s.ListenAndServe().Error())
+	return nil
 }

@@ -55,6 +55,7 @@ require (
 	github.com/tencentyun/cos-go-sdk-v5 v0.7.19
 	github.com/unrolled/secure v1.0.7
 	github.com/urfave/cli v1.20.0
+	github.com/urfave/cli/v2 v2.3.0 // indirect
 	github.com/xanzy/go-gitlab v0.48.0
 	go.uber.org/zap v1.10.0
 	golang.org/x/net v0.0.0-20201224014010-6772e930b67b // indirect
