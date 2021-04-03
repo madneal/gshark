@@ -2,7 +2,7 @@ package util
 
 import (
 	"fmt"
-	"github.com/madneal/gshark/logger"
+	//"github.com/madneal/gshark/logger"
 	"github.com/madneal/gshark/vars"
 	"net/http"
 	url2 "net/url"
@@ -103,6 +103,6 @@ func SendMessage(key, title, msg string) {
 	url := fmt.Sprintf("https://sc.ftqq.com/%s.send?text=%s&desp=%s", key, title, url2.QueryEscape(msg))
 	_, err := http.Get(url)
 	if err != nil {
-		logger.Log.Error(err)
+		//logger.Log.Error(err)
 	}
 }

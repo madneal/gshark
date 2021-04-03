@@ -3,7 +3,7 @@ package githubsearch
 import (
 	"fmt"
 	"github.com/google/go-github/github"
-	"github.com/madneal/gshark/logger"
+	//"github.com/madneal/gshark/logger"
 	"github.com/madneal/gshark/models"
 	"github.com/madneal/gshark/util"
 	"strconv"
@@ -50,30 +50,30 @@ func InsertAllRepos() {
 					}
 				}
 
-			case CONST_ORGS:
-				orgs := strings.Split(name, ",")
-				var orgsRepos []*github.Repository
-				var usersAll []*github.User
-				for _, org := range orgs {
-					users, resp, err := gitClient.GetOrgsMembers(org)
-					usersAll = append(usersAll, users...)
-					logger.Log.Println(users, resp, err)
-					repos, resp, err := gitClient.GetOrgsRepos(org)
-					orgsRepos = append(orgsRepos, repos...)
-					models.UpdateRate(gitClient.Token, resp)
-				}
-				mapRepos := gitClient.GetUsersRepos(usersAll)
-				for _, rs := range mapRepos {
-					orgsRepos = append(orgsRepos, rs...)
-				}
-
-				for _, repo := range orgsRepos {
-					r := models.NewRepo(*repo.Name, *repo.HTMLURL)
-					has, err := r.Exist()
-					if err == nil && !has {
-						r.Insert()
-					}
-				}
+			//case CONST_ORGS:
+			//	orgs := strings.Split(name, ",")
+			//	var orgsRepos []*github.Repository
+			//	var usersAll []*github.User
+			//	for _, org := range orgs {
+			//		users, resp, err := gitClient.GetOrgsMembers(org)
+			//		usersAll = append(usersAll, users...)
+			//		//logger.Log.Println(users, resp, err)
+			//		//repos, resp, err := gitClient.GetOrgsRepos(org)
+			//		orgsRepos = append(orgsRepos, repos...)
+			//		models.UpdateRate(gitClient.Token, resp)
+			//	}
+			//	mapRepos := gitClient.GetUsersRepos(usersAll)
+			//	for _, rs := range mapRepos {
+			//		orgsRepos = append(orgsRepos, rs...)
+			//	}
+			//
+			//	for _, repo := range orgsRepos {
+			//		r := models.NewRepo(*repo.Name, *repo.HTMLURL)
+			//		has, err := r.Exist()
+			//		if err == nil && !has {
+			//			r.Insert()
+			//		}
+			//	}
 
 			case CONST_USER:
 				var usersRepos []*github.Repository
