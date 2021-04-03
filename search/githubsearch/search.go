@@ -135,7 +135,7 @@ func RunTask(duration time.Duration) {
 	RunSearchTask(GenerateSearchCodeTask())
 
 	// insert repos from inputInfo
-	InsertAllRepos()
+	//InsertAllRepos()
 
 	//logger.Log.Infof("Complete the scan of Github, start to sleep %v seconds", duration*time.Second)
 	time.Sleep(duration * time.Second)
