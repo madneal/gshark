@@ -116,6 +116,9 @@ func FindSearchResult(c *gin.Context) {
 func GetSearchResultList(c *gin.Context) {
 	var pageInfo request.SearchResultSearch
 	_ = c.ShouldBindQuery(&pageInfo)
+	//if err != nil {
+	//	global.GVA_LOG.Error("GetSearchResultList bind query error", zap.Any("err", err))
+	//}
 	if err, list, total := service.GetSearchResultInfoList(pageInfo); err != nil {
 		global.GVA_LOG.Error("获取失败", zap.Any("err", err))
 		response.FailWithMessage("获取失败", c)
