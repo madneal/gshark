@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/google/go-github/github"
-	//"github.com/madneal/gshark/logger"
-	"github.com/madneal/gshark/models"
+	"github.com/madneal/gshark/service"
+
 	"golang.org/x/oauth2"
 	"os"
 )
@@ -27,10 +27,10 @@ func init() {
 
 func InitGithubClients() (map[string]*Client, error) {
 	githubClients := make(map[string]*Client)
-	tokens, err := models.ListValidTokens("github")
+	err, tokens := service.ListTokenByType("github")
 	if err == nil {
 		for _, token := range tokens {
-			githubToken := token.Token
+			githubToken := token.Content
 			gitClient := &github.Client{}
 			if githubToken != "" {
 				ctx := context.Background()
@@ -39,7 +39,7 @@ func InitGithubClients() (map[string]*Client, error) {
 				)
 				tc := oauth2.NewClient(ctx, ts)
 				gitClient = github.NewClient(tc)
-				githubClients[token.Token] = NewGitClient(gitClient, githubToken)
+				githubClients[token.Content] = NewGitClient(gitClient, githubToken)
 			}
 		}
 	}
@@ -87,25 +87,25 @@ func (c *Client) GetUserRepos(username string) ([]*github.Repository, *github.Re
 	return c.Client.Repositories.List(ctx, username, nil)
 }
 
-func (c *Client) GetUsersRepos(users []*github.User) map[string][]*github.Repository {
-	result := make(map[string][]*github.Repository)
-	for _, u := range users {
-		repos, resp, _ := c.GetUserRepos(*u.Login)
-		models.UpdateRate(c.Token, resp)
-		result[*u.Login] = repos
-	}
-	return result
-}
-
-func (c *Client) GetStrUsersRepos(users []string) map[string][]*github.Repository {
-	result := make(map[string][]*github.Repository)
-	for _, u := range users {
-		repos, resp, _ := c.GetUserRepos(u)
-		models.UpdateRate(c.Token, resp)
-		result[u] = repos
-	}
-	return result
-}
+//func (c *Client) GetUsersRepos(users []*github.User) map[string][]*github.Repository {
+//	result := make(map[string][]*github.Repository)
+//	for _, u := range users {
+//		repos, resp, _ := c.GetUserRepos(*u.Login)
+//		model.UpdateRate(c.Token, resp)
+//		result[*u.Login] = repos
+//	}
+//	return result
+//}
+//
+//func (c *Client) GetStrUsersRepos(users []string) map[string][]*github.Repository {
+//	result := make(map[string][]*github.Repository)
+//	for _, u := range users {
+//		repos, resp, _ := c.GetUserRepos(u)
+//		model.UpdateRate(c.Token, resp)
+//		result[u] = repos
+//	}
+//	return result
+//}
 
 func (c *Client) GetUserOrgs(username string) ([]*github.Organization, *github.Response, error) {
 	ctx := context.Background()
