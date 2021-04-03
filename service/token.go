@@ -50,6 +50,11 @@ func UpdateToken(token model.Token) (err error) {
 	return err
 }
 
+func UpdateTokenRate(token model.Token) error {
+	err := global.GVA_DB.Update("rate", &token).Error
+	return err
+}
+
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: GetToken
 //@description: 根据id获取Token记录
@@ -59,6 +64,11 @@ func UpdateToken(token model.Token) (err error) {
 func GetToken(id uint) (err error, token model.Token) {
 	err = global.GVA_DB.Where("id = ?", id).First(&token).Error
 	return
+}
+
+func ListTokenByType(tokenType string) (err error, tokens []model.Token) {
+	err = global.GVA_DB.Where(" type = ?", tokenType).Find(&tokens).Error
+	return err, tokens
 }
 
 //@author: [piexlmax](https://github.com/piexlmax)
