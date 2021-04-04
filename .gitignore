@@ -11,7 +11,7 @@ vendor
 
 .DS_Store
 main
-log
+log/
 test
 
 conf/app.ini
@@ -19,3 +19,11 @@ conf/app-pa.ini
 nohup.out
 config.yaml
 latest_log
+/web/node_modules
+/web/dist
+go.sum
+/server/log/
+/server/main
+/server/latest_log
+
+*.iml
