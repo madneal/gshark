@@ -205,7 +205,7 @@ func searchCodeByOpt(c *Client, ctx context.Context, query string, opt github.Se
 	// for best guidelines, wait one second
 	// https://docs.github.com/en/rest/guides/best-practices-for-integrators#dealing-with-abuse-rate-limits
 
-	time.Sleep(time.Second)
+	time.Sleep(1 * time.Second)
 	if res != nil && res.Rate.Remaining < 10 {
 		time.Sleep(45 * time.Second)
 	}
@@ -213,10 +213,10 @@ func searchCodeByOpt(c *Client, ctx context.Context, query string, opt github.Se
 	if err == nil {
 		global.GVA_LOG.Info("Search for "+query, zap.Any("remaining", res.Rate.Remaining), zap.Any("nextPage",
 			res.NextPage), zap.Any("lastPage", res.LastPage))
-		//logger.Log.Infof("remaining: %d, nextPage: %d, lastPage: %d", res.Rate.Remaining, res.NextPage, res.LastPage)
 	} else {
-		//logger.Log.Error(err)
 		global.GVA_LOG.Error("Search error", zap.Any("github search error", err))
+		//if errors.Is(err, github.AbuseRateLimitError)
+		time.Sleep(30 * time.Second)
 		return nil, 0
 	}
 	return result, res.NextPage
