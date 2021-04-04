@@ -1,3 +1,0 @@
-// +build !packfile
-
-package packfile
