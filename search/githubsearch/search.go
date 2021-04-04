@@ -8,6 +8,7 @@ import (
 	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/service"
 	"github.com/madneal/gshark/utils"
+	"go.uber.org/zap"
 
 	//"github.com/madneal/gshark/logger"
 	//"github.com/madneal/gshark/model"
@@ -153,10 +154,11 @@ func (c *Client) SearchCode(keyword string) ([]*github.CodeSearchResult, error) 
 	opt := &github.SearchOptions{Sort: "indexed", Order: "desc", TextMatch: true, ListOptions: listOpt}
 	query := keyword + " +in:file"
 	//query, err = BuildQuery(query)
-	fmt.Println("search with the query:" + query)
+	global.GVA_LOG.Info("Github scan with the query:", zap.Any("github", query))
+	//fmt.Println("search with the query:" + query)
 	for {
 		result, nextPage := searchCodeByOpt(c, ctx, query, *opt)
-		time.Sleep(time.Second * 3)
+		//time.Sleep(time.Second * 3)
 		if result != nil {
 			allSearchResult = append(allSearchResult, result)
 		}
@@ -200,14 +202,21 @@ func (c *Client) SearchCode(keyword string) ([]*github.CodeSearchResult, error) 
 func searchCodeByOpt(c *Client, ctx context.Context, query string, opt github.SearchOptions) (*github.CodeSearchResult, int) {
 	result, res, err := c.Client.Search.Code(ctx, query, &opt)
 
+	// for best guidelines, wait one second
+	// https://docs.github.com/en/rest/guides/best-practices-for-integrators#dealing-with-abuse-rate-limits
+
+	time.Sleep(time.Second)
 	if res != nil && res.Rate.Remaining < 10 {
 		time.Sleep(45 * time.Second)
 	}
 
 	if err == nil {
+		global.GVA_LOG.Info("Search for "+query, zap.Any("remaining", res.Rate.Remaining), zap.Any("nextPage",
+			res.NextPage), zap.Any("lastPage", res.LastPage))
 		//logger.Log.Infof("remaining: %d, nextPage: %d, lastPage: %d", res.Rate.Remaining, res.NextPage, res.LastPage)
 	} else {
 		//logger.Log.Error(err)
+		global.GVA_LOG.Error("Search error", zap.Any("github search error", err))
 		return nil, 0
 	}
 	return result, res.NextPage
