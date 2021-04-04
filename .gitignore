@@ -11,10 +11,11 @@ vendor
 
 .DS_Store
 main
-log/
+log
 test
 
 conf/app.ini
 conf/app-pa.ini
 nohup.out
 config.yaml
+latest_log
