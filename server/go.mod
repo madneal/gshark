@@ -12,7 +12,6 @@ require (
 	github.com/casbin/casbin/v2 v2.11.0
 	github.com/casbin/gorm-adapter/v3 v3.0.2
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
-	github.com/elazarl/goproxy v0.0.0-20210110162100-a92cc753f88e // indirect
 	github.com/fastly/go-utils v0.0.0-20180712184237-d95a45783239 // indirect
 	github.com/fsnotify/fsnotify v1.4.9
 	github.com/fvbock/endless v0.0.0-20170109170031-447134032cb6
@@ -31,13 +30,11 @@ require (
 	github.com/json-iterator/go v1.1.10 // indirect
 	github.com/lestrrat-go/file-rotatelogs v2.3.0+incompatible
 	github.com/lestrrat-go/strftime v1.0.3 // indirect
-	github.com/lib/pq v1.3.0
 	github.com/mailru/easyjson v0.7.1 // indirect
 	github.com/mitchellh/mapstructure v1.2.2 // indirect
 	github.com/mojocn/base64Captcha v1.3.1
 	github.com/onsi/ginkgo v1.7.0 // indirect
 	github.com/onsi/gomega v1.4.3 // indirect
-	github.com/parnurzeal/gorequest v0.2.16
 	github.com/pelletier/go-toml v1.6.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/qiniu/api.v7/v7 v7.4.1
@@ -48,25 +45,23 @@ require (
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/spf13/viper v1.7.0
-	github.com/stretchr/testify v1.6.1
 	github.com/swaggo/gin-swagger v1.2.0
 	github.com/swaggo/swag v1.6.7
 	github.com/tebeka/strftime v0.1.3 // indirect
 	github.com/tencentyun/cos-go-sdk-v5 v0.7.19
 	github.com/unrolled/secure v1.0.7
-	github.com/urfave/cli v1.20.0
-	github.com/urfave/cli/v2 v2.3.0 // indirect
-	github.com/xanzy/go-gitlab v0.48.0
+	github.com/urfave/cli/v2 v2.3.0
 	go.uber.org/zap v1.10.0
 	golang.org/x/net v0.0.0-20201224014010-6772e930b67b // indirect
 	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
+	golang.org/x/time v0.0.0-20191024005414-555d28b269f0 // indirect
 	golang.org/x/tools v0.0.0-20200324003944-a576cf524670 // indirect
 	google.golang.org/protobuf v1.24.0 // indirect
 	gopkg.in/ini.v1 v1.55.0
-	gopkg.in/yaml.v2 v2.3.0
-	gorm.io/driver/mysql v0.3.0
+	gopkg.in/yaml.v2 v2.3.0 // indirect
+	gorm.io/datatypes v1.0.0
+	gorm.io/driver/mysql v1.0.3
 	gorm.io/gorm v1.20.9
-	moul.io/http2curl v1.0.0 // indirect
 )
 
 replace github.com/casbin/gorm-adapter/v3 => github.com/casbin/gorm-adapter/v3 v3.0.2

@@ -2,22 +2,37 @@
 package model
 
 import (
-	"github.com/google/go-github/github"
+	"database/sql/driver"
+	"encoding/json"
 	"github.com/madneal/gshark/global"
+	"gorm.io/datatypes"
 )
 
 // 如果含有time.Time 请自行import time包
 type SearchResult struct {
 	global.GVA_MODEL
 	Repo         string             `json:"repo" form:"repo" gorm:"column:repo;comment:;type:varchar(50);size:50;"`
-	Repository   *github.Repository `json:"repository" gorm:"column:repository;type:json;"`
+	RepoUrl   string `gorm:"column:repository;type:varchar(200);"`
 	Matches      string             `json:"matches" form:"matches" gorm:"column:matches;comment:;type:text;"`
 	Keyword      string             `json:"keyword" form:"keyword" gorm:"column:keyword;comment:;type:varchar(100);size:100;"`
 	Path         string             `json:"path" form:"path" gorm:"column:path;comment:;type:varchar(100);size:100;"`
 	Url          string             `json:"url" form:"url" gorm:"column:url;comment:;type:varchar(500);size:500;"`
 	TextmatchMd5 string             `json:"textmatchMd5" gorm:"column:textmatch_md5;comment:;type:varchar(100);size:100;"`
 	Status       int                `json:"status" form:"status" gorm:"column:status;comment:;type:int;size:3;"`
-	TextMatches  []TextMatch        `json:"text_matches,omitempty" gorm:"json;-"`
+	TextMatchesJson   datatypes.JSON      `json:"text_matches,omitempty" gorm:"type:json;-"`
+}
+
+type TextMatchesJson struct {
+	TextMatch []TextMatch
+}
+
+func (t TextMatchesJson) Value() (driver.Value, error) {
+	b, err := json.Marshal(t.TextMatch)
+	return string(b), err
+}
+
+func (t TextMatchesJson) Scan(input interface{}) error {
+	return json.Unmarshal(input.([]byte), t.TextMatch)
 }
 
 // TextMatch represents a text match for a SearchResult

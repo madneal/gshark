@@ -9,14 +9,12 @@ import (
 	"github.com/madneal/gshark/service"
 	"github.com/madneal/gshark/utils"
 	"go.uber.org/zap"
-
 	//"github.com/madneal/gshark/logger"
 	//"github.com/madneal/gshark/model"
 	//"github.com/madneal/gshark/util"
 	//"github.com/madneal/gshark/vars"
 	"github.com/madneal/gshark/model"
-	//"github.com/madneal/gshark/service"
-	"regexp"
+
 	"sync"
 	"time"
 )
@@ -102,38 +100,53 @@ func PassFilters(codeResult *model.SearchResult, fullName string) bool {
 	// detect if the codeResult exist
 	_, exist := service.CheckExistOfSearchResult(codeResult)
 	// detect if there are any random characters in text matches
-	textMatches := codeResult.TextMatches[0].Fragment
-	reg := regexp.MustCompile(`[A-Za-z0-9_+]{50,}`)
-	return !reg.MatchString(*textMatches) && !exist
+	//textMatches := codeResult.TextMatches[0].Fragment
+	//reg := regexp.MustCompile(`[A-Za-z0-9_+]{50,}`)
+	//return !reg.MatchString(*textMatches) && !exist
+	return !exist
 }
 
 func SaveResult(results []*github.CodeSearchResult, keyword *string) int {
-	insertCount := 0
-	for _, result := range results {
-		if result != nil && len(result.CodeResults) > 0 {
-			for _, resultItem := range result.CodeResults {
-				ret, err := json.Marshal(resultItem)
-				if err == nil {
-					var codeResult *model.SearchResult
-					err = json.Unmarshal(ret, &codeResult)
-					codeResult.Keyword = *keyword
-					fullName := codeResult.Repository.GetFullName()
-					codeResult.Repo = fullName
-					if len(codeResult.TextMatches) > 0 {
-						hash := utils.GenMd5WithSpecificLen(*(codeResult.TextMatches[0].Fragment), 50)
-						codeResult.TextmatchMd5 = hash
-					}
-
-					if err == nil && PassFilters(codeResult, fullName) {
-						insertCount++
-						//logger.Log.Infoln(codeResult.Insert())
-					}
-				}
-			}
+	//insertCount := 0
+	searchResults := ConvertToSearchResults(results, keyword)
+	insertCount := len(searchResults)
+	for _, result := range searchResults {
+		err := service.CreateSearchResult(result)
+		if err != nil {
+			global.GVA_LOG.Error("save search result error", zap.Any("save searchResult error",
+				err))
 		}
-		//logger.Log.Infof("Has inserted %d results into code_result", insertCount)
 	}
 	return insertCount
+}
+
+func ConvertToSearchResults(results []*github.CodeSearchResult, keyword *string) []model.SearchResult {
+	searchResults := make([]model.SearchResult, 0)
+	for _, result := range results {
+		codeResults := result.CodeResults
+		for _, codeResult := range codeResults {
+			searchResult := model.SearchResult{
+				RepoUrl: *codeResult.Repository.HTMLURL,
+				Repo: *codeResult.Repository.Name,
+				Keyword: *keyword,
+				Url: *codeResult.HTMLURL,
+				Path: *codeResult.Path,
+				Status: 0,
+				//TextMatches: codeResult.TextMatches,
+			}
+			if len(codeResult.TextMatches) > 0 {
+				hash := utils.GenMd5WithSpecificLen(*(codeResult.TextMatches[0].Fragment), 50)
+				searchResult.TextmatchMd5 = hash
+				b, err := json.Marshal(codeResult.TextMatches)
+				searchResult.TextMatchesJson = b
+				if err != nil {
+					global.GVA_LOG.Error("json.marshal error", zap.Error(err))
+				}
+			}
+			searchResults = append(searchResults, searchResult)
+		}
+	}
+	return searchResults
 }
 
 func RunTask(duration time.Duration) {
@@ -214,7 +227,6 @@ func searchCodeByOpt(c *Client, ctx context.Context, query string, opt github.Se
 			res.NextPage), zap.Any("lastPage", res.LastPage))
 	} else {
 		global.GVA_LOG.Error("Search error", zap.Any("github search error", err))
-		//if errors.Is(err, github.AbuseRateLimitError)
 		time.Sleep(30 * time.Second)
 		return nil, 0
 	}
