@@ -6,14 +6,11 @@ import (
 	"fmt"
 	"github.com/google/go-github/github"
 	"github.com/madneal/gshark/global"
+	"github.com/madneal/gshark/model"
 	"github.com/madneal/gshark/service"
 	"github.com/madneal/gshark/utils"
 	"go.uber.org/zap"
-	//"github.com/madneal/gshark/logger"
-	//"github.com/madneal/gshark/model"
-	//"github.com/madneal/gshark/util"
-	//"github.com/madneal/gshark/vars"
-	"github.com/madneal/gshark/model"
+	"strings"
 
 	"sync"
 	"time"
@@ -83,20 +80,6 @@ func RunSearchTask(mapRules map[int][]model.Rule, err error) {
 
 // The filters are utilized to filter the codeResult
 func PassFilters(codeResult *model.SearchResult, fullName string) bool {
-	// detect if the Repository url exist in input_info
-	//repoUrl := codeResult.Repository.GetHTMLURL()
-	//
-	//inputInfo := model.NewInputInfo(CONST_REPO, repoUrl, fullName)
-	//has, err := inputInfo.Exist()
-	//if err != nil {
-	//	return false
-	//}
-	//if !has {
-	//	_, err = inputInfo.Insert()
-	//	if err != nil {
-	//		logger.Log.Error(err)
-	//	}
-	//}
 	// detect if the codeResult exist
 	_, exist := service.CheckExistOfSearchResult(codeResult)
 	// detect if there are any random characters in text matches
@@ -132,7 +115,6 @@ func ConvertToSearchResults(results []*github.CodeSearchResult, keyword *string)
 				Url: *codeResult.HTMLURL,
 				Path: *codeResult.Path,
 				Status: 0,
-				//TextMatches: codeResult.TextMatches,
 			}
 			if len(codeResult.TextMatches) > 0 {
 				hash := utils.GenMd5WithSpecificLen(*(codeResult.TextMatches[0].Fragment), 50)
@@ -151,11 +133,8 @@ func ConvertToSearchResults(results []*github.CodeSearchResult, keyword *string)
 
 func RunTask(duration time.Duration) {
 	RunSearchTask(GenerateSearchCodeTask())
-
-	// insert repos from inputInfo
-	//InsertAllRepos()
-
-	//logger.Log.Infof("Complete the scan of Github, start to sleep %v seconds", duration*time.Second)
+	global.GVA_LOG.Info(fmt.Sprintf("Comple the scan of Github, start to sleep %d", duration *time.Second),
+		zap.Any("", ""))
 	time.Sleep(duration * time.Second)
 }
 
@@ -170,7 +149,6 @@ func (c *Client) SearchCode(keyword string) ([]*github.CodeSearchResult, error) 
 	global.GVA_LOG.Info("Github scan with the query:", zap.Any("github", query))
 	for {
 		result, nextPage := searchCodeByOpt(c, ctx, query, *opt)
-		//time.Sleep(time.Second * 3)
 		if result != nil {
 			allSearchResult = append(allSearchResult, result)
 		}
@@ -182,36 +160,25 @@ func (c *Client) SearchCode(keyword string) ([]*github.CodeSearchResult, error) 
 	return allSearchResult, err
 }
 
-//func BuildQuery(query string) (string, error) {
-//	filterRules, err := model.GetFilterRules()
-//	str := ""
-//	for _, filterRule := range filterRules {
-//		ruleValue := filterRule.RuleValue
-//		ruleType := filterRule.RuleType
-//		ruleKey := filterRule.RuleKey
-//		ruleValueList := strings.Split(ruleValue, ",")
-//		for _, value := range ruleValueList {
-//			if ruleType == 0 {
-//				str += " -"
-//			} else {
-//				str += " +"
-//			}
-//
-//			if ruleKey == "ext" {
-//				str += "extension:"
-//			} else if ruleKey == "lang" {
-//				str += "language:"
-//			}
-//
-//			value = strings.TrimSpace(value)
-//			str += value
-//		}
-//	}
-//	builtQuery := query + str
-//	return builtQuery, err
-//}
+func BuildQuery(query string) (string, error) {
+	err, filterRule := model.GetFilterRule()
+	str := ""
+	extensions := strings.Split(filterRule.Extension, ",")
+	for _, extension := range extensions {
+		str += " -extension:" +  extension
+	}
+	if filterRule.IsFork {
+		str += " fork:true"
+	} else {
+		str += " fork:false"
+	}
+	builtQuery := query + str
+	return builtQuery, err
+}
 
-func searchCodeByOpt(c *Client, ctx context.Context, query string, opt github.SearchOptions) (*github.CodeSearchResult, int) {
+func searchCodeByOpt(c *Client, ctx context.Context, query string, opt github.SearchOptions) (*github.CodeSearchResult,
+	int) {
+	query, err := BuildQuery(query)
 	result, res, err := c.Client.Search.Code(ctx, query, &opt)
 
 	// for best guidelines, wait one second
