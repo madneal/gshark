@@ -9,7 +9,13 @@ import (
 type Filter struct {
       global.GVA_MODEL
       Extension  string `json:"extension" form:"extension" gorm:"column:extension;comment:;type:varchar(1000);size:1000;"`
-      IsFork  *bool `json:"isFork" form:"isFork" gorm:"column:is_fork;comment:"`
+      IsFork  bool `json:"isFork" form:"isFork" gorm:"column:is_fork;comment:"`
+}
+
+func GetFilterRule() (error, Filter) {
+	var filter Filter
+	err := global.GVA_DB.First(&filter).Error
+	return err, filter
 }
 
 
