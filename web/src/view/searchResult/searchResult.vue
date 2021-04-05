@@ -20,9 +20,7 @@
         <el-form-item>
           <el-button @click="onSubmit" type="primary">查询</el-button>
         </el-form-item>
-        <el-form-item>
-          <el-button @click="openDialog" type="primary">新增搜索结果</el-button>
-        </el-form-item>
+
         <el-form-item>
           <el-popover placement="top" v-model="deleteVisible" width="160">
             <p>确定要删除吗？</p>
@@ -39,7 +37,7 @@
               size="mini"
               slot="reference"
               type="danger"
-              >批量删除</el-button
+              >批量忽略</el-button
             >
           </el-popover>
         </el-form-item>
@@ -127,66 +125,6 @@
       layout="total, sizes, prev, pager, next, jumper"
     ></el-pagination>
 
-    <el-dialog
-      :before-close="closeDialog"
-      :visible.sync="dialogFormVisible"
-      title="弹窗操作"
-    >
-      <el-form :model="formData" label-position="right" label-width="80px">
-        <el-form-item label="仓库名称:">
-          <el-input
-            v-model="formData.repo"
-            clearable
-            placeholder="请输入"
-          ></el-input>
-        </el-form-item>
-
-        <el-form-item label="匹配内容:">
-          <el-input
-            v-model="formData.matches"
-            clearable
-            placeholder="请输入"
-          ></el-input>
-        </el-form-item>
-
-        <el-form-item label="关键词:">
-          <el-input
-            v-model="formData.keyword"
-            clearable
-            placeholder="请输入"
-          ></el-input>
-        </el-form-item>
-
-        <el-form-item label="路径:">
-          <el-input
-            v-model="formData.path"
-            clearable
-            placeholder="请输入"
-          ></el-input>
-        </el-form-item>
-
-        <el-form-item label="URL:">
-          <el-input
-            v-model="formData.url"
-            clearable
-            placeholder="请输入"
-          ></el-input>
-        </el-form-item>
-
-        <el-form-item label="状态:">
-          <el-input
-            v-model.number="formData.status"
-            clearable
-            placeholder="请输入"
-          >
-          </el-input>
-        </el-form-item>
-      </el-form>
-      <div class="dialog-footer" slot="footer">
-        <el-button @click="closeDialog">取 消</el-button>
-        <el-button @click="enterDialog" type="primary">确 定</el-button>
-      </div>
-    </el-dialog>
   </div>
 </template>
 
@@ -307,18 +245,6 @@ export default {
         this.dialogFormVisible = true;
       }
     },
-    closeDialog() {
-      this.dialogFormVisible = false;
-      this.formData = {
-        repo: "",
-        matches: "",
-        keyword: "",
-        path: "",
-        url: "",
-        textmatchMd5: "",
-        status: 0,
-      };
-    },
     async deleteSearchResult(row) {
       const res = await deleteSearchResult({ ID: row.ID });
       if (res.code == 0) {
@@ -331,33 +257,7 @@ export default {
         }
         this.getTableData();
       }
-    },
-    async enterDialog() {
-      let res;
-      switch (this.type) {
-        case "create":
-          res = await createSearchResult(this.formData);
-          break;
-        case "update":
-          res = await updateSearchResult(this.formData);
-          break;
-        default:
-          res = await createSearchResult(this.formData);
-          break;
-      }
-      if (res.code == 0) {
-        this.$message({
-          type: "success",
-          message: "创建/更改成功",
-        });
-        this.closeDialog();
-        this.getTableData();
-      }
-    },
-    openDialog() {
-      this.type = "create";
-      this.dialogFormVisible = true;
-    },
+    }
   },
   async created() {
     await this.getTableData();
