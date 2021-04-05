@@ -98,11 +98,10 @@
             <el-input v-model="formData.url" clearable placeholder="请输入" ></el-input>
       </el-form-item>
        
-         <el-form-item label="哈希值:">
-            <el-input v-model="formData.textmatchMd5" clearable placeholder="请输入" ></el-input>
-      </el-form-item>
-       
-         <el-form-item label="状态:"><el-input v-model.number="formData.status" clearable placeholder="请输入"></el-input>
+         <el-form-item label="状态:">
+           <el-input v-model.number="formData.status" clearable placeholder="请输入">
+             <template></template>
+           </el-input>
       </el-form-item>
        </el-form>
       <div class="dialog-footer" slot="footer">
@@ -133,6 +132,11 @@ export default {
       dialogFormVisible: false,
       type: "",
       deleteVisible: false,
+      statusOptions: {
+        0: "未处理",
+        1: "已确认",
+        2: "已忽略"
+      },
       multipleSelection: [],formData: {
             repo:"",
             matches:"",

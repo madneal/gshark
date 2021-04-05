@@ -1,4 +1,4 @@
-const title = 'GIN-VUE-ADMIN'
+const title = 'GShark'
 
 export default function getPageTitle(pageTitle) {
     if (pageTitle) {
