@@ -42,7 +42,6 @@ export const router = {
                 children: []
             }]
             const asyncRouterRes = await asyncMenu()
-            debugger
             if(asyncRouterRes.code !=0){
                 return
             }
