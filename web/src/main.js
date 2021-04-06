@@ -52,7 +52,8 @@ import {
     Steps,
     Upload,
     Progress,
-    MessageBox
+    MessageBox,
+    Link
 } from 'element-ui';
 
 Vue.use(Button);
@@ -103,6 +104,7 @@ Vue.use(Upload);
 Vue.use(Progress);
 Vue.use(Scrollbar);
 Vue.use(Loading.directive);
+Vue.use(Link);
 
 Vue.prototype.$loading = Loading.service;
 Vue.prototype.$message = Message;
