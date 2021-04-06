@@ -60,7 +60,7 @@ export const createSearchResult = (data) => {
  export const updateSearchResult = (data) => {
      return service({
          url: "/searchResult/updateSearchResult",
-         method: 'put',
+         method: 'post',
          data
      })
  }
