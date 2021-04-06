@@ -89,7 +89,6 @@
         
         <template slot-scope="scope">
             {{ scope.row.status | statusFilter }}
-          </el-select>
         </template>
       </el-table-column>
 
@@ -130,10 +129,8 @@
 
 <script>
 import {
-  createSearchResult,
   deleteSearchResult,
   deleteSearchResultByIds,
-  updateSearchResult,
   findSearchResult,
   getSearchResultList,
 } from "@/api/searchResult"; //  此处请自行替换地址
