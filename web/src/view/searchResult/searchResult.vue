@@ -61,9 +61,14 @@
 
       <el-table-column
         label="仓库名称"
-        prop="repo"
         width="120"
-      ></el-table-column>
+      >
+      <template slot-scope="scope">
+        <el-link :href="scope.row.RepoUrl" type="primary" :underline="false">
+          {{ scope.row.repo}}
+        </el-link>
+      </template>
+      </el-table-column>
 
       <el-table-column
         label="匹配内容"
@@ -76,12 +81,10 @@
         prop="keyword"
         width="120"
       ></el-table-column>
-
-      <el-table-column label="路径" prop="path" width="120"></el-table-column>
-
+      
       <el-table-column label="URL" width="120">
         <template slot-scope="scope">
-        <el-link :href="scope.row.url" type="primary">{{ scope.row.path }}</el-link>
+        <el-link :href="scope.row.url" type="primary" :underline="false">{{ scope.row.repo + '/' + scope.row.path }}</el-link>
         </template>
       </el-table-column>
 
