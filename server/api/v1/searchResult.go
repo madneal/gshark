@@ -67,6 +67,17 @@ func DeleteSearchResultByIds(c *gin.Context) {
 	}
 }
 
+func UpdateSearchResultByIds(c *gin.Context) {
+	var batchUpdateReq request.BatchUpdateReq
+	_ = c.ShouldBindJSON(&batchUpdateReq)
+	if err := service.UpdateSearchResultByIds(batchUpdateReq); err != nil {
+		global.GVA_LOG.Error("批量更新状态失败！", zap.Any("err", err))
+		response.FailWithMessage("批量更新状态失败", c)
+	} else {
+		response.OkWithMessage("批量更新状态成功", c)
+	}
+}
+
 // @Tags SearchResult
 // @Summary 更新SearchResult
 // @Security ApiKeyAuth
