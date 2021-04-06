@@ -52,6 +52,11 @@ func UpdateSearchResult(searchResult model.SearchResult) (err error) {
 	return err
 }
 
+func UpdateSearchResultById(id, status int) (err error) {
+	err = global.GVA_DB.UpdateColumn("status", status).Where("id = ?", id).Error
+	return err
+}
+
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: GetSearchResult
 //@description: 根据id获取SearchResult记录

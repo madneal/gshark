@@ -110,7 +110,7 @@
         <template slot-scope="scope">
           <el-button
             class="table-button"
-            @click="updateSearchResult(scope.row)"
+            @click="updateSearchResult(scope.row, 1)"
             size="small"
             type="primary"
             icon="el-icon-edit"
@@ -120,7 +120,7 @@
             type="danger"
             icon="el-icon-delete"
             size="mini"
-            @click="deleteRow(scope.row)"
+            @click="updateSearchResult(scope.row, 2)"
             >忽略</el-button
           >
         </template>
@@ -147,6 +147,7 @@ import {
   deleteSearchResultByIds,
   findSearchResult,
   getSearchResultList,
+  updateSearchResult
 } from "@/api/searchResult"; //  此处请自行替换地址
 import { formatTimeToStr } from "@/utils/date";
 import infoList from "@/mixins/infoList";
@@ -258,12 +259,14 @@ export default {
         this.getTableData();
       }
     },
-    async updateSearchResult(row) {
+    async updateSearchResult(row, status) {
       const res = await findSearchResult({ ID: row.ID });
       this.type = "update";
-      if (res.code == 0) {
+      res.data.researchResult.status = status;
+      if (res.code === 0) {
         this.formData = res.data.researchResult;
         this.dialogFormVisible = true;
+        updateSearchResult(this.formData);
       }
     },
     async deleteSearchResult(row) {
