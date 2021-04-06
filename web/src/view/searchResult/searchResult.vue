@@ -114,6 +114,7 @@
             size="small"
             type="primary"
             icon="el-icon-edit"
+            :disabled="scope.row.status === 1 ? true:false"
             >确认</el-button
           >
           <el-button
@@ -121,6 +122,7 @@
             icon="el-icon-delete"
             size="mini"
             @click="updateSearchResult(scope.row, 2)"
+            :disabled="scope.row.status === 2 ? true:false"
             >忽略</el-button
           >
         </template>
@@ -266,22 +268,13 @@ export default {
       if (res.code === 0) {
         this.formData = res.data.researchResult;
         this.dialogFormVisible = true;
-        updateSearchResult(this.formData);
-      }
-    },
-    async deleteSearchResult(row) {
-      const res = await deleteSearchResult({ ID: row.ID });
-      if (res.code == 0) {
-        this.$message({
-          type: "success",
-          message: "删除成功",
-        });
-        if (this.tableData.length == 1) {
-          this.page--;
+        const updateRes = await updateSearchResult(this.formData);
+        if (res.code === 0) {
+          // this.updateVisible = false;
+          this.getTableData();
         }
-        this.getTableData();
       }
-    },
+    }
   },
   async created() {
     await this.getTableData();
