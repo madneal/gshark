@@ -28,7 +28,6 @@ func main() {
 	}
 	app := cli.NewApp()
 	app.Name = "GShark"
-	app.Version = "20201109"
 	app.Usage = "Scan for sensitive information easily and effectively."
 	app.Commands = []*cli.Command{&cmd.Web, &cmd.Scan}
 	app.Flags = append(app.Flags, cmd.Web.Flags...)
@@ -39,5 +38,3 @@ func main() {
 	}
 	//core.RunWindowsServer()
 }
-
-
