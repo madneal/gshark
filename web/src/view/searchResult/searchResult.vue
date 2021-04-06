@@ -84,10 +84,10 @@
       <el-table-column
         label="关键词"
         prop="keyword"
-        width="120"
+        width="80"
       ></el-table-column>
 
-            <el-table-column label="日期" width="180">
+            <el-table-column label="日期" width="100">
         <template slot-scope="scope">{{
           scope.row.CreatedAt | formatDate
         }}</template>
@@ -99,7 +99,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="状态" prop="status" width="120">
+      <el-table-column label="状态" prop="status" width="100">
         
         <template slot-scope="scope">
             {{ scope.row.status | statusFilter }}
