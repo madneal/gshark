@@ -53,11 +53,12 @@
       tooltip-effect="dark"
     >
       <el-table-column type="selection" width="55"></el-table-column>
-      <el-table-column label="日期" width="180">
-        <template slot-scope="scope">{{
-          scope.row.CreatedAt | formatDate
-        }}</template>
-      </el-table-column>
+
+      <el-table-column
+        label="ID"
+        prop="ID"
+        width="50"
+      ></el-table-column>
 
       <el-table-column
         label="仓库名称"
@@ -76,8 +77,7 @@
         width="500"
       >
       <template slot-scope="scope">
-        <pre>{{ scope.row.text_matches | fragmentsFilter }}</pre>
-        
+        <pre>{{ scope.row.text_matches | fragmentsFilter }}</pre>    
       </template>
       </el-table-column>
 
@@ -86,6 +86,12 @@
         prop="keyword"
         width="120"
       ></el-table-column>
+
+            <el-table-column label="日期" width="180">
+        <template slot-scope="scope">{{
+          scope.row.CreatedAt | formatDate
+        }}</template>
+      </el-table-column>
 
       <el-table-column label="URL" width="120">
         <template slot-scope="scope">
@@ -188,24 +194,24 @@ export default {
         return "";
       }
     },
-    statusFilter: function(val) {
+    statusFilter: function (val) {
       const statusOptions = {
-        0: '未处理',
-        1: '已处理',
-        2: '已忽略'
+        0: "未处理",
+        1: "已处理",
+        2: "已忽略",
       };
       return statusOptions[val];
     },
-    fragmentsFilter: function(val) {
-      let result = '';
+    fragmentsFilter: function (val) {
+      let result = "";
       for (let i = 0; i < val.length; i++) {
         result = result + val[i].fragment;
         if (i !== val.length - 1) {
-          result = result + '\n=====================================\n';
+          result = result + "\n=====================================\n";
         }
       }
       return result;
-    }
+    },
   },
   methods: {
     //条件搜索前端看此方法
@@ -272,7 +278,7 @@ export default {
         }
         this.getTableData();
       }
-    }
+    },
   },
   async created() {
     await this.getTableData();
