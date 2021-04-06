@@ -15,6 +15,11 @@ type IdsReq struct {
 	Ids []int `json:"ids" form:"ids"`
 }
 
+type BatchUpdateReq struct {
+	Ids    []int `json:"ids" form:"ids"`
+	Status int   `json:"status" form:"status"`
+}
+
 // Get role by id structure
 type GetAuthorityId struct {
 	AuthorityId string
