@@ -73,15 +73,20 @@
       <el-table-column
         label="匹配内容"
         prop="matches"
-        width="120"
-      ></el-table-column>
+        width="500"
+      >
+      <template slot-scope="scope">
+        <pre>{{ scope.row.text_matches | fragmentsFilter }}</pre>
+        
+      </template>
+      </el-table-column>
 
       <el-table-column
         label="关键词"
         prop="keyword"
         width="120"
       ></el-table-column>
-      
+
       <el-table-column label="URL" width="120">
         <template slot-scope="scope">
         <el-link :href="scope.row.url" type="primary" :underline="false">{{ scope.row.repo + '/' + scope.row.path }}</el-link>
@@ -190,6 +195,16 @@ export default {
         2: '已忽略'
       };
       return statusOptions[val];
+    },
+    fragmentsFilter: function(val) {
+      let result = '';
+      for (let i = 0; i < val.length; i++) {
+        result = result + val[i].fragment;
+        if (i !== val.length - 1) {
+          result = result + '\n=====================================\n';
+        }
+      }
+      return result;
     }
   },
   methods: {
@@ -266,4 +281,7 @@ export default {
 </script>
 
 <style>
+.el-table pre {
+  white-space: pre-line;
+}
 </style>
