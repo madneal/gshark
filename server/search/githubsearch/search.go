@@ -90,7 +90,6 @@ func PassFilters(codeResult *model.SearchResult, fullName string) bool {
 }
 
 func SaveResult(results []*github.CodeSearchResult, keyword *string) int {
-	//insertCount := 0
 	searchResults := ConvertToSearchResults(results, keyword)
 	insertCount := len(searchResults)
 	for _, result := range searchResults {
@@ -110,11 +109,11 @@ func ConvertToSearchResults(results []*github.CodeSearchResult, keyword *string)
 		for _, codeResult := range codeResults {
 			searchResult := model.SearchResult{
 				RepoUrl: *codeResult.Repository.HTMLURL,
-				Repo: *codeResult.Repository.Name,
+				Repo:    *codeResult.Repository.FullName,
 				Keyword: *keyword,
-				Url: *codeResult.HTMLURL,
-				Path: *codeResult.Path,
-				Status: 0,
+				Url:     *codeResult.HTMLURL,
+				Path:    *codeResult.Path,
+				Status:  0,
 			}
 			if len(codeResult.TextMatches) > 0 {
 				hash := utils.GenMd5WithSpecificLen(*(codeResult.TextMatches[0].Fragment), 50)
@@ -133,7 +132,7 @@ func ConvertToSearchResults(results []*github.CodeSearchResult, keyword *string)
 
 func RunTask(duration time.Duration) {
 	RunSearchTask(GenerateSearchCodeTask())
-	global.GVA_LOG.Info(fmt.Sprintf("Comple the scan of Github, start to sleep %d", duration *time.Second),
+	global.GVA_LOG.Info(fmt.Sprintf("Comple the scan of Github, start to sleep %d", duration*time.Second),
 		zap.Any("", ""))
 	time.Sleep(duration * time.Second)
 }
@@ -165,7 +164,7 @@ func BuildQuery(query string) (string, error) {
 	str := ""
 	extensions := strings.Split(filterRule.Extension, ",")
 	for _, extension := range extensions {
-		str += " -extension:" +  extension
+		str += " -extension:" + extension
 	}
 	if filterRule.IsFork {
 		str += " fork:true"
