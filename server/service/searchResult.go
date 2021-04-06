@@ -41,6 +41,11 @@ func DeleteSearchResultByIds(ids request.IdsReq) (err error) {
 	return err
 }
 
+func UpdateSearchResultByIds(req request.BatchUpdateReq) (err error) {
+	err = global.GVA_DB.UpdateColumn("status", req.Status).Where("id in ?", req.Ids).Error
+	return err
+}
+
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: UpdateSearchResult
 //@description: 更新SearchResult记录
