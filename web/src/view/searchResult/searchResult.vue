@@ -12,10 +12,15 @@
           ></el-input>
         </el-form-item>
         <el-form-item label="状态">
-          <el-input
-            placeholder="搜索条件"
-            v-model="searchInfo.status"
-          ></el-input>
+          <el-select v-model="searchInfo.status" placeholder="请选择">
+            <el-option
+              v-for="item in statusOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            >
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item>
           <el-button @click="onSubmit" type="primary">查询</el-button>
@@ -54,31 +59,20 @@
     >
       <el-table-column type="selection" width="55"></el-table-column>
 
-      <el-table-column
-        label="ID"
-        prop="ID"
-        width="50"
-      ></el-table-column>
+      <el-table-column label="ID" prop="ID" width="50"></el-table-column>
 
-      <el-table-column
-        label="仓库名称"
-        width="120"
-      >
-      <template slot-scope="scope">
-        <el-link :href="scope.row.RepoUrl" type="primary" :underline="false">
-          {{ scope.row.repo}}
-        </el-link>
-      </template>
+      <el-table-column label="仓库名称" width="120">
+        <template slot-scope="scope">
+          <el-link :href="scope.row.RepoUrl" type="primary" :underline="false">
+            {{ scope.row.repo }}
+          </el-link>
+        </template>
       </el-table-column>
 
-      <el-table-column
-        label="匹配内容"
-        prop="matches"
-        width="500"
-      >
-      <template slot-scope="scope">
-        <pre>{{ scope.row.text_matches | fragmentsFilter }}</pre>    
-      </template>
+      <el-table-column label="匹配内容" prop="matches" width="500">
+        <template slot-scope="scope">
+          <pre>{{ scope.row.text_matches | fragmentsFilter }}</pre>
+        </template>
       </el-table-column>
 
       <el-table-column
@@ -87,7 +81,7 @@
         width="80"
       ></el-table-column>
 
-            <el-table-column label="日期" width="100">
+      <el-table-column label="日期" width="100">
         <template slot-scope="scope">{{
           scope.row.CreatedAt | formatDate
         }}</template>
@@ -95,14 +89,15 @@
 
       <el-table-column label="URL" width="120">
         <template slot-scope="scope">
-        <el-link :href="scope.row.url" type="primary" :underline="false">{{ scope.row.repo + '/' + scope.row.path }}</el-link>
+          <el-link :href="scope.row.url" type="primary" :underline="false">{{
+            scope.row.repo + "/" + scope.row.path
+          }}</el-link>
         </template>
       </el-table-column>
 
       <el-table-column label="状态" prop="status" width="100">
-        
         <template slot-scope="scope">
-            {{ scope.row.status | statusFilter }}
+          {{ scope.row.status | statusFilter }}
         </template>
       </el-table-column>
 
@@ -114,7 +109,7 @@
             size="small"
             type="primary"
             icon="el-icon-edit"
-            :disabled="scope.row.status === 1 ? true:false"
+            :disabled="scope.row.status === 1 ? true : false"
             >确认</el-button
           >
           <el-button
@@ -122,7 +117,7 @@
             icon="el-icon-delete"
             size="mini"
             @click="updateSearchResult(scope.row, 2)"
-            :disabled="scope.row.status === 2 ? true:false"
+            :disabled="scope.row.status === 2 ? true : false"
             >忽略</el-button
           >
         </template>
@@ -139,7 +134,6 @@
       @size-change="handleSizeChange"
       layout="total, sizes, prev, pager, next, jumper"
     ></el-pagination>
-
   </div>
 </template>
 
@@ -149,7 +143,7 @@ import {
   findSearchResult,
   getSearchResultList,
   updateSearchResult,
-  updateSearchResultStatusByIds
+  updateSearchResultStatusByIds,
 } from "@/api/searchResult"; //  此处请自行替换地址
 import { formatTimeToStr } from "@/utils/date";
 import infoList from "@/mixins/infoList";
@@ -162,12 +156,16 @@ export default {
       dialogFormVisible: false,
       type: "",
       deleteVisible: false,
-      statusOptions: [
-        {
-          未处理: 0,
-          已确认: 1,
-          已忽略: 2,
-        },
+      statusOptions: [{
+        label: '未处理',
+        value: 0
+      }, {
+        label: '已确认',
+        value: 1
+      }, {
+        label: '已忽略',
+        value: 2
+      }
       ],
       multipleSelection: [],
       formData: {
@@ -274,7 +272,7 @@ export default {
           this.getTableData();
         }
       }
-    }
+    },
   },
   async created() {
     await this.getTableData();
