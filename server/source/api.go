@@ -85,10 +85,41 @@ var apis = []model.SysApi{
 	{global.GVA_MODEL{ID: 82, CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/excel/loadExcel", "下载excel", "excel", "GET"},
 	{global.GVA_MODEL{ID: 83, CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/excel/exportExcel", "导出excel", "excel", "POST"},
 	{global.GVA_MODEL{ID: 84, CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/excel/downloadTemplate", "下载excel模板", "excel", "GET"},
+	{global.GVA_MODEL{ID: 85, CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/excel/downloadTemplate", "下载excel模板", "excel", "GET"},
+	{global.GVA_MODEL{ID: 85, CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/rule/createRule", "新增规则", "rule", "POST"},
+	{global.GVA_MODEL{ID: 86, CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/rule/deleteRule", "删除规则", "rule", "DELETE"},
+	{global.GVA_MODEL{ID: 87, CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/rule/deleteRuleByIds", "批量删除规则", "rule", "DELETE"},
+	{global.GVA_MODEL{ID: 88, CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/rule/updateRule", "更新规则", "rule", "PUT"},
+	{global.GVA_MODEL{ID: 89, CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/rule/findRule", "根据ID获取规则", "rule", "GET"},
+	{global.GVA_MODEL{ID: 90, CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/rule/getRuleList", "获取规则列表", "rule", "GET"},
+	{global.GVA_MODEL{ID: 91, CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/token/createToken", "新增token", "token", "POST"},
+	{global.GVA_MODEL{ID: 92, CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/token/deleteToken", "删除token", "token", "DELETE"},
+	{global.GVA_MODEL{ID: 93, CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/token/deleteTokenByIds", "批量删除token", "token", "DELETE"},
+	{global.GVA_MODEL{ID: 94, CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/token/updateToken", "更新token", "token", "PUT"},
+	{global.GVA_MODEL{ID: 95, CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/token/findToken", "根据ID获取token", "token", "GET"},
+	{global.GVA_MODEL{ID: 96, CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/token/getTokenList", "获取token列表", "token", "GET"},
+	{global.GVA_MODEL{ID: 97, CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/searchResult/createSearchResult", "新增搜索结果", "searchResult", "POST"},
+	{global.GVA_MODEL{ID: 98, CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/searchResult/deleteSearchResult", "删除搜索结果", "searchResult", "DELETE"},
+	{global.GVA_MODEL{ID: 99, CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/searchResult/deleteSearchResultByIds", "批量删除搜索结果", "searchResult", "DELETE"},
+	{global.GVA_MODEL{ID: 100, CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/searchResult/updateSearchResult", "更新搜索结果", "searchResult", "POST"},
+	{global.GVA_MODEL{ID: 101, CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/searchResult/findSearchResult", "根据ID获取搜索结果", "searchResult", "GET"},
+	{global.GVA_MODEL{ID: 102, CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/searchResult/getSearchResultList", "获取搜索结果列表", "searchResult", "GET"},
+	{global.GVA_MODEL{ID: 103, CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/subdomain/createSubdomain", "新增子域名", "subdomain", "POST"},
+	{global.GVA_MODEL{ID: 104, CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/subdomain/deleteSubdomain", "删除子域名", "subdomain", "DELETE"},
+	{global.GVA_MODEL{ID: 105, CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/subdomain/deleteSubdomainByIds", "批量删除子域名", "subdomain", "DELETE"},
+	{global.GVA_MODEL{ID: 106, CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/subdomain/updateSubdomain", "更新子域名", "subdomain", "PUT"},
+	{global.GVA_MODEL{ID: 107, CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/subdomain/findSubdomain", "根据ID获取子域名", "subdomain", "GET"},
+	{global.GVA_MODEL{ID: 108, CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/subdomain/getSubdomainList", "获取子域名列表", "subdomain", "GET"},
+	{global.GVA_MODEL{ID: 115, CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/filter/createFilter", "新增过滤规则", "filter", "POST"},
+	{global.GVA_MODEL{ID: 116, CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/filter/deleteFilter", "删除过滤规则", "filter", "DELETE"},
+	{global.GVA_MODEL{ID: 117, CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/filter/deleteFilterByIds", "批量删除过滤规则", "filter", "DELETE"},
+	{global.GVA_MODEL{ID: 118, CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/filter/updateFilter", "更新过滤规则", "filter", "PUT"},
+	{global.GVA_MODEL{ID: 119, CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/filter/findFilter", "根据ID获取过滤规则", "filter", "GET"},
+	{global.GVA_MODEL{ID: 120, CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/filter/getFilterList", "获取过滤规则列表", "filter", "GET"},
 }
 
 //@author: [SliverHorn](https://github.com/SliverHorn)
-//@description: sys_apis 表数据初始化
+//@ sys_apis 表数据初始化
 func (a *api) Init() error {
 	return global.GVA_DB.Transaction(func(tx *gorm.DB) error {
 		if tx.Where("id IN ?", []int{1, 67}).Find(&[]model.SysApi{}).RowsAffected == 2 {
