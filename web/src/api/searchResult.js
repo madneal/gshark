@@ -98,3 +98,12 @@ export const createSearchResult = (data) => {
          params
      })
  }
+
+
+ export const updateSearchResultStatusByIds = (params) => {
+     return service({
+         url: '/searchResult/updateSearchResultStatusByIds',
+         method: 'post',
+         params
+     })
+ }

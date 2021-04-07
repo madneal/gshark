@@ -145,11 +145,11 @@
 
 <script>
 import {
-  deleteSearchResult,
   deleteSearchResultByIds,
   findSearchResult,
   getSearchResultList,
-  updateSearchResult
+  updateSearchResult,
+  updateSearchResultStatusByIds
 } from "@/api/searchResult"; //  此处请自行替换地址
 import { formatTimeToStr } from "@/utils/date";
 import infoList from "@/mixins/infoList";
@@ -248,7 +248,7 @@ export default {
         this.multipleSelection.map((item) => {
           ids.push(item.ID);
         });
-      const res = await deleteSearchResultByIds({ ids });
+      const res = await updateSearchResultStatusByIds({ ids, status: 2 });
       if (res.code == 0) {
         this.$message({
           type: "success",
