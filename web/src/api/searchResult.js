@@ -100,10 +100,10 @@ export const createSearchResult = (data) => {
  }
 
 
- export const updateSearchResultStatusByIds = (params) => {
+ export const updateSearchResultStatusByIds = (data) => {
      return service({
          url: '/searchResult/updateSearchResultStatusByIds',
          method: 'post',
-         params
+         data
      })
  }
