@@ -3,6 +3,8 @@ package search
 import (
 	//"github.com/madneal/gshark/search/codesearch"
 	"github.com/madneal/gshark/search/githubsearch"
+	"github.com/madneal/gshark/search/gobuster"
+
 	//"github.com/madneal/gshark/search/gitlabsearch"
 	"github.com/urfave/cli/v2"
 	"strings"
@@ -45,7 +47,7 @@ func Scan(ctx *cli.Context) error {
 	default:
 		for {
 			githubsearch.RunTask(Interval)
-			//go gobuster.RunTask(Interval)
+			go gobuster.RunTask(Interval)
 		}
 	}
 	return nil
