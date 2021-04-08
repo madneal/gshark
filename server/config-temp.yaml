@@ -1,15 +1,3 @@
-aliyun-oss:
-  access-key-id: yourAccessKeyId
-  access-key-secret: yourAccessKeySecret
-  bucket-name: yourBucketName
-  bucket-url: yourBucketUrl
-  endpoint: yourEndpoint
-aliyunoss:
-  endpoint: yourEndpoint
-  access-key-id: yourAccessKeyId
-  access-key-secret: yourAccessKeySecret
-  bucket-name: yourBucketName
-  bucket-url: yourBucketUrl
 autocode:
   root: /Users/neal/project
   server: /server
@@ -76,20 +64,6 @@ system:
   db-type: mysql
   oss-type: local
   use-multipoint: false
-tencent-cos:
-  base-url: https://gin.vue.admin
-  bucket: xxxxx-10005608
-  path-prefix: gin-vue-admin
-  region: ap-shanghai
-  secret-id: xxxxxxxx
-  secret-key: xxxxxxxx
-tencentcos:
-  bucket: xxxxx-10005608
-  region: ap-shanghai
-  secret-id: xxxxxxxx
-  secret-key: xxxxxxxx
-  base-url: https://gin.vue.admin
-  path-prefix: gin-vue-admin
 zap:
   level: info
   format: console
@@ -100,3 +74,6 @@ zap:
   encode-level: LowercaseColorLevelEncoder
   stacktrace-key: stacktrace
   log-in-console: true
+search:
+  gobuster-filepath:
+  subdomain-wordlist:
