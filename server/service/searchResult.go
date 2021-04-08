@@ -42,7 +42,8 @@ func DeleteSearchResultByIds(ids request.IdsReq) (err error) {
 }
 
 func UpdateSearchResultByIds(req request.BatchUpdateReq) (err error) {
-	err = global.GVA_DB.UpdateColumn("status", req.Status).Where("id in ?", req.Ids).Error
+	err = global.GVA_DB.Table("search_result").Where("id in ?", req.Ids).
+		UpdateColumn("status", req.Status).Error
 	return err
 }
 
