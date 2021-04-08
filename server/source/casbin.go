@@ -153,11 +153,6 @@ var carbines = []gormadapter.CasbinRule{
 	{PType: "p", V0: "9528", V1: "/jwt/jsonInBlacklist", V2: "POST"},
 	{PType: "p", V0: "9528", V1: "/system/getSystemConfig", V2: "POST"},
 	{PType: "p", V0: "9528", V1: "/system/setSystemConfig", V2: "POST"},
-	{PType: "p", V0: "9528", V1: "/customer/customer", V2: "POST"},
-	{PType: "p", V0: "9528", V1: "/customer/customer", V2: "PUT"},
-	{PType: "p", V0: "9528", V1: "/customer/customer", V2: "DELETE"},
-	{PType: "p", V0: "9528", V1: "/customer/customer", V2: "GET"},
-	{PType: "p", V0: "9528", V1: "/customer/customerList", V2: "GET"},
 	{PType: "p", V0: "9528", V1: "/autoCode/createTemp", V2: "POST"},
 }
 

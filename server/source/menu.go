@@ -33,6 +33,13 @@ var menus = []model.SysBaseMenu{
 	{GVA_MODEL: global.GVA_MODEL{ID: 20, CreatedAt: time.Now(), UpdatedAt: time.Now()}, MenuLevel: 0, Hidden: false, ParentId: "3", Path: "operation", Name: "operation", Component: "view/superAdmin/operation/sysOperationRecord.vue", Sort: 6, Meta: model.Meta{Title: "操作历史", Icon: "time"}},
 	{GVA_MODEL: global.GVA_MODEL{ID: 21, CreatedAt: time.Now(), UpdatedAt: time.Now()}, MenuLevel: 0, Hidden: false, ParentId: "9", Path: "simpleUploader", Name: "simpleUploader", Component: "view/example/simpleUploader/simpleUploader", Sort: 6, Meta: model.Meta{Title: "断点续传（插件版）", Icon: "upload"}},
 	{GVA_MODEL: global.GVA_MODEL{ID: 23, CreatedAt: time.Now(), UpdatedAt: time.Now()}, MenuLevel: 0, ParentId: "0", Path: "state", Name: "state", Hidden: false, Component: "view/system/state.vue", Sort: 6, Meta: model.Meta{Title: "服务器状态", Icon: "cloudy"}},
+	{GVA_MODEL: global.GVA_MODEL{ID: 24, CreatedAt: time.Now(), UpdatedAt: time.Now()}, MenuLevel: 0, ParentId: "0", Path: "setting", Name: "setting", Hidden: false, Component: "view/routerHolder.vue", Sort: 1, Meta: model.Meta{Title: "管理", Icon: "cloudy"}},
+	{GVA_MODEL: global.GVA_MODEL{ID: 25, CreatedAt: time.Now(), UpdatedAt: time.Now()}, MenuLevel: 0, ParentId: "24", Path: "rule", Name: "rule", Hidden: false, Component: "view/rule/rule.vue", Sort: 1, Meta: model.Meta{Title: "规则管理", Icon: "cloudy"}},
+	{GVA_MODEL: global.GVA_MODEL{ID: 26, CreatedAt: time.Now(), UpdatedAt: time.Now()}, MenuLevel: 0, ParentId: "0", Path: "result", Name: "result", Hidden: false, Component: "view/routerHolder.vue", Sort: 0, Meta: model.Meta{Title: "搜索结果", Icon: "cloudy"}},
+	{GVA_MODEL: global.GVA_MODEL{ID: 27, CreatedAt: time.Now(), UpdatedAt: time.Now()}, MenuLevel: 0, ParentId: "26", Path: "code", Name: "code", Hidden: false, Component: "view/searchResult/searchResult.vue", Sort: 1, Meta: model.Meta{Title: "代码", Icon: "cloudy"}},
+	{GVA_MODEL: global.GVA_MODEL{ID: 28, CreatedAt: time.Now(), UpdatedAt: time.Now()}, MenuLevel: 0, ParentId: "24", Path: "token", Name: "token", Hidden: false, Component: "view/token/token.vue", Sort: 2, Meta: model.Meta{Title: "token管理", Icon: "cloudy"}},
+	{GVA_MODEL: global.GVA_MODEL{ID: 29, CreatedAt: time.Now(), UpdatedAt: time.Now()}, MenuLevel: 0, ParentId: "26", Path: "subdomain", Name: "subdomain", Hidden: false, Component: "view/subdomain/subdomain.vue", Sort: 2, Meta: model.Meta{Title: "子域名资产报告", Icon: "cloudy"}},
+	{GVA_MODEL: global.GVA_MODEL{ID: 30, CreatedAt: time.Now(), UpdatedAt: time.Now()}, MenuLevel: 0, ParentId: "24", Path: "filter", Name: "filter", Hidden: false, Component: "view/filter/filter.vue", Sort: 3, Meta: model.Meta{Title: "过滤规则", Icon: "cloudy"}},
 }
 
 //@author: [SliverHorn](https://github.com/SliverHorn)
