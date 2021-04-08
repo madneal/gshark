@@ -132,8 +132,7 @@ func ConvertToSearchResults(results []*github.CodeSearchResult, keyword *string)
 
 func RunTask(duration time.Duration) {
 	RunSearchTask(GenerateSearchCodeTask())
-	global.GVA_LOG.Info(fmt.Sprintf("Comple the scan of Github, start to sleep %d", duration*time.Second),
-		zap.Any("", ""))
+	global.GVA_LOG.Info(fmt.Sprintf("Comple the scan of Github, start to sleep %d seconds", duration))
 	time.Sleep(duration * time.Second)
 }
 
