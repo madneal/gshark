@@ -140,7 +140,7 @@ func InitDB(conf request.InitDB) error {
 		model.Rule{},
 		model.Filter{},
 		model.Token{},
-		model.SearchCodeResult{},
+		model.SearchResult{},
 	)
 	if err != nil {
 		return err
