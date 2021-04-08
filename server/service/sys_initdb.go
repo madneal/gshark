@@ -140,6 +140,10 @@ func InitDB(conf request.InitDB) error {
 		model.ExaSimpleUploader{},
 		model.ExaCustomer{},
 		model.SysOperationRecord{},
+		model.Rule{},
+		model.Filter{},
+		model.Token{},
+		model.SearchCodeResult{},
 	)
 	if err != nil {
 		return err
