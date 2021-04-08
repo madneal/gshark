@@ -233,6 +233,7 @@ export default {
         });
         return;
       }
+      debugger
       this.multipleSelection &&
         this.multipleSelection.map((item) => {
           ids.push(item.ID);
