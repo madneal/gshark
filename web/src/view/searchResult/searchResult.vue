@@ -164,7 +164,6 @@
 
 <script>
 import {
-  deleteSearchResultByIds,
   findSearchResult,
   getSearchResultList,
   updateSearchResult,
@@ -255,7 +254,6 @@ export default {
     },
     async onChange(isIgnore) {
       console.log(isIgnore);
-      debugger;
       const ids = [];
       if (this.multipleSelection.length === 0) {
         this.$message({
@@ -298,8 +296,7 @@ export default {
         this.formData = res.data.researchResult;
         this.dialogFormVisible = true;
         const updateRes = await updateSearchResult(this.formData);
-        if (res.code === 0) {
-          // this.updateVisible = false;
+        if (updateRes.code === 0) {
           this.getTableData();
         }
       }
