@@ -86,15 +86,15 @@ func GetSearchResultInfoList(info request.SearchResultSearch) (err error, list i
 	db := global.GVA_DB.Model(&model.SearchResult{})
 	var searchResults []model.SearchResult
 	// 如果有条件搜索 下方会自动创建搜索语句
-	//if info.Repo != "" {
-	//	db = db.Where("`repo` LIKE ?", "%"+info.Repo+"%")
-	//}
-	//if info.Keyword != "" {
-	//	db = db.Where("`keyword` = ?", info.Keyword)
-	//}
-	//if info.Status != 0 {
-	//	db = db.Where("`status` = ?", info.Status)
-	//}
+	if info.Query != "" {
+		db = db.Where("`repo` LIKE ? or `text_matches_json` LIKE ?", "%"+info.Query+"%", "%"+info.Query+"%")
+	}
+	if info.Keyword != "" {
+		db = db.Where("`keyword` = ?", info.Keyword)
+	}
+	if info.Status >= 0 {
+		db = db.Where("`status` = ?", info.Status)
+	}
 	err = db.Count(&total).Error
 	err = db.Limit(limit).Offset(offset).Find(&searchResults).Error
 	return err, searchResults, total
