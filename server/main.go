@@ -36,5 +36,4 @@ func main() {
 	if err != nil {
 
 	}
-	//core.RunWindowsServer()
 }
