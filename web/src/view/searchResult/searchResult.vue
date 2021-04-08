@@ -242,7 +242,7 @@ export default {
       if (res.code == 0) {
         this.$message({
           type: "success",
-          message: "删除成功",
+          message: "忽略成功",
         });
         if (this.tableData.length == ids.length) {
           this.page--;
