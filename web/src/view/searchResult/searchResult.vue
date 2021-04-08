@@ -3,7 +3,10 @@
     <div class="search-term">
       <el-form :inline="true" :model="searchInfo" class="demo-form-inline">
         <el-form-item label="搜索条件">
-          <el-input placeholder="仓库名称|匹配内容" v-model="searchInfo.query"></el-input>
+          <el-input
+            placeholder="仓库名称|匹配内容"
+            v-model="searchInfo.query"
+          ></el-input>
         </el-form-item>
         <el-form-item label="关键词">
           <el-input
@@ -33,7 +36,7 @@
               <el-button @click="deleteVisible = false" size="mini" type="text"
                 >取消</el-button
               >
-              <el-button @click="onDelete" size="mini" type="primary"
+              <el-button @click="onChange(true)" size="mini" type="primary"
                 >确定</el-button
               >
             </div>
@@ -43,6 +46,27 @@
               slot="reference"
               type="danger"
               >批量忽略</el-button
+            >
+          </el-popover>
+        </el-form-item>
+
+        <el-form-item>
+          <el-popover placement="top" v-model="confirmVisible" width="160">
+            <p>确定要确认吗？</p>
+            <div style="text-align: right; margin: 0">
+              <el-button @click="confirmVisible = false" size="mini" type="text"
+                >取消</el-button
+              >
+              <el-button @click="onChange(false)" size="mini" type="primary"
+                >确定</el-button
+              >
+            </div>
+            <el-button
+              icon="el-icon-delete"
+              size="mini"
+              slot="reference"
+              type="primary"
+              >批量确认</el-button
             >
           </el-popover>
         </el-form-item>
@@ -61,15 +85,24 @@
 
       <el-table-column label="ID" prop="ID" width="50"></el-table-column>
 
-      <el-table-column label="仓库名称" width="120">
+      <!-- <el-table-column label="仓库名称" width="120">
         <template slot-scope="scope">
           <el-link :href="scope.row.RepoUrl" type="primary" :underline="false">
             {{ scope.row.repo }}
           </el-link>
         </template>
+      </el-table-column> -->
+
+      <el-table-column label="文件" width="180">
+        <template slot-scope="scope">
+          <el-link :href="scope.row.url" type="primary" :underline="false">
+            {{
+            scope.row.repo + "/" + scope.row.path
+          }}</el-link>
+        </template>
       </el-table-column>
 
-      <el-table-column label="匹配内容" prop="matches" width="500">
+      <el-table-column label="匹配内容" prop="matches" width="550">
         <template slot-scope="scope">
           <pre>{{ scope.row.text_matches | fragmentsFilter }}</pre>
         </template>
@@ -87,15 +120,7 @@
         }}</template>
       </el-table-column>
 
-      <el-table-column label="URL" width="120">
-        <template slot-scope="scope">
-          <el-link :href="scope.row.url" type="primary" :underline="false">{{
-            scope.row.repo + "/" + scope.row.path
-          }}</el-link>
-        </template>
-      </el-table-column>
-
-      <el-table-column label="状态" prop="status" width="100">
+      <el-table-column label="状态" prop="status" width="80">
         <template slot-scope="scope">
           {{ scope.row.status | statusFilter }}
         </template>
@@ -156,16 +181,20 @@ export default {
       dialogFormVisible: false,
       type: "",
       deleteVisible: false,
-      statusOptions: [{
-        label: '未处理',
-        value: 0
-      }, {
-        label: '已确认',
-        value: 1
-      }, {
-        label: '已忽略',
-        value: 2
-      }
+      confirmVisible: false,
+      statusOptions: [
+        {
+          label: "未处理",
+          value: 0,
+        },
+        {
+          label: "已确认",
+          value: 1,
+        },
+        {
+          label: "已忽略",
+          value: 2,
+        },
       ],
       multipleSelection: [],
       formData: {
@@ -224,30 +253,40 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },
-    async onDelete() {
+    async onChange(isIgnore) {
+      console.log(isIgnore);
+      debugger;
       const ids = [];
-      if (this.multipleSelection.length == 0) {
+      if (this.multipleSelection.length === 0) {
         this.$message({
           type: "warning",
-          message: "请选择要忽略的数据",
+          message: "请选择要操作的数据",
         });
         return;
       }
-      debugger
       this.multipleSelection &&
         this.multipleSelection.map((item) => {
           ids.push(item.ID);
         });
-      const res = await updateSearchResultStatusByIds({ ids, status: 2 });
-      if (res.code == 0) {
+      let res;
+      if (isIgnore) {
+        res = await updateSearchResultStatusByIds({ ids, status: 2 });
+      } else {
+        res = await updateSearchResult({ ids, status: 1 });
+      }
+      if (res.code === 0) {
         this.$message({
           type: "success",
-          message: "忽略成功",
+          message: "操作成功",
         });
         if (this.tableData.length == ids.length) {
           this.page--;
         }
-        this.deleteVisible = false;
+        if (isIgnore) {
+          this.deleteVisible = false;
+        } else {
+          this.confirmVisible = false;
+        }
         this.getTableData();
       }
     },
