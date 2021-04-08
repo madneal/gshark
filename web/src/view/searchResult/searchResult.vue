@@ -2,8 +2,8 @@
   <div>
     <div class="search-term">
       <el-form :inline="true" :model="searchInfo" class="demo-form-inline">
-        <el-form-item label="仓库名称">
-          <el-input placeholder="搜索条件" v-model="searchInfo.repo"></el-input>
+        <el-form-item label="搜索条件">
+          <el-input placeholder="仓库名称|匹配内容" v-model="searchInfo.query"></el-input>
         </el-form-item>
         <el-form-item label="关键词">
           <el-input
@@ -28,7 +28,7 @@
 
         <el-form-item>
           <el-popover placement="top" v-model="deleteVisible" width="160">
-            <p>确定要删除吗？</p>
+            <p>确定要忽略吗？</p>
             <div style="text-align: right; margin: 0">
               <el-button @click="deleteVisible = false" size="mini" type="text"
                 >取消</el-button
@@ -224,21 +224,12 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },
-    deleteRow(row) {
-      this.$confirm("确定要删除吗?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      }).then(() => {
-        this.deleteSearchResult(row);
-      });
-    },
     async onDelete() {
       const ids = [];
       if (this.multipleSelection.length == 0) {
         this.$message({
           type: "warning",
-          message: "请选择要删除的数据",
+          message: "请选择要忽略的数据",
         });
         return;
       }
