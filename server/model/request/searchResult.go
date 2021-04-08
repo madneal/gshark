@@ -1,12 +1,8 @@
 package request
 
 type SearchResultSearch struct {
-	//model.SearchResult
 	PageInfo
 	SearchInfo
-	//Status int
-	//Keyword string
-	//Query   string
 }
 
 type SearchInfo struct {
