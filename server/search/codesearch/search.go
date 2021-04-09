@@ -18,7 +18,7 @@ func RunTask(duration time.Duration) {
 	global.GVA_LOG.Info(fmt.Sprintf("Complete the scan of searchcode, start to sleep %v seconds", duration))
 	time.Sleep(duration * time.Second)
 }
-k
+
 func GenerateSearchCodeTask() (map[int][]model.Rule, error) {
 	result := make(map[int][]model.Rule)
 	err, rules := service.GetValidRulesByType("searchcode")
