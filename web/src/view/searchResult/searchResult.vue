@@ -232,6 +232,9 @@ export default {
       return statusOptions[val];
     },
     fragmentsFilter: function (val) {
+      if (!val) {
+        return "";
+      }
       let result = "";
       for (let i = 0; i < val.length; i++) {
         result = result + val[i].fragment;
