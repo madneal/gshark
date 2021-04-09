@@ -97,9 +97,7 @@ func GetResult(request *gorequest.SuperAgent, url string) ([]*model.SearchResult
 		fmt.Printf("Request to %s error, status code: %d", url, resp.StatusCode)
 	}
 	var result model.SearchCodeRes
-	//fmt.Println(body)
 	json.Unmarshal([]byte(body), &result)
-	//fmt.Println(total)
 	results := result.Results
 	if len(results) == 0 {
 		hasResult = false
