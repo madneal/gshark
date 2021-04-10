@@ -53,8 +53,9 @@ func UpdateSearchResultByIds(req request.BatchUpdateReq) (err error) {
 //@param: searchResult *model.SearchResult
 //@return: err error
 
-func UpdateSearchResult(searchResult model.SearchResult) (err error) {
-	err = global.GVA_DB.Save(&searchResult).Error
+func UpdateSearchResult(updateReq request.UpdateReq) (err error) {
+	err = global.GVA_DB.Table("search_result").Where("repo = ?", updateReq.Repo).
+		UpdateColumn("status", updateReq.Status).Error
 	return err
 }
 
