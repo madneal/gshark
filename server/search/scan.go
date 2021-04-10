@@ -1,6 +1,7 @@
 package search
 
 import (
+	"github.com/madneal/gshark/search/codesearch"
 	//"github.com/madneal/gshark/search/codesearch"
 	"github.com/madneal/gshark/search/githubsearch"
 	"github.com/madneal/gshark/search/gobuster"
@@ -46,7 +47,8 @@ func Scan(ctx *cli.Context) error {
 	//	}
 	default:
 		for {
-			githubsearch.RunTask(Interval)
+			//githubsearch.RunTask(Interval)
+			codesearch.RunTask(Interval)
 			go gobuster.RunTask(Interval)
 		}
 	}

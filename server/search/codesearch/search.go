@@ -15,7 +15,7 @@ import (
 
 func RunTask(duration time.Duration) {
 	RunSearchTask(GenerateSearchCodeTask())
-	global.GVA_LOG.Info(fmt.Sprintf("Complete the scan of searchcode, start to sleep %v seconds", duration))
+	global.GVA_LOG.Info(fmt.Sprintf("Complete the scan of searchcode, start to sleep %d seconds", duration))
 	time.Sleep(duration * time.Second)
 }
 
@@ -41,7 +41,7 @@ func RunSearchTask(mapRules map[int][]model.Rule, err error) {
 	if err == nil {
 		for _, rules := range mapRules {
 			for _, rule := range rules {
-				global.GVA_LOG.Info(fmt.Sprint("Search for %s in searchcode", rule.Content))
+				global.GVA_LOG.Info(fmt.Sprintf("Search for %s in searchcode", rule.Content))
 				codeResults := SearchForSearchCode(rule, request)
 				SaveResults(codeResults, &rule.Content)
 			}
