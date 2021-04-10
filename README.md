@@ -12,6 +12,7 @@ The project is based on go with vue to build a management system for sensitive i
 ## Features
 
 * Support multi platform, including Gitlab, Github, Searchcode
+* Flexible menu and API permission setting
 * Flexible rules and filter rules
 * Utilize gobuster to brute force subdomain
 * Easily used management system
