@@ -21,8 +21,8 @@ casbin:
 email:
   to: xxx@qq.com
   port: 465
-  from: xxx@163.com
-  host: smtp.163.com
+  from: xxx@qq.com
+  host: smtp.qq.com
   is-ssl: true
   secret: xxx
   nickname: test
