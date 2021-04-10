@@ -18,6 +18,5 @@ type Server struct {
 	AliyunOSS  AliyunOSS  `mapstructure:"aliyun-oss" json:"aliyunOSS" yaml:"aliyun-oss"`
 	TencentCOS TencentCOS `mapstructure:"tencent-cos" json:"tencentCOS" yaml:"tencent-cos"`
 	Excel      Excel      `mapstructure:"excel" json:"excel" yaml:"excel"`
-	Serverj    ServerJ    `mapstructure:"serverj" json:"serverj" yaml:"serverj"`
 	Search     Search     `mapstructure:"search" json:"search" yaml:"search"`
 }
