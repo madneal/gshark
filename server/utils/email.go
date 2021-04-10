@@ -37,12 +37,12 @@ func ErrorToEmail(subject string, body string) error {
 }
 
 //@author: [maplepie](https://github.com/maplepie)
-//@function: EmailTest
+//@function: EmailSend
 //@description: Email测试方法
 //@param: subject string, body string
 //@return: error
 
-func EmailTest(subject string, body string) error {
+func EmailSend(subject string, body string) error {
 	to := []string{global.GVA_CONFIG.Email.From}
 	return send(to, subject, body)
 }
