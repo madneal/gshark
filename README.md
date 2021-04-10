@@ -8,15 +8,13 @@
 
 The project is based on go with vue to build a management system for sensitive information detection. This is the total fresh version, you can refer the [old version](https://github.com/madneal/gshark/blob/gin/OLD_README.md) here.
 
-![ezgif com-optimize](https://user-images.githubusercontent.com/12164075/47776907-72db2a00-dd2e-11e8-9862-db4aa5c458ff.gif)
 
 ## Features
 
 * Support multi platform, including Gitlab, Github, Searchcode
-* Support search keyword in Huawei app store
-* Flexible rules
+* Flexible rules and filter rules
 * Utilize gobuster to brute force subdomain
-* Batch insert rules
+* Easily used management system
 
 ## Quick start
 
