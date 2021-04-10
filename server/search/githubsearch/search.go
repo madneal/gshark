@@ -49,20 +49,20 @@ func Search(rules []model.Rule) {
 				defer wg.Done()
 				results, err := client.SearchCode(rule.Content)
 				if err != nil {
-					//logger.Log.Error(err)
 					return
 				}
 				counts := SaveResult(results, &rule.Content)
 				if counts > 0 {
-					content += fmt.Sprintf("%s: %d条\n", rule.Content, counts)
+					content += fmt.Sprintf("%s: %d条<br>", rule.Content, counts)
 				}
 			}(rule)
 		}
 		wg.Wait()
 	}
-	//if global.GVA_CONFIG.Serverj.SCKEY != "" && content != "" {
-	//	util.SendMessage(global.GVA_CONFIG.Serverj.SCKEY, "扫描结果", content)
-	//}
+	err = utils.EmailSend("Github敏感信息报告", content)
+	if err != nil {
+		global.GVA_LOG.Error("send email error", zap.Any("err", err))
+	}
 }
 
 func RunSearchTask(mapRules map[int][]model.Rule, err error) {
