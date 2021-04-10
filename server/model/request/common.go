@@ -20,6 +20,11 @@ type BatchUpdateReq struct {
 	Status int   `json:"status" form:"status"`
 }
 
+type UpdateReq struct {
+	Status int    `json:"status" form:"status"`
+	Repo   string `json:"repo" form:"repo"`
+}
+
 // Get role by id structure
 type GetAuthorityId struct {
 	AuthorityId string
