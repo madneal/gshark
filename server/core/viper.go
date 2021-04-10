@@ -3,9 +3,9 @@ package core
 import (
 	"flag"
 	"fmt"
+	config2 "github.com/madneal/gshark/config"
 	"github.com/madneal/gshark/global"
 	_ "github.com/madneal/gshark/packfile"
-	"github.com/madneal/gshark/utils"
 	"os"
 	"path/filepath"
 
@@ -19,9 +19,9 @@ func Viper(path ...string) *viper.Viper {
 		flag.StringVar(&config, "c", "", "choose config file.")
 		flag.Parse()
 		if config == "" { // 优先级: 命令行 > 环境变量 > 默认值
-			if configEnv := os.Getenv(utils.ConfigEnv); configEnv == "" {
-				config = utils.ConfigFile
-				fmt.Printf("您正在使用config的默认值,config的路径为%v\n", utils.ConfigFile)
+			if configEnv := os.Getenv(config2.ConfigEnv); configEnv == "" {
+				config = config2.ConfigFile
+				fmt.Printf("您正在使用config的默认值,config的路径为%v\n", config2.ConfigFile)
 			} else {
 				config = configEnv
 				fmt.Printf("您正在使用GVA_CONFIG环境变量,config的路径为%v\n", config)
