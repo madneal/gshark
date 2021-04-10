@@ -87,9 +87,9 @@ func UpdateSearchResultByIds(c *gin.Context) {
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"更新成功"}"
 // @Router /searchResult/updateSearchResult [put]
 func UpdateSearchResult(c *gin.Context) {
-	var searchResult model.SearchResult
-	_ = c.ShouldBindJSON(&searchResult)
-	if err := service.UpdateSearchResult(searchResult); err != nil {
+	var updateReq request.UpdateReq
+	_ = c.ShouldBindJSON(&updateReq)
+	if err := service.UpdateSearchResult(updateReq); err != nil {
 		global.GVA_LOG.Error("更新失败!", zap.Any("err", err))
 		response.FailWithMessage("更新失败", c)
 	} else {

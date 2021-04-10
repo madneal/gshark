@@ -273,7 +273,7 @@ export default {
       if (isIgnore) {
         res = await updateSearchResultStatusByIds({ ids, status: 2 });
       } else {
-        res = await updateSearchResult({ ids, status: 1 });
+        res = await updateSearchResultStatusByIds({ ids , status: 1 });
       }
       if (res.code === 0) {
         this.$message({
@@ -298,7 +298,11 @@ export default {
       if (res.code === 0) {
         this.formData = res.data.researchResult;
         this.dialogFormVisible = true;
-        const updateRes = await updateSearchResult(this.formData);
+        const data = {
+          repo: this.formData.repo,
+          status: status
+        };
+        const updateRes = await updateSearchResult(data);
         if (updateRes.code === 0) {
           this.getTableData();
         }
