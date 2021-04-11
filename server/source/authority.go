@@ -14,9 +14,8 @@ var Authority = new(authority)
 type authority struct{}
 
 var authorities = []model.SysAuthority{
-	{CreatedAt: time.Now(), UpdatedAt: time.Now(), AuthorityId: "888", AuthorityName: "普通用户", ParentId: "0", DefaultRouter: "state"},
-	{CreatedAt: time.Now(), UpdatedAt: time.Now(), AuthorityId: "8881", AuthorityName: "普通用户子角色", ParentId: "888", DefaultRouter: "state"},
-	{CreatedAt: time.Now(), UpdatedAt: time.Now(), AuthorityId: "9528", AuthorityName: "测试用户", ParentId: "0", DefaultRouter: "state"},
+	{CreatedAt: time.Now(), UpdatedAt: time.Now(), AuthorityId: "888", AuthorityName: "管理员", ParentId: "0", DefaultRouter: "state"},
+	{CreatedAt: time.Now(), UpdatedAt: time.Now(), AuthorityId: "9528", AuthorityName: "普通用户", ParentId: "0", DefaultRouter: "state"},
 }
 
 //@author: [SliverHorn](https://github.com/SliverHorn)
