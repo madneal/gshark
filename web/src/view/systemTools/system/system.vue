@@ -75,7 +75,7 @@
       <!--  Zap end  -->
 
       <!--  Redis start  -->
-      <h2>Redis admin数据库配置</h2>
+      <!-- <h2>Redis admin数据库配置</h2>
       <el-form-item label="db">
         <el-input v-model="config.redis.db"></el-input>
       </el-form-item>
@@ -84,7 +84,7 @@
       </el-form-item>
       <el-form-item label="password">
         <el-input v-model="config.redis.password"></el-input>
-      </el-form-item>
+      </el-form-item> -->
       <!--  Redis end  -->
 
       <!--  Email start  -->
