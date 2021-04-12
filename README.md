@@ -6,68 +6,77 @@
 
 # GShark [![Go Report Card](https://goreportcard.com/badge/github.com/madneal/gshark)](https://goreportcard.com/report/github.com/madneal/gshark)   
 
-The project is based on golang with AdminLTE to build a management system to manage the Github search results. Github API is utilized to crawl the related results according to key words and some rules. It proves to be a proper way to detect the information related to your company.:rocket::rocket::rocket: For a detailed introduction, you can refer [here](https://mp.weixin.qq.com/s?__biz=MzI3MjA3MTY3Mw==&mid=2247483770&idx=1&sn=9f02c2803e1c946e8c23b16ff3eba757&chksm=eb396fecdc4ee6fa2f378e846f354f45acf6e6f540cfd54190e9353df47c7707e3a2aadf714f&token=1263666156&lang=zh_CN#rd).
+The project is based on go with vue to build a management system for sensitive information detection. This is the total fresh version, you can refer the [old version](https://github.com/madneal/gshark/blob/gin/OLD_README.md) here.
 
-![ezgif com-optimize](https://user-images.githubusercontent.com/12164075/47776907-72db2a00-dd2e-11e8-9862-db4aa5c458ff.gif)
 
 ## Features
 
 * Support multi platform, including Gitlab, Github, Searchcode
-* Support search keyword in Huawei app store
-* Flexible rules
+* Flexible menu and API permission setting
+* Flexible rules and filter rules
 * Utilize gobuster to brute force subdomain
-* Batch insert rules
+* Easily used management system
 
 ## Quick start
 
-```
-git clone https://github.com/madneal/gshark
+![GShark](https://user-images.githubusercontent.com/12164075/114326875-58e1da80-9b69-11eb-82a5-b2e3751a2304.png)
 
-go get ./...
+### Deployment
 
-go build main.go
-
-# check the config
-mv app-template.ini app.ini 
-
-# start web service
-./main web 
-
-# start crawler
-./main scan
-```
-
-## Config
-
-The configuration can be set according to `app-template.ini`. You should rename it to `app.ini` to config the project.
+For the deployment of frontend, it's suggested to install nginx. Place the gshark folder under `html`, modify the `nginx.conf` to reverse proxy the backend service.
 
 ```
-HTTP_HOST = 127.0.0.1
-HTTP_PORT = 8000
-MAX_INDEXERS = 2
-DEBUG_MODE = true
-REPO_PATH = repos
-MAX_Concurrency_REPOS = 5
-
-; server酱配置口令
-SCKEY =
-; gobuster file path
-gobuster_path =
-; gobuster subdomain wordlist file path
-subdomain_wordlist_file =
-
-[database]
-;support sqlite3, mysql, postgres
-DB_TYPE = sqlite
-HOST = 127.0.0.1
-PORT = 3306
-NAME = misec
-USER = root
-PASSWD = 
-SSL_MODE = disable
-;the path to store the database file of sqlite3
-PATH = 
+location /api/ {
+proxy_set_header Host $http_host;
+proxy_set_header  X-Real-IP $remote_addr;
+proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+proxy_set_header X-Forwarded-Proto $scheme;
+rewrite ^/api/(.*)$ /$1 break;
+proxy_pass http://127.0.0.1:8888;
+}
 ```
+### Web service
+
+```
+./ghsark web
+```
+
+### Scan service
+
+```
+./gshark scan
+```
+
+### Development
+
+``` 
+git clone https://github.com/madneal/gshark.git
+
+cd server
+
+go mod tidy
+
+mv config-temp.yaml config.yaml
+
+go build
+
+./gshark web
+
+cd ../web
+
+npm install
+
+npm run serve
+```
+
+If you want to set up the scan service, please run:
+
+```
+./gshark scan
+```
+
+
+
 
 ## Before Running
 
@@ -78,11 +87,9 @@ PATH =
 
 ## Run
 
-You should build the `main.go` file firstly with the command `go build main.go`.
-
 ```
 USAGE:
-   main [global options] command [command options] [arguments...]
+   gshark [global options] command [command options] [arguments...]
 
 COMMANDS:
      web      Startup a web Service
@@ -100,51 +107,15 @@ GLOBAL OPTIONS:
 
 ### Add Token
 
-To execute `main scan`, you need to add a Github token for crawl information in github. You can generate a token in [tokens](https://github.com/settings/tokens). Most access scopes are enough. For Gitlab search, remember to add token too.
+To execute `./gshark scan`, you need to add a Github token for crawl information in github. You can generate a token in [tokens](https://github.com/settings/tokens). Most access scopes are enough. For Gitlab search, remember to add token too.
 
 [![iR2TMt.md.png](https://s1.ax1x.com/2018/10/31/iR2TMt.md.png)](https://imgchr.com/i/iR2TMt)
 
-## Docker support(not suggested)
-
-Make sure rename `app-docker.ini` to `app.ini`.
-
-### Build 
-
-```
- docker build -t gshark-docker .      
-```
-
-### Run web
-
-`sqlite_database_folder` is the folder for the sqlite database folder, make sure create `gshark.db` file inside the folder.
-```
-docker run -e OPTION=web -p 8000:8000 -v sqlite_database_folder:/data/gshark gshark-docker
-```
-
-### Run Scan 
-
-```
-docker run -e OPTION=scan -v sqlite_database_folder:/data/gshark gshark-docker
-```
-
-### Add notification
-
-Now support notification by `server 酱`. Set the config of `SCKEY` in `app.ini` file.
-
 ## FAQ
 
-1. Access web service 403 forbidden
-
-Access to http://127.0.0.1/admin/login
-
-2. Default username and password
+1. Default username and password to login
 
 gshark/gshark
-
-3. `# github.com/mattn/go-sqlite3
-exec: "gcc": executable file not found in %PATH%`
-
-https://github.com/mattn/go-sqlite3/issues/435#issuecomment-314247676
 
 4. `go get ./... connection error`
 
@@ -157,9 +128,7 @@ go env -w GO111MODULE=on
 
 ## Reference
 
-* [x-patrol](https://github.com/MiSecurity/x-patrol)
-* [authz](https://github.com/go-macaron/authz)
-* [macaron](https://github.com/go-macaron/macaron)
+* [gin-vue-admin](https://github.com/flipped-aurora/gin-vue-admin)
 
 ## Wechat
 
