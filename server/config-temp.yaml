@@ -1,0 +1,78 @@
+autocode:
+  root: /Users/neal/project
+  server: /server
+  server-api: /api/v1
+  server-initialize: /initialize
+  server-model: /model
+  server-request: /model/request/
+  server-router: /router
+  server-service: /service
+  web: /web/src
+  web-api: /api
+  web-form: /view
+  web-table: /view
+  web-flow: /view
+captcha:
+  key-long: 6
+  img-width: 240
+  img-height: 80
+casbin:
+  model-path: ./resource/rbac_model.conf
+email:
+  to: xxx@qq.com
+  port: 465
+  from: xxx@qq.com
+  host: smtp.qq.com
+  is-ssl: true
+  secret: xxx
+  nickname: test
+excel:
+  dir: ./resource/excel/
+jwt:
+  signing-key: qmPlus
+  expires-time: 604800
+  buffer-time: 86400
+local:
+  path: uploads/file
+mysql:
+  path: 127.0.0.1:3306
+  config: charset=utf8mb4&parseTime=True&loc=Local
+  db-name:
+  username:
+  password:
+  max-idle-conns: 0
+  max-open-conns: 0
+  log-mode: false
+  log-zap: ""
+qiniu:
+  zone: ZoneHuadong
+  bucket: qm-plus-img
+  img-path: http://qmplusimg.henrongyi.top
+  use-https: false
+  access-key: 25j8dYBZ2wuiy0yhwShytjZDTX662b8xiFguwxzZ
+  secret-key: pgdbqEsf7ooZh7W3xokP833h3dZ_VecFXPDeG5JY
+  use-cdn-domains: false
+redis:
+  db: 0
+  addr: 127.0.0.1:6379
+  password: ""
+system:
+  env: public
+  addr: 8888
+  db-type: mysql
+  oss-type: local
+  use-multipoint: false
+zap:
+  level: info
+  format: console
+  prefix: '[GShark]'
+  director: log
+  link-name: latest_log
+  showLine: false
+  encode-level: LowercaseColorLevelEncoder
+  stacktrace-key: stacktrace
+  log-in-console: true
+search:
+  gobuster-filepath:
+  subdomain-wordlist:
+  searchnum: 10
