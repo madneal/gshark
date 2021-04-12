@@ -23,7 +23,7 @@ The project is based on go with vue to build a management system for sensitive i
 
 ### Deployment
 
-For the deployment of frontend, it's suggested to install nginx. Place the gshark folder under `html`, modify the `nginx.conf` to reverse proxy the backend service.
+For the deployment, it's suggested to install nginx. Place the `dist` folder under `html`, modify the `nginx.conf` to reverse proxy the backend service.
 
 ```
 location /api/ {
@@ -35,6 +35,9 @@ rewrite ^/api/(.*)$ /$1 break;
 proxy_pass http://127.0.0.1:8888;
 }
 ```
+
+The deployment work is very easy. Find the corresponding binary zip file from [releases](https://github.com/madneal/gshark/releases). Unzip and run. Remember to copy the files inside `dist` to `html` folder of nginx.
+
 ### Web service
 
 ```
