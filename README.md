@@ -19,6 +19,8 @@ The project is based on go with vue to build a management system for sensitive i
 
 ## Quick start
 
+![GShark](https://user-images.githubusercontent.com/12164075/114326875-58e1da80-9b69-11eb-82a5-b2e3751a2304.png)
+
 ### Deployment
 
 For the deployment of frontend, it's suggested to install nginx. Place the gshark folder under `html`, modify the `nginx.conf` to reverse proxy the backend service.
@@ -30,7 +32,7 @@ proxy_set_header  X-Real-IP $remote_addr;
 proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 proxy_set_header X-Forwarded-Proto $scheme;
 rewrite ^/api/(.*)$ /$1 break;
-proxy_pass http://127.0.0.1:8888; # 设置代理服务器的协议和地址
+proxy_pass http://127.0.0.1:8888;
 }
 ```
 ### Web service
@@ -47,7 +49,31 @@ proxy_pass http://127.0.0.1:8888; # 设置代理服务器的协议和地址
 
 ### Development
 
+``` 
+git clone https://github.com/madneal/gshark.git
 
+cd server
+
+go mod tidy
+
+mv config-temp.yaml config.yaml
+
+go build
+
+./gshark web
+
+cd ../web
+
+npm install
+
+npm run serve
+```
+
+If you want to set up the scan service, please run:
+
+```
+./gshark scan
+```
 
 
 ## Config
