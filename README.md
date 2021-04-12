@@ -76,37 +76,7 @@ If you want to set up the scan service, please run:
 ```
 
 
-## Config
 
-The configuration can be set according to `app-template.ini`. You should rename it to `app.ini` to config the project.
-
-```
-HTTP_HOST = 127.0.0.1
-HTTP_PORT = 8000
-MAX_INDEXERS = 2
-DEBUG_MODE = true
-REPO_PATH = repos
-MAX_Concurrency_REPOS = 5
-
-; server酱配置口令
-SCKEY =
-; gobuster file path
-gobuster_path =
-; gobuster subdomain wordlist file path
-subdomain_wordlist_file =
-
-[database]
-;support sqlite3, mysql, postgres
-DB_TYPE = sqlite
-HOST = 127.0.0.1
-PORT = 3306
-NAME = misec
-USER = root
-PASSWD = 
-SSL_MODE = disable
-;the path to store the database file of sqlite3
-PATH = 
-```
 
 ## Before Running
 
@@ -117,11 +87,9 @@ PATH =
 
 ## Run
 
-You should build the `main.go` file firstly with the command `go build main.go`.
-
 ```
 USAGE:
-   main [global options] command [command options] [arguments...]
+   gshark [global options] command [command options] [arguments...]
 
 COMMANDS:
      web      Startup a web Service
@@ -139,51 +107,15 @@ GLOBAL OPTIONS:
 
 ### Add Token
 
-To execute `main scan`, you need to add a Github token for crawl information in github. You can generate a token in [tokens](https://github.com/settings/tokens). Most access scopes are enough. For Gitlab search, remember to add token too.
+To execute `./gshark scan`, you need to add a Github token for crawl information in github. You can generate a token in [tokens](https://github.com/settings/tokens). Most access scopes are enough. For Gitlab search, remember to add token too.
 
 [![iR2TMt.md.png](https://s1.ax1x.com/2018/10/31/iR2TMt.md.png)](https://imgchr.com/i/iR2TMt)
 
-## Docker support(not suggested)
-
-Make sure rename `app-docker.ini` to `app.ini`.
-
-### Build 
-
-```
- docker build -t gshark-docker .      
-```
-
-### Run web
-
-`sqlite_database_folder` is the folder for the sqlite database folder, make sure create `gshark.db` file inside the folder.
-```
-docker run -e OPTION=web -p 8000:8000 -v sqlite_database_folder:/data/gshark gshark-docker
-```
-
-### Run Scan 
-
-```
-docker run -e OPTION=scan -v sqlite_database_folder:/data/gshark gshark-docker
-```
-
-### Add notification
-
-Now support notification by `server 酱`. Set the config of `SCKEY` in `app.ini` file.
-
 ## FAQ
 
-1. Access web service 403 forbidden
-
-Access to http://127.0.0.1/admin/login
-
-2. Default username and password
+1. Default username and password to login
 
 gshark/gshark
-
-3. `# github.com/mattn/go-sqlite3
-exec: "gcc": executable file not found in %PATH%`
-
-https://github.com/mattn/go-sqlite3/issues/435#issuecomment-314247676
 
 4. `go get ./... connection error`
 
@@ -196,9 +128,7 @@ go env -w GO111MODULE=on
 
 ## Reference
 
-* [x-patrol](https://github.com/MiSecurity/x-patrol)
-* [authz](https://github.com/go-macaron/authz)
-* [macaron](https://github.com/go-macaron/macaron)
+* [gin-vue-admin](https://github.com/flipped-aurora/gin-vue-admin)
 
 ## Wechat
 
