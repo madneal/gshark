@@ -3,7 +3,6 @@
 .idea
 *.exe
 *.exe*
-*.sh
 repos
 
 app.ini_bak
