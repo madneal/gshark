@@ -9,7 +9,7 @@
 The project is based on go with vue to build a management system for sensitive information detection. This is the total fresh version, you can refer the [old version](https://github.com/madneal/gshark/blob/gin/OLD_README.md) here.
 
 
-## Features
+# Features
 
 * Support multi platform, including Gitlab, Github, Searchcode
 * Flexible menu and API permission setting
@@ -17,11 +17,11 @@ The project is based on go with vue to build a management system for sensitive i
 * Utilize gobuster to brute force subdomain
 * Easily used management system
 
-## Quick start
+# Quick start
 
 ![GShark](https://user-images.githubusercontent.com/12164075/114326875-58e1da80-9b69-11eb-82a5-b2e3751a2304.png)
 
-### Deployment
+## Deployment
 
 For the deployment, it's suggested to install nginx. Place the `dist` folder under `html`, modify the `nginx.conf` to reverse proxy the backend service.
 
@@ -50,7 +50,9 @@ The deployment work is very easy. Find the corresponding binary zip file from [r
 ./gshark scan
 ```
 
-### Development
+## Development
+
+### Server side
 
 ``` 
 git clone https://github.com/madneal/gshark.git
@@ -64,12 +66,6 @@ mv config-temp.yaml config.yaml
 go build
 
 ./gshark web
-
-cd ../web
-
-npm install
-
-npm run serve
 ```
 
 If you want to set up the scan service, please run:
@@ -80,13 +76,15 @@ If you want to set up the scan service, please run:
 
 
 
+### Web side
 
-## Before Running
+```
+cd ../web
 
-* Make sure you have installed dependencies, suggest to use go mod
-* Make sure the `app.ini` in config folder, you can rename `app-template.ini` to `app.ini`
-* Make sure that you have config and set database correctly, make sure create the corresponding database when using mysqp or postgresql
-* Make sure that you have config corresponding tokens for Github or Gitlab
+npm install
+
+npm run serve
+```
 
 ## Run
 
