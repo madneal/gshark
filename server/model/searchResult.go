@@ -11,7 +11,7 @@ import (
 // 如果含有time.Time 请自行import time包
 type SearchResult struct {
 	global.GVA_MODEL
-	Repo            string         `json:"repo" form:"repo" gorm:"column:repo;comment:;type:varchar(50);size:50;"`
+	Repo            string         `json:"repo" form:"repo" gorm:"column:repo;comment:;type:varchar(200);size:200;"`
 	RepoUrl         string         `gorm:"column:repository;type:varchar(200);"`
 	Matches         string         `json:"matches" form:"matches" gorm:"column:matches;comment:;type:text;"`
 	Keyword         string         `json:"keyword" form:"keyword" gorm:"column:keyword;comment:;type:varchar(100);size:100;"`
