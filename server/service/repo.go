@@ -78,3 +78,7 @@ func GetRepoInfoList(info request.RepoSearch) (err error, list interface{}, tota
 	err = db.Limit(limit).Offset(offset).Find(&repos).Error
 	return err, repos, total
 }
+
+//func GetRepoByType(typeStr string) (err error, repos []model.Repo) {
+//
+//}
