@@ -11,7 +11,7 @@ mkdir gshark_darwin_amd64
 cd gshark_darwin_amd64
 mv ../../server/gshark .
 cp -rf ../../server/resource .
-cp ../../server/config.yaml .
+cp ../../server/config-temp.yaml config.yaml
 cd ../../
 cp -rf ./web/dist ./releases/gshark_darwin_amd64
 7z a -r ./releases/gshark_darwin_amd64.zip ./releases/gshark_darwin_amd64/
@@ -24,7 +24,7 @@ mkdir gshark_windows_amd64
 cd gshark_windows_amd64
 mv ../../server/gshark.exe .
 cp -rf ../../server/resource .
-cp ../../server/config.yaml .
+cp ../../server/config-temp.yaml config.yaml
 cd ../../
 cp -rf ./web/dist ./releases/gshark_windows_amd64
 7z a -r ./releases/gshark_windows_amd64.zip ./releases/gshark_windows_amd64/
@@ -37,7 +37,7 @@ mkdir gshark_linux_amd64
 cd gshark_linux_amd64
 mv ../../server/gshark .
 cp -rf ../../server/resource .
-cp ../../server/config.yaml .
+cp ../../server/config-temp.yaml config.yaml
 cd ../../
 cp -rf ./web/dist ./releases/gshark_linux_amd64
 7z a -r ./releases/gshark_linux_amd64.zip ./releases/gshark_linux_amd64
