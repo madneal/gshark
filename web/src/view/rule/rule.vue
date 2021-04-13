@@ -4,16 +4,22 @@
       <el-form :inline="true" :model="searchInfo" class="demo-form-inline">
         <el-form-item label="规则类型">
           <el-input placeholder="搜索条件" v-model="searchInfo.type"></el-input>
-        </el-form-item>    
+        </el-form-item>
         <el-form-item label="规则内容">
-          <el-input placeholder="搜索条件" v-model="searchInfo.content"></el-input>
-        </el-form-item>    
+          <el-input
+            placeholder="搜索条件"
+            v-model="searchInfo.content"
+          ></el-input>
+        </el-form-item>
         <el-form-item label="规则名称">
           <el-input placeholder="搜索条件" v-model="searchInfo.name"></el-input>
-        </el-form-item>      
+        </el-form-item>
         <el-form-item label="状态">
-          <el-input placeholder="搜索条件" v-model="searchInfo.status"></el-input>
-        </el-form-item>    
+          <el-input
+            placeholder="搜索条件"
+            v-model="searchInfo.status"
+          ></el-input>
+        </el-form-item>
         <el-form-item>
           <el-button @click="onSubmit" type="primary">查询</el-button>
         </el-form-item>
@@ -23,11 +29,21 @@
         <el-form-item>
           <el-popover placement="top" v-model="deleteVisible" width="160">
             <p>确定要删除吗？</p>
-              <div style="text-align: right; margin: 0">
-                <el-button @click="deleteVisible = false" size="mini" type="text">取消</el-button>
-                <el-button @click="onDelete" size="mini" type="primary">确定</el-button>
-              </div>
-            <el-button icon="el-icon-delete" size="mini" slot="reference" type="danger">批量删除</el-button>
+            <div style="text-align: right; margin: 0">
+              <el-button @click="deleteVisible = false" size="mini" type="text"
+                >取消</el-button
+              >
+              <el-button @click="onDelete" size="mini" type="primary"
+                >确定</el-button
+              >
+            </div>
+            <el-button
+              icon="el-icon-delete"
+              size="mini"
+              slot="reference"
+              type="danger"
+              >批量删除</el-button
+            >
           </el-popover>
         </el-form-item>
       </el-form>
@@ -41,29 +57,60 @@
       style="width: 100%"
       tooltip-effect="dark"
     >
-    <el-table-column type="selection" width="55"></el-table-column>
-    <el-table-column label="日期" width="180">
-         <template slot-scope="scope">{{scope.row.CreatedAt|formatDate}}</template>
-    </el-table-column>
-    
-    <el-table-column label="规则类型" prop="type" width="120"></el-table-column> 
-    
-    <el-table-column label="规则内容" prop="content" width="120"></el-table-column> 
-    
-    <el-table-column label="规则名称" prop="name" width="120"></el-table-column> 
-    
-    <el-table-column label="规则描述" prop="desc" width="120"></el-table-column> 
-    
-    <el-table-column label="状态" prop="status" width="120">
-      <template slot-scope="scope">
-        {{scope.row.status|formatStatus}}
-      </template>
-      </el-table-column> 
-    
+      <el-table-column type="selection" width="55"></el-table-column>
+      <el-table-column label="日期" width="180">
+        <template slot-scope="scope">{{
+          scope.row.CreatedAt | formatDate
+        }}</template>
+      </el-table-column>
+
+      <el-table-column
+        label="规则类型"
+        prop="type"
+        width="120"
+      ></el-table-column>
+
+      <el-table-column
+        label="规则内容"
+        prop="content"
+        width="120"
+      ></el-table-column>
+
+      <el-table-column
+        label="规则名称"
+        prop="name"
+        width="120"
+      ></el-table-column>
+
+      <el-table-column
+        label="规则描述"
+        prop="desc"
+        width="120"
+      ></el-table-column>
+
+      <el-table-column label="状态" prop="status" width="120">
+        <template slot-scope="scope">
+          {{ scope.row.status | formatStatus }}
+        </template>
+      </el-table-column>
+
       <el-table-column label="按钮组">
         <template slot-scope="scope">
-          <el-button class="table-button" @click="updateRule(scope.row)" size="small" type="primary" icon="el-icon-edit">变更</el-button>
-          <el-button type="danger" icon="el-icon-delete" size="mini" @click="deleteRow(scope.row)">删除</el-button>
+          <el-button
+            class="table-button"
+            @click="updateRule(scope.row)"
+            size="small"
+            type="primary"
+            icon="el-icon-edit"
+            >变更</el-button
+          >
+          <el-button
+            type="danger"
+            icon="el-icon-delete"
+            size="mini"
+            @click="deleteRow(scope.row)"
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
@@ -72,45 +119,66 @@
       :current-page="page"
       :page-size="pageSize"
       :page-sizes="[10, 30, 50, 100]"
-      :style="{float:'right',padding:'20px'}"
+      :style="{ float: 'right', padding: '20px' }"
       :total="total"
       @current-change="handleCurrentChange"
       @size-change="handleSizeChange"
       layout="total, sizes, prev, pager, next, jumper"
     ></el-pagination>
 
-    <el-dialog :before-close="closeDialog" :visible.sync="dialogFormVisible" title="弹窗操作">
+    <el-dialog
+      :before-close="closeDialog"
+      :visible.sync="dialogFormVisible"
+      title="弹窗操作"
+    >
       <el-form :model="formData" label-position="right" label-width="80px">
-         <el-form-item label="规则类型:">
-            <el-input v-model="formData.type" clearable placeholder="请输入" ></el-input>
-      </el-form-item>
-       
-         <el-form-item label="规则内容:">
-            <el-input v-model="formData.content" clearable placeholder="请输入" ></el-input>
-      </el-form-item>
-       
-         <el-form-item label="规则名称:">
-            <el-input v-model="formData.name" clearable placeholder="请输入" ></el-input>
-      </el-form-item>
-       
-         <el-form-item label="规则描述:">
-            <el-input v-model="formData.desc" clearable placeholder="请输入" ></el-input>
-      </el-form-item>
-       
-         <el-form-item label="状态:">
-                   <el-select
-          placeholder="请选择"
-          v-model="formData.status"
-        >
-          <el-option
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-            v-for="item in statusOptions"
-          ></el-option>
-        </el-select>
-      </el-form-item>
-       </el-form>
+        <el-form-item label="规则类型:">
+          <!-- <el-input v-model="formData.type" clearable placeholder="请输入" ></el-input> -->
+          <el-select v-model="formData.type">
+            <el-option
+              v-for="item in typeOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="规则内容:">
+          <el-input
+            v-model="formData.content"
+            clearable
+            placeholder="请输入"
+          ></el-input>
+        </el-form-item>
+
+        <el-form-item label="规则名称:">
+          <el-input
+            v-model="formData.name"
+            clearable
+            placeholder="请输入"
+          ></el-input>
+        </el-form-item>
+
+        <el-form-item label="规则描述:">
+          <el-input
+            v-model="formData.desc"
+            clearable
+            placeholder="请输入"
+          ></el-input>
+        </el-form-item>
+
+        <el-form-item label="状态:">
+          <el-select placeholder="请选择" v-model="formData.status">
+            <el-option
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+              v-for="item in statusOptions"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
       <div class="dialog-footer" slot="footer">
         <el-button @click="closeDialog">取 消</el-button>
         <el-button @click="enterDialog" type="primary">确 定</el-button>
@@ -149,13 +217,28 @@ export default {
       },
       statusOptions: [
         {
-          label: 'disabled',
-          value: 0
-        }, {
-          label: 'enabled',
-          value: 1
+          label: "disabled",
+          value: 0,
+        },
+        {
+          label: "enabled",
+          value: 1,
+        },
+      ],
+      typeOptions: [
+        {
+          label: "github",
+          value: "github",
+        },
+        {
+          label: "gitlab",
+          value: "gitlab",
+        },
+        {
+          label: "searchcode",
+          value: "searchcode"
         }
-      ]
+      ],
     };
   },
   filters: {

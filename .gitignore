@@ -1,5 +1,6 @@
 # Created by .ignore support plugin (hsz.mobi)
 /server/gshark
+/server/go.sum
 .idea
 *.exe
 *.exe*
