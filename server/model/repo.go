@@ -3,6 +3,7 @@ package model
 
 import (
 	"github.com/madneal/gshark/global"
+      "time"
 )
 
 // 如果含有time.Time 请自行import time包
