@@ -92,6 +92,6 @@ func GetRuleInfoList(info request.RuleSearch) (err error, list interface{}, tota
 }
 
 func GetValidRulesByType(typeStr string) (err error, list []model.Rule) {
-	err = global.GVA_DB.Where("type = ?", typeStr).Find(&list).Error
+	err = global.GVA_DB.Where("type = ? and status = 1", typeStr).Find(&list).Error
 	return err, list
 }
