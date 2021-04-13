@@ -154,9 +154,9 @@ func SaveResult(results []*model.SearchResult, keyword *string) {
 //	return flag
 //}
 //
-//func ListValidProjects() []model.InputInfo {
-//	validProjects := make([]model.InputInfo, 0)
-//	projects, err := models.ListInputInfoByType(vars.GITLAB)
+//func ListValidProjects() []model.Repo {
+//	validProjects := make([]model.Repo, 0)
+//	projects, err := service.GetRepoInfoList()
 //	if err != nil {
 //		logger.Log.Error(err)
 //	}
@@ -171,15 +171,15 @@ func SaveResult(results []*model.SearchResult, keyword *string) {
 //}
 
 func GetClient() *gitlab.Client {
-	tokens, err := service.ListValidTokens("gitlab")
+	err, tokens := service.ListTokenByType("")
+	if len(tokens) == 0 {
+		return nil
+	}
+	client, err := gitlab.NewClient(tokens[0].Content)
 	if err != nil {
 		//logger.Log.Error(err)
 	}
-	if len(tokens) == 0 {
-		//logger.Log.Warn("There is no valid gitlab token")
-		return nil
-	}
-	return gitlab.NewClient(nil, tokens[0].Token)
+	return client
 }
 
 //// GetProjects is utilized to obtain public projects from gitlab
