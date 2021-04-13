@@ -15,7 +15,6 @@
       <div class="main">
         <el-form
           :model="loginForm"
-          :rules="rules"
           ref="loginForm"
           @keyup.enter.native="submitForm"
         >
@@ -95,6 +94,10 @@ export default {
       return await this.LoginIn(this.loginForm);
     },
     async submitForm() {
+      // const flag = await this.login();
+      // if (!flag) {
+      //   this.loginVefify();
+      // }
       this.$refs.loginForm.validate(async (v) => {
         if (v) {
           const flag = await this.login();
