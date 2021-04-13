@@ -5,12 +5,11 @@ import (
 	"github.com/madneal/gshark/model"
 	"github.com/madneal/gshark/service"
 	"github.com/xanzy/go-gitlab"
-	"sync"
 	"time"
 )
 
 func RunTask(duration time.Duration) {
-	RunSearchTask(GenerateSearchCodeTask())
+	//RunSearchTask(GenerateSearchCodeTask())
 
 	//logger.Log.Infof("Complete the scan of Gitlab, start to sleep %v seconds", duration*time.Second)
 	time.Sleep(duration * time.Second)
@@ -24,54 +23,54 @@ func GenerateSearchCodeTask() (map[int][]model.Rule, error) {
 	batch := ruleNum / global.GVA_CONFIG.Search.SearchNum
 
 	for i := 0; i < batch; i++ {
-		result[i] = rules[ global.GVA_CONFIG.Search.SearchNum*i :  global.GVA_CONFIG.Search.SearchNum*(i+1)]
+		result[i] = rules[global.GVA_CONFIG.Search.SearchNum*i : global.GVA_CONFIG.Search.SearchNum*(i+1)]
 	}
 
-	if ruleNum% global.GVA_CONFIG.Search.SearchNum != 0 {
-		result[batch] = rules[ global.GVA_CONFIG.Search.SearchNum*batch : ruleNum]
+	if ruleNum%global.GVA_CONFIG.Search.SearchNum != 0 {
+		result[batch] = rules[global.GVA_CONFIG.Search.SearchNum*batch : ruleNum]
 	}
 	return result, err
 }
 
-func RunSearchTask(mapRules map[int][]model.Rule, err error) {
-	client := GetClient()
-	if client == nil {
-		return
-	}
-	// get all public projects
-	GetProjects(client)
-	if err == nil {
-		for _, rules := range mapRules {
-			startTime := time.Now()
-			Search(rules, client)
-			usedTime := time.Since(startTime).Seconds()
-			if usedTime < 60 {
-				time.Sleep(time.Duration(60 - usedTime))
-			}
-		}
-	}
-}
+//func RunSearchTask(mapRules map[int][]model.Rule, err error) {
+//	client := GetClient()
+//	if client == nil {
+//		return
+//	}
+//	// get all public projects
+//	GetProjects(client)
+//	if err == nil {
+//		for _, rules := range mapRules {
+//			startTime := time.Now()
+//			Search(rules, client)
+//			usedTime := time.Since(startTime).Seconds()
+//			if usedTime < 60 {
+//				time.Sleep(time.Duration(60 - usedTime))
+//			}
+//		}
+//	}
+//}
 
-func Search(rules []model.Rule, client *gitlab.Client) {
-	var wg sync.WaitGroup
-	wg.Add(len(rules))
+//func Search(rules []model.Rule, client *gitlab.Client) {
+//	var wg sync.WaitGroup
+//	wg.Add(len(rules))
+//
+//	for _, rule := range rules {
+//		go func(rule model.Rule) {
+//			defer wg.Done()
+//			SearchInsideProjects(rule.Content, client)
+//		}(rule)
+//	}
+//	wg.Wait()
+//}
 
-	for _, rule := range rules {
-		go func(rule model.Rule) {
-			defer wg.Done()
-			SearchInsideProjects(rule.Content, client)
-		}(rule)
-	}
-	wg.Wait()
-}
-
-func SearchInsideProjects(keyword string, client *gitlab.Client) {
-	projects := ListValidProjects()
-	for _, project := range projects {
-		results := SearchCode(keyword, project, client)
-		SaveResult(results, &keyword)
-	}
-}
+//func SearchInsideProjects(keyword string, client *gitlab.Client) {
+//	projects := ListValidProjects()
+//	for _, project := range projects {
+//		results := SearchCode(keyword, project, client)
+//		SaveResult(results, &keyword)
+//	}
+//}
 
 func SaveResult(results []*model.SearchResult, keyword *string) {
 	insertCount := 0
@@ -92,7 +91,6 @@ func SaveResult(results []*model.SearchResult, keyword *string) {
 		//logger.Log.Infof("Has inserted %d results into code_result", insertCount)
 	}
 }
-
 
 //func SearchCode(keyword string, project models.InputInfo, client *gitlab.Client) []*model.SearchResult {
 //	codeResults := make([]*model.SearchResult, 0)
@@ -237,4 +235,4 @@ func GetClient() *gitlab.Client {
 //		opt.Page = resp.NextPage
 //	}
 //	logger.Log.Infof("Has found %d projects", projectNum)
-}
+//}
