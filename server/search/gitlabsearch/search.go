@@ -1,15 +1,19 @@
 package gitlabsearch
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/model"
 	"github.com/madneal/gshark/service"
 	"github.com/xanzy/go-gitlab"
+	"go.uber.org/zap"
+	"sync"
 	"time"
 )
 
 func RunTask(duration time.Duration) {
-	//RunSearchTask(GenerateSearchCodeTask())
+	RunSearchTask(GenerateSearchCodeTask())
 
 	//logger.Log.Infof("Complete the scan of Gitlab, start to sleep %v seconds", duration*time.Second)
 	time.Sleep(duration * time.Second)
@@ -32,45 +36,48 @@ func GenerateSearchCodeTask() (map[int][]model.Rule, error) {
 	return result, err
 }
 
-//func RunSearchTask(mapRules map[int][]model.Rule, err error) {
-//	client := GetClient()
-//	if client == nil {
-//		return
-//	}
-//	// get all public projects
-//	GetProjects(client)
-//	if err == nil {
-//		for _, rules := range mapRules {
-//			startTime := time.Now()
-//			Search(rules, client)
-//			usedTime := time.Since(startTime).Seconds()
-//			if usedTime < 60 {
-//				time.Sleep(time.Duration(60 - usedTime))
-//			}
-//		}
-//	}
-//}
+func RunSearchTask(mapRules map[int][]model.Rule, err error) {
+	client := GetClient()
+	if client == nil {
+		return
+	}
+	// get all public projects
+	GetProjects(client)
+	if err == nil {
+		for _, rules := range mapRules {
+			startTime := time.Now()
+			Search(rules, client)
+			usedTime := time.Since(startTime).Seconds()
+			if usedTime < 60 {
+				time.Sleep(time.Duration(60 - usedTime))
+			}
+		}
+	}
+}
 
-//func Search(rules []model.Rule, client *gitlab.Client) {
-//	var wg sync.WaitGroup
-//	wg.Add(len(rules))
-//
-//	for _, rule := range rules {
-//		go func(rule model.Rule) {
-//			defer wg.Done()
-//			SearchInsideProjects(rule.Content, client)
-//		}(rule)
-//	}
-//	wg.Wait()
-//}
+func Search(rules []model.Rule, client *gitlab.Client) {
+	var wg sync.WaitGroup
+	wg.Add(len(rules))
 
-//func SearchInsideProjects(keyword string, client *gitlab.Client) {
-//	projects := ListValidProjects()
-//	for _, project := range projects {
-//		results := SearchCode(keyword, project, client)
-//		SaveResult(results, &keyword)
-//	}
-//}
+	for _, rule := range rules {
+		go func(rule model.Rule) {
+			defer wg.Done()
+			SearchInsideProjects(rule.Content, client)
+		}(rule)
+	}
+	wg.Wait()
+}
+
+func SearchInsideProjects(keyword string, client *gitlab.Client) {
+	err, projects := service.GetRepoByType("gitlab")
+	if err != nil {
+		global.GVA_LOG.Error("list projects error", zap.Any("err", err))
+	}
+	for _, project := range projects {
+		results := SearchCode(keyword, project, client)
+		SaveResult(results, &keyword)
+	}
+}
 
 func SaveResult(results []*model.SearchResult, keyword *string) {
 	insertCount := 0
@@ -92,54 +99,57 @@ func SaveResult(results []*model.SearchResult, keyword *string) {
 	}
 }
 
-//func SearchCode(keyword string, project models.InputInfo, client *gitlab.Client) []*model.SearchResult {
-//	codeResults := make([]*model.SearchResult, 0)
-//	//queryString := BuildQueryString(keyword, "ext")
-//	//logger.Log.Infof("Search inside project %s", project.Url)
-//	results, resp, err := client.Search.BlobsByProject(project.ProjectId, queryString, &gitlab.SearchOptions{})
-//	if err != nil {
-//		//logger.Log.Error(err)
-//	}
-//	if resp.StatusCode != 200 {
-//		fmt.Printf("request error for projectId-%d: %d\n", project.ProjectId, resp.StatusCode)
-//		if resp.StatusCode == 404 {
-//			err = project.DeleteByProjectId()
-//			if err != nil {
-//				logger.Log.Error(err)
-//			}
-//		}
-//		return codeResults
-//	}
-//	for _, result := range results {
-//		url := project.Url + "/blob/master/" + result.Filename
-//		textMatches := make([]models.TextMatch, 0)
-//		textMatch := models.TextMatch{
-//			Fragment: &result.Data,
-//		}
-//		textMatches = append(textMatches, textMatch)
-//		codeResult := models.CodeResult{
-//			Id:          0,
-//			Name:        &result.Filename,
-//			Path:        &result.Basename,
-//			RepoName:    result.Basename,
-//			HTMLURL:     &url,
-//			TextMatches: textMatches,
-//			Status:      0,
-//			Keyword:     &keyword,
-//		}
-//		if !mergeTextMatches(codeResults, result.Filename, textMatch) {
-//			codeResults = append(codeResults, &codeResult)
-//		}
-//	}
-//	err = models.UpdateStatusById(1, project.ProjectId)
-//	if err != nil {
-//		//logger.Log.Error(err)
-//	}
-//	return codeResults
-//}
-//
-//// mergeTextMatches is utilized to merge multi textMatches in the same file
-//// return: if has merged
+func SearchCode(keyword string, project model.Repo, client *gitlab.Client) []*model.SearchResult {
+	codeResults := make([]*model.SearchResult, 0)
+	//queryString := BuildQueryString(keyword, "ext")
+	//logger.Log.Infof("Search inside project %s", project.Url)
+	results, resp, err := client.Search.BlobsByProject(project.ProjectId, keyword, &gitlab.SearchOptions{})
+	if err != nil {
+		//logger.Log.Error(err)
+	}
+	if resp != nil && resp.StatusCode != 200 {
+		fmt.Printf("request error for projectId-%d: %d\n", project.ProjectId, resp.StatusCode)
+		//if resp.StatusCode == 404 {
+		//	err = project.DeleteByProjectId()
+		//	if err != nil {
+		//		//logger.Log.Error(err)
+		//	}
+		//}
+		return codeResults
+	}
+	for _, result := range results {
+		url := project.Url + "/blob/master/" + result.Filename
+		textMatches := make([]model.TextMatch, 0)
+		textMatch := model.TextMatch{
+			Fragment: &result.Data,
+		}
+		textMatches = append(textMatches, textMatch)
+		b, err := json.Marshal(textMatches)
+		if err != nil {
+			global.GVA_LOG.Error("json marshal error", zap.Error(err))
+		}
+		codeResult := model.SearchResult{
+			Path:            result.Filename,
+			Repo:            result.Basename,
+			Url:             url,
+			TextMatchesJson: b,
+			Status:          0,
+			Keyword:         keyword,
+		}
+		//if !mergeTextMatches(codeResults, result.Filename, textMatch) {
+		codeResults = append(codeResults, &codeResult)
+		//}
+
+	}
+	//err = models.UpdateStatusById(1, project.ProjectId)
+	if err != nil {
+		//logger.Log.Error(err)
+	}
+	return codeResults
+}
+
+// mergeTextMatches is utilized to merge multi textMatches in the same file
+// return: if has merged
 //func mergeTextMatches(codeResults []*model.SearchResult, filename string, textMatch models.TextMatch) bool {
 //	flag := false
 //	for index, result := range codeResults {
@@ -151,22 +161,23 @@ func SaveResult(results []*model.SearchResult, keyword *string) {
 //	}
 //	return flag
 //}
-//
-//func ListValidProjects() []model.Repo {
-//	validProjects := make([]model.Repo, 0)
-//	projects, err := service.GetRepoInfoList()
-//	if err != nil {
-//		logger.Log.Error(err)
-//	}
-//	for _, p := range projects {
-//		// if the project has been searched
-//		//if p.Status == 1 {
-//		//	continue
-//		//}
-//		validProjects = append(validProjects, p)
-//	}
-//	return validProjects
-//}
+
+func ListValidProjects() []model.Repo {
+	validProjects := make([]model.Repo, 0)
+	err, projects := service.GetRepoByType("gitlab")
+	if err != nil {
+		//logger.Log.Error(err)
+		global.GVA_LOG.Error("list projects error", zap.Error(err))
+	}
+	for _, p := range projects {
+		// if the project has been searched
+		//if p.Status == 1 {
+		//	continue
+		//}
+		validProjects = append(validProjects, p)
+	}
+	return validProjects
+}
 
 func GetClient() *gitlab.Client {
 	err, tokens := service.ListTokenByType("")
@@ -180,59 +191,57 @@ func GetClient() *gitlab.Client {
 	return client
 }
 
-//// GetProjects is utilized to obtain public projects from gitlab
-//func GetProjects(client *gitlab.Client) {
-//	opt := &gitlab.ListProjectsOptions{
-//		ListOptions: gitlab.ListOptions{
-//			PerPage: 100,
-//			Page:    1,
-//		},
-//	}
-//	projectNum := 0
-//	for {
-//		// Get the first page with projects.
-//		ps, resp, err := client.Projects.ListProjects(opt)
-//		if err != nil {
-//			fmt.Println(err)
-//			break
-//		}
-//
-//		// List all the projects we've found so far.
-//		for _, p := range ps {
-//			inputInfo := models.InputInfo{
-//				Url:         p.WebURL,
-//				Path:        p.PathWithNamespace,
-//				Type:        vars.GITLAB,
-//				ProjectId:   p.ID,
-//				Status:      2,
-//				CreatedTime: time.Now(),
-//				UpdatedTime: time.Now(),
-//			}
-//			has, err := inputInfo.Exist()
-//			if err != nil {
-//				fmt.Println(err)
-//			}
-//			if !has {
-//				//logger.Log.Infof("Insert project %s", p.WebURL)
-//				_, err := inputInfo.Insert()
-//				if err != nil {
-//					logger.Log.Error(err)
-//				}
-//				projectNum++
-//			}
-//		}
-//
-//		if resp.NextPage == 0 {
-//			fmt.Println("next page is 0")
-//			break
-//		}
-//
-//		if resp.StatusCode != 200 {
-//			fmt.Printf("request error: %d", resp.StatusCode)
-//			break
-//		}
-//
-//		opt.Page = resp.NextPage
-//	}
-//	logger.Log.Infof("Has found %d projects", projectNum)
-//}
+// GetProjects is utilized to obtain public projects from gitlab
+func GetProjects(client *gitlab.Client) {
+	opt := &gitlab.ListProjectsOptions{
+		ListOptions: gitlab.ListOptions{
+			PerPage: 100,
+			Page:    1,
+		},
+	}
+	projectNum := 0
+	for {
+		// Get the first page with projects.
+		ps, resp, err := client.Projects.ListProjects(opt)
+		if err != nil {
+			fmt.Println(err)
+			break
+		}
+
+		// List all the projects we've found so far.
+		for _, p := range ps {
+			repo := model.Repo{
+				Url:       p.WebURL,
+				Path:      p.PathWithNamespace,
+				Type:      "gitlab",
+				ProjectId: p.ID,
+				Status:    2,
+			}
+			err, has := service.CheckRepoExist(repo)
+			if err != nil {
+				fmt.Println(err)
+			}
+			if !has {
+				//logger.Log.Infof("Insert project %s", p.WebURL)
+				err := service.CreateRepo(repo)
+				if err != nil {
+					//logger.Log.Error(err)
+				}
+				projectNum++
+			}
+		}
+
+		if resp.NextPage == 0 {
+			fmt.Println("next page is 0")
+			break
+		}
+
+		if resp.StatusCode != 200 {
+			fmt.Printf("request error: %d", resp.StatusCode)
+			break
+		}
+
+		opt.Page = resp.NextPage
+	}
+	//logger.Log.Infof("Has found %d projects", projectNum)
+}
