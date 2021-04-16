@@ -2,6 +2,8 @@ package search
 
 import (
 	"github.com/madneal/gshark/search/codesearch"
+	"github.com/madneal/gshark/search/gitlabsearch"
+
 	//"github.com/madneal/gshark/search/codesearch"
 	"github.com/madneal/gshark/search/githubsearch"
 	"github.com/madneal/gshark/search/gobuster"
@@ -31,20 +33,20 @@ func Scan(ctx *cli.Context) error {
 		for {
 			githubsearch.RunTask(Interval)
 		}
-	//case "searchcode":
-	//	for {
-	//		codesearch.RunTask(Interval)
-	//	}
-	//case "gitlab":
-	//	for {
-	//		gitlabsearch.RunTask(Interval)
-	//	}
-	//case "all":
-	//	for {
-	//		gitlabsearch.RunTask(Interval)
-	//		codesearch.RunTask(Interval)
-	//		githubsearch.RunTask(Interval)
-	//	}
+	case "searchcode":
+		for {
+			codesearch.RunTask(Interval)
+		}
+	case "gitlab":
+		for {
+			gitlabsearch.RunTask(Interval)
+		}
+	case "all":
+		for {
+			gitlabsearch.RunTask(Interval)
+			codesearch.RunTask(Interval)
+			githubsearch.RunTask(Interval)
+		}
 	default:
 		for {
 			githubsearch.RunTask(Interval)
