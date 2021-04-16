@@ -2,12 +2,15 @@ package gitlabsearch
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/model"
 	"github.com/madneal/gshark/service"
 	"github.com/xanzy/go-gitlab"
 	"go.uber.org/zap"
+	"gorm.io/gorm"
+	"strings"
 	"sync"
 	"time"
 )
@@ -180,7 +183,7 @@ func ListValidProjects() []model.Repo {
 }
 
 func GetClient() *gitlab.Client {
-	err, tokens := service.ListTokenByType("")
+	err, tokens := service.ListTokenByType("gitlab")
 	if len(tokens) == 0 {
 		return nil
 	}
@@ -193,11 +196,15 @@ func GetClient() *gitlab.Client {
 
 // GetProjects is utilized to obtain public projects from gitlab
 func GetProjects(client *gitlab.Client) {
+	isSimple := true
+	date := time.Now().AddDate(0, -1, 0)
 	opt := &gitlab.ListProjectsOptions{
 		ListOptions: gitlab.ListOptions{
 			PerPage: 100,
 			Page:    1,
 		},
+		Simple:            &isSimple,
+		LastActivityAfter: &date,
 	}
 	projectNum := 0
 	for {
@@ -210,22 +217,29 @@ func GetProjects(client *gitlab.Client) {
 
 		// List all the projects we've found so far.
 		for _, p := range ps {
-			repo := model.Repo{
-				Url:       p.WebURL,
-				Path:      p.PathWithNamespace,
-				Type:      "gitlab",
-				ProjectId: p.ID,
-				Status:    2,
+			if strings.HasPrefix(p.PathWithNamespace, "gitlab") {
+				continue
 			}
-			err, has := service.CheckRepoExist(repo)
-			if err != nil {
-				fmt.Println(err)
+			repo := model.Repo{
+				Url:            p.WebURL,
+				Path:           p.PathWithNamespace,
+				Type:           "gitlab",
+				ProjectId:      p.ID,
+				Status:         0,
+				LastActivityAt: *(p.LastActivityAt),
+			}
+			fmt.Println(repo.Path)
+			//fmt.Println(p.)
+			err, has := service.CheckRepoExist(&repo)
+			if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+				global.GVA_LOG.Error("CheckRepoExist error", zap.Error(err))
 			}
 			if !has {
 				//logger.Log.Infof("Insert project %s", p.WebURL)
 				err := service.CreateRepo(repo)
 				if err != nil {
 					//logger.Log.Error(err)
+					global.GVA_LOG.Error("creareRepo error", zap.Error(err))
 				}
 				projectNum++
 			}
