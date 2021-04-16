@@ -32,3 +32,9 @@ func TestListValidProjects(t *testing.T) {
 	projects := ListValidProjects()
 	assert.Equal(t, true, len(*projects) > 0, "there is should one more project")
 }
+
+func TestSearchInsideProjects(t *testing.T) {
+	initialDataBase()
+	client := GetClient()
+	SearchInsideProjects("spdb", client)
+}
