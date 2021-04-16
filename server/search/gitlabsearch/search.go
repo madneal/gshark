@@ -189,7 +189,7 @@ func GetClient() *gitlab.Client {
 	}
 	client, err := gitlab.NewClient(tokens[0].Content)
 	if err != nil {
-		//logger.Log.Error(err)
+		global.GVA_LOG.Error("getClient error", zap.Error(err))
 	}
 	return client
 }
@@ -229,16 +229,13 @@ func GetProjects(client *gitlab.Client) {
 				LastActivityAt: *(p.LastActivityAt),
 			}
 			fmt.Println(repo.Path)
-			//fmt.Println(p.)
 			err, has := service.CheckRepoExist(&repo)
 			if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 				global.GVA_LOG.Error("CheckRepoExist error", zap.Error(err))
 			}
 			if !has {
-				//logger.Log.Infof("Insert project %s", p.WebURL)
 				err := service.CreateRepo(repo)
 				if err != nil {
-					//logger.Log.Error(err)
 					global.GVA_LOG.Error("creareRepo error", zap.Error(err))
 				}
 				projectNum++
@@ -257,5 +254,5 @@ func GetProjects(client *gitlab.Client) {
 
 		opt.Page = resp.NextPage
 	}
-	//logger.Log.Infof("Has found %d projects", projectNum)
+	global.GVA_LOG.Info(fmt.Sprintf("Has inserted %d projects", projectNum))
 }
