@@ -87,8 +87,8 @@ func GetRepoByType(typeStr string) (err error, repos []model.Repo) {
 	return err, repos
 }
 
-func CheckRepoExist(repo model.Repo) (err error, result bool) {
-	r := global.GVA_DB.First(repo)
+func CheckRepoExist(repo *model.Repo) (err error, result bool) {
+	r := global.GVA_DB.Where("project_id = ?", repo.ProjectId).First(repo)
 	err = r.Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return err, false
