@@ -26,3 +26,9 @@ func TestGetProjects(t *testing.T) {
 	client := GetClient()
 	GetProjects(client)
 }
+
+func TestListValidProjects(t *testing.T) {
+	initialDataBase()
+	projects := ListValidProjects()
+	assert.Equal(t, true, len(*projects) > 0, "there is should one more project")
+}

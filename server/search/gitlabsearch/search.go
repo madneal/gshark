@@ -165,21 +165,20 @@ func SearchCode(keyword string, project model.Repo, client *gitlab.Client) []*mo
 //	return flag
 //}
 
-func ListValidProjects() []model.Repo {
+func ListValidProjects() *[]model.Repo {
 	validProjects := make([]model.Repo, 0)
 	err, projects := service.GetRepoByType("gitlab")
 	if err != nil {
-		//logger.Log.Error(err)
 		global.GVA_LOG.Error("list projects error", zap.Error(err))
 	}
 	for _, p := range projects {
 		// if the project has been searched
-		//if p.Status == 1 {
-		//	continue
-		//}
+		if p.Status == 1 {
+			continue
+		}
 		validProjects = append(validProjects, p)
 	}
-	return validProjects
+	return &validProjects
 }
 
 func GetClient() *gitlab.Client {
