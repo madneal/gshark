@@ -17,8 +17,7 @@ import (
 
 func RunTask(duration time.Duration) {
 	RunSearchTask(GenerateSearchCodeTask())
-
-	//logger.Log.Infof("Complete the scan of Gitlab, start to sleep %v seconds", duration*time.Second)
+	global.GVA_LOG.Info(fmt.Sprintf("Complete the scan of Gitlab, start to sleep %d seconds", duration))
 	time.Sleep(duration * time.Second)
 }
 
@@ -98,26 +97,20 @@ func SaveResult(results []*model.SearchResult, keyword *string) {
 			}
 
 		}
-		//logger.Log.Infof("Has inserted %d results into code_result", insertCount)
+		global.GVA_LOG.Info(fmt.Sprintf("Has inserted %d results", insertCount))
 	}
 }
 
 func SearchCode(keyword string, project model.Repo, client *gitlab.Client) []*model.SearchResult {
 	codeResults := make([]*model.SearchResult, 0)
 	//queryString := BuildQueryString(keyword, "ext")
-	//logger.Log.Infof("Search inside project %s", project.Url)
+	global.GVA_LOG.Info(fmt.Sprintf("Search inside project %s", project.Path))
 	results, resp, err := client.Search.BlobsByProject(project.ProjectId, keyword, &gitlab.SearchOptions{})
 	if err != nil {
-		//logger.Log.Error(err)
+		global.GVA_LOG.Error("search inside project error", zap.Error(err))
 	}
 	if resp != nil && resp.StatusCode != 200 {
-		fmt.Printf("request error for projectId-%d: %d\n", project.ProjectId, resp.StatusCode)
-		//if resp.StatusCode == 404 {
-		//	err = project.DeleteByProjectId()
-		//	if err != nil {
-		//		//logger.Log.Error(err)
-		//	}
-		//}
+		global.GVA_LOG.Info(fmt.Sprintf("Request error for project statuscode %d", resp.StatusCode))
 		return codeResults
 	}
 	for _, result := range results {
@@ -143,10 +136,6 @@ func SearchCode(keyword string, project model.Repo, client *gitlab.Client) []*mo
 		codeResults = append(codeResults, &codeResult)
 		//}
 
-	}
-	//err = models.UpdateStatusById(1, project.ProjectId)
-	if err != nil {
-		//logger.Log.Error(err)
 	}
 	return codeResults
 }
