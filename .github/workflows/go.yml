@@ -31,7 +31,11 @@ jobs:
         fi
 
     - name: Build
-      run: go build -v ./...
+      run: |
+        cd server  
+        go build -v ./...
 
     - name: Test
-      run: go test -v ./...
+      run: |
+        cd server
+        go test -v ./...
