@@ -23,7 +23,7 @@ The project is based on go with vue to build a management system for sensitive i
 
 ## Deployment
 
-For the deployment, it's suggested to install nginx. Place the `dist` folder under `html`, modify the `nginx.conf` to reverse proxy the backend service.
+For the deployment, it's suggested to install nginx. Place the `dist` folder under `html`, modify the `nginx.conf` to reverse proxy the backend service. I have also made a video for the deployment in bilibili and youtube.
 
 ```
 location /api/ {
@@ -41,7 +41,7 @@ The deployment work is very easy. Find the corresponding binary zip file from [r
 ### Web service
 
 ```
-./ghsark web
+./gshark web
 ```
 
 ### Scan service
