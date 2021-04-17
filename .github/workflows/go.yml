@@ -35,7 +35,3 @@ jobs:
         cd server  
         go build -v ./...
 
-    - name: Test
-      run: |
-        cd server
-        go test -v ./...
