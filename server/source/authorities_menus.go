@@ -53,7 +53,7 @@ var authorityMenus = []AuthorityMenus{
 //@description: sys_authority_menus 表数据初始化
 func (a *authoritiesMenus) Init() error {
 	return global.GVA_DB.Table("sys_authority_menus").Transaction(func(tx *gorm.DB) error {
-		if tx.Where("sys_authority_authority_id IN ('888', '8881', '9528')").Find(&[]AuthorityMenus{}).RowsAffected == 48 {
+		if tx.Where("sys_authority_authority_id IN ('888')").Find(&[]AuthorityMenus{}).RowsAffected == 48 {
 			color.Danger.Println("\n[Mysql] --> sys_authority_menus 表的初始数据已存在!")
 			return nil
 		}
