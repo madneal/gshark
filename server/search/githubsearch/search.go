@@ -43,6 +43,7 @@ func Search(rules []model.Rule) {
 	wg.Add(len(rules))
 	client, token, err := GetGithubClient()
 	var content string
+	var counts int
 	if err == nil && token != "" {
 		for _, rule := range rules {
 			go func(rule model.Rule) {
@@ -51,7 +52,7 @@ func Search(rules []model.Rule) {
 				if err != nil {
 					return
 				}
-				counts := SaveResult(results, &rule.Content)
+				counts = SaveResult(results, &rule.Content)
 				if counts > 0 {
 					content += fmt.Sprintf("%s: %d条<br>", rule.Content, counts)
 				}
@@ -59,9 +60,11 @@ func Search(rules []model.Rule) {
 		}
 		wg.Wait()
 	}
-	err = utils.EmailSend("Github敏感信息报告", content)
-	if err != nil {
-		global.GVA_LOG.Error("send email error", zap.Any("err", err))
+	if counts > 0 {
+		err = utils.EmailSend("Github敏感信息报告", content)
+		if err != nil {
+			global.GVA_LOG.Error("send email error", zap.Any("err", err))
+		}
 	}
 }
 
