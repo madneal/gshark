@@ -118,7 +118,11 @@ To execute `./gshark scan`, you need to add a Github token for crawl information
 
 gshark/gshark
 
-4. `go get ./... connection error`
+2. Database initial failed
+
+make sure the version of mysql is over 5.6. And remove the databse before initial the second time.
+
+3. `go get ./... connection error`
 
 It's suggested to enable goproxy(refer this [article](https://madneal.com/post/gproxy/) for golang upgrade):
 
