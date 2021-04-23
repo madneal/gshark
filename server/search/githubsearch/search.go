@@ -164,9 +164,11 @@ func (c *Client) SearchCode(keyword string) ([]*github.CodeSearchResult, error) 
 func BuildQuery(query string) (string, error) {
 	err, filterRule := model.GetFilterRule()
 	str := ""
-	extensions := strings.Split(filterRule.Extension, ",")
-	for _, extension := range extensions {
-		str += " -extension:" + extension
+	if filterRule.Extension != "" {
+		extensions := strings.Split(filterRule.Extension, ",")
+		for _, extension := range extensions {
+			str += " -extension:" + extension
+		}
 	}
 	if filterRule.IsFork {
 		str += " fork:true"
