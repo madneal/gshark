@@ -1,4 +1,4 @@
-# qm-plus-vue-page
+# GShark web
 
 ## Project setup
 ```
