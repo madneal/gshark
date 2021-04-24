@@ -30,6 +30,10 @@ func InitDB(c *gin.Context) {
 	}
 	if err := service.InitDB(dbInfo); err != nil {
 		global.GVA_LOG.Error("自动创建数据库失败", zap.Any("err", err))
+		err = service.RemoveDB(dbInfo)
+		if err != nil {
+			global.GVA_LOG.Error("移除数据库", zap.Error(err))
+		}
 		response.FailWithMessage("自动创建数据库失败，请查看后台日志", c)
 		return
 	}
