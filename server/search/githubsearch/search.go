@@ -3,6 +3,7 @@ package githubsearch
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/google/go-github/github"
 	"github.com/madneal/gshark/global"
@@ -10,6 +11,7 @@ import (
 	"github.com/madneal/gshark/service"
 	"github.com/madneal/gshark/utils"
 	"go.uber.org/zap"
+	"gorm.io/gorm"
 	"strings"
 
 	"sync"
@@ -163,6 +165,9 @@ func (c *Client) SearchCode(keyword string) ([]*github.CodeSearchResult, error) 
 
 func BuildQuery(query string) (string, error) {
 	err, filterRule := model.GetFilterRule()
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return "", err
+	}
 	str := ""
 	if filterRule.Extension != "" {
 		extensions := strings.Split(filterRule.Extension, ",")
