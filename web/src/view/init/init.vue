@@ -50,7 +50,7 @@ export default {
         port: "3306",
         userName: "root",
         password: "",
-        dbName: "gva",
+        dbName: "gshark",
       },
     };
   },
