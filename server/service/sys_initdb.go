@@ -31,12 +31,12 @@ func writeConfig(viper *viper.Viper, mysql config.Mysql) error {
 }
 
 //@author: [songzhibin97](https://github.com/songzhibin97)
-//@function: createTable
+//@function: executeSql
 //@description: 创建数据库(mysql)
 //@param: dsn string, driver string, createSql
 //@return: error
 
-func createTable(dsn string, driver string, createSql string) error {
+func executeSql(dsn string, driver string, createSql string) error {
 	db, err := sql.Open(driver, dsn)
 	if err != nil {
 		return err
@@ -84,7 +84,7 @@ func InitDB(conf request.InitDB) error {
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/", conf.UserName, conf.Password, conf.Host, conf.Port)
 	fmt.Println(dsn)
 	createSql := fmt.Sprintf("CREATE DATABASE IF NOT EXISTS %s DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_general_ci;", conf.DBName)
-	if err := createTable(dsn, "mysql", createSql); err != nil {
+	if err := executeSql(dsn, "mysql", createSql); err != nil {
 		return err
 	}
 
@@ -138,9 +138,11 @@ func InitDB(conf request.InitDB) error {
 		model.ExaCustomer{},
 		model.SysOperationRecord{},
 		model.Rule{},
-		model.Filter{},
 		model.Token{},
 		model.SearchResult{},
+		model.Subdomain{},
+		model.Filter{},
+		model.Repo{},
 	)
 	if err != nil {
 		return err
@@ -163,4 +165,20 @@ func InitDB(conf request.InitDB) error {
 	}
 	global.GVA_CONFIG.AutoCode.Root, _ = filepath.Abs("..")
 	return nil
+}
+
+func RemoveDB(conf request.InitDB) error {
+	if conf.Host == "" {
+		conf.Host = "127.0.0.1"
+	}
+
+	if conf.Port == "" {
+		conf.Port = "3306"
+	}
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/", conf.UserName, conf.Password, conf.Host, conf.Port)
+	fmt.Println(dsn)
+	createSql := fmt.Sprintf("DROP DATABASE IF EXISTS %s;", conf.DBName)
+	fmt.Println(createSql)
+	err := executeSql(dsn, "mysql", createSql)
+	return err
 }
