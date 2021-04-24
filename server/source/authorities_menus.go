@@ -46,14 +46,32 @@ var authorityMenus = []AuthorityMenus{
 	{"888", 28},
 	{"888", 29},
 	{"888", 30},
-	{"888", 31},
+	{"8881", 1},
+	{"8881", 2},
+	{"8881", 8},
+	{"9528", 1},
+	{"9528", 2},
+	{"9528", 3},
+	{"9528", 4},
+	{"9528", 5},
+	{"9528", 6},
+	{"9528", 7},
+	{"9528", 8},
+	{"9528", 9},
+	{"9528", 10},
+	{"9528", 11},
+	{"9528", 12},
+	{"9528", 14},
+	{"9528", 15},
+	{"9528", 16},
+	{"9528", 17},
 }
 
 //@author: [SliverHorn](https://github.com/SliverHorn)
 //@description: sys_authority_menus 表数据初始化
 func (a *authoritiesMenus) Init() error {
 	return global.GVA_DB.Table("sys_authority_menus").Transaction(func(tx *gorm.DB) error {
-		if tx.Where("sys_authority_authority_id IN ('888')").Find(&[]AuthorityMenus{}).RowsAffected == 48 {
+		if tx.Where("sys_authority_authority_id IN ('888', '8881', '9528')").Find(&[]AuthorityMenus{}).RowsAffected == 48 {
 			color.Danger.Println("\n[Mysql] --> sys_authority_menus 表的初始数据已存在!")
 			return nil
 		}
