@@ -145,7 +145,7 @@ func (c *Client) SearchCode(keyword string) ([]*github.CodeSearchResult, error) 
 	ctx := context.Background()
 	listOpt := github.ListOptions{PerPage: 100}
 	opt := &github.SearchOptions{Sort: "indexed", Order: "desc", TextMatch: true, ListOptions: listOpt}
-	query := keyword + " +in:file"
+	query := keyword + " in:file"
 	//query, err = BuildQuery(query)
 	global.GVA_LOG.Info("Github scan with the query:", zap.Any("github", query))
 	for {
