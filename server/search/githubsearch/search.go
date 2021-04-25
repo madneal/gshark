@@ -175,11 +175,6 @@ func BuildQuery(query string) (string, error) {
 			str += " -extension:" + extension
 		}
 	}
-	if filterRule.IsFork {
-		str += " fork:true"
-	} else {
-		str += " fork:false"
-	}
 	builtQuery := query + str
 	return builtQuery, err
 }

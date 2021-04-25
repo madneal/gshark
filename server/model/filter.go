@@ -7,9 +7,8 @@ import (
 
 // 如果含有time.Time 请自行import time包
 type Filter struct {
-      global.GVA_MODEL
-      Extension  string `json:"extension" form:"extension" gorm:"column:extension;comment:;type:varchar(1000);size:1000;"`
-      IsFork  bool `json:"isFork" form:"isFork" gorm:"column:is_fork;comment:"`
+	global.GVA_MODEL
+	Extension string `json:"extension" form:"extension" gorm:"column:extension;comment:;type:varchar(1000);size:1000;"`
 }
 
 func GetFilterRule() (error, Filter) {
@@ -17,5 +16,3 @@ func GetFilterRule() (error, Filter) {
 	err := global.GVA_DB.First(&filter).Error
 	return err, filter
 }
-
-
