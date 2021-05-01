@@ -44,8 +44,20 @@
       </el-table-column>
 
       <el-table-column
-        label="文件后缀"
+        label="文件后缀（黑名单）"
         prop="extension"
+        width="120"
+      ></el-table-column>
+
+      <el-table-column
+        label="文件后缀（白名单）"
+        prop="whiteExts"
+        width="120"
+      ></el-table-column>
+
+      <el-table-column
+        label="关键词（黑名单）"
+        prop="keywords"
         width="120"
       ></el-table-column>
 
@@ -101,6 +113,13 @@
             placeholder="css,png,md"
           ></el-input>
         </el-form-item>
+        <el-form-item label="关键词（黑名单）:">
+          <el-input
+            v-model="formData.keywords"
+            clearable
+            placeholder="仅适用于Github，排除关键词，以,分隔"
+          ></el-input>
+        </el-form-item>
       </el-form>
       <div class="dialog-footer" slot="footer">
         <el-button @click="closeDialog">取 消</el-button>
@@ -135,6 +154,7 @@ export default {
         extension: "",
         isFork: false,
         whiteExts: "",
+        keywords: ""
       },
     };
   },
