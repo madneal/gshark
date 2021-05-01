@@ -8,7 +8,8 @@ import (
 // 如果含有time.Time 请自行import time包
 type Filter struct {
 	global.GVA_MODEL
-	Extension string `json:"extension" form:"extension" gorm:"column:extension;comment:;type:varchar(1000);size:1000;"`
+	Extension string `json:"extension" form:"extension" gorm:"column:extension;comment:;type:varchar(100);"`
+	WhiteExts string `json:"whiteExts" form:"whiteExts" gorm:"column:whiteExts;type:varchar(100);"`
 }
 
 func GetFilterRule() (error, Filter) {

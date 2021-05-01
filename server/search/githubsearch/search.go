@@ -83,17 +83,6 @@ func RunSearchTask(mapRules map[int][]model.Rule, err error) {
 	}
 }
 
-// The filters are utilized to filter the codeResult
-func PassFilters(codeResult *model.SearchResult, fullName string) bool {
-	// detect if the codeResult exist
-	_, exist := service.CheckExistOfSearchResult(codeResult)
-	// detect if there are any random characters in text matches
-	//textMatches := codeResult.TextMatches[0].Fragment
-	//reg := regexp.MustCompile(`[A-Za-z0-9_+]{50,}`)
-	//return !reg.MatchString(*textMatches) && !exist
-	return !exist
-}
-
 func SaveResult(results []*github.CodeSearchResult, keyword *string) int {
 	searchResults := ConvertToSearchResults(results, keyword)
 	insertCount := len(searchResults)
@@ -173,6 +162,12 @@ func BuildQuery(query string) (string, error) {
 		extensions := strings.Split(filterRule.Extension, ",")
 		for _, extension := range extensions {
 			str += " -extension:" + extension
+		}
+	}
+	if filterRule.WhiteExts != "" {
+		whiteExts := strings.Split(filterRule.WhiteExts, ",")
+		for _, whiteExt := range whiteExts {
+			str += " +extension:" + whiteExt
 		}
 	}
 	builtQuery := query + str
