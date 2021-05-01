@@ -170,6 +170,12 @@ func BuildQuery(query string) (string, error) {
 			str += " +extension:" + whiteExt
 		}
 	}
+	if filterRule.Keywords != "" {
+		keyswords := strings.Split(filterRule.Keywords, ",")
+		for _, keyword := range keyswords {
+			str += " NOT " + keyword
+		}
+	}
 	builtQuery := query + str
 	return builtQuery, err
 }
