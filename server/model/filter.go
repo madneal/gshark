@@ -10,6 +10,7 @@ type Filter struct {
 	global.GVA_MODEL
 	Extension string `json:"extension" form:"extension" gorm:"column:extension;comment:;type:varchar(100);"`
 	WhiteExts string `json:"whiteExts" form:"whiteExts" gorm:"column:whiteExts;type:varchar(100);"`
+	Keywords  string `json:"keywords" form:"keywords" gorm:"column:keywords;type:varchar(100);"`
 }
 
 func GetFilterRule() (error, Filter) {
