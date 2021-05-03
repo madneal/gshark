@@ -159,7 +159,7 @@ func (c *Client) SearchCode(keyword string) ([]*github.CodeSearchResult, error) 
 func BuildQuery(query string) (string, error) {
 	err, filterRule := model.GetFilterRule()
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return "", err
+		return query, err
 	}
 	str := ""
 	if filterRule.Extension != "" {
