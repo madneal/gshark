@@ -133,7 +133,6 @@
     >
       <el-form :model="formData" label-position="right" label-width="80px">
         <el-form-item label="规则类型:">
-          <!-- <el-input v-model="formData.type" clearable placeholder="请输入" ></el-input> -->
           <el-select v-model="formData.type">
             <el-option
               v-for="item in typeOptions"
