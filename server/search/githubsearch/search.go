@@ -85,7 +85,7 @@ func RunSearchTask(mapRules map[int][]model.Rule, err error) {
 
 func SaveResult(results []*github.CodeSearchResult, keyword *string) int {
 	searchResults := ConvertToSearchResults(results, keyword)
-	insertCount := len(searchResults)
+	insertCount := 0
 	for _, result := range searchResults {
 		err, exist := service.CheckExistOfSearchResult(&result)
 		if exist {
@@ -95,6 +95,8 @@ func SaveResult(results []*github.CodeSearchResult, keyword *string) int {
 		if err != nil {
 			global.GVA_LOG.Error("save search result error", zap.Any("save searchResult error",
 				err))
+		} else {
+			insertCount++
 		}
 	}
 	return insertCount
