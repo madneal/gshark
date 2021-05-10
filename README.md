@@ -137,7 +137,7 @@ go env -w GO111MODULE=on
 
 ## Wechat
 
-If you would like to join wechat group, you can add my wechat `Cafery` with the message `gshark`.
+If you would like to join wechat group, you can add my wechat `mmadneal` with the message `gshark`.
 
 ## License
 
