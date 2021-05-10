@@ -103,7 +103,7 @@ func GetSearchResultInfoList(info request.SearchResultSearch) (err error, list i
 }
 
 func CheckExistOfSearchResult(searchResult *model.SearchResult) (err error, result bool) {
-	queryResult := global.GVA_DB.First(searchResult).Where("url = ? or repo = ?", searchResult.Url, searchResult.Repo)
+	queryResult := global.GVA_DB.First(searchResult).Where("url = ? or repo = ? and status != 0", searchResult.Url, searchResult.Repo)
 	err = queryResult.Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return err, false
