@@ -249,7 +249,7 @@ export default {
     //条件搜索前端看此方法
     onSubmit() {
       this.page = 1;
-      this.pageSize = 10;
+      this.pageSize = 100;
       this.getTableData();
     },
     handleSelectionChange(val) {

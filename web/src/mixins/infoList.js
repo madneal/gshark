@@ -4,7 +4,7 @@ export default {
         return {
             page: 1,
             total: 10,
-            pageSize: 10,
+            pageSize: 100,
             tableData: [],
             searchInfo: {}
         }
