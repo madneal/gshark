@@ -1,6 +1,6 @@
 {
-  "name": "gin-vue-admin",
-  "version": "0.1.0",
+  "name": "gshark",
+  "version": "0.1.1",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
