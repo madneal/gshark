@@ -1,9 +1,9 @@
 package v1
 
 import (
-	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis"
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/middleware"
 	"github.com/madneal/gshark/model"
