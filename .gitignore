@@ -1,8 +1,10 @@
 # Created by .ignore support plugin (hsz.mobi)
+/releases
+/server/gshark
+/server/go.sum
 .idea
 *.exe
 *.exe*
-*.sh
 repos
 
 app.ini_bak
@@ -11,9 +13,18 @@ vendor
 
 .DS_Store
 main
-
 test
 
 conf/app.ini
 conf/app-pa.ini
 nohup.out
+config.yaml
+latest_log
+/web/node_modules
+/web/dist
+go.sum
+/server/log/
+/server/main
+/server/latest_log
+
+*.iml
