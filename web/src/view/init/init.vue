@@ -11,7 +11,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="host">
-          <el-input v-model="form.host" placeholder="请输入数据库链接"></el-input>
+          <el-input v-model="form.host" placeholder="请输入数据库链接(如果使用docker环境，请填写 gshark-mysql)"></el-input>
         </el-form-item>
         <el-form-item label="port">
           <el-input v-model="form.port" placeholder="请输入数据库端口"></el-input>
@@ -46,10 +46,10 @@ export default {
     return {
       form: {
         sqlType: "mysql",
-        host: "127.0.0.1",
+        host: "",
         port: "3306",
         userName: "root",
-        password: "",
+        password: "gshark",
         dbName: "gshark",
       },
     };
