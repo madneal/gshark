@@ -1,7 +1,6 @@
 package v1
 
 import (
-	"fmt"
 	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/model/request"
 	"github.com/madneal/gshark/model/response"
@@ -30,7 +29,6 @@ func InitDB(c *gin.Context) {
 		return
 	}
 	if err := service.InitDB(dbInfo); err != nil {
-		fmt.Println(err)
 		global.GVA_LOG.Error("自动创建数据库失败", zap.Error(err))
 		err = service.RemoveDB(dbInfo)
 		if err != nil {
