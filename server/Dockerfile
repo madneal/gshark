@@ -1,19 +1,21 @@
 FROM golang:alpine
 
-ENV GO111MODULE=on
-ENV GOPROXY=https://goproxy.io,direct
-
-WORKDIR /go/src/gshark
+WORKDIR /go/src/github.com/madneal/gshark/server
 COPY . .
-RUN go env && go build -o server .
+ENV GSHARK_CONFIG /go/src/github.com/madneal/gshark/server/config-temp.yaml
+RUN go env -w GO111MODULE=on
+RUN go env -w GOPROXY=https://goproxy.cn,direct
+RUN go env -w CGO_ENABLED=0
+RUN go env
+RUN go mod tidy
+RUN go build -o server .
 
 FROM alpine:latest
 
-WORKDIR /go/src/gshark
+WORKDIR /go/src/github.com/madneal/gshark/server
+
 COPY --from=0 /go/src/github.com/madneal/gshark/server ./
-COPY --from=0 /go/src/github.com/madneal/gshark/config.yaml ./
-COPY --from=0 /go/src/github.com/madneal/gshark/resource ./resource
 
 EXPOSE 8888
 
-ENTRYPOINT ./server
+ENTRYPOINT ./server web
