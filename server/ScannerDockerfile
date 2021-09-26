@@ -1,0 +1,23 @@
+FROM golang:alpine as builder
+
+WORKDIR /gshark/server
+COPY . .
+
+RUN go env -w GO111MODULE=on
+RUN go env -w GOPROXY=https://goproxy.cn,direct
+RUN go env -w CGO_ENABLED=0
+RUN go env
+RUN go mod tidy
+RUN go build -o server .
+
+
+FROM alpine:latest
+ENV GSHARK_CONFIG=/gshark/server/config.docker.yaml
+
+WORKDIR /gshark/server
+
+COPY --from=0 /gshark/server ./
+
+RUN ./server scan 
+
+

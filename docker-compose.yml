@@ -52,3 +52,19 @@ services:
     networks:
       network:
         ipv4_address: 177.7.0.13
+
+  scanner:
+    build:
+      context: ./server
+      dockerfile: ./ScannerDockerfile
+    container_name: gshark-scanner
+    restart: always
+    depends_on:
+      - mysql
+    links:
+      - mysql
+    networks:
+      network:
+        ipv4_address: 177.7.0.14
+    environment:
+      GSHARK_CONFIG: /gshark/server/config.docker.yaml
