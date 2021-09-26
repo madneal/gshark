@@ -42,6 +42,7 @@ services:
   mysql:
     image: mysql:8.0.21
     container_name: gshark-mysql
+    hostname: gshark-mysql
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --init-file /data/application/init.sql
     volumes: 
       - ./init.sql:/data/application/init.sql
