@@ -42,13 +42,16 @@ services:
   mysql:
     image: mysql:8.0.21
     container_name: gshark-mysql
-    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci #设置utf8字符集
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --init-file /data/application/init.sql
+    volumes: 
+      - ./init.sql:/data/application/init.sql
     restart: always
     ports:
       - "13306:3306"  # host物理直接映射端口为13306
     environment:
       MYSQL_DATABASE: 'gshark' # 初始化启动时要创建的数据库的名称
       MYSQL_ROOT_PASSWORD: 'gshark' # root管理员用户密码
+      MYSQL_ROOT_USER: root
     networks:
       network:
         ipv4_address: 177.7.0.13
