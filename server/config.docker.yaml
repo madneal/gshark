@@ -35,7 +35,7 @@ jwt:
 local:
   path: uploads/file
 mysql:
-  path: gshark-mysql:3306
+  path: localhost:3306
   config: charset=utf8mb4&parseTime=True&loc=Local
   db-name: gshark
   username: root
