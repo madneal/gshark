@@ -43,7 +43,7 @@
     "core-js": "^3.3.2",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
-    "node-sass": "^4.12.0",
+    "node-sass": "^7.0.0",
     "numericjs": "^1.2.6",
     "raw-loader": "^3.1.0",
     "sass-loader": "^8.0.0",
