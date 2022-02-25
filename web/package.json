@@ -13,7 +13,6 @@
     "@antv/g6": "3.5.2",
     "@antv/matrix-util": "2.0.7",
     "@antv/util": "^2.0.17",
-    "@moefe/vue-aplayer": "^2.0.0-beta.5",
     "axios": "^0.21.2",
     "element-ui": "^2.15.6",
     "highlight.js": "^10.7.3",
