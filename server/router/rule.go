@@ -15,5 +15,6 @@ func InitRuleRouter(Router *gin.RouterGroup) {
 		RuleRouter.PUT("updateRule", v1.UpdateRule)              // 更新Rule
 		RuleRouter.GET("findRule", v1.FindRule)                  // 根据ID获取Rule
 		RuleRouter.GET("getRuleList", v1.GetRuleList)            // 获取Rule列表
+		RuleRouter.POST("switchRuleStatus", v1.SwitchRuleStatus)
 	}
 }
