@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/model"
@@ -126,5 +127,18 @@ func GetRuleList(c *gin.Context) {
 			Page:     pageInfo.Page,
 			PageSize: pageInfo.PageSize,
 		}, "获取成功", c)
+	}
+}
+
+func SwitchRuleStatus(c *gin.Context) {
+	var switchRequest request.RuleSwitch
+	_ = c.ShouldBindJSON(&switchRequest)
+	fmt.Println(switchRequest.ID)
+	fmt.Println(switchRequest.Status)
+	if err := service.SwitchRuleStatus(switchRequest.ID, switchRequest.Status); err != nil {
+		global.GVA_LOG.Error("切换状态失败", zap.Any("err", err))
+		response.FailWithMessage("切换状态失败", c)
+	} else {
+		response.OkWithMessage("更新成功", c)
 	}
 }

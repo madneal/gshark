@@ -88,9 +88,15 @@
         width="120"
       ></el-table-column>
 
-      <el-table-column label="状态" prop="status" width="120">
+      <el-table-column label="状态" width="120">
         <template slot-scope="scope">
-          {{ scope.row.status | formatStatus }}
+          <!-- {{ scope.row.status | formatStatus }} -->
+          <el-switch
+            v-model="scope.row.status"
+            :active-value="1"
+            :inactive-value="0"
+            @change="switchStatus(scope.row.ID, scope.row.status, scope.row)"
+          />
         </template>
       </el-table-column>
 
@@ -194,6 +200,7 @@ import {
   updateRule,
   findRule,
   getRuleList,
+  switchRule,
 } from "@/api/rule"; //  此处请自行替换地址
 import { formatTimeToStr } from "@/utils/date";
 import infoList from "@/mixins/infoList";
@@ -235,8 +242,8 @@ export default {
         },
         {
           label: "searchcode",
-          value: "searchcode"
-        }
+          value: "searchcode",
+        },
       ],
     };
   },
@@ -265,7 +272,19 @@ export default {
     },
   },
   methods: {
-    //条件搜索前端看此方法
+    async switchStatus(id, status, row) {
+      console.log(id);
+      console.log(status);
+      console.log(row);
+      const data = {
+        id,
+        status,
+      };
+      const res = await switchRule(data);
+      if (res) {
+        this.getTableData();
+      }
+    },
     onSubmit() {
       this.page = 1;
       this.pageSize = 10;
