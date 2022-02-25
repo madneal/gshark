@@ -95,3 +95,8 @@ func GetValidRulesByType(typeStr string) (err error, list []model.Rule) {
 	err = global.GVA_DB.Where("type = ? and status = 1", typeStr).Find(&list).Error
 	return err, list
 }
+
+func SwitchRuleStatus(id uint, status int) error {
+	err := global.GVA_DB.Table("rule").Where("id = ?", id).UpdateColumn("status", status).Error
+	return err
+}
