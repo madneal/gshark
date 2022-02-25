@@ -65,6 +65,14 @@ export const createRule = (data) => {
      })
  }
 
+ export const switchRule = (data) => {
+     return service({
+         url: "/rule/switchRuleStatus",
+         method: "post",
+         data
+     })
+ }
+
 
 // @Tags Rule
 // @Summary 用id查询Rule
