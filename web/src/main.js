@@ -125,14 +125,6 @@ Vue.config.productionTip = false
 import Bus from '@/utils/bus.js'
 Vue.use(Bus)
 
-import APlayer from '@moefe/vue-aplayer';
-
-Vue.use(APlayer, {
-    defaultCover: 'https://github.com/u3u.png',
-    productionTip: true,
-});
-
-
 import { auth } from '@/directive/auth'
 // 按钮权限指令
 auth(Vue)
