@@ -131,11 +131,8 @@ func InitDB(conf request.InitDB) error {
 		model.JwtBlacklist{},
 		model.SysDictionary{},
 		model.SysDictionaryDetail{},
-		model.ExaFileUploadAndDownload{},
 		model.ExaFile{},
 		model.ExaFileChunk{},
-		model.ExaSimpleUploader{},
-		model.ExaCustomer{},
 		model.SysOperationRecord{},
 		model.Rule{},
 		model.Token{},
@@ -157,7 +154,6 @@ func InitDB(conf request.InitDB) error {
 		source.DataAuthorities,
 		source.Dictionary,
 		source.DictionaryDetail,
-		source.File,
 		source.BaseMenu)
 	if err != nil {
 		_ = writeConfig(global.GVA_VP, BaseMysql)
