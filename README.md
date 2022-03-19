@@ -130,6 +130,9 @@ It's suggested to enable goproxy(refer this [article](https://madneal.com/post/g
 go env -w GOPROXY=https://goproxy.cn,direct
 go env -w GO111MODULE=on
 ```
+4. When deployed the web to `nginx`, the page was empty
+
+try to clear the LocalStorage
 
 ## Reference
 
