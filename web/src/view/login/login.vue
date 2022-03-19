@@ -66,6 +66,7 @@
 </template>
 
 <script>
+/* eslint-disable vue/multi-word-component-names */
 import { mapActions } from "vuex";
 import { captcha } from "@/api/user";
 export default {
@@ -118,11 +119,14 @@ export default {
     changeLock() {
       this.lock === "lock" ? (this.lock = "unlock") : (this.lock = "lock");
     },
-    loginVefify() {
-      captcha({}).then((ele) => {
-        this.picPath = ele.data.picPath;
-        this.loginForm.captchaId = ele.data.captchaId;
-      });
+    async loginVefify() {
+      const result = await captcha({});
+      this.picPath = result.data.picPath;
+      this.loginForm.captchaId = result.data.captchaId;
+      // captcha({}).then((ele) => {
+      //   this.picPath = ele.data.picPath;
+      //   this.loginForm.captchaId = ele.data.captchaId;
+      // });
     },
   },
 };
