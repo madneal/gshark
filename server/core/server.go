@@ -14,10 +14,6 @@ type server interface {
 }
 
 func RunWindowsServer(ctx *cli.Context) error {
-	if global.GVA_CONFIG.System.UseMultipoint {
-		// 初始化redis服务
-		initialize.Redis()
-	}
 	Router := initialize.Routers()
 	// Router.Static("/form-generator", "./resource/page")
 

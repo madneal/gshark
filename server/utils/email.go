@@ -1,14 +1,16 @@
 package utils
 
 import (
+	"bytes"
 	"crypto/tls"
+	"errors"
 	"fmt"
+	"github.com/jordan-wright/email"
+	"github.com/madneal/gshark/global"
+	"io/ioutil"
+	"net/http"
 	"net/smtp"
 	"strings"
-
-	"github.com/madneal/gshark/global"
-
-	"github.com/jordan-wright/email"
 )
 
 //@author: [maplepie](https://github.com/maplepie)
@@ -45,6 +47,29 @@ func ErrorToEmail(subject string, body string) error {
 func EmailSend(subject string, body string) error {
 	to := []string{global.GVA_CONFIG.Email.From}
 	return send(to, subject, body)
+}
+
+func BotSend(content string) error {
+	url := global.GVA_CONFIG.Wechat.Url
+	if url == "" {
+		err := errors.New("url is empty")
+		return err
+	}
+	jsonStr := []byte(fmt.Sprintf(`{"msgtype": "markdown", "markdown":{"content":"%s"}}`, content))
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Content-Type", "application/json")
+	c := &http.Client{}
+	res, err := c.Do(req)
+	if err != nil {
+		return err
+	}
+	defer res.Body.Close()
+	body, _ := ioutil.ReadAll(res.Body)
+	fmt.Println(string(body))
+	return err
 }
 
 //@author: [maplepie](https://github.com/maplepie)

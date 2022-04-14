@@ -3,7 +3,6 @@ package config
 type Server struct {
 	JWT     JWT     `mapstructure:"jwt" json:"jwt" yaml:"jwt"`
 	Zap     Zap     `mapstructure:"zap" json:"zap" yaml:"zap"`
-	Redis   Redis   `mapstructure:"redis" json:"redis" yaml:"redis"`
 	Email   Email   `mapstructure:"email" json:"email" yaml:"email"`
 	Casbin  Casbin  `mapstructure:"casbin" json:"casbin" yaml:"casbin"`
 	System  System  `mapstructure:"system" json:"system" yaml:"system"`
@@ -19,4 +18,5 @@ type Server struct {
 	TencentCOS TencentCOS `mapstructure:"tencent-cos" json:"tencentCOS" yaml:"tencent-cos"`
 	Excel      Excel      `mapstructure:"excel" json:"excel" yaml:"excel"`
 	Search     Search     `mapstructure:"search" json:"search" yaml:"search"`
+	Wechat     Wechat     `mapstructure:"wechat" json:"wechat" yaml:"wechat"`
 }
