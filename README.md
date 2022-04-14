@@ -25,7 +25,7 @@ The project is based on go with vue to build a management system for sensitive i
 
 ## Deployment
 
-For the deployment, it's suggested to install nginx. Place the `dist` folder under `html`, modify the `nginx.conf` to reverse proxy the backend service. I have also made a video for the deployment in [bilibili](https://www.bilibili.com/video/BV1Py4y1s7ap/) and [youtube](https://youtu.be/bFrKm5t4M54). For the deploment in windows, refer [here](https://www.bilibili.com/video/BV1CA411L7ux/).
+For the deployment, it's suggested to install nginx. Place the `dist` folder under `html`, modify the `nginx.conf` to reverse proxy the backend service. For the detailed deployment videos in [bilibili](https://www.bilibili.com/video/BV1Py4y1s7ap/) and [youtube](https://youtu.be/bFrKm5t4M54). For the deploment in windows, refer [here](https://www.bilibili.com/video/BV1CA411L7ux/).
 
 ```
 location /api/ {
