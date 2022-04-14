@@ -14,7 +14,6 @@ import (
 	"gorm.io/gorm"
 	"strings"
 
-	"sync"
 	"time"
 )
 
@@ -41,31 +40,34 @@ func GenerateSearchCodeTask() (map[int][]model.Rule, error) {
 }
 
 func Search(rules []model.Rule) {
-	var wg sync.WaitGroup
-	wg.Add(len(rules))
 	client, token, err := GetGithubClient()
 	var content string
 	var counts int
 	if err == nil && token != "" {
 		for _, rule := range rules {
-			go func(rule model.Rule) {
-				defer wg.Done()
-				results, err := client.SearchCode(rule.Content)
-				if err != nil {
-					return
-				}
-				counts = SaveResult(results, &rule.Content)
-				if counts > 0 {
-					content += fmt.Sprintf("%s: %d条<br>", rule.Content, counts)
-				}
-			}(rule)
+			results, err := client.SearchCode(rule.Content)
+			if err != nil {
+				global.GVA_LOG.Error("SearchCode error", zap.Error(err))
+			}
+			counts = SaveResult(results, &rule.Content)
+			if counts > 0 {
+				content += fmt.Sprintf("%s: %d条<br>", rule.Content, counts)
+			}
 		}
-		wg.Wait()
 	}
 	if counts > 0 {
-		err = utils.EmailSend("Github敏感信息报告", content)
-		if err != nil {
-			global.GVA_LOG.Error("send email error", zap.Any("err", err))
+		if global.GVA_CONFIG.Email.Enable {
+			err = utils.EmailSend("Github敏感信息报告", content)
+			if err != nil {
+				global.GVA_LOG.Error("send email error", zap.Any("err", err))
+			}
+		}
+		if global.GVA_CONFIG.Email.Enable {
+			content = "Github敏感信息报告\n" + content
+			err = utils.BotSend(content)
+			if err != nil {
+				global.GVA_LOG.Error("send wechat error", zap.Any("err", err))
+			}
 		}
 	}
 }
@@ -141,9 +143,9 @@ func (c *Client) SearchCode(keyword string) ([]*github.CodeSearchResult, error) 
 	var err error
 	ctx := context.Background()
 	listOpt := github.ListOptions{PerPage: 100}
-	opt := &github.SearchOptions{Sort: "indexed", Order: "desc", TextMatch: true, ListOptions: listOpt}
+	opt := &github.SearchOptions{Order: "desc", TextMatch: true, ListOptions: listOpt}
 	query := keyword + " in:file"
-	//query, err = BuildQuery(query)
+	query, err = BuildQuery(query)
 	global.GVA_LOG.Info("Github scan with the query:", zap.Any("github", query))
 	for {
 		result, nextPage := searchCodeByOpt(c, ctx, query, *opt)
@@ -160,8 +162,9 @@ func (c *Client) SearchCode(keyword string) ([]*github.CodeSearchResult, error) 
 
 func BuildQuery(query string) (string, error) {
 	err, filterRule := model.GetFilterRule()
+	// if there is no record, does not return err
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return query, err
+		return query, nil
 	}
 	str := ""
 	if filterRule.Extension != "" {
@@ -190,11 +193,18 @@ func searchCodeByOpt(c *Client, ctx context.Context, query string, opt github.Se
 	int) {
 	query, err := BuildQuery(query)
 	result, res, err := c.Client.Search.Code(ctx, query, &opt)
-
+	if _, ok := err.(*github.RateLimitError); ok {
+		global.GVA_LOG.Warn("Trigger the github rate limit, ready to sleep 5 minutes")
+		time.Sleep(5 * time.Minute)
+	}
+	if err == nil {
+		resetTimeStamp := res.Rate.Reset
+		time.Sleep(resetTimeStamp.Sub(time.Now()))
+		time.Sleep(5 * time.Second)
+	}
 	// for best guidelines, wait one second
 	// https://docs.github.com/en/rest/guides/best-practices-for-integrators#dealing-with-abuse-rate-limits
 
-	time.Sleep(1 * time.Second)
 	if res != nil && res.Rate.Remaining < 10 {
 		time.Sleep(45 * time.Second)
 	}
