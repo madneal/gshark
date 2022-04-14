@@ -18,7 +18,11 @@ captcha:
   img-height: 80
 casbin:
   model-path: ./resource/rbac_model.conf
+wechat:
+  url:
+  enable: false
 email:
+  enable: false
   to: xxx@qq.com
   port: 465
   from: xxx@qq.com
@@ -52,10 +56,6 @@ qiniu:
   access-key: 25j8dYBZ2wuiy0yhwShytjZDTX662b8xiFguwxzZ
   secret-key: pgdbqEsf7ooZh7W3xokP833h3dZ_VecFXPDeG5JY
   use-cdn-domains: false
-redis:
-  db: 0
-  addr: 127.0.0.1:6379
-  password: ""
 system:
   env: public
   addr: 8888
