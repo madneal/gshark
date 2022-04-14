@@ -8,7 +8,7 @@
 
 # GShark [![Go Report Card](https://goreportcard.com/badge/github.com/madneal/gshark)](https://goreportcard.com/report/github.com/madneal/gshark)   
 
-The project is based on go with vue to build a management system for sensitive information detection.  For the full introduction of the new version, please refer [here](https://mp.weixin.qq.com/s/Yoo1DdC2lCtqOMAreF9K0w).
+The project is based on go with vue to build a management system for sensitive information detection.  For the full introduction, please refer [here](https://mp.weixin.qq.com/s/Yoo1DdC2lCtqOMAreF9K0w).
 
 
 # Features
