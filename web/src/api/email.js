@@ -13,3 +13,10 @@ export const emailTest = (data) => {
         data
     })
 }
+
+export const botTest = () => {
+    return service({
+        url: "/email/botTest",
+        method: "get"
+    })
+}

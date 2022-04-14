@@ -74,21 +74,30 @@
       </el-form-item>
       <!--  Zap end  -->
 
-      <!--  Redis start  -->
-      <h2>Redis admin数据库配置</h2>
-      <el-form-item label="db">
-        <el-input v-model="config.redis.db"></el-input>
+      <h2>企业微信机器人</h2>
+      <el-form-item label="是否启用">
+        <el-switch
+            v-model="config.wechat.enable"
+            active-color="#13ce66"
+            inactive-color="#ff4949">
+        </el-switch>
       </el-form-item>
-      <el-form-item label="addr">
-        <el-input v-model="config.redis.addr"></el-input>
+      <el-form-item label="企业微信">
+        <el-input v-model="config.wechat.url" placeholder="请填写企业微信机器人webhook地址"></el-input>
       </el-form-item>
-      <el-form-item label="password">
-        <el-input v-model="config.redis.password"></el-input>
+      <el-form-item label="测试机器人">
+        <el-button @click="sendBot">测试</el-button>
       </el-form-item>
-      <!--  Redis end  -->
 
       <!--  Email start  -->
       <h2>邮箱配置</h2>
+      <el-form-item label="是否启用">
+        <el-switch
+            v-model="config.email.enable"
+            active-color="#13ce66"
+            inactive-color="#ff4949">
+        </el-switch>
+      </el-form-item>
       <el-form-item label="接收者邮箱">
         <el-input v-model="config.email.to" placeholder="可多个，以逗号分隔"></el-input>
       </el-form-item>
@@ -310,7 +319,7 @@
 
 <script>
 import { getSystemConfig, setSystemConfig } from "@/api/system";
-import { emailTest } from "@/api/email";
+import { emailTest, botTest } from "@/api/email";
 export default {
   name: "Config",
   data() {
@@ -321,14 +330,14 @@ export default {
         casbin: {},
         mysql: {},
         sqlite: {},
-        redis: {},
         qiniu: {},
         tencentCOS:{},
         aliyunOSS:{},
         captcha: {},
         zap: {},
         local: {},
-        email: {}
+        email: {},
+        wechat: {}
       }
     };
   },
@@ -338,14 +347,14 @@ export default {
   methods: {
     async initForm() {
       const res = await getSystemConfig();
-      if (res.code == 0) {
+      if (res.code === 0) {
         this.config = res.data.config;
       }
     },
     reload() {},
     async update() {
       const res = await setSystemConfig({ config: this.config });
-      if (res.code == 0) {
+      if (res.code === 0) {
         this.$message({
           type: "success",
           message: "配置文件设置成功"
@@ -366,6 +375,15 @@ export default {
           type: "error",
           message: "邮件发送失败"
         });
+      }
+    },
+    async sendBot() {
+      const res = await botTest();
+      if (res.code === 0) {
+        this.$message.success("消息发送成功");
+        await this.initForm();
+      } else {
+        this.$message.error("消息发送失败");
       }
     }
   }
