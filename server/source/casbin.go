@@ -77,6 +77,7 @@ var carbines = []gormadapter.CasbinRule{
 	{PType: "p", V0: "888", V1: "/sysOperationRecord/deleteSysOperationRecordByIds", V2: "DELETE"},
 	{PType: "p", V0: "888", V1: "/user/setUserInfo", V2: "PUT"},
 	{PType: "p", V0: "888", V1: "/email/emailTest", V2: "POST"},
+	{PType: "p", V0: "888", V1: "/email/botTest", V2: "GET"},
 	{PType: "p", V0: "888", V1: "/simpleUploader/upload", V2: "POST"},
 	{PType: "p", V0: "888", V1: "/simpleUploader/checkFileMd5", V2: "GET"},
 	{PType: "p", V0: "888", V1: "/simpleUploader/mergeFileMd5", V2: "GET"},

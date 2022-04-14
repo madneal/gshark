@@ -22,3 +22,12 @@ func EmailTest(c *gin.Context) {
 		response.OkWithData("发送成功", c)
 	}
 }
+
+func BotTest(c *gin.Context) {
+	if err := service.BotTest(); err != nil {
+		global.GVA_LOG.Error("发送失败!", zap.Any("err", err))
+		response.FailWithMessage("发送失败", c)
+	} else {
+		response.OkWithData("发送成功", c)
+	}
+}

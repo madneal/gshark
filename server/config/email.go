@@ -8,4 +8,5 @@ type Email struct {
 	IsSSL    bool   `mapstructure:"is-ssl" json:"isSSL" yaml:"is-ssl"`
 	Secret   string `mapstructure:"secret" json:"secret" yaml:"secret"`
 	Nickname string `mapstructure:"nickname" json:"nickname" yaml:"nickname"`
+	Enable   bool   `mapstructure:"enable" json:"enable" yaml:"enable"`
 }
