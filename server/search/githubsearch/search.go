@@ -198,12 +198,11 @@ func searchCodeByOpt(c *Client, ctx context.Context, query string, opt github.Se
 		time.Sleep(5 * time.Minute)
 	}
 	if err == nil {
+		// https://docs.github.com/en/rest/guides/best-practices-for-integrators#dealing-with-abuse-rate-limits
 		resetTimeStamp := res.Rate.Reset
 		time.Sleep(resetTimeStamp.Sub(time.Now()))
 		time.Sleep(5 * time.Second)
 	}
-	// for best guidelines, wait one second
-	// https://docs.github.com/en/rest/guides/best-practices-for-integrators#dealing-with-abuse-rate-limits
 
 	if res != nil && res.Rate.Remaining < 10 {
 		time.Sleep(45 * time.Second)
