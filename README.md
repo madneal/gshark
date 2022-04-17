@@ -8,7 +8,7 @@
 
 # GShark [![Go Report Card](https://goreportcard.com/badge/github.com/madneal/gshark)](https://goreportcard.com/report/github.com/madneal/gshark)   
 
-The project is based on go with vue to build a management system for sensitive information detection.  For the full introduction, please refer [here](https://mp.weixin.qq.com/s/Yoo1DdC2lCtqOMAreF9K0w).
+The project is based on Go and Vue to build a management system for sensitive information detection.  For the full introduction, please refer [here](https://mp.weixin.qq.com/s/Yoo1DdC2lCtqOMAreF9K0w).
 
 
 # Features
@@ -25,7 +25,7 @@ The project is based on go with vue to build a management system for sensitive i
 
 ## Deployment
 
-For the deployment, it's suggested to install nginx. Place the `dist` folder under `html`, modify the `nginx.conf` to reverse proxy the backend service. For the detailed deployment videos in [bilibili](https://www.bilibili.com/video/BV1Py4y1s7ap/) and [youtube](https://youtu.be/bFrKm5t4M54). For the deploment in windows, refer [here](https://www.bilibili.com/video/BV1CA411L7ux/).
+For the deployment, it's suggested to install nginx. Place the `dist` folder under `/var/www/html`, modify the `nginx.conf` to reverse proxy the backend service. For the detailed deployment videos, refer to [bilibili](https://www.bilibili.com/video/BV1Py4y1s7ap/) or [youtube](https://youtu.be/bFrKm5t4M54). For the deployment in windows, refer to [here](https://www.bilibili.com/video/BV1CA411L7ux/).
 
 ```
 location /api/ {
