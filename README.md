@@ -8,12 +8,12 @@
 
 # GShark [![Go Report Card](https://goreportcard.com/badge/github.com/madneal/gshark)](https://goreportcard.com/report/github.com/madneal/gshark)   
 
-The project is based on Go and Vue to build a management system for sensitive information detection.  For the full introduction, please refer [here](https://mp.weixin.qq.com/s/Yoo1DdC2lCtqOMAreF9K0w).
+The project is based on Go and Vue to build a management system for sensitive information detection. For the full introduction, please refer [here](https://mp.weixin.qq.com/s/Yoo1DdC2lCtqOMAreF9K0w).
 
 
 # Features
 
-* Support multi platform, including Gitlab, Github, Searchcode
+* Support multi platforms, including Gitlab, Github, Searchcode
 * Flexible menu and API permission setting
 * Flexible rules and filter rules
 * Utilize gobuster to brute force subdomain
@@ -25,7 +25,7 @@ The project is based on Go and Vue to build a management system for sensitive in
 
 ## Deployment
 
-For the deployment, it's suggested to install nginx. Place the `dist` folder under `/var/www/html`, modify the `nginx.conf` to reverse proxy the backend service. For the detailed deployment videos, refer to [bilibili](https://www.bilibili.com/video/BV1Py4y1s7ap/) or [youtube](https://youtu.be/bFrKm5t4M54). For the deployment in windows, refer to [here](https://www.bilibili.com/video/BV1CA411L7ux/).
+It's suggested to deploy the frontend project by nginx. Place the `dist` folder under `/var/www/html`, modify the `nginx.conf` to reverse proxy the backend service. For the detailed deployment videos, refer to [bilibili](https://www.bilibili.com/video/BV1Py4y1s7ap/) or [youtube](https://youtu.be/bFrKm5t4M54). For the deployment in windows, refer to [here](https://www.bilibili.com/video/BV1CA411L7ux/).
 
 ```
 location /api/ {
@@ -38,7 +38,7 @@ proxy_pass http://127.0.0.1:8888;
 }
 ```
 
-The deployment work is very easy. Find the corresponding binary zip file from [releases](https://github.com/madneal/gshark/releases). Unzip and run. Remember to copy the files inside `dist` to `html` folder of nginx.
+The deployment work is very easy. Find the corresponding version zip file from [releases](https://github.com/madneal/gshark/releases). Unzip and copy the files inside `dist` to `/var/www/html` folder of nginx. Start the nginx and the frontend is deploy successfully.
 
 ### Web service
 
