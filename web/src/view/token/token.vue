@@ -54,22 +54,6 @@
         width="120"
       ></el-table-column>
 
-      <el-table-column label="描述" prop="desc" width="120"></el-table-column>
-
-      <el-table-column label="limit" prop="limit" width="120"></el-table-column>
-
-      <el-table-column
-        label="remaining"
-        prop="remaining"
-        width="120"
-      ></el-table-column>
-
-      <el-table-column
-        label="重置时间"
-        prop="resetTime"
-        width="120"
-      ></el-table-column>
-
       <el-table-column label="按钮组">
         <template slot-scope="scope">
           <el-button
@@ -126,39 +110,6 @@
             placeholder="请输入"
           ></el-input>
         </el-form-item>
-
-        <el-form-item label="描述:">
-          <el-input
-            v-model="formData.desc"
-            clearable
-            placeholder="请输入"
-          ></el-input>
-        </el-form-item>
-
-        <el-form-item label="limit:"
-          ><el-input
-            v-model.number="formData.limit"
-            clearable
-            placeholder="请输入"
-          ></el-input>
-        </el-form-item>
-
-        <el-form-item label="remaining:"
-          ><el-input
-            v-model.number="formData.remaining"
-            clearable
-            placeholder="请输入"
-          ></el-input>
-        </el-form-item>
-
-        <el-form-item label="重置时间:">
-          <el-date-picker
-            type="date"
-            placeholder="选择日期"
-            v-model="formData.resetTime"
-            clearable
-          ></el-date-picker>
-        </el-form-item>
       </el-form>
       <div class="dialog-footer" slot="footer">
         <el-button @click="closeDialog">取 消</el-button>
@@ -192,10 +143,6 @@ export default {
       formData: {
         type: "",
         content: "",
-        desc: "",
-        limit: 0,
-        remaining: 0,
-        resetTime: new Date(),
       },
       typeOptions: [
         {
