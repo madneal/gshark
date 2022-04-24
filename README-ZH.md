@@ -7,24 +7,23 @@
 
 # GShark [![Go Report Card](https://goreportcard.com/badge/github.com/madneal/gshark)](https://goreportcard.com/report/github.com/madneal/gshark)   
 
-The project is based on go with vue to build a management system for sensitive information detection. This is the total fresh version, you can refer the [old version](https://github.com/madneal/gshark/blob/gin/OLD_README.md) here. For the full introduction of the new version, please refer [here](https://mp.weixin.qq.com/s/Yoo1DdC2lCtqOMAreF9K0w).
+项目基于 Go 以及 Vue 搭建的敏感信息检测管理系统。关于的完整介绍请参考[这里](https://mp.weixin.qq.com/s/Yoo1DdC2lCtqOMAreF9K0w)。
 
+# 特性
 
-# Features
+* 支持多个搜索平台，包括 Github，Gitlab（不稳定支持），Searchcode
+* 灵活的菜单以及 API 权限管理
+* 灵活的规则以及过滤规则设置
+* 支持 gobuster 作为子域名爆破的支持
+* 方便易用
 
-* Support multi platform, including Gitlab, Github, Searchcode
-* Flexible menu and API permission setting
-* Flexible rules and filter rules
-* Utilize gobuster to brute force subdomain
-* Easily used management system
-
-# Quick start
+# 快速开始
 
 ![GShark](https://user-images.githubusercontent.com/12164075/114326875-58e1da80-9b69-11eb-82a5-b2e3751a2304.png)
 
-## Deployment
+## 部署
 
-For the deployment, it's suggested to install nginx. Place the `dist` folder under `html`, modify the `nginx.conf` to reverse proxy the backend service. I have also made a video for the deployment in [bilibili](https://www.bilibili.com/video/BV1Py4y1s7ap/) and [youtube](https://youtu.be/bFrKm5t4M54). For the deploment in windows, refer [here](https://www.bilibili.com/video/BV1CA411L7ux/).
+建议通过 nginx 部署前端项目。 将 `dist` 文件夹放在 `/var/www/html`下，修改 `nginx.conf` 来反向代理后端服务。在[bilibili](https://www.bilibili.com/video/BV1Py4y1s7ap/) 和 [youtube](https://youtu.be/bFrKm5t4M54) 可以参考部署视频教程。 Windows 下的部署请参考[这里](https://www.bilibili.com/video/BV1CA411L7ux/)。
 
 ```
 location /api/ {
@@ -37,23 +36,23 @@ proxy_pass http://127.0.0.1:8888;
 }
 ```
 
-The deployment work is very easy. Find the corresponding binary zip file from [releases](https://github.com/madneal/gshark/releases). Unzip and run. Remember to copy the files inside `dist` to `html` folder of nginx.
+部署工作非常简单。 从 [releases](https://github.com/madneal/gshark/releases) 中找到对应的版本 zip 文件。 解压后得将 `dist` 中的文件复制到  `/var/www/html` 文件夹中。
 
-### Web service
+### Web 服务
 
 ```
 ./gshark web
 ```
 
-### Scan service
+### 扫描服务
 
 ```
 ./gshark scan
 ```
 
-## Development
+## 开发
 
-### Server side
+### 服务端
 
 ``` 
 git clone https://github.com/madneal/gshark.git
@@ -69,7 +68,7 @@ go build
 ./gshark web
 ```
 
-If you want to set up the scan service, please run:
+启动扫描服务：
 
 ```
 ./gshark scan
@@ -77,7 +76,7 @@ If you want to set up the scan service, please run:
 
 
 
-### Web side
+### Web 端
 
 ```
 cd ../web
@@ -87,7 +86,7 @@ npm install
 npm run serve
 ```
 
-## Run
+## 运行
 
 ```
 USAGE:
@@ -107,33 +106,33 @@ GLOBAL OPTIONS:
    --version, -v           print the version
 ```
 
-### Add Token
+### 添加 Token
 
-To execute `./gshark scan`, you need to add a Github token for crawl information in github. You can generate a token in [tokens](https://github.com/settings/tokens). Most access scopes are enough. For Gitlab search, remember to add token too.
+执行扫描任务需要在 Github 的 Github token。你可以在 [tokens](https://github.com/settings/tokens) 中生成令牌，只需要 public_repo 的读权限即可。对于 Gitlab 扫描，请记得添加令牌。
 
 [![iR2TMt.md.png](https://s1.ax1x.com/2018/10/31/iR2TMt.md.png)](https://imgchr.com/i/iR2TMt)
 
 ## FAQ
 
-1. Default username and password to login
+1. 默认登录的用户名密码（**及时修改**）：
 
 gshark/gshark
 
-2. Database initial failed
+2. 数据库初始化失败
 
-make sure the version of mysql is over 5.6. And remove the databse before initial the second time.
+确保数据库 mysql 版本高于 5.6。如果是第二次初始化的时候记得移除第一次初始化产生的实例。
 
 3. `go get ./... connection error`
 
-It's suggested to enable goproxy(refer this [article](https://madneal.com/post/gproxy/) for golang upgrade):
+[使用 GOPROXY](https://madneal.com/post/gproxy/:
 
 ```
 go env -w GOPROXY=https://goproxy.cn,direct
 go env -w GO111MODULE=on
 ```
-4. When deployed the web to `nginx`, the page was empty
+4. 部署前端项目后，页面空白
 
-try to clear the LocalStorage
+尝试清除 LocalStorage
 
 ## Reference
 
@@ -141,7 +140,7 @@ try to clear the LocalStorage
 
 ## Wechat
 
-If you would like to join wechat group, you can add my wechat `mmadneal` with the message `gshark`.
+如果您想加入微信群，可以添加我的微信 `mmadneal`，并留言 `gshark`。
 
 ## License
 
