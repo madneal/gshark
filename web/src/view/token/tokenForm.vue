@@ -8,20 +8,7 @@
              <el-form-item label="token:">
                 <el-input v-model="formData.content" clearable placeholder="请输入" ></el-input>
           </el-form-item>
-           
-             <el-form-item label="描述:">
-                <el-input v-model="formData.desc" clearable placeholder="请输入" ></el-input>
-          </el-form-item>
-           
-             <el-form-item label="limit:"><el-input v-model.number="formData.limit" clearable placeholder="请输入"></el-input>
-          </el-form-item>
-           
-             <el-form-item label="remaining:"><el-input v-model.number="formData.remaining" clearable placeholder="请输入"></el-input>
-          </el-form-item>
-           
-             <el-form-item label="重置时间:">
-                  <el-date-picker type="date" placeholder="选择日期" v-model="formData.resetTime" clearable></el-date-picker>
-           </el-form-item>
+
            <el-form-item>
            <el-button @click="save" type="primary">保存</el-button>
            <el-button @click="back" type="primary">返回</el-button>
@@ -42,7 +29,8 @@ export default {
   mixins: [infoList],
   data() {
     return {
-      type: "",formData: {
+      type: "",
+      formData: {
             type:"",
             content:"",
             desc:"",
