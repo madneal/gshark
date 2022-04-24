@@ -8,4 +8,8 @@ insert into sys_apis (created_at, updated_at, deleted_at, path, description, api
 ## v0.9.4
 ```
 alter table search_result modify path varchar(800) default '' not null;
+alter table token drop column limit_times;
+alter table token drop column remaining
+alter table token drop column reset_time;
+alter table token drop column description
 ```
