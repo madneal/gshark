@@ -1,6 +1,6 @@
 package config
 
 const (
-	ConfigEnv  = "GVA_CONFIG"
+	ConfigEnv  = "GSHARK_CONFIG"
 	ConfigFile = "config.yaml"
 )
