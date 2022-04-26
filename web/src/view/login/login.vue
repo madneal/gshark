@@ -3,7 +3,7 @@
     <div class="container">
       <div class="top">
         <div class="desc">
-          <img class="logo_login" src="@/assets/logo_login.png" alt="" />
+          <img class="logo_login" src="@/assets/nav_logo.png" alt="" />
         </div>
         <div class="header">
           <a href="/">
