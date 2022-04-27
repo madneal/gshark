@@ -5,7 +5,6 @@ import (
 	"github.com/madneal/gshark/global"
 )
 
-// 如果含有time.Time 请自行import time包
 type Token struct {
 	global.GVA_MODEL
 	Type    string `json:"type" form:"type" gorm:"column:type;comment:;type:varchar(10);size:10;"`

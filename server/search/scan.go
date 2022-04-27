@@ -41,6 +41,10 @@ func Scan(ctx *cli.Context) error {
 		for {
 			gitlabsearch.RunTask(Interval)
 		}
+	case "subdomain":
+		for {
+			gobuster.RunTask(Interval)
+		}
 	case "all":
 		for {
 			gitlabsearch.RunTask(Interval)
@@ -51,7 +55,7 @@ func Scan(ctx *cli.Context) error {
 		for {
 			githubsearch.RunTask(Interval)
 			codesearch.RunTask(Interval)
-			go gobuster.RunTask(Interval)
+			gobuster.RunTask(Interval)
 		}
 	}
 	return nil

@@ -17,28 +17,6 @@ import (
 	"time"
 )
 
-const SearchNum = 10
-
-func GenerateSearchCodeTask() (map[int][]model.Rule, error) {
-	result := make(map[int][]model.Rule)
-	// get rules with the type of github
-	err, rules := service.GetValidRulesByType("github")
-	if len(rules) == 0 {
-		global.GVA_LOG.Info("Rules of github is empty, please specify one rule for scan at least")
-	}
-	ruleNum := len(rules)
-	batch := ruleNum / SearchNum
-
-	for i := 0; i < batch; i++ {
-		result[i] = rules[SearchNum*i : SearchNum*(i+1)]
-	}
-
-	if ruleNum%SearchNum != 0 {
-		result[batch] = rules[SearchNum*batch : ruleNum]
-	}
-	return result, err
-}
-
 func Search(rules []model.Rule) {
 	client, token, err := GetGithubClient()
 	var content string
@@ -67,19 +45,6 @@ func Search(rules []model.Rule) {
 			err = utils.BotSend(content)
 			if err != nil {
 				global.GVA_LOG.Error("send wechat error", zap.Any("err", err))
-			}
-		}
-	}
-}
-
-func RunSearchTask(mapRules map[int][]model.Rule, err error) {
-	if err == nil {
-		for _, rules := range mapRules {
-			startTime := time.Now()
-			Search(rules)
-			usedTime := time.Since(startTime).Seconds()
-			if usedTime < 60 {
-				time.Sleep(time.Duration(60 - usedTime))
 			}
 		}
 	}
@@ -133,7 +98,16 @@ func ConvertToSearchResults(results []*github.CodeSearchResult, keyword *string)
 }
 
 func RunTask(duration time.Duration) {
-	RunSearchTask(GenerateSearchCodeTask())
+	err, rules := service.GetValidRulesByType("github")
+	if err != nil {
+		global.GVA_LOG.Error("GetValidRulesByType github err", zap.Error(err))
+		return
+	}
+	if len(rules) == 0 {
+		global.GVA_LOG.Info("Rules of github is empty, please specify one rule for scan at least")
+		return
+	}
+	Search(rules)
 	global.GVA_LOG.Info(fmt.Sprintf("Comple the scan of Github, start to sleep %d seconds", duration))
 	time.Sleep(duration * time.Second)
 }
