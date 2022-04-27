@@ -3,16 +3,16 @@ import App from './App.vue'
 
 //  按需引入element
 import {
-    Button, 
-    Select, 
-    Dialog, 
-    Form, 
+    Button,
+    Select,
+    Dialog,
+    Form,
     Input,
-    FormItem, 
-    Option, 
-    Loading, 
-    Message, 
-    Container, 
+    FormItem,
+    Option,
+    Loading,
+    Message,
+    Container,
     Card,
     Dropdown,
     DropdownMenu,
@@ -53,7 +53,7 @@ import {
     Upload,
     Progress,
     MessageBox,
-    Link
+    Link, RadioGroup, Radio
 } from 'element-ui';
 
 Vue.use(Button);
@@ -105,7 +105,8 @@ Vue.use(Progress);
 Vue.use(Scrollbar);
 Vue.use(Loading.directive);
 Vue.use(Link);
-
+Vue.use(Radio);
+Vue.use(RadioGroup);
 Vue.prototype.$loading = Loading.service;
 Vue.prototype.$message = Message;
 Vue.prototype.$confirm = MessageBox.confirm;
