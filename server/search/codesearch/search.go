@@ -14,39 +14,22 @@ import (
 )
 
 func RunTask(duration time.Duration) {
-	RunSearchTask(GenerateSearchCodeTask())
-	global.GVA_LOG.Info(fmt.Sprintf("Complete the scan of searchcode, start to sleep %d seconds", duration))
-	time.Sleep(duration * time.Second)
-}
-
-func GenerateSearchCodeTask() (map[int][]model.Rule, error) {
-	result := make(map[int][]model.Rule)
 	err, rules := service.GetValidRulesByType("searchcode")
-	ruleNum := len(rules)
-	searchNum := global.GVA_CONFIG.Search.SearchNum
-	batch := ruleNum / searchNum
-
-	for i := 0; i < batch; i++ {
-		result[i] = rules[searchNum*i : searchNum*(i+1)]
+	if err != nil {
+		global.GVA_LOG.Error("GetValidRulesByType searchcode err", zap.Error(err))
+		return
 	}
-
-	if ruleNum%searchNum != 0 {
-		result[batch] = rules[searchNum*batch : ruleNum]
+	if len(rules) == 0 {
+		global.GVA_LOG.Info("Rules of search code is empty")
+		return
 	}
-	return result, err
-}
-
-func RunSearchTask(mapRules map[int][]model.Rule, err error) {
 	request := gorequest.New()
-	if err == nil {
-		for _, rules := range mapRules {
-			for _, rule := range rules {
-				global.GVA_LOG.Info(fmt.Sprintf("Search for %s in searchcode", rule.Content))
-				codeResults := SearchForSearchCode(rule, request)
-				SaveResults(codeResults, &rule.Content)
-			}
-		}
+	for _, rule := range rules {
+		global.GVA_LOG.Info(fmt.Sprintf("Search for %s in searchcode", rule.Content))
+		codeResults := SearchForSearchCode(rule, request)
+		SaveResults(codeResults, &rule.Content)
 	}
+	global.GVA_LOG.Info(fmt.Sprintf("Compelete the scan of searchcode"))
 }
 
 func SaveResults(results []*model.SearchResult, keyword *string) {
