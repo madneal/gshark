@@ -2,8 +2,11 @@
 package model
 
 import (
+	"errors"
 	"github.com/madneal/gshark/global"
+	"go.uber.org/zap"
 	"gorm.io/datatypes"
+	"gorm.io/gorm"
 )
 
 // 如果含有time.Time 请自行import time包
@@ -42,4 +45,26 @@ type Match struct {
 
 func (SearchResult) TableName() string {
 	return "search_result"
+}
+
+func (result *SearchResult) CheckUrlExists() bool {
+	var r SearchResult
+	queryResult := global.GVA_DB.Where("url = ?", result.Url).First(&r)
+	err := queryResult.Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return false
+	}
+	global.GVA_LOG.Error("CheckUrlExists error", zap.Error(err))
+	return true
+}
+
+func (result *SearchResult) CheckRepoExists() bool {
+	var r SearchResult
+	queryResult := global.GVA_DB.Where("repo = ? and status > 0", result.Repo).First(&r)
+	err := queryResult.Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return false
+	}
+	global.GVA_LOG.Error("CheckRepoExists err", zap.Error(err))
+	return true
 }

@@ -1,11 +1,9 @@
 package service
 
 import (
-	"errors"
 	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/model"
 	"github.com/madneal/gshark/model/request"
-	"gorm.io/gorm"
 )
 
 //@author: [piexlmax](https://github.com/piexlmax)
@@ -102,11 +100,8 @@ func GetSearchResultInfoList(info request.SearchResultSearch) (err error, list i
 	return err, searchResults, total
 }
 
-func CheckExistOfSearchResult(searchResult *model.SearchResult) (err error, result bool) {
-	queryResult := global.GVA_DB.Where("url = ? or repo = ? and status != 0", searchResult.Url, searchResult.Repo).First(searchResult)
-	err = queryResult.Error
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return err, false
-	}
-	return err, true
+func CheckExistOfSearchResult(searchResult *model.SearchResult) bool {
+	urlExist := searchResult.CheckUrlExists()
+	repoExists := searchResult.CheckRepoExists()
+	return urlExist || repoExists
 }
