@@ -18,22 +18,24 @@ import (
 )
 
 func Search(rules []model.Rule) {
-	client, token, err := GetGithubClient()
+	client, err := GetGithubClient()
+	if err != nil {
+		global.GVA_LOG.Error("GetGithubClient err", zap.Error(err))
+		return
+	}
 	var content string
 	var counts int
-	if err == nil && token != "" {
-		for _, rule := range rules {
-			results, err := client.SearchCode(rule.Content)
-			if err != nil {
-				global.GVA_LOG.Error("SearchCode error", zap.Error(err))
-			}
-			counts = SaveResult(results, &rule.Content)
-			if counts > 0 {
-				content += fmt.Sprintf("%s: %d条<br>", rule.Content, counts)
-			}
+	for _, rule := range rules {
+		results, err := client.SearchCode(rule.Content)
+		if err != nil {
+			global.GVA_LOG.Error("SearchCode error", zap.Error(err))
+		}
+		counts = SaveResult(results, &rule.Content)
+		if counts > 0 {
+			content += fmt.Sprintf("%s: %d条<br>", rule.Content, counts)
 		}
 	}
-	if counts > 0 {
+	if content != "" {
 		if global.GVA_CONFIG.Email.Enable {
 			err = utils.EmailSend("Github敏感信息报告", content)
 			if err != nil {
