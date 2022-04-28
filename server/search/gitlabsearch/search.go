@@ -85,9 +85,7 @@ func SaveResult(results []*model.SearchResult, keyword *string) {
 	insertCount := 0
 	if len(results) > 0 {
 		for _, resultItem := range results {
-			err, has := service.CheckExistOfSearchResult(resultItem)
-			if err != nil {
-			}
+			has := service.CheckExistOfSearchResult(resultItem)
 			if !has {
 				resultItem.Keyword = *keyword
 				err := service.CreateSearchResult(*resultItem)

@@ -54,11 +54,11 @@ func SaveResult(results []*github.CodeSearchResult, keyword *string) int {
 	searchResults := ConvertToSearchResults(results, keyword)
 	insertCount := 0
 	for _, result := range searchResults {
-		err, exist := service.CheckExistOfSearchResult(&result)
+		exist := service.CheckExistOfSearchResult(&result)
 		if exist {
 			continue
 		}
-		err = service.CreateSearchResult(result)
+		err := service.CreateSearchResult(result)
 		if err != nil {
 			global.GVA_LOG.Error("save search result error", zap.Any("save searchResult error",
 				err))
