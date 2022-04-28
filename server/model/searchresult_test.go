@@ -25,14 +25,6 @@ func TestSearchResult_CheckUrlExists(t *testing.T) {
 	assert.Equal(t, true, result1, "the result should exists")
 }
 
-func TestSearchResult_CheckRepoExists(t *testing.T) {
-	global.GVA_DB = InitialDb()
-	global.GVA_LOG = zap.New(nil)
-	searchResult := &SearchResult{
-		Repo:,
-	}
-}
-
 func InitialDb() *gorm.DB {
 	dsn := "gshark:gshark@tcp(127.0.0.1:3306)/gshark?charset=utf8mb4&parseTime=True&loc=Local"
 	mysqlConfig := mysql.Config{
