@@ -36,11 +36,9 @@ func SaveResults(results []*model.SearchResult, keyword *string) {
 	insertCount := 0
 	for _, result := range results {
 		if result != nil {
-			err, exist := service.CheckExistOfSearchResult(result)
+			var err error
+			exist := service.CheckExistOfSearchResult(result)
 			result.Keyword = *keyword
-			if err != nil {
-				fmt.Println(err)
-			}
 			if !exist {
 				err = service.CreateSearchResult(*result)
 				insertCount++
