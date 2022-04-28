@@ -41,21 +41,18 @@ func InitGithubClients() (map[string]*Client, error) {
 	return githubClients, err
 }
 
-func GetGithubClient() (*Client, string, error) {
+func GetGithubClient() (*Client, error) {
 	var c *Client
 	clients, err := InitGithubClients()
 	for _, client := range clients {
 		c = client
 		break
 	}
-	if err != nil {
-		//logger.Log.Error(err)
-	}
 	if c == nil {
 		fmt.Println("Github Client initial failed, please add token")
 		os.Exit(3)
 	}
-	return c, c.Token, err
+	return c, err
 }
 
 func NewGitClient(GithubClient *github.Client, token string) *Client {
