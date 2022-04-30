@@ -54,7 +54,7 @@ The deployment work is very easy. Find the corresponding version zip file from [
 
 ## Development
 
-### Server side
+### Server
 
 ``` 
 git clone https://github.com/madneal/gshark.git
@@ -78,7 +78,7 @@ If you want to set up the scan service, please run:
 
 
 
-### Web side
+### Web 
 
 ```
 cd ../web
