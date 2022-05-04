@@ -43,24 +43,24 @@ type Match struct {
 	Indices []int   `json:"indices,omitempty" gorm:"json"`
 }
 
-func (SearchResult) TableName() string {
+func (SearchResult) TabadleName() string {
 	return "search_result"
 }
 
 func (result *SearchResult) CheckUrlExists() bool {
 	var r SearchResult
-	queryResult := global.GVA_DB.Where("url = ?", result.Url).First(&r)
+	queryResult := global.GVA_DB.Table("search_result").Where("url = ?", result.Url).First(&r)
 	err := queryResult.Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return false
 	}
-	global.GVA_LOG.Error("CheckUrlExists error", zap.Error(err))
+	global.GVA_LOG.Error("CheckUrlExists error", zap.Any("err", err))
 	return true
 }
 
 func (result *SearchResult) CheckRepoExists() bool {
 	var r SearchResult
-	queryResult := global.GVA_DB.Where("repo = ? and status > 0", result.Repo).First(&r)
+	queryResult := global.GVA_DB.Table("search_result").Where("repo = ? and status > 0", result.Repo).First(&r)
 	err := queryResult.Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return false
