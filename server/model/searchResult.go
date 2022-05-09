@@ -54,7 +54,9 @@ func (result *SearchResult) CheckUrlExists() bool {
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return false
 	}
-	global.GVA_LOG.Error("CheckUrlExists error", zap.Any("err", err))
+	if err != nil {
+		global.GVA_LOG.Error("CheckUrlExists error", zap.Any("err", err))
+	}
 	return true
 }
 
@@ -65,6 +67,8 @@ func (result *SearchResult) CheckRepoExists() bool {
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return false
 	}
-	global.GVA_LOG.Error("CheckRepoExists err", zap.Error(err))
+	if err != nil {
+		global.GVA_LOG.Error("CheckRepoExists err", zap.Error(err))
+	}
 	return true
 }
