@@ -12,11 +12,21 @@ type Server struct {
 	// gorm
 	Mysql Mysql `mapstructure:"mysql" json:"mysql" yaml:"mysql"`
 	// oss
-	Local      Local      `mapstructure:"local" json:"local" yaml:"local"`
-	Qiniu      Qiniu      `mapstructure:"qiniu" json:"qiniu" yaml:"qiniu"`
-	AliyunOSS  AliyunOSS  `mapstructure:"aliyun-oss" json:"aliyunOSS" yaml:"aliyun-oss"`
-	TencentCOS TencentCOS `mapstructure:"tencent-cos" json:"tencentCOS" yaml:"tencent-cos"`
-	Excel      Excel      `mapstructure:"excel" json:"excel" yaml:"excel"`
-	Search     Search     `mapstructure:"search" json:"search" yaml:"search"`
-	Wechat     Wechat     `mapstructure:"wechat" json:"wechat" yaml:"wechat"`
+	Local  Local  `mapstructure:"local" json:"local" yaml:"local"`
+	Excel  Excel  `mapstructure:"excel" json:"excel" yaml:"excel"`
+	Search Search `mapstructure:"search" json:"search" yaml:"search"`
+	Wechat Wechat `mapstructure:"wechat" json:"wechat" yaml:"wechat"`
+}
+
+type Local struct {
+	Path string `mapstructure:"path" json:"path" yaml:"path" `
+}
+
+type Excel struct {
+	Dir string `mapstructure:"dir" json:"dir" yaml:"dir"`
+}
+
+type Wechat struct {
+	Url    string `mapstructure:"url" json:"url" yaml:"url"`
+	Enable bool   `mapstructure:"enable" json:"enable" yaml:"enable"`
 }
