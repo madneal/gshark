@@ -1,4 +1,3 @@
-// 自动生成模板SearchResult
 package model
 
 import (
@@ -9,7 +8,6 @@ import (
 	"gorm.io/gorm"
 )
 
-// 如果含有time.Time 请自行import time包
 type SearchResult struct {
 	global.GVA_MODEL
 	Repo            string         `json:"repo" form:"repo" gorm:"column:repo;comment:;type:varchar(200);size:200;"`
@@ -43,7 +41,7 @@ type Match struct {
 	Indices []int   `json:"indices,omitempty" gorm:"json"`
 }
 
-func (SearchResult) TabadleName() string {
+func (SearchResult) TableName() string {
 	return "search_result"
 }
 

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/gookit/color"
 	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/model"
 	"github.com/madneal/gshark/service"
@@ -16,14 +17,19 @@ import (
 )
 
 func RunTask(duration time.Duration) {
-	RunSearchTask(GenerateSearchCodeTask())
+	//RunSearchTask(GenerateSearchCodeTask())
+	err, rules := service.GetValidRulesByType("gitlab")
+	if err != nil {
+		global.GVA_LOG.Error("GetValidRulesByType gitlab err", zap.Error(err))
+		return
+	}
+	RunSearchTask(&rules)
 	global.GVA_LOG.Info(fmt.Sprintf("Complete the scan of Gitlab, start to sleep %d seconds", duration))
 	time.Sleep(duration * time.Second)
 }
 
 func GenerateSearchCodeTask() (map[int][]model.Rule, error) {
 	result := make(map[int][]model.Rule)
-	// get rules with the type of github
 	err, rules := service.GetValidRulesByType("gitlab")
 	ruleNum := len(rules)
 	batch := ruleNum / global.GVA_CONFIG.Search.SearchNum
@@ -38,7 +44,20 @@ func GenerateSearchCodeTask() (map[int][]model.Rule, error) {
 	return result, err
 }
 
-func RunSearchTask(mapRules map[int][]model.Rule, err error) {
+func RunSearchTask(rules *[]model.Rule) {
+	client := GetClient()
+	if client == nil {
+		color.Warnln("There is no client for Gitlab, please check if you specify Gitlab token")
+		return
+	}
+	for _, rule := range *rules {
+		blobs := SearchBlobs(client, rule.Content)
+		results := ConvertBlobsToResults(client, blobs, rule.Content)
+		SaveResult(results, &rule.Content)
+	}
+}
+
+func RunSearchTaskByProject(mapRules map[int][]model.Rule, err error) {
 	client := GetClient()
 	if client == nil {
 		return
@@ -178,6 +197,68 @@ func GetClient() *gitlab.Client {
 		global.GVA_LOG.Error("getClient error", zap.Error(err))
 	}
 	return client
+}
+
+// SearchBlobBySearchOptions is utilized to search inside blob by keyword
+func SearchBlobBySearchOptions(client *gitlab.Client, keyword string, searchOptions *gitlab.SearchOptions) ([]*gitlab.Blob, int) {
+	blobs, res, err := client.Search.Blobs(keyword, searchOptions)
+	if err != nil {
+		global.GVA_LOG.Error("SearchBlob error", zap.Error(err))
+	}
+	return blobs, res.NextPage
+}
+
+// SearchBlobs is utilized to search all the results by keyword
+func SearchBlobs(client *gitlab.Client, keyword string) []*gitlab.Blob {
+	blobs := make([]*gitlab.Blob, 0)
+	searchOptions := &gitlab.SearchOptions{
+		Page:    1,
+		PerPage: 100,
+	}
+	currentPage := 1
+	for currentPage > 0 {
+		blobResults, nextPage := SearchBlobBySearchOptions(client, keyword, searchOptions)
+		searchOptions.Page = nextPage
+		currentPage = nextPage
+		blobs = append(blobs, blobResults...)
+	}
+	return blobs
+}
+
+// GetProjectById is utilized to get the project by id
+func GetProjectById(client *gitlab.Client, id int) *gitlab.Project {
+	project, _, err := client.Projects.GetProject(id, &gitlab.GetProjectOptions{})
+	if err != nil {
+		global.GVA_LOG.Error("GetProjectById err", zap.Error(err))
+	}
+	return project
+}
+
+// ConvertBlobsToResults is utilized to convert blobs to results
+func ConvertBlobsToResults(client *gitlab.Client, blobs []*gitlab.Blob, keyword string) []*model.SearchResult {
+	results := make([]*model.SearchResult, 0)
+	for _, blob := range blobs {
+		projectId := blob.ProjectID
+		project := GetProjectById(client, projectId)
+		textMatches := make([]model.TextMatch, 0)
+		textMatches = append(textMatches, model.TextMatch{
+			Fragment: &blob.Data,
+		})
+		dataJson, err := json.Marshal(textMatches)
+		if err != nil {
+			global.GVA_LOG.Error("blob.Data marshal error", zap.Error(err))
+		}
+		result := model.SearchResult{
+			Url:             fmt.Sprintf("%s/blob/master/%s", project.WebURL, blob.Filename),
+			Path:            blob.Filename,
+			Repo:            blob.Basename,
+			TextMatchesJson: dataJson,
+			Status:          0,
+			Keyword:         keyword,
+		}
+		results = append(results, &result)
+	}
+	return results
 }
 
 // GetProjects is utilized to obtain public projects from gitlab
