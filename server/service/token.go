@@ -67,7 +67,7 @@ func GetToken(id uint) (err error, token model.Token) {
 }
 
 func ListTokenByType(tokenType string) (err error, tokens []model.Token) {
-	err = global.GVA_DB.Where(" type = ?", tokenType).Find(&tokens).Error
+	err = global.GVA_DB.Where("type = ?", tokenType).Find(&tokens).Error
 	return err, tokens
 }
 
