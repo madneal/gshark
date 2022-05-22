@@ -54,23 +54,26 @@ jobs:
       - name: Go Setup
         uses: actions/setup-go@v3.1.0
         with:
-          go-version: 1.16
+          go-version: '1.17.1'
 
       - name: Go Build for darwin
+        working-directory: ./server
         run: |
-          cd server && GOOS=darwin GOARCH=amd64 go build && cp gshark ../release/gshark_darwin_amd64
+          GOOS=darwin GOARCH=amd64 go build && cp gshark ../release/gshark_darwin_amd64
 
       - name: Go Build for windows
+        working-directory: ./server
         run: |
           GOOS=windows GOARCH=amd64 go build && cp gshark ../release/gshark_darwin_amd64
 
       - name: Go Build for linux
+        working-directory: ./server
         run: |
           GOOS=linux GOARCH=amd64 go build && cp gshark ../release/gshark_darwin_amd64
 
       - name: Compress
         run: |
-          cd .. && 7z a -r ./releases/gshark_darwin_amd64.zip ./releases/gshark_darwin_amd64/ &&
+          7z a -r ./releases/gshark_darwin_amd64.zip ./releases/gshark_darwin_amd64/ &&
           7z a -r ./releases/gshark_windows_amd64.zip ./releases/gshark_windows_amd64/ &&
           7z a -r ./releases/gshark_linux_amd64.zip ./releases/gshark_linux_amd64
 
