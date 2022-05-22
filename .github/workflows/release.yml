@@ -29,7 +29,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
           
 
-      - run: cd web && npm run build
+      - run: cd web && npm install && npm run build
 
       - name: Mkdir
         run: |
