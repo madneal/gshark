@@ -57,17 +57,17 @@ jobs:
       - name: Go Build for darwin
         working-directory: ./server
         run: |
-          GOOS=darwin GOARCH=amd64 go build && cp gshark ../release/gshark_darwin_amd64
+          GOOS=darwin GOARCH=amd64 go build -v ./... && cp gshark ../release/gshark_darwin_amd64
 
       - name: Go Build for windows
         working-directory: ./server
         run: |
-          GOOS=windows GOARCH=amd64 go build && cp gshark ../release/gshark_darwin_amd64
+          GOOS=windows GOARCH=amd64 go build -v ./... && cp gshark ../release/gshark_darwin_amd64
 
       - name: Go Build for linux
         working-directory: ./server
         run: |
-          GOOS=linux GOARCH=amd64 go build && cp gshark ../release/gshark_darwin_amd64
+          GOOS=linux GOARCH=amd64 go build -v ./... && cp gshark ../release/gshark_darwin_amd64
 
       - name: Compress
         run: |
