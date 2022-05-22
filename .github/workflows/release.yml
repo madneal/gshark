@@ -77,9 +77,9 @@ jobs:
 
       - name: Compress
         run: |
-          7z a -r ./releases/gshark_darwin_amd64.zip ./releases/gshark_darwin_amd64/ &&
-          7z a -r ./releases/gshark_windows_amd64.zip ./releases/gshark_windows_amd64/ &&
-          7z a -r ./releases/gshark_linux_amd64.zip ./releases/gshark_linux_amd64
+          7z a -r ./release/gshark_darwin_amd64.zip ./release/gshark_darwin_amd64/ &&
+          7z a -r ./release/gshark_windows_amd64.zip ./release/gshark_windows_amd64/ &&
+          7z a -r ./release/gshark_linux_amd64.zip ./release/gshark_linux_amd64
 
       - name: Upload Release Asset
         env:
