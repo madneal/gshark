@@ -55,16 +55,22 @@ jobs:
         uses: actions/setup-go@v3.1.0
 
       - name: Go Build for darwin
+        env:
+          GO111MODULE: on
         working-directory: ./server
         run: |
           GOOS=darwin GOARCH=amd64 go build -v ./... && cp gshark ../release/gshark_darwin_amd64
 
       - name: Go Build for windows
+        env:
+          GO111MODULE: on
         working-directory: ./server
         run: |
           GOOS=windows GOARCH=amd64 go build -v ./... && cp gshark ../release/gshark_darwin_amd64
 
       - name: Go Build for linux
+        env:
+          GO111MODULE: on
         working-directory: ./server
         run: |
           GOOS=linux GOARCH=amd64 go build -v ./... && cp gshark ../release/gshark_darwin_amd64
