@@ -80,6 +80,10 @@ jobs:
           7z a -r ./release/gshark_darwin_amd64.zip ./release/gshark_darwin_amd64/ &&
           7z a -r ./release/gshark_windows_amd64.zip ./release/gshark_windows_amd64/ &&
           7z a -r ./release/gshark_linux_amd64.zip ./release/gshark_linux_amd64
+          
+      - name: Remove release directory
+        run: |
+          rm -rf release/gshark_*/
 
       - name: Upload Release Asset
         env:
