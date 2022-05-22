@@ -1,9 +1,8 @@
-package upload
+package utils
 
 import (
 	"errors"
 	"github.com/madneal/gshark/global"
-	"github.com/madneal/gshark/utils"
 	"go.uber.org/zap"
 	"io"
 	"mime/multipart"
@@ -29,7 +28,7 @@ func (*Local) UploadFile(file *multipart.FileHeader) (string, string, error) {
 	ext := path.Ext(file.Filename)
 	// 读取文件名并加密
 	name := strings.TrimSuffix(file.Filename, ext)
-	name = utils.MD5V([]byte(name))
+	name = MD5V([]byte(name))
 	// 拼接新文件名
 	filename := name + "_" + time.Now().Format("20060102150405") + ext
 	// 尝试创建此路径
