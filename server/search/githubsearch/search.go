@@ -42,7 +42,7 @@ func Search(rules []model.Rule) {
 				global.GVA_LOG.Error("send email error", zap.Any("err", err))
 			}
 		}
-		if global.GVA_CONFIG.Email.Enable {
+		if global.GVA_CONFIG.Wechat.Enable {
 			content = "Github敏感信息报告\n" + content
 			err = utils.BotSend(content)
 			if err != nil {
