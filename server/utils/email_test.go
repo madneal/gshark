@@ -19,7 +19,7 @@ func TestEmailTest(t *testing.T) {
 
 func TestBot(t *testing.T) {
 	global.GVA_VP = core.Viper("/Users/neal/project/gshark/server/config.yaml")
-	err := utils.BotSend("test")
+	err := utils.BotSend("Github敏感信息报告\n" + "test")
 	if err != nil {
 		fmt.Println(err)
 	}
