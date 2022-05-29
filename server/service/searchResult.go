@@ -101,7 +101,7 @@ func GetSearchResultInfoList(info request.SearchResultSearch) (err error, list i
 }
 
 func CheckExistOfSearchResult(searchResult *model.SearchResult) bool {
-	urlExist := searchResult.CheckUrlExists()
+	urlExist := searchResult.CheckPathExists()
 	repoExists := searchResult.CheckRepoExists()
 	return urlExist || repoExists
 }
