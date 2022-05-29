@@ -16,12 +16,12 @@ func TestSearchResult_CheckUrlExists(t *testing.T) {
 	searchResult := &SearchResult{
 		Url: "adfasdfasdf",
 	}
-	result := searchResult.CheckUrlExists()
+	result := searchResult.CheckPathExists()
 	assert.Equal(t, false, result, "the url should not exists")
 	searchResult1 := &SearchResult{
 		Url: "https://baidu.com",
 	}
-	result1 := searchResult1.CheckUrlExists()
+	result1 := searchResult1.CheckPathExists()
 	assert.Equal(t, true, result1, "the result should exists")
 }
 
