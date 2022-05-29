@@ -45,15 +45,16 @@ func (SearchResult) TableName() string {
 	return "search_result"
 }
 
-func (result *SearchResult) CheckUrlExists() bool {
+func (result *SearchResult) CheckPathExists() bool {
 	var r SearchResult
-	queryResult := global.GVA_DB.Table("search_result").Where("url = ?", result.Url).First(&r)
+	queryResult := global.GVA_DB.Table("search_result").Where("path = ? and repository = ?",
+		result.Path, result.RepoUrl).First(&r)
 	err := queryResult.Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return false
 	}
 	if err != nil {
-		global.GVA_LOG.Error("CheckUrlExists error", zap.Any("err", err))
+		global.GVA_LOG.Error("CheckPathExists error", zap.Any("err", err))
 	}
 	return true
 }
