@@ -10,15 +10,6 @@ export default {
         }
     },
     methods: {
-        filterDict(value, type) {
-            const rowLabel = this[type + "Options"] && this[type + "Options"].filter(item => item.value == value)
-            return rowLabel && rowLabel[0] && rowLabel[0].label
-        },
-        async getDict(type) {
-            const dicts = await getDict(type)
-            this[type + "Options"] = dicts
-            return dicts
-        },
         handleSizeChange(val) {
             this.pageSize = val
             this.getTableData()
