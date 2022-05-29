@@ -131,7 +131,6 @@ func InitDB(conf request.InitDB) error {
 		model.JwtBlacklist{},
 		model.SysDictionary{},
 		model.SysDictionaryDetail{},
-		model.ExaFile{},
 		model.ExaFileChunk{},
 		model.SysOperationRecord{},
 		model.Rule{},
