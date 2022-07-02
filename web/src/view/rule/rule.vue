@@ -46,6 +46,9 @@
             >
           </el-popover>
         </el-form-item>
+        <el-form-item>
+          <el-button @click="dialogBatchRules = true" type="primary">批量导入</el-button>
+        </el-form-item>
       </el-form>
     </div>
     <el-table
@@ -135,7 +138,7 @@
     <el-dialog
       :before-close="closeDialog"
       :visible.sync="dialogFormVisible"
-      title="弹窗操作"
+      title="新增规则"
     >
       <el-form :model="formData" label-position="right" label-width="80px">
         <el-form-item label="规则类型:">
@@ -187,6 +190,28 @@
         <el-button @click="enterDialog" type="primary">确 定</el-button>
       </div>
     </el-dialog>
+
+    <el-dialog :visible.sync="dialogBatchRules" title="批量导入规则">
+      <el-form :model="batchRulesForm" label-position="right" label-width="80px">
+        <el-form-item label="规则类型:">
+          <el-radio-group v-model="batchRulesForm.type">
+            <el-radio label="github"></el-radio>
+            <el-radio label="gitlab"></el-radio>
+            <el-radio label="searchcode"></el-radio>
+            <el-radio label="domain"></el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="规则内容:">
+          <el-input type="textarea" auto-size placeholder="规则内容，多条规则换行"
+                    :rows="5"
+                    v-model="batchRulesForm.contents"></el-input>
+        </el-form-item>
+      </el-form>
+      <div class="dialog-footer" slot="footer">
+        <el-button @click="dialogBatchRules = false">取 消</el-button>
+        <el-button @click="batchCreateRules" type="primary">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -198,10 +223,11 @@ import {
   updateRule,
   findRule,
   getRuleList,
-  switchRule,
-} from "@/api/rule"; //  此处请自行替换地址
+  switchRule, batchCreateRules,
+} from "@/api/rule";
 import { formatTimeToStr } from "@/utils/date";
 import infoList from "@/mixins/infoList";
+
 export default {
   name: "Rule",
   mixins: [infoList],
@@ -209,6 +235,7 @@ export default {
     return {
       listApi: getRuleList,
       dialogFormVisible: false,
+      dialogBatchRules: false,
       type: "",
       deleteVisible: false,
       multipleSelection: [],
@@ -218,6 +245,10 @@ export default {
         name: "",
         desc: "",
         status: 1,
+      },
+      batchRulesForm: {
+        type: 'github',
+        contents: ''
       },
       statusOptions: [
         {
@@ -383,6 +414,17 @@ export default {
       this.type = "create";
       this.dialogFormVisible = true;
     },
+    async batchCreateRules() {
+      const res = await batchCreateRules(this.batchRulesForm);
+      if (res.code === 0) {
+        this.dialogBatchRules = false;
+        this.$message({
+          type: 'success',
+          message: '批量创建规则成功'
+        });
+        await this.getTableData();
+      }
+    }
   },
   async created() {
     await this.getTableData();

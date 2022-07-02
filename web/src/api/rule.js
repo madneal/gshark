@@ -16,6 +16,14 @@ export const createRule = (data) => {
     })
 }
 
+export const batchCreateRules = (data) => {
+    return service({
+        url: '/rule/batchCreateRule',
+        method: 'post',
+        data
+    })
+}
+
 
 // @Tags Rule
 // @Summary 删除Rule
