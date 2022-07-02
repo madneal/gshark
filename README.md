@@ -40,6 +40,10 @@ proxy_pass http://127.0.0.1:8888;
 
 The deployment work is very easy. Find the corresponding version zip file from [releases](https://github.com/madneal/gshark/releases). Unzip and copy the files inside `dist` to `/var/www/html` folder of nginx. Start the nginx and the frontend is deploy successfully.
 
+### Incremental Deployment
+
+For the incremental deployment, [sql.md](https://github.com/madneal/gshark/blob/master/sql.md) should be executed for the corresponding database operations.
+
 ### Web service
 
 ```
