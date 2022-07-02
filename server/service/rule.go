@@ -6,22 +6,10 @@ import (
 	"github.com/madneal/gshark/model/request"
 )
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: CreateRule
-//@description: 创建Rule记录
-//@param: rule model.Rule
-//@return: err error
-
 func CreateRule(rule model.Rule) (err error) {
 	err = global.GVA_DB.Create(&rule).Error
 	return err
 }
-
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: DeleteRule
-//@description: 删除Rule记录
-//@param: rule model.Rule
-//@return: err error
 
 func DeleteRule(rule model.Rule) (err error) {
 	err = global.GVA_DB.Delete(&rule).Error
