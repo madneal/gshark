@@ -32,7 +32,6 @@
     "vuex-persist": "^2.3.0"
   },
   "devDependencies": {
-    "webpack": "^5.55.1",
     "@babel/core": "^7.17.5",
     "@babel/eslint-parser": "^7.17.0",
     "@vue/cli-plugin-babel": "^5.0.1",
@@ -43,11 +42,13 @@
     "core-js": "^3.21.1",
     "eslint": "^8.10.0",
     "eslint-plugin-vue": "^8.5.0",
+    "html-webpack-plugin": "^5.5.0",
     "numericjs": "^1.2.6",
     "raw-loader": "^3.1.0",
     "sass": "^1.49.9",
     "sass-loader": "^8.0.2",
-    "vue-template-compiler": "^2.6.14"
+    "vue-template-compiler": "^2.6.14",
+    "webpack": "^5.55.1"
   },
   "eslintConfig": {
     "root": true,
