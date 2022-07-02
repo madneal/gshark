@@ -9,16 +9,9 @@ import (
 	"github.com/madneal/gshark/model/response"
 	"github.com/madneal/gshark/service"
 	"go.uber.org/zap"
+	"strings"
 )
 
-// @Tags Rule
-// @Summary 创建Rule
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body model.Rule true "创建Rule"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
-// @Router /rule/createRule [post]
 func CreateRule(c *gin.Context) {
 	var rule model.Rule
 	_ = c.ShouldBindJSON(&rule)
@@ -30,14 +23,24 @@ func CreateRule(c *gin.Context) {
 	}
 }
 
-// @Tags Rule
-// @Summary 删除Rule
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body model.Rule true "删除Rule"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"删除成功"}"
-// @Router /rule/deleteRule [delete]
+func BatchCreateRule(c *gin.Context) {
+	var batchCreateRule request.BatchCreateRuleReq
+	_ = c.ShouldBindJSON(&batchCreateRule)
+	rules := strings.Split(batchCreateRule.Contents, "\n")
+	for _, ruleContent := range rules {
+		rule := model.Rule{
+			Type:    batchCreateRule.Type,
+			Content: ruleContent,
+		}
+		if err := service.CreateRule(rule); err != nil {
+			global.GVA_LOG.Error("创建Rule失败！", zap.Error(err))
+			response.FailWithMessage("创建规则失败", c)
+			return
+		}
+	}
+	response.OkWithMessage("创建规则成功", c)
+}
+
 func DeleteRule(c *gin.Context) {
 	var rule model.Rule
 	_ = c.ShouldBindJSON(&rule)
@@ -49,14 +52,6 @@ func DeleteRule(c *gin.Context) {
 	}
 }
 
-// @Tags Rule
-// @Summary 批量删除Rule
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body request.IdsReq true "批量删除Rule"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"批量删除成功"}"
-// @Router /rule/deleteRuleByIds [delete]
 func DeleteRuleByIds(c *gin.Context) {
 	var IDS request.IdsReq
 	_ = c.ShouldBindJSON(&IDS)

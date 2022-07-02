@@ -67,8 +67,6 @@ var authorityMenus = []AuthorityMenus{
 	{"9528", 17},
 }
 
-//@author: [SliverHorn](https://github.com/SliverHorn)
-//@description: sys_authority_menus 表数据初始化
 func (a *authoritiesMenus) Init() error {
 	return global.GVA_DB.Table("sys_authority_menus").Transaction(func(tx *gorm.DB) error {
 		if tx.Where("sys_authority_authority_id IN ('888', '8881', '9528')").Find(&[]AuthorityMenus{}).RowsAffected == 48 {

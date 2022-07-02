@@ -16,5 +16,6 @@ func InitRuleRouter(Router *gin.RouterGroup) {
 		RuleRouter.GET("findRule", v1.FindRule)                  // 根据ID获取Rule
 		RuleRouter.GET("getRuleList", v1.GetRuleList)            // 获取Rule列表
 		RuleRouter.POST("switchRuleStatus", v1.SwitchRuleStatus)
+		RuleRouter.POST("batchCreateRule", v1.BatchCreateRule)
 	}
 }

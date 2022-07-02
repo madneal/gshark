@@ -124,6 +124,7 @@ var carbines = []gormadapter.CasbinRule{
 	{PType: "p", V0: "8881", V1: "/customer/customerList", V2: "GET"},
 	{PType: "p", V0: "888", V1: "/rule/deleteRule", V2: "DELETE"},
 	{PType: "p", V0: "888", V1: "/rule/createRule", V2: "POST"},
+	{PType: "p", V0: "888", V1: "/rule/batchCreateRule", V2: "POST"},
 	{PType: "p", V0: "888", V1: "/rule/deleteRuleByIds", V2: "DELETE"},
 	{PType: "p", V0: "888", V1: "/rule/updateRule", V2: "PUT"},
 	{PType: "p", V0: "888", V1: "/rule/findRule", V2: "GET"},
