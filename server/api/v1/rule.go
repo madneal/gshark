@@ -31,6 +31,7 @@ func BatchCreateRule(c *gin.Context) {
 		rule := model.Rule{
 			Type:    batchCreateRule.Type,
 			Content: ruleContent,
+			Status:  1,
 		}
 		if err := service.CreateRule(rule); err != nil {
 			global.GVA_LOG.Error("创建Rule失败！", zap.Error(err))
