@@ -18,7 +18,7 @@ export const dictionary = {
                 return state.dictionaryMap[type]
             } else {
                 const res = await findSysDictionary({ type })
-                if (res.code == 0) {
+                if (res.code === 0) {
                     const dictionaryMap = {}
                     const dict = []
                     res.data.resysDictionary.sysDictionaryDetails && res.data.resysDictionary.sysDictionaryDetails.map(item => {
