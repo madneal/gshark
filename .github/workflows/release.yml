@@ -59,7 +59,7 @@ jobs:
           GO111MODULE: on
         working-directory: ./server
         run: |
-          go mod tidy && bGOOS=darwin GOARCH=amd64 go build -o gshark_darwin && cp gshark_darwin ../release/gshark_darwin_amd64
+          go mod tidy && bGOOS=darwin GOARCH=amd64 go build -o gshark && cp gshark ../release/gshark_darwin_amd64
 
       - name: Go Build for windows
         env:
@@ -73,7 +73,7 @@ jobs:
           GO111MODULE: on
         working-directory: ./server
         run: |
-          go mod tidy && GOOS=linux GOARCH=amd64 go build -o gshark_linux && cp gshark_linux ../release/gshark_linux_amd64
+          go mod tidy && GOOS=linux GOARCH=amd64 go build -o gshark && cp gshark ../release/gshark_linux_amd64
 
       - name: Compress
         run: |
