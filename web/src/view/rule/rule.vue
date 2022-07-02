@@ -407,7 +407,7 @@ export default {
           message: "创建/更改成功",
         });
         this.closeDialog();
-        this.getTableData();
+        await this.getTableData();
       }
     },
     openDialog() {
