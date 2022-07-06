@@ -146,7 +146,7 @@ try to clear the LocalStorage
 
 ## Wechat
 
-If you would like to join wechat group, you can add my wechat `mmadneal` with the message `gshark`.
+If you would like to join wechat group, you can add my wechat `mmadneal` with the message `gshark`. But I would strongly suggest you to raise a issue diretcly instead of just asking in wechat.
 
 ## License
 
