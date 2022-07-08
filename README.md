@@ -112,11 +112,16 @@ GLOBAL OPTIONS:
    --version, -v           print the version
 ```
 
+## Usage
 ### Add Token
 
 To execute `./gshark scan`, you need to add a Github token for crawl information in github. You can generate a token in [tokens](https://github.com/settings/tokens). Most access scopes are enough. For Gitlab search, remember to add token too.
 
 [![iR2TMt.md.png](https://s1.ax1x.com/2018/10/31/iR2TMt.md.png)](https://imgchr.com/i/iR2TMt)
+
+### Rule Configuration
+
+For the Github or Gitlab rule, the rule will be matched by the k
 
 ## FAQ
 
