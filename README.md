@@ -56,6 +56,8 @@ For the incremental deployment, [sql.md](https://github.com/madneal/gshark/blob/
 ./gshark scan
 ```
 
+For the scan service, it's necessary to config the corresponding rules. For example, Github or Gitlab rules.
+
 ## Development
 
 ### Server
@@ -121,7 +123,7 @@ To execute `./gshark scan`, you need to add a Github token for crawl information
 
 ### Rule Configuration
 
-For the Github or Gitlab rule, the rule will be matched by the k
+For the Github or Gitlab rule, the rule will be matched by the syntax in the corresponding platfroms. Directly, you config what you search at Github.
 
 ## FAQ
 
