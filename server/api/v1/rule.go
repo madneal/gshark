@@ -29,9 +29,9 @@ func BatchCreateRule(c *gin.Context) {
 	rules := strings.Split(batchCreateRule.Contents, "\n")
 	for _, ruleContent := range rules {
 		rule := model.Rule{
-			Type:    batchCreateRule.Type,
-			Content: ruleContent,
-			Status:  1,
+			RuleType: batchCreateRule.Type,
+			Content:  ruleContent,
+			Status:   true,
 		}
 		if err := service.CreateRule(rule); err != nil {
 			global.GVA_LOG.Error("创建Rule失败！", zap.Error(err))
@@ -64,14 +64,6 @@ func DeleteRuleByIds(c *gin.Context) {
 	}
 }
 
-// @Tags Rule
-// @Summary 更新Rule
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body model.Rule true "更新Rule"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"更新成功"}"
-// @Router /rule/updateRule [put]
 func UpdateRule(c *gin.Context) {
 	var rule model.Rule
 	_ = c.ShouldBindJSON(&rule)
@@ -83,14 +75,6 @@ func UpdateRule(c *gin.Context) {
 	}
 }
 
-// @Tags Rule
-// @Summary 用id查询Rule
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body model.Rule true "用id查询Rule"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"查询成功"}"
-// @Router /rule/findRule [get]
 func FindRule(c *gin.Context) {
 	var rule model.Rule
 	_ = c.ShouldBindQuery(&rule)
@@ -102,14 +86,6 @@ func FindRule(c *gin.Context) {
 	}
 }
 
-// @Tags Rule
-// @Summary 分页获取Rule列表
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body request.RuleSearch true "分页获取Rule列表"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
-// @Router /rule/getRuleList [get]
 func GetRuleList(c *gin.Context) {
 	var pageInfo request.RuleSearch
 	_ = c.ShouldBindQuery(&pageInfo)
