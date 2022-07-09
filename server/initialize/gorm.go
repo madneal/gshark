@@ -2,7 +2,6 @@ package initialize
 
 import (
 	"github.com/madneal/gshark/global"
-	"github.com/madneal/gshark/initialize/internal"
 	"github.com/madneal/gshark/model"
 	"os"
 
@@ -100,21 +99,21 @@ func gormConfig(mod bool) *gorm.Config {
 	var config = &gorm.Config{DisableForeignKeyConstraintWhenMigrating: true}
 	switch global.GVA_CONFIG.Mysql.LogZap {
 	case "silent", "Silent":
-		config.Logger = internal.Default.LogMode(logger.Silent)
+		config.Logger = Default.LogMode(logger.Silent)
 	case "error", "Error":
-		config.Logger = internal.Default.LogMode(logger.Error)
+		config.Logger = Default.LogMode(logger.Error)
 	case "warn", "Warn":
-		config.Logger = internal.Default.LogMode(logger.Warn)
+		config.Logger = Default.LogMode(logger.Warn)
 	case "info", "Info":
-		config.Logger = internal.Default.LogMode(logger.Info)
+		config.Logger = Default.LogMode(logger.Info)
 	case "zap", "Zap":
-		config.Logger = internal.Default.LogMode(logger.Info)
+		config.Logger = Default.LogMode(logger.Info)
 	default:
 		if mod {
-			config.Logger = internal.Default.LogMode(logger.Info)
+			config.Logger = Default.LogMode(logger.Info)
 			break
 		}
-		config.Logger = internal.Default.LogMode(logger.Silent)
+		config.Logger = Default.LogMode(logger.Silent)
 	}
 	return config
 }
