@@ -8,7 +8,7 @@
 
 # GShark [![Go Report Card](https://goreportcard.com/badge/github.com/madneal/gshark)](https://goreportcard.com/report/github.com/madneal/gshark)  [![Release](https://github.com/madneal/gshark/actions/workflows/release.yml/badge.svg)](https://github.com/madneal/gshark/actions/workflows/release.yml)
 
-The project is based on Go and Vue to build a management system for sensitive information detection. For the full introduction, please refer to [articles](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI3MjA3MTY3Mw==&action=getalbum&album_id=2376148333116850178#wechat_redirect) and [videos](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI3MjA3MTY3Mw==&action=getalbum&album_id=1834365721464651778#wechat_redirect).
+The project is based on Go and Vue to build a management system for sensitive information detection. For the full introduction, please refer to [articles](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI3MjA3MTY3Mw==&action=getalbum&album_id=2376148333116850178#wechat_redirect) and [videos](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI3MjA3MTY3Mw==&action=getalbum&album_id=1834365721464651778#wechat_redirect). For now, all the scans are only targeted to the public environments, not local environments.
 
 
 # Features
@@ -55,6 +55,8 @@ For the incremental deployment, [sql.md](https://github.com/madneal/gshark/blob/
 ```
 ./gshark scan
 ```
+
+For the scan service, it's necessary to config the corresponding rules. For example, Github or Gitlab rules.
 
 ## Development
 
@@ -112,11 +114,16 @@ GLOBAL OPTIONS:
    --version, -v           print the version
 ```
 
+## Usage
 ### Add Token
 
 To execute `./gshark scan`, you need to add a Github token for crawl information in github. You can generate a token in [tokens](https://github.com/settings/tokens). Most access scopes are enough. For Gitlab search, remember to add token too.
 
 [![iR2TMt.md.png](https://s1.ax1x.com/2018/10/31/iR2TMt.md.png)](https://imgchr.com/i/iR2TMt)
+
+### Rule Configuration
+
+For the Github or Gitlab rule, the rule will be matched by the syntax in the corresponding platfroms. Directly, you config what you search at Github.
 
 ## FAQ
 
@@ -140,13 +147,28 @@ go env -w GO111MODULE=on
 
 try to clear the LocalStorage
 
+## Resources 
+
+### Articles
+
+* [多平台的敏感信息监测工具-GShark](https://mp.weixin.qq.com/s?__biz=MzI3MjA3MTY3Mw==&mid=2247484283&idx=1&sn=3232df7d321c0f62ce61b7e6368204ad&chksm=eb396deddc4ee4fb0c825a378c085223b87fc45f05648d46e7bdc24a03fb83ad6c7ade414df7#rd)
+* [GShark-监测你的 Github 敏感信息泄露](https://mp.weixin.qq.com/s?__biz=MzI3MjA3MTY3Mw==&mid=2247483770&idx=1&sn=9f02c2803e1c946e8c23b16ff3eba757&chksm=eb396fecdc4ee6fa2f378e846f354f45acf6e6f540cfd54190e9353df47c7707e3a2aadf714f&token=1578822041&lang=zh_CN#rd)
+
+
+### Videos
+
+* [批量导入规则](https://mp.weixin.qq.com/s?__biz=MzI3MjA3MTY3Mw==&mid=2247484546&idx=1&sn=818915279c5199457340ade89d6cbd54&chksm=eb396a14dc4ee302039bcb1474380a6049dba84370345b7813049aa8feb49a98f89d47ec5d5b#rd)
+* [GShark部署](https://mp.weixin.qq.com/s?__biz=MzI3MjA3MTY3Mw==&mid=2247484487&idx=1&sn=78f942ccf6861f433fc7f4a60564441c&chksm=eb396ad1dc4ee3c7505362da243433e54a2b558c96fbbb50f8b6cea87d1f9bc920b249b72705#rd)
+* [windows 部署](https://mp.weixin.qq.com/s?__biz=MzI3MjA3MTY3Mw==&mid=2247484289&idx=1&sn=2b0f1c38b88c924ad514fb64b559b784&chksm=eb396d17dc4ee4018573dde6c3bfce83903c86034403539eaf1b87b89c4a4dd44f957a308818#rd)
+
+
 ## Reference
 
 * [gin-vue-admin](https://github.com/flipped-aurora/gin-vue-admin)
 
 ## Wechat
 
-If you would like to join wechat group, you can add my wechat `mmadneal` with the message `gshark`.
+If you would like to join wechat group, you can add my wechat `mmadneal` with the message `gshark`. But I would strongly suggest you to raise a issue diretcly instead of just asking in wechat.
 
 ## License
 
