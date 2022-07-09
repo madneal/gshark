@@ -34,4 +34,7 @@ insert into casbin_rule (p_type, v0, v1, v2) values ('p', 888, '/rule/switchRule
 ```
 alter table rule
     modify type varchar(100) null;
+alter table rule
+    change type rule_type varchar(200) null;
+
 ```
