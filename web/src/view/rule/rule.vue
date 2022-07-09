@@ -14,12 +14,7 @@
         <el-form-item label="规则名称">
           <el-input placeholder="搜索条件" v-model="searchInfo.name"></el-input>
         </el-form-item>
-        <el-form-item label="状态">
-          <el-input
-            placeholder="搜索条件"
-            v-model="searchInfo.status"
-          ></el-input>
-        </el-form-item>
+
         <el-form-item>
           <el-button @click="onSubmit" type="primary">查询</el-button>
         </el-form-item>
@@ -69,7 +64,7 @@
 
       <el-table-column
         label="规则类型"
-        prop="type"
+        prop="ruleType"
         width="120"
       ></el-table-column>
 
@@ -92,12 +87,11 @@
       ></el-table-column>
 
       <el-table-column label="状态" width="120">
-        <template slot-scope="scope">
-          <!-- {{ scope.row.status | formatStatus }} -->
+        <template v-slot="scope">
           <el-switch
             v-model="scope.row.status"
-            :active-value="1"
-            :inactive-value="0"
+            :active-value="true"
+            :inactive-value="false"
             @change="switchStatus(scope.row.ID, scope.row.status, scope.row)"
           />
         </template>
@@ -140,17 +134,14 @@
       :visible.sync="dialogFormVisible"
       title="新增规则"
     >
-      <el-form :model="formData" label-position="right" label-width="80px">
-        <el-form-item label="规则类型:">
-          <el-radio-group v-model="formData.type">
-            <el-radio label="github"></el-radio>
-            <el-radio label="gitlab"></el-radio>
-            <el-radio label="searchcode"></el-radio>
-            <el-radio label="domain"></el-radio>
-          </el-radio-group>
+      <el-form :model="formData" label-position="right" label-width="100px">
+        <el-form-item label="规则类型:" required>
+          <el-checkbox-group v-model="formData.ruleType">
+            <el-checkbox v-for="ruleType in types" :label="ruleType" :key="ruleType">{{ ruleType }}</el-checkbox>
+          </el-checkbox-group>
         </el-form-item>
 
-        <el-form-item label="规则内容:">
+        <el-form-item label="规则内容:" required>
           <el-input
             v-model="formData.content"
             clearable
@@ -175,14 +166,7 @@
         </el-form-item>
 
         <el-form-item label="状态:">
-          <el-select placeholder="请选择" v-model="formData.status">
-            <el-option
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-              v-for="item in statusOptions"
-            ></el-option>
-          </el-select>
+          <el-switch v-model="formData.status"></el-switch>
         </el-form-item>
       </el-form>
       <div class="dialog-footer" slot="footer">
@@ -194,12 +178,9 @@
     <el-dialog :visible.sync="dialogBatchRules" title="批量导入规则">
       <el-form :model="batchRulesForm" label-position="right" label-width="80px">
         <el-form-item label="规则类型:">
-          <el-radio-group v-model="batchRulesForm.type">
-            <el-radio label="github"></el-radio>
-            <el-radio label="gitlab"></el-radio>
-            <el-radio label="searchcode"></el-radio>
-            <el-radio label="domain"></el-radio>
-          </el-radio-group>
+          <el-checkbox-group v-model="batchRulesForm.type">
+            <el-checkbox v-for="ruleType in types" :label="ruleType" :key="ruleType">{{ ruleType }}</el-checkbox>
+          </el-checkbox-group>
         </el-form-item>
         <el-form-item label="规则内容:">
           <el-input type="textarea" auto-size placeholder="规则内容，多条规则换行"
@@ -240,14 +221,14 @@ export default {
       deleteVisible: false,
       multipleSelection: [],
       formData: {
-        type: "github",
+        ruleType: [],
         content: "",
         name: "",
         desc: "",
-        status: 1,
+        status: true,
       },
       batchRulesForm: {
-        type: 'github',
+        type: [],
         contents: ''
       },
       statusOptions: [
@@ -260,6 +241,7 @@ export default {
           value: 1,
         },
       ],
+      types: ['github', 'gitlab', 'searchcode', 'domain'],
       typeOptions: [
         {
           label: "github",
@@ -368,7 +350,7 @@ export default {
     closeDialog() {
       this.dialogFormVisible = false;
       this.formData = {
-        type: "",
+        ruleType: [],
         content: "",
         name: "",
         desc: "",
@@ -390,6 +372,7 @@ export default {
     },
     async enterDialog() {
       let res;
+      this.formData.ruleType = this.formData.ruleType.join(',');
       switch (this.type) {
         case "create":
           res = await createRule(this.formData);
@@ -413,8 +396,10 @@ export default {
     openDialog() {
       this.type = "create";
       this.dialogFormVisible = true;
+      this.formData.ruleType = [];
     },
     async batchCreateRules() {
+      this.batchRulesForm.type = this.batchRulesForm.type.join(',');
       const res = await batchCreateRules(this.batchRulesForm);
       if (res.code === 0) {
         this.dialogBatchRules = false;
