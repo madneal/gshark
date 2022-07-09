@@ -28,3 +28,10 @@ insert into sys_apis (created_at, updated_at, deleted_at, path, description, api
 
 insert into casbin_rule (p_type, v0, v1, v2) values ('p', 888, '/rule/switchRuleStatus', 'POST');
 ```
+
+## v0.9.9
+
+```
+alter table rule
+    modify type varchar(100) null;
+```
