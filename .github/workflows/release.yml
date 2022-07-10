@@ -59,7 +59,7 @@ jobs:
           GO111MODULE: on
         working-directory: ./server
         run: |
-          go mod tidy && bGOOS=darwin GOARCH=amd64 go build -o gshark && cp gshark ../release/gshark_darwin_amd64
+          go mod tidy && GOOS=darwin GOARCH=amd64 go build -o gshark && cp gshark ../release/gshark_darwin_amd64
 
       - name: Go Build for windows
         env:
