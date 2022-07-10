@@ -11,14 +11,6 @@ import (
 	"go.uber.org/zap"
 )
 
-// @Tags Authority
-// @Summary 创建角色
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body model.SysAuthority true "权限id, 权限名, 父角色id"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"创建成功"}"
-// @Router /authority/createAuthority [post]
 func CreateAuthority(c *gin.Context) {
 	var authority model.SysAuthority
 	_ = c.ShouldBindJSON(&authority)
@@ -34,14 +26,6 @@ func CreateAuthority(c *gin.Context) {
 	}
 }
 
-// @Tags Authority
-// @Summary 拷贝角色
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body response.SysAuthorityCopyResponse true "旧角色id, 新权限id, 新权限名, 新父角色id"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"拷贝成功"}"
-// @Router /authority/copyAuthority [post]
 func CopyAuthority(c *gin.Context) {
 	var copyInfo response.SysAuthorityCopyResponse
 	_ = c.ShouldBindJSON(&copyInfo)
@@ -61,14 +45,6 @@ func CopyAuthority(c *gin.Context) {
 	}
 }
 
-// @Tags Authority
-// @Summary 删除角色
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body model.SysAuthority true "删除角色"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"删除成功"}"
-// @Router /authority/deleteAuthority [post]
 func DeleteAuthority(c *gin.Context) {
 	var authority model.SysAuthority
 	_ = c.ShouldBindJSON(&authority)
@@ -84,14 +60,6 @@ func DeleteAuthority(c *gin.Context) {
 	}
 }
 
-// @Tags Authority
-// @Summary 更新角色信息
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body model.SysAuthority true "权限id, 权限名, 父角色id"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"更新成功"}"
-// @Router /authority/updateAuthority [post]
 func UpdateAuthority(c *gin.Context) {
 	var auth model.SysAuthority
 	_ = c.ShouldBindJSON(&auth)

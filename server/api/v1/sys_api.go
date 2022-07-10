@@ -11,14 +11,6 @@ import (
 	"go.uber.org/zap"
 )
 
-// @Tags SysApi
-// @Summary 创建基础api
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body model.SysApi true "api路径, api中文描述, api组, 方法"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"创建成功"}"
-// @Router /api/createApi [post]
 func CreateApi(c *gin.Context) {
 	var api model.SysApi
 	_ = c.ShouldBindJSON(&api)
@@ -34,14 +26,6 @@ func CreateApi(c *gin.Context) {
 	}
 }
 
-// @Tags SysApi
-// @Summary 删除api
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body model.SysApi true "ID"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"删除成功"}"
-// @Router /api/deleteApi [post]
 func DeleteApi(c *gin.Context) {
 	var api model.SysApi
 	_ = c.ShouldBindJSON(&api)
@@ -57,14 +41,6 @@ func DeleteApi(c *gin.Context) {
 	}
 }
 
-// @Tags SysApi
-// @Summary 分页获取API列表
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body request.SearchApiParams true "分页获取API列表"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
-// @Router /api/getApiList [post]
 func GetApiList(c *gin.Context) {
 	var pageInfo request.SearchApiParams
 	_ = c.ShouldBindJSON(&pageInfo)
@@ -85,14 +61,6 @@ func GetApiList(c *gin.Context) {
 	}
 }
 
-// @Tags SysApi
-// @Summary 根据id获取api
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body request.GetById true "根据id获取api"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
-// @Router /api/getApiById [post]
 func GetApiById(c *gin.Context) {
 	var idInfo request.GetById
 	_ = c.ShouldBindJSON(&idInfo)

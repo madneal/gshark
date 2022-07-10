@@ -15,12 +15,6 @@ import (
 	"time"
 )
 
-// @Tags Base
-// @Summary 用户登录
-// @Produce  application/json
-// @Param data body request.Login true "用户名, 密码, 验证码"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"登陆成功"}"
-// @Router /base/login [post]
 func Login(c *gin.Context) {
 	var L request.Login
 	_ = c.ShouldBindJSON(&L)
@@ -104,12 +98,6 @@ func tokenNext(c *gin.Context, user model.SysUser) {
 	}
 }
 
-// @Tags SysUser
-// @Summary 用户注册账号
-// @Produce  application/json
-// @Param data body model.SysUser true "用户名, 昵称, 密码, 角色ID"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"注册成功"}"
-// @Router /user/register [post]
 func Register(c *gin.Context) {
 	var R request.Register
 	_ = c.ShouldBindJSON(&R)
@@ -127,13 +115,6 @@ func Register(c *gin.Context) {
 	}
 }
 
-// @Tags SysUser
-// @Summary 用户修改密码
-// @Security ApiKeyAuth
-// @Produce  application/json
-// @Param data body request.ChangePasswordStruct true "用户名, 原密码, 新密码"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"修改成功"}"
-// @Router /user/changePassword [put]
 func ChangePassword(c *gin.Context) {
 	var user request.ChangePasswordStruct
 	_ = c.ShouldBindJSON(&user)
@@ -150,14 +131,6 @@ func ChangePassword(c *gin.Context) {
 	}
 }
 
-// @Tags SysUser
-// @Summary 分页获取用户列表
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body request.PageInfo true "页码, 每页大小"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
-// @Router /user/getUserList [post]
 func GetUserList(c *gin.Context) {
 	var pageInfo request.PageInfo
 	_ = c.ShouldBindJSON(&pageInfo)
@@ -178,14 +151,6 @@ func GetUserList(c *gin.Context) {
 	}
 }
 
-// @Tags SysUser
-// @Summary 设置用户权限
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body request.SetUserAuth true "用户UUID, 角色ID"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"修改成功"}"
-// @Router /user/setUserAuthority [post]
 func SetUserAuthority(c *gin.Context) {
 	var sua request.SetUserAuth
 	_ = c.ShouldBindJSON(&sua)
@@ -201,14 +166,6 @@ func SetUserAuthority(c *gin.Context) {
 	}
 }
 
-// @Tags SysUser
-// @Summary 删除用户
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body request.GetById true "用户ID"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"删除成功"}"
-// @Router /user/deleteUser [delete]
 func DeleteUser(c *gin.Context) {
 	var reqId request.GetById
 	_ = c.ShouldBindJSON(&reqId)
@@ -229,14 +186,6 @@ func DeleteUser(c *gin.Context) {
 	}
 }
 
-// @Tags SysUser
-// @Summary 设置用户信息
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body model.SysUser true "ID, 用户名, 昵称, 头像链接"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"设置成功"}"
-// @Router /user/setUserInfo [put]
 func SetUserInfo(c *gin.Context) {
 	var user model.SysUser
 	_ = c.ShouldBindJSON(&user)
