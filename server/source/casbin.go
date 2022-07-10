@@ -49,11 +49,6 @@ var carbines = []gormadapter.CasbinRule{
 	{PType: "p", V0: "888", V1: "/system/getSystemConfig", V2: "POST"},
 	{PType: "p", V0: "888", V1: "/system/setSystemConfig", V2: "POST"},
 	{PType: "p", V0: "888", V1: "/system/getServerInfo", V2: "POST"},
-	{PType: "p", V0: "888", V1: "/customer/customer", V2: "POST"},
-	{PType: "p", V0: "888", V1: "/customer/customer", V2: "PUT"},
-	{PType: "p", V0: "888", V1: "/customer/customer", V2: "DELETE"},
-	{PType: "p", V0: "888", V1: "/customer/customer", V2: "GET"},
-	{PType: "p", V0: "888", V1: "/customer/customerList", V2: "GET"},
 	{PType: "p", V0: "888", V1: "/autoCode/createTemp", V2: "POST"},
 	{PType: "p", V0: "888", V1: "/autoCode/preview", V2: "POST"},
 	{PType: "p", V0: "888", V1: "/autoCode/getTables", V2: "GET"},
@@ -117,11 +112,6 @@ var carbines = []gormadapter.CasbinRule{
 	{PType: "p", V0: "8881", V1: "/jwt/jsonInBlacklist", V2: "POST"},
 	{PType: "p", V0: "8881", V1: "/system/getSystemConfig", V2: "POST"},
 	{PType: "p", V0: "8881", V1: "/system/setSystemConfig", V2: "POST"},
-	{PType: "p", V0: "8881", V1: "/customer/customer", V2: "POST"},
-	{PType: "p", V0: "8881", V1: "/customer/customer", V2: "PUT"},
-	{PType: "p", V0: "8881", V1: "/customer/customer", V2: "DELETE"},
-	{PType: "p", V0: "8881", V1: "/customer/customer", V2: "GET"},
-	{PType: "p", V0: "8881", V1: "/customer/customerList", V2: "GET"},
 	{PType: "p", V0: "888", V1: "/rule/deleteRule", V2: "DELETE"},
 	{PType: "p", V0: "888", V1: "/rule/createRule", V2: "POST"},
 	{PType: "p", V0: "888", V1: "/rule/batchCreateRule", V2: "POST"},
@@ -156,8 +146,6 @@ var carbines = []gormadapter.CasbinRule{
 	{PType: "p", V0: "888", V1: "/filter/getFilterList", V2: "GET"},
 }
 
-//@author: [SliverHorn](https://github.com/SliverHorn)
-//@description: casbin_rule 表数据初始化
 func (c *casbin) Init() error {
 	global.GVA_DB.AutoMigrate(gormadapter.CasbinRule{})
 	return global.GVA_DB.Transaction(func(tx *gorm.DB) error {

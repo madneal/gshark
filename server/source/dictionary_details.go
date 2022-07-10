@@ -13,8 +13,6 @@ var DictionaryDetail = new(dictionaryDetail)
 
 type dictionaryDetail struct{}
 
-//@author: [SliverHorn](https://github.com/SliverHorn)
-//@description: dictionary_details 表数据初始化
 func (d *dictionaryDetail) Init() error {
 	var details = []model.SysDictionaryDetail{
 		{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "smallint", 1, status, 1, 2},

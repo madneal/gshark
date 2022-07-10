@@ -19,8 +19,6 @@ var admins = []model.SysUser{
 	{GVA_MODEL: global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, UUID: uuid.NewV4(), Username: "test", Password: "4e097ce13bea7674b8d828b63e4f7b8c", NickName: "QMPlusUser", HeaderImg: "http://qmplusimg.henrongyi.top/1572075907logo.png", AuthorityId: "9528"},
 }
 
-//@author: [SliverHorn](https://github.com/SliverHorn)
-//@description: sys_users 表数据初始化
 func (a *admin) Init() error {
 	return global.GVA_DB.Transaction(func(tx *gorm.DB) error {
 		if tx.Where("id IN ?", []int{1, 2}).Find(&[]model.SysUser{}).RowsAffected == 2 {
