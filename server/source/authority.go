@@ -19,8 +19,6 @@ var authorities = []model.SysAuthority{
 	{CreatedAt: time.Now(), UpdatedAt: time.Now(), AuthorityId: "9528", AuthorityName: "测试角色", ParentId: "0", DefaultRouter: "state"},
 }
 
-//@author: [SliverHorn](https://github.com/SliverHorn)
-//@description: sys_authorities 表数据初始化
 func (a *authority) Init() error {
 	return global.GVA_DB.Transaction(func(tx *gorm.DB) error {
 		if tx.Where("authority_id IN ? ", []string{"888", "9528"}).Find(&[]model.SysAuthority{}).RowsAffected == 2 {

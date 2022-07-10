@@ -37,8 +37,6 @@ var menus = []model.SysBaseMenu{
 	{GVA_MODEL: global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, MenuLevel: 0, ParentId: "24", Path: "filter", Name: "filter", Hidden: false, Component: "view/filter/filter.vue", Sort: 3, Meta: model.Meta{Title: "过滤规则", Icon: "s-opportunity"}},
 }
 
-//@author: [SliverHorn](https://github.com/SliverHorn)
-//@description: sys_base_menus 表数据初始化
 func (m *menu) Init() error {
 	return global.GVA_DB.Transaction(func(tx *gorm.DB) error {
 		if tx.Where("id IN ?", []int{1, 29}).Find(&[]model.SysBaseMenu{}).RowsAffected == 2 {

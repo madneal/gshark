@@ -10,14 +10,6 @@ import (
 	"go.uber.org/zap"
 )
 
-// @Tags SearchResult
-// @Summary 创建SearchResult
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body model.SearchResult true "创建SearchResult"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
-// @Router /searchResult/createSearchResult [post]
 func CreateSearchResult(c *gin.Context) {
 	var searchResult model.SearchResult
 	_ = c.ShouldBindJSON(&searchResult)
@@ -29,14 +21,6 @@ func CreateSearchResult(c *gin.Context) {
 	}
 }
 
-// @Tags SearchResult
-// @Summary 删除SearchResult
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body model.SearchResult true "删除SearchResult"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"删除成功"}"
-// @Router /searchResult/deleteSearchResult [delete]
 func DeleteSearchResult(c *gin.Context) {
 	var searchResult model.SearchResult
 	_ = c.ShouldBindJSON(&searchResult)
@@ -48,14 +32,6 @@ func DeleteSearchResult(c *gin.Context) {
 	}
 }
 
-// @Tags SearchResult
-// @Summary 批量删除SearchResult
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body request.IdsReq true "批量删除SearchResult"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"批量删除成功"}"
-// @Router /searchResult/deleteSearchResultByIds [delete]
 func DeleteSearchResultByIds(c *gin.Context) {
 	var IDS request.IdsReq
 	_ = c.ShouldBindJSON(&IDS)
@@ -78,14 +54,6 @@ func UpdateSearchResultByIds(c *gin.Context) {
 	}
 }
 
-// @Tags SearchResult
-// @Summary 更新SearchResult
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body model.SearchResult true "更新SearchResult"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"更新成功"}"
-// @Router /searchResult/updateSearchResult [put]
 func UpdateSearchResult(c *gin.Context) {
 	var updateReq request.UpdateReq
 	_ = c.ShouldBindJSON(&updateReq)
@@ -97,14 +65,6 @@ func UpdateSearchResult(c *gin.Context) {
 	}
 }
 
-// @Tags SearchResult
-// @Summary 用id查询SearchResult
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body model.SearchResult true "用id查询SearchResult"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"查询成功"}"
-// @Router /searchResult/findSearchResult [get]
 func FindSearchResult(c *gin.Context) {
 	var searchResult model.SearchResult
 	_ = c.ShouldBindQuery(&searchResult)
@@ -116,14 +76,6 @@ func FindSearchResult(c *gin.Context) {
 	}
 }
 
-// @Tags SearchResult
-// @Summary 分页获取SearchResult列表
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body request.SearchResultSearch true "分页获取SearchResult列表"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
-// @Router /searchResult/getSearchResultList [get]
 func GetSearchResultList(c *gin.Context) {
 	var pageInfo request.SearchResultSearch
 	_ = c.ShouldBindQuery(&pageInfo)

@@ -114,8 +114,6 @@ var apis = []model.SysApi{
 	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/filter/getFilterList", "获取过滤规则列表", "filter", "GET"},
 }
 
-//@author: [SliverHorn](https://github.com/SliverHorn)
-//@ sys_apis 表数据初始化
 func (a *api) Init() error {
 	return global.GVA_DB.Transaction(func(tx *gorm.DB) error {
 		if tx.Where("id IN ?", []int{1, 67}).Find(&[]model.SysApi{}).RowsAffected == 2 {
