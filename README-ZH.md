@@ -2,16 +2,16 @@
 <p align="center">
    <img alt="GgShark logo" src="https://s1.ax1x.com/2018/10/17/idhZvj.png" />
    <h3 align="center">GShark</h3>
-   <p align="center">Scan for sensitive information easily and effectively.</p>
+   <p align="center">快速有效地扫描敏感信息</p>
 </p>
 
 # GShark [![Go Report Card](https://goreportcard.com/badge/github.com/madneal/gshark)](https://goreportcard.com/report/github.com/madneal/gshark)   
 
-项目基于 Go 以及 Vue 搭建的敏感信息检测管理系统。关于的完整介绍请参考[这里](https://mp.weixin.qq.com/s/Yoo1DdC2lCtqOMAreF9K0w)。
+项目基于 Go 以及 Vue 搭建的敏感信息检测管理系统。关于的完整介绍请参考[这里](https://mp.weixin.qq.com/s/Yoo1DdC2lCtqOMAreF9K0w)。对于项目的详细介绍，可以参考资源里面的视频或者文章链接。目前，本项目针对的都是公开环境而不是本地环境。
 
 # 特性
 
-* 支持多个搜索平台，包括 Github，Gitlab（不稳定支持），Searchcode
+* 支持多个搜索平台，包括 Github，Gitlab，Searchcode
 * 灵活的菜单以及 API 权限管理
 * 灵活的规则以及过滤规则设置
 * 支持 gobuster 作为子域名爆破的支持
@@ -22,6 +22,8 @@
 ![GShark](https://user-images.githubusercontent.com/12164075/114326875-58e1da80-9b69-11eb-82a5-b2e3751a2304.png)
 
 ## 部署
+
+### 前端项目部署
 
 建议通过 nginx 部署前端项目。 将 `dist` 文件夹放在 `/var/www/html`下，修改 `nginx.conf` 来反向代理后端服务。在[bilibili](https://www.bilibili.com/video/BV1Py4y1s7ap/) 和 [youtube](https://youtu.be/bFrKm5t4M54) 可以参考部署视频教程。 Windows 下的部署请参考[这里](https://www.bilibili.com/video/BV1CA411L7ux/)。
 
@@ -38,7 +40,9 @@ proxy_pass http://127.0.0.1:8888;
 
 部署工作非常简单。 从 [releases](https://github.com/madneal/gshark/releases) 中找到对应的版本 zip 文件。 解压后得将 `dist` 中的文件复制到  `/var/www/html` 文件夹中。
 
-### Web 服务
+### 后端部署
+
+后端项目无须部署，直接在文件夹内启动运行即可。web 服务和 scan 服务分别是两个独立的服务，需要独立运行。
 
 ```
 ./gshark web
