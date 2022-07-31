@@ -25,7 +25,6 @@ func Scan(ctx *cli.Context) error {
 
 	switch scanMode {
 	case "github":
-		// use go keyword or not
 		for {
 			githubsearch.RunTask(Interval)
 		}
