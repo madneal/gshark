@@ -117,13 +117,13 @@ GLOBAL OPTIONS:
 ## Usage
 ### Add Token
 
-To execute `./gshark scan`, you need to add a Github token for crawl information in github. You can generate a token in [tokens](https://github.com/settings/tokens). Most access scopes are enough. For Gitlab search, remember to add token too.
+To execute `./gshark scan`, you need to add a GitHub token for crawl information in GitHub. You can generate a token in [tokens](https://github.com/settings/tokens). Most access scopes are enough. For Gitlab search, remember to add token too.
 
 [![iR2TMt.md.png](https://s1.ax1x.com/2018/10/31/iR2TMt.md.png)](https://imgchr.com/i/iR2TMt)
 
 ### Rule Configuration
 
-For the Github or Gitlab rule, the rule will be matched by the syntax in the corresponding platfroms. Directly, you config what you search at Github.
+For the Github or Gitlab rule, the rule will be matched by the syntax in the corresponding platforms. Directly, you config what you search at GitHub.
 
 ## FAQ
 
@@ -133,11 +133,11 @@ gshark/gshark
 
 2. Database initial failed
 
-make sure the version of mysql is over 5.6. And remove the databse before initial the second time.
+make sure the version of mysql is over 5.6. And remove the database before initial the second time.
 
 3. `go get ./... connection error`
 
-It's suggested to enable goproxy(refer this [article](https://madneal.com/post/gproxy/) for golang upgrade):
+It's suggested to enable GOPROXY(refer this [article](https://madneal.com/post/gproxy/) for golang upgrade):
 
 ```
 go env -w GOPROXY=https://goproxy.cn,direct
@@ -169,7 +169,7 @@ try to clear the LocalStorage
 
 ## Wechat
 
-If you would like to join wechat group, you can add my wechat `mmadneal` with the message `gshark`. But I would strongly suggest you to raise a issue diretcly instead of just asking in wechat.
+If you would like to join WeChat group, you can add my WeChat `mmadneal` with the message `gshark`. But I would strongly suggest you to raise an issue directly instead of just asking in WeChat.
 
 ## License
 
