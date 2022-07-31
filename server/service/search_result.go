@@ -6,33 +6,15 @@ import (
 	"github.com/madneal/gshark/model/request"
 )
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: CreateSearchResult
-//@description: 创建SearchResult记录
-//@param: searchResult model.SearchResult
-//@return: err error
-
 func CreateSearchResult(searchResult model.SearchResult) (err error) {
 	err = global.GVA_DB.Create(&searchResult).Error
 	return err
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: DeleteSearchResult
-//@description: 删除SearchResult记录
-//@param: searchResult model.SearchResult
-//@return: err error
-
 func DeleteSearchResult(searchResult model.SearchResult) (err error) {
 	err = global.GVA_DB.Delete(&searchResult).Error
 	return err
 }
-
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: DeleteSearchResultByIds
-//@description: 批量删除SearchResult记录
-//@param: ids request.IdsReq
-//@return: err error
 
 func DeleteSearchResultByIds(ids request.IdsReq) (err error) {
 	err = global.GVA_DB.Delete(&[]model.SearchResult{}, "id in ?", ids.Ids).Error
@@ -45,12 +27,6 @@ func UpdateSearchResultByIds(req request.BatchUpdateReq) (err error) {
 	return err
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: UpdateSearchResult
-//@description: 更新SearchResult记录
-//@param: searchResult *model.SearchResult
-//@return: err error
-
 func UpdateSearchResult(updateReq request.UpdateReq) (err error) {
 	err = global.GVA_DB.Table("search_result").Where("repo = ?", updateReq.Repo).
 		UpdateColumn("status", updateReq.Status).Error
@@ -62,22 +38,10 @@ func UpdateSearchResultById(id, status int) (err error) {
 	return err
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: GetSearchResult
-//@description: 根据id获取SearchResult记录
-//@param: id uint
-//@return: err error, searchResult model.SearchResult
-
 func GetSearchResult(id uint) (err error, searchResult model.SearchResult) {
 	err = global.GVA_DB.Where("id = ?", id).First(&searchResult).Error
 	return
 }
-
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: GetSearchResultInfoList
-//@description: 分页获取SearchResult记录
-//@param: info request.SearchResultSearch
-//@return: err error, list interface{}, total int64
 
 func GetSearchResultInfoList(info request.SearchResultSearch) (err error, list interface{}, total int64) {
 	limit := info.PageSize
