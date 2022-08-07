@@ -118,10 +118,10 @@ func (res *PostmanRes) CovertToSearchResult() *[]model.SearchResult {
 	results := make([]model.SearchResult, 0)
 	for _, data := range res.Data {
 		document := data.Document
-		requestURL := fmt.Sprintf("https://www.postman.com/%s/workspace/%s/request/%s", document.Workspaces[0].Slug,
-			data.Requests.Document.Id)
+		requestURL := fmt.Sprintf("https://www.postman.com/%s/workspace/%s/request/%s", document.PublisherHandle,
+			document.Workspaces[0].Slug, data.Requests.Document.Id)
 		result := model.SearchResult{
-			Path:    data.Requests.Document.Name,
+			Path:    data.Requests.Document.Name + "/" + data.Requests.Document.Name,
 			Url:     requestURL,
 			Matches: data.Requests.Document.Url,
 		}
