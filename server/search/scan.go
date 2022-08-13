@@ -5,6 +5,7 @@ import (
 	"github.com/madneal/gshark/search/githubsearch"
 	"github.com/madneal/gshark/search/gitlabsearch"
 	"github.com/madneal/gshark/search/gobuster"
+	"github.com/madneal/gshark/search/postman"
 	"github.com/urfave/cli/v2"
 	"strings"
 	"time"
@@ -25,7 +26,6 @@ func Scan(ctx *cli.Context) error {
 
 	switch scanMode {
 	case "github":
-		// use go keyword or not
 		for {
 			githubsearch.RunTask(Interval)
 		}
@@ -40,6 +40,10 @@ func Scan(ctx *cli.Context) error {
 	case "subdomain":
 		for {
 			gobuster.RunTask(Interval)
+		}
+	case "postman":
+		for {
+			postman.RunTask()
 		}
 	case "all":
 		for {
