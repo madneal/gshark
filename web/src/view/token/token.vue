@@ -148,6 +148,10 @@ export default {
         {
           label: "gitlab",
           value: "gitlab",
+        },
+        {
+          label: "postman",
+          value: "postman"
         }
       ],
     };
