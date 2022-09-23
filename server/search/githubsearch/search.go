@@ -114,6 +114,15 @@ func RunTask(duration time.Duration) {
 	time.Sleep(duration * time.Second)
 }
 
+func (c *Client) GetCommiter(ctx context.Context, owner, repo string) string {
+	commit, _, err := c.Client.Repositories.GetCommit(ctx, owner, repo, "master")
+	if err != nil {
+		global.GVA_LOG.Error("get github commit err", zap.Error(err))
+		return ""
+	}
+	return commit.Commit.Committer.GetEmail()
+}
+
 func (c *Client) SearchCode(keyword string) ([]*github.CodeSearchResult, error) {
 	var allSearchResult []*github.CodeSearchResult
 	var err error
