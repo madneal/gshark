@@ -13,22 +13,10 @@ import (
 	"strings"
 )
 
-//@author: [maplepie](https://github.com/maplepie)
-//@function: Email
-//@description: Email发送方法
-//@param: subject string, body string
-//@return: error
-
 func Email(subject string, body string) error {
 	to := strings.Split(global.GVA_CONFIG.Email.To, ",")
 	return send(to, subject, body)
 }
-
-//@author: [SliverHorn](https://github.com/SliverHorn)
-//@function: ErrorToEmail
-//@description: 给email中间件错误发送邮件到指定邮箱
-//@param: subject string, body string
-//@return: error
 
 func ErrorToEmail(subject string, body string) error {
 	to := strings.Split(global.GVA_CONFIG.Email.To, ",")
@@ -37,12 +25,6 @@ func ErrorToEmail(subject string, body string) error {
 	}
 	return send(to, subject, body)
 }
-
-//@author: [maplepie](https://github.com/maplepie)
-//@function: EmailSend
-//@description: Email测试方法
-//@param: subject string, body string
-//@return: error
 
 func EmailSend(subject string, body string) error {
 	to := []string{global.GVA_CONFIG.Email.From}
