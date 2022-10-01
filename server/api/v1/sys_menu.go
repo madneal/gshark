@@ -11,13 +11,6 @@ import (
 	"go.uber.org/zap"
 )
 
-// @Tags AuthorityMenu
-// @Summary 获取用户动态路由
-// @Security ApiKeyAuth
-// @Produce  application/json
-// @Param data body request.Empty true "空"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
-// @Router /menu/getMenu [post]
 func GetMenu(c *gin.Context) {
 	if err, menus := service.GetMenuTree(getUserAuthorityId(c)); err != nil {
 		global.GVA_LOG.Error("获取失败!", zap.Any("err", err))
@@ -27,13 +20,6 @@ func GetMenu(c *gin.Context) {
 	}
 }
 
-// @Tags AuthorityMenu
-// @Summary 获取用户动态路由
-// @Security ApiKeyAuth
-// @Produce  application/json
-// @Param data body request.Empty true "空"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
-// @Router /menu/getBaseMenuTree [post]
 func GetBaseMenuTree(c *gin.Context) {
 	if err, menus := service.GetBaseMenuTree(); err != nil {
 		global.GVA_LOG.Error("获取失败!", zap.Any("err", err))
@@ -43,14 +29,6 @@ func GetBaseMenuTree(c *gin.Context) {
 	}
 }
 
-// @Tags AuthorityMenu
-// @Summary 增加menu和角色关联关系
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body request.AddMenuAuthorityInfo true "角色ID"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"添加成功"}"
-// @Router /menu/addMenuAuthority [post]
 func AddMenuAuthority(c *gin.Context) {
 	var authorityMenu request.AddMenuAuthorityInfo
 	_ = c.ShouldBindJSON(&authorityMenu)
@@ -66,14 +44,6 @@ func AddMenuAuthority(c *gin.Context) {
 	}
 }
 
-// @Tags AuthorityMenu
-// @Summary 获取指定角色menu
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body request.GetAuthorityId true "角色ID"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
-// @Router /menu/GetMenuAuthority [post]
 func GetMenuAuthority(c *gin.Context) {
 	var param request.GetAuthorityId
 	_ = c.ShouldBindJSON(&param)
@@ -89,14 +59,6 @@ func GetMenuAuthority(c *gin.Context) {
 	}
 }
 
-// @Tags Menu
-// @Summary 新增菜单
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body model.SysBaseMenu true "路由path, 父菜单ID, 路由name, 对应前端文件路径, 排序标记"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"添加成功"}"
-// @Router /menu/addBaseMenu [post]
 func AddBaseMenu(c *gin.Context) {
 	var menu model.SysBaseMenu
 	_ = c.ShouldBindJSON(&menu)
@@ -110,21 +72,12 @@ func AddBaseMenu(c *gin.Context) {
 	}
 	if err := service.AddBaseMenu(menu); err != nil {
 		global.GVA_LOG.Error("添加失败!", zap.Any("err", err))
-
 		response.FailWithMessage("添加失败", c)
 	} else {
 		response.OkWithMessage("添加成功", c)
 	}
 }
 
-// @Tags Menu
-// @Summary 删除菜单
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body request.GetById true "菜单id"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"删除成功"}"
-// @Router /menu/deleteBaseMenu [post]
 func DeleteBaseMenu(c *gin.Context) {
 	var menu request.GetById
 	_ = c.ShouldBindJSON(&menu)
@@ -140,14 +93,6 @@ func DeleteBaseMenu(c *gin.Context) {
 	}
 }
 
-// @Tags Menu
-// @Summary 更新菜单
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body model.SysBaseMenu true "路由path, 父菜单ID, 路由name, 对应前端文件路径, 排序标记"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"更新成功"}"
-// @Router /menu/updateBaseMenu [post]
 func UpdateBaseMenu(c *gin.Context) {
 	var menu model.SysBaseMenu
 	_ = c.ShouldBindJSON(&menu)
