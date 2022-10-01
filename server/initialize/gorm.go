@@ -11,11 +11,6 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-//@author: SliverHorn
-//@function: Gorm
-//@description: 初始化数据库并产生数据库全局变量
-//@return: *gorm.DB
-
 func Gorm() *gorm.DB {
 	switch global.GVA_CONFIG.System.DbType {
 	case "mysql":
@@ -24,12 +19,6 @@ func Gorm() *gorm.DB {
 		return GormMysql()
 	}
 }
-
-// MysqlTables
-//@author: SliverHorn
-//@function: MysqlTables
-//@description: 注册数据库表专用
-//@param: db *gorm.DB
 
 func MysqlTables(db *gorm.DB) {
 	err := db.AutoMigrate(
@@ -55,12 +44,6 @@ func MysqlTables(db *gorm.DB) {
 	}
 	global.GVA_LOG.Info("register table success")
 }
-
-//
-//@author: SliverHorn
-//@function: GormMysql
-//@description: 初始化Mysql数据库
-//@return: *gorm.DB
 
 func GormMysql() *gorm.DB {
 	m := global.GVA_CONFIG.Mysql
@@ -88,12 +71,6 @@ func GormMysql() *gorm.DB {
 		return db
 	}
 }
-
-//@author: SliverHorn
-//@function: gormConfig
-//@description: 根据配置决定是否开启日志
-//@param: mod bool
-//@return: *gorm.Config
 
 func gormConfig(mod bool) *gorm.Config {
 	var config = &gorm.Config{DisableForeignKeyConstraintWhenMigrating: true}
