@@ -10,14 +10,6 @@ import (
 	"go.uber.org/zap"
 )
 
-// @Tags Token
-// @Summary 创建Token
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body model.Token true "创建Token"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
-// @Router /token/createToken [post]
 func CreateToken(c *gin.Context) {
 	var token model.Token
 	_ = c.ShouldBindJSON(&token)
@@ -29,14 +21,6 @@ func CreateToken(c *gin.Context) {
 	}
 }
 
-// @Tags Token
-// @Summary 删除Token
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body model.Token true "删除Token"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"删除成功"}"
-// @Router /token/deleteToken [delete]
 func DeleteToken(c *gin.Context) {
 	var token model.Token
 	_ = c.ShouldBindJSON(&token)
@@ -48,14 +32,6 @@ func DeleteToken(c *gin.Context) {
 	}
 }
 
-// @Tags Token
-// @Summary 批量删除Token
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body request.IdsReq true "批量删除Token"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"批量删除成功"}"
-// @Router /token/deleteTokenByIds [delete]
 func DeleteTokenByIds(c *gin.Context) {
 	var IDS request.IdsReq
 	_ = c.ShouldBindJSON(&IDS)
@@ -67,14 +43,6 @@ func DeleteTokenByIds(c *gin.Context) {
 	}
 }
 
-// @Tags Token
-// @Summary 更新Token
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body model.Token true "更新Token"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"更新成功"}"
-// @Router /token/updateToken [put]
 func UpdateToken(c *gin.Context) {
 	var token model.Token
 	_ = c.ShouldBindJSON(&token)
@@ -86,14 +54,6 @@ func UpdateToken(c *gin.Context) {
 	}
 }
 
-// @Tags Token
-// @Summary 用id查询Token
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body model.Token true "用id查询Token"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"查询成功"}"
-// @Router /token/findToken [get]
 func FindToken(c *gin.Context) {
 	var token model.Token
 	_ = c.ShouldBindQuery(&token)
@@ -105,14 +65,6 @@ func FindToken(c *gin.Context) {
 	}
 }
 
-// @Tags Token
-// @Summary 分页获取Token列表
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body request.TokenSearch true "分页获取Token列表"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
-// @Router /token/getTokenList [get]
 func GetTokenList(c *gin.Context) {
 	var pageInfo request.TokenSearch
 	_ = c.ShouldBindQuery(&pageInfo)

@@ -77,14 +77,6 @@ func GetApiById(c *gin.Context) {
 	}
 }
 
-// @Tags SysApi
-// @Summary 创建基础api
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body model.SysApi true "api路径, api中文描述, api组, 方法"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"修改成功"}"
-// @Router /api/updateApi [post]
 func UpdateApi(c *gin.Context) {
 	var api model.SysApi
 	_ = c.ShouldBindJSON(&api)
@@ -100,13 +92,6 @@ func UpdateApi(c *gin.Context) {
 	}
 }
 
-// @Tags SysApi
-// @Summary 获取所有的Api 不分页
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
-// @Router /api/getAllApis [post]
 func GetAllApis(c *gin.Context) {
 	if err, apis := service.GetAllApis(); err != nil {
 		global.GVA_LOG.Error("获取失败!", zap.Any("err", err))

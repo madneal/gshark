@@ -11,14 +11,6 @@ import (
 	"go.uber.org/zap"
 )
 
-// @Tags SysDictionaryDetail
-// @Summary 创建SysDictionaryDetail
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body model.SysDictionaryDetail true "SysDictionaryDetail模型"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"创建成功"}"
-// @Router /sysDictionaryDetail/createSysDictionaryDetail [post]
 func CreateSysDictionaryDetail(c *gin.Context) {
 	var detail model.SysDictionaryDetail
 	_ = c.ShouldBindJSON(&detail)
@@ -30,14 +22,6 @@ func CreateSysDictionaryDetail(c *gin.Context) {
 	}
 }
 
-// @Tags SysDictionaryDetail
-// @Summary 删除SysDictionaryDetail
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body model.SysDictionaryDetail true "SysDictionaryDetail模型"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"删除成功"}"
-// @Router /sysDictionaryDetail/deleteSysDictionaryDetail [delete]
 func DeleteSysDictionaryDetail(c *gin.Context) {
 	var detail model.SysDictionaryDetail
 	_ = c.ShouldBindJSON(&detail)
@@ -49,14 +33,6 @@ func DeleteSysDictionaryDetail(c *gin.Context) {
 	}
 }
 
-// @Tags SysDictionaryDetail
-// @Summary 更新SysDictionaryDetail
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body model.SysDictionaryDetail true "更新SysDictionaryDetail"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"更新成功"}"
-// @Router /sysDictionaryDetail/updateSysDictionaryDetail [put]
 func UpdateSysDictionaryDetail(c *gin.Context) {
 	var detail model.SysDictionaryDetail
 	_ = c.ShouldBindJSON(&detail)
@@ -68,14 +44,6 @@ func UpdateSysDictionaryDetail(c *gin.Context) {
 	}
 }
 
-// @Tags SysDictionaryDetail
-// @Summary 用id查询SysDictionaryDetail
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body model.SysDictionaryDetail true "用id查询SysDictionaryDetail"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"查询成功"}"
-// @Router /sysDictionaryDetail/findSysDictionaryDetail [get]
 func FindSysDictionaryDetail(c *gin.Context) {
 	var detail model.SysDictionaryDetail
 	_ = c.ShouldBindQuery(&detail)
@@ -91,14 +59,6 @@ func FindSysDictionaryDetail(c *gin.Context) {
 	}
 }
 
-// @Tags SysDictionaryDetail
-// @Summary 分页获取SysDictionaryDetail列表
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body request.SysDictionaryDetailSearch true "页码, 每页大小, 搜索条件"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
-// @Router /sysDictionaryDetail/getSysDictionaryDetailList [get]
 func GetSysDictionaryDetailList(c *gin.Context) {
 	var pageInfo request.SysDictionaryDetailSearch
 	_ = c.ShouldBindQuery(&pageInfo)

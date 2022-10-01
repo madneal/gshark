@@ -15,14 +15,6 @@ import (
 	"go.uber.org/zap"
 )
 
-// @Tags AutoCode
-// @Summary 预览创建后的代码
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body model.AutoCodeStruct true "预览创建代码"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"创建成功"}"
-// @Router /autoCode/preview [post]
 func PreviewTemp(c *gin.Context) {
 	var a model.AutoCodeStruct
 	_ = c.ShouldBindJSON(&a)
@@ -39,14 +31,6 @@ func PreviewTemp(c *gin.Context) {
 	}
 }
 
-// @Tags AutoCode
-// @Summary 自动代码模板
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body model.AutoCodeStruct true "创建自动代码"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"创建成功"}"
-// @Router /autoCode/createTemp [post]
 func CreateTemp(c *gin.Context) {
 	var a model.AutoCodeStruct
 	_ = c.ShouldBindJSON(&a)
@@ -83,13 +67,6 @@ func CreateTemp(c *gin.Context) {
 	}
 }
 
-// @Tags AutoCode
-// @Summary 获取当前数据库所有表
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
-// @Router /autoCode/getTables [get]
 func GetTables(c *gin.Context) {
 	dbName := c.DefaultQuery("dbName", global.GVA_CONFIG.Mysql.Dbname)
 	err, tables := service.GetTables(dbName)
@@ -101,13 +78,6 @@ func GetTables(c *gin.Context) {
 	}
 }
 
-// @Tags AutoCode
-// @Summary 获取当前所有数据库
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
-// @Router /autoCode/getDatabase [get]
 func GetDB(c *gin.Context) {
 	if err, dbs := service.GetDB(); err != nil {
 		global.GVA_LOG.Error("获取失败!", zap.Any("err", err))
@@ -117,13 +87,6 @@ func GetDB(c *gin.Context) {
 	}
 }
 
-// @Tags AutoCode
-// @Summary 获取当前表所有字段
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
-// @Router /autoCode/getColumn [get]
 func GetColumn(c *gin.Context) {
 	dbName := c.DefaultQuery("dbName", global.GVA_CONFIG.Mysql.Dbname)
 	tableName := c.Query("tableName")
