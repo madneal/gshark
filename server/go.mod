@@ -5,8 +5,6 @@ go 1.16
 require (
 	github.com/StackExchange/wmi v1.2.1 // indirect
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
-	github.com/aliyun/aliyun-oss-go-sdk v2.2.3+incompatible
-	github.com/baiyubin/aliyun-sts-go-sdk v0.0.0-20180326062324-cfa1a18b161f // indirect
 	github.com/casbin/casbin v1.9.1
 	github.com/casbin/casbin/v2 v2.11.0
 	github.com/casbin/gorm-adapter/v3 v3.0.2
@@ -37,7 +35,6 @@ require (
 	github.com/parnurzeal/gorequest v0.2.16
 	github.com/pelletier/go-toml v1.6.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
-	github.com/qiniu/api.v7/v7 v7.4.1
 	github.com/satori/go.uuid v1.2.0
 	github.com/shirou/gopsutil v3.21.1+incompatible
 	github.com/spf13/afero v1.2.2 // indirect
@@ -49,7 +46,6 @@ require (
 	github.com/swaggo/gin-swagger v1.2.0
 	github.com/swaggo/swag v1.6.7
 	github.com/tebeka/strftime v0.1.3 // indirect
-	github.com/tencentyun/cos-go-sdk-v5 v0.7.19
 	github.com/unrolled/secure v1.0.7
 	github.com/urfave/cli/v2 v2.3.0
 	github.com/xanzy/go-gitlab v0.48.0
