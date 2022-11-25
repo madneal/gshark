@@ -6,4 +6,5 @@ type System struct {
 	DbType        string `mapstructure:"db-type" json:"dbType" yaml:"db-type"`
 	OssType       string `mapstructure:"oss-type" json:"ossType" yaml:"oss-type"`
 	UseMultipoint bool   `mapstructure:"use-multipoint" json:"useMultipoint" yaml:"use-multipoint"`
+	GitlabBase    string `json:"gitlabBase" yaml:"gitlab-base"`
 }

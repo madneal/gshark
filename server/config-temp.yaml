@@ -54,6 +54,7 @@ system:
   db-type: mysql
   oss-type: local
   use-multipoint: false
+  gitlab-base: https://gitlab.com
 zap:
   level: info
   format: console
