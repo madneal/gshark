@@ -12,7 +12,7 @@ The project is based on Go and Vue to build a management system for sensitive in
 
 # Features
 
-* Support multi platforms, including Gitlab, Github, Searchcode
+* Support multi platforms, including Gitlab, Github, Searchcode, Postman
 * Flexible menu and API permission setting
 * Flexible rules and filter rules
 * Utilize gobuster to brute force subdomain
@@ -123,6 +123,15 @@ To execute `./gshark scan`, you need to add a GitHub token for crawl information
 ### Rule Configuration
 
 For the Github or Gitlab rule, the rule will be matched by the syntax in the corresponding platforms. Directly, you config what you search at GitHub.
+
+## Configuration
+
+You are supposed to rename `config-temp.yaml` to `config.yaml` and config the database information and other information according to your environment.
+
+### GitLab Base Url
+
+<img width="363" alt="image" src="https://user-images.githubusercontent.com/12164075/203898719-1ce66395-083d-4226-937f-b6eed859addc.png">
+
 
 ## FAQ
 
