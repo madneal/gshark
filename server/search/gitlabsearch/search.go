@@ -188,11 +188,17 @@ func ListValidProjects() *[]model.Repo {
 }
 
 func GetClient() *gitlab.Client {
+	var baseURL string
+	if global.GVA_CONFIG.System.GitlabBase != "" {
+		baseURL = global.GVA_CONFIG.System.GitlabBase
+	} else {
+		baseURL = "https://gitlab.com"
+	}
 	err, tokens := service.ListTokenByType("gitlab")
 	if len(tokens) == 0 {
 		return nil
 	}
-	client, err := gitlab.NewClient(tokens[0].Content)
+	client, err := gitlab.NewClient(tokens[0].Content, gitlab.WithBaseURL(baseURL))
 	if err != nil {
 		global.GVA_LOG.Error("getClient error", zap.Error(err))
 	}
