@@ -28,16 +28,16 @@ It's suggested to deploy the frontend project by nginx. Place the `dist` folder 
 
 ```
 location /api/ {
-proxy_set_header Host $http_host;
-proxy_set_header  X-Real-IP $remote_addr;
-proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-proxy_set_header X-Forwarded-Proto $scheme;
-rewrite ^/api/(.*)$ /$1 break;
-proxy_pass http://127.0.0.1:8888;
+   proxy_set_header Host $http_host;
+   proxy_set_header X-Real-IP $remote_addr;
+   proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+   proxy_set_header X-Forwarded-Proto $scheme;
+   rewrite ^/api/(.*)$ /$1 break;
+   proxy_pass http://127.0.0.1:8888;
 }
 ```
 
-The deployment work is very easy. Find the corresponding version zip file from [releases](https://github.com/madneal/gshark/releases). Unzip and copy the files inside `dist` to `/var/www/html` folder of nginx. Start the nginx and the frontend is deploy successfully.
+The deployment work is very easy. Find the corresponding version zip file from [releases](https://github.com/madneal/gshark/releases). Unzip and copy the files inside `dist` to `/var/www/html` folder of Nginx. Start the Nginx and the Front-End is deployed successfully.
 
 ### Incremental Deployment
 
@@ -116,7 +116,7 @@ GLOBAL OPTIONS:
 ## Usage
 ### Add Token
 
-To execute `./gshark scan`, you need to add a GitHub token for crawl information in GitHub. You can generate a token in [tokens](https://github.com/settings/tokens). Most access scopes are enough. For Gitlab search, remember to add token too.
+To execute `./gshark scan`, you need to add a GitHub token for crawl information in GitHub. You can generate a token in [tokens](https://github.com/settings/tokens). Most access scopes are enough. For GitLab search, remember to add token too.
 
 [![iR2TMt.md.png](https://s1.ax1x.com/2018/10/31/iR2TMt.md.png)](https://imgchr.com/i/iR2TMt)
 
