@@ -21,7 +21,6 @@ config.yaml
 latest_log
 /web/node_modules
 /web/dist
-go.sum
 /server/log/
 /server/main
 /server/latest_log
