@@ -118,9 +118,6 @@ func RunTask(duration time.Duration) {
 	if err != nil {
 		global.GVA_LOG.Error("get subdomain rules error", zap.Any("error", err))
 	}
-	if len(rules) == 0 {
-		global.GVA_LOG.Warn("There's no rule for subdomain scan, please specify a subdomain rule at least")
-	}
 	for _, rule := range rules {
 		start := time.Now()
 		domain := rule.Content

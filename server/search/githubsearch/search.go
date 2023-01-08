@@ -105,10 +105,6 @@ func RunTask(duration time.Duration) {
 		global.GVA_LOG.Error("GetValidRulesByType github err", zap.Error(err))
 		return
 	}
-	if len(rules) == 0 {
-		global.GVA_LOG.Info("Rules of github is empty, please specify one rule for scan at least")
-		return
-	}
 	Search(rules)
 	global.GVA_LOG.Info(fmt.Sprintf("Comple the scan of Github, start to sleep %d seconds", duration))
 	time.Sleep(duration * time.Second)
