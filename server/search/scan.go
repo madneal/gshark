@@ -50,6 +50,8 @@ func Scan(ctx *cli.Context) error {
 			gitlabsearch.RunTask(Interval)
 			codesearch.RunTask(Interval)
 			githubsearch.RunTask(Interval)
+			gobuster.RunTask(Interval)
+			postman.RunTask()
 		}
 	default:
 		for {
