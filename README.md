@@ -24,6 +24,11 @@ The project is based on Go and Vue to build a management system for sensitive in
 
 ## Deployment
 
+### Requirements
+
+* Nginx
+* MySQL(version above **8.0**)
+
 It's suggested to deploy the frontend project by nginx. Place the `dist` folder under `/var/www/html`, modify the `nginx.conf` to reverse proxy the backend service. For the detailed deployment videos, refer to [bilibili](https://www.bilibili.com/video/BV1Py4y1s7ap/) or [youtube](https://youtu.be/bFrKm5t4M54). For the deployment in windows, refer to [here](https://www.bilibili.com/video/BV1CA411L7ux/).
 
 ```
