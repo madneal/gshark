@@ -38,7 +38,7 @@ func GetRuleInfoList(info request.RuleSearch) (err error, list interface{}, tota
 	db := global.GVA_DB.Model(&model.Rule{})
 	var rules []model.Rule
 	if len(info.RuleType) > 0 {
-		db = db.Where("find_in_set(?, type)", info.RuleType)
+		db = db.Where("find_in_set(?, rule_type)", info.RuleType)
 	}
 	if info.Content != "" {
 		db = db.Where("`content` LIKE ?", "%"+info.Content+"%")
