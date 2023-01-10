@@ -145,7 +145,7 @@
           <el-input
             v-model="formData.content"
             clearable
-            placeholder="请输入"
+            placeholder="请输入关键词内容"
           ></el-input>
         </el-form-item>
 
