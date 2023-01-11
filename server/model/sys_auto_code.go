@@ -2,7 +2,6 @@ package model
 
 import "errors"
 
-// 初始版本自动化代码工具
 type AutoCodeStruct struct {
 	StructName         string  `json:"structName"`
 	TableName          string  `json:"tableName"`
