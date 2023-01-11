@@ -23,6 +23,15 @@ func CreateRule(c *gin.Context) {
 	}
 }
 
+func UploadRules(c *gin.Context) {
+	file, err := c.FormFile("file")
+	if err != nil {
+		global.GVA_LOG.Error("上传失败！", zap.Error(err))
+		response.FailWithMessage("上传文件失败", c)
+	}
+	fmt.Println(file.Filename)
+}
+
 func BatchCreateRule(c *gin.Context) {
 	var batchCreateRule request.BatchCreateRuleReq
 	_ = c.ShouldBindJSON(&batchCreateRule)

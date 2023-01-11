@@ -42,7 +42,15 @@
           </el-popover>
         </el-form-item>
         <el-form-item>
-          <el-button @click="dialogBatchRules = true" type="primary">批量导入</el-button>
+          <el-upload action="/api/rule/uploadRules" ref="ruleData" :with-credentials="true"
+          :headers="{ 'x-token': $store.getters['user/token'] }">
+            <template #trigger>
+              <el-button type="primary">规则导入</el-button>
+            </template>
+          </el-upload>
+        </el-form-item>
+        <el-form-item>
+          <el-link href="https://github.com/madneal/gshark/blob/master/template.csv" type="primary">规则导入模板</el-link>
         </el-form-item>
       </el-form>
     </div>
@@ -174,25 +182,6 @@
         <el-button @click="enterDialog" type="primary">确 定</el-button>
       </div>
     </el-dialog>
-
-    <el-dialog :visible.sync="dialogBatchRules" title="批量导入规则">
-      <el-form :model="batchRulesForm" label-position="right" label-width="80px">
-        <el-form-item label="规则类型:">
-          <el-checkbox-group v-model="batchRulesForm.type">
-            <el-checkbox v-for="ruleType in types" :label="ruleType" :key="ruleType">{{ ruleType }}</el-checkbox>
-          </el-checkbox-group>
-        </el-form-item>
-        <el-form-item label="规则内容:">
-          <el-input type="textarea" auto-size placeholder="规则内容，多条规则换行"
-                    :rows="5"
-                    v-model="batchRulesForm.contents"></el-input>
-        </el-form-item>
-      </el-form>
-      <div class="dialog-footer" slot="footer">
-        <el-button @click="dialogBatchRules = false">取 消</el-button>
-        <el-button @click="batchCreateRules" type="primary">确 定</el-button>
-      </div>
-    </el-dialog>
   </div>
 </template>
 
@@ -208,6 +197,7 @@ import {
 } from "@/api/rule";
 import { formatTimeToStr } from "@/utils/date";
 import infoList from "@/mixins/infoList";
+import { store } from '@/store/index';
 
 export default {
   name: "Rule",
