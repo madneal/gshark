@@ -54,6 +54,8 @@ For the incremental deployment, [sql.md](https://github.com/madneal/gshark/blob/
 
 ### Web service
 
+For the first time, you need to rename `config-temp.yaml` to `config.yaml`.
+
 ```
 ./gshark web
 ```
