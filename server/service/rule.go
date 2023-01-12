@@ -4,10 +4,13 @@ import (
 	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/model"
 	"github.com/madneal/gshark/model/request"
+	"gorm.io/gorm/clause"
 )
 
 func CreateRule(rule model.Rule) (err error) {
-	err = global.GVA_DB.Create(&rule).Error
+	err = global.GVA_DB.Clauses(clause.Insert{
+		Modifier: "IGNORE",
+	}).Create(&rule).Error
 	return err
 }
 

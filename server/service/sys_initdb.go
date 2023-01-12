@@ -15,12 +15,6 @@ import (
 	"path/filepath"
 )
 
-//@author: [songzhibin97](https://github.com/songzhibin97)
-//@function: writeConfig
-//@description: 回写配置
-//@param:
-//@return: error
-
 func writeConfig(viper *viper.Viper, mysql config.Mysql) error {
 	global.GVA_CONFIG.Mysql = mysql
 	cs := utils.StructToMap(global.GVA_CONFIG)
@@ -29,12 +23,6 @@ func writeConfig(viper *viper.Viper, mysql config.Mysql) error {
 	}
 	return viper.WriteConfig()
 }
-
-//@author: [songzhibin97](https://github.com/songzhibin97)
-//@function: executeSql
-//@description: 创建数据库(mysql)
-//@param: dsn string, driver string, createSql
-//@return: error
 
 func executeSql(dsn string, driver string, createSql string) error {
 	db, err := sql.Open(driver, dsn)
@@ -58,12 +46,6 @@ func initDB(InitDBFunctions ...model.InitDBFunc) (err error) {
 	}
 	return nil
 }
-
-//@author: [songzhibin97](https://github.com/songzhibin97)
-//@function: InitDB
-//@description: 创建数据库并初始化
-//@param: authorityId string
-//@return: err error, treeMap map[string][]model.SysMenu
 
 func InitDB(conf request.InitDB) error {
 	BaseMysql := config.Mysql{
