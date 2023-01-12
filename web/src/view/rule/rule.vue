@@ -43,7 +43,8 @@
         </el-form-item>
         <el-form-item>
           <el-upload action="/api/rule/uploadRules" ref="ruleData" :with-credentials="true"
-          :headers="{ 'x-token': $store.getters['user/token'] }">
+          :headers="{ 'x-token': $store.getters['user/token'] }" :show-file-list="false"
+          :on-success="uploadSuccess">
             <template #trigger>
               <el-button type="primary">规则导入</el-button>
             </template>
@@ -306,6 +307,13 @@ export default {
       }).then(() => {
         this.deleteRule(row);
       });
+    },
+    uploadSuccess() {
+      this.$message({
+        type: "success",
+        message: "规则导入成功"
+      });
+      this.getTableData();
     },
     async onDelete() {
       const ids = [];
