@@ -329,7 +329,7 @@ export default {
           ids.push(item.ID);
         });
       const res = await deleteRuleByIds({ ids });
-      if (res.code == 0) {
+      if (res.code === 0) {
         this.$message({
           type: "success",
           message: "删除成功",
@@ -338,14 +338,14 @@ export default {
           this.page--;
         }
         this.deleteVisible = false;
-        this.getTableData();
+        await this.getTableData();
       }
     },
     async updateRule(row) {
       const res = await findRule({ ID: row.ID });
       this.type = "update";
-      if (res.code == 0) {
-        this.formData = res.data.rerule;
+      if (res.code === 0) {
+        this.formData = res.data.rule;
         this.dialogFormVisible = true;
       }
     },
@@ -369,7 +369,7 @@ export default {
         if (this.tableData.length == 1) {
           this.page--;
         }
-        this.getTableData();
+        await this.getTableData();
       }
     },
     async enterDialog() {
