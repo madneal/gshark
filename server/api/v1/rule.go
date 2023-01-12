@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"encoding/csv"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/madneal/gshark/global"
@@ -24,12 +25,42 @@ func CreateRule(c *gin.Context) {
 }
 
 func UploadRules(c *gin.Context) {
-	file, err := c.FormFile("file")
+	fileHeader, err := c.FormFile("file")
 	if err != nil {
 		global.GVA_LOG.Error("上传失败！", zap.Error(err))
 		response.FailWithMessage("上传文件失败", c)
 	}
-	fmt.Println(file.Filename)
+	file, _ := fileHeader.Open()
+	csvLines, readErr := csv.NewReader(file).ReadAll()
+	if readErr != nil {
+		global.GVA_LOG.Error("csv 文件读取失败！", zap.Error(err))
+		response.FailWithMessage("规则导入失败", c)
+	}
+	rules := convertCsvIntoRules(csvLines)
+	for _, rule := range rules {
+		if err := service.CreateRule(rule); err != nil {
+			global.GVA_LOG.Error("创建Rule失败！", zap.Error(err))
+			response.FailWithMessage("创建规则失败", c)
+			return
+		}
+	}
+}
+
+func convertCsvIntoRules(lines [][]string) []model.Rule {
+	rules := make([]model.Rule, 0)
+	for index, line := range lines {
+		if index == 0 {
+			continue
+		}
+		rules = append(rules, model.Rule{
+			RuleType: line[0],
+			Content:  line[1],
+			Name:     line[2],
+			Desc:     line[3],
+			Status:   true,
+		})
+	}
+	return rules
 }
 
 func BatchCreateRule(c *gin.Context) {
