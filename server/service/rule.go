@@ -20,7 +20,7 @@ func DeleteRule(rule model.Rule) (err error) {
 }
 
 func DeleteRuleByIds(ids request.IdsReq) (err error) {
-	err = global.GVA_DB.Delete(&[]model.Rule{}, "id in ?", ids.Ids).Error
+	err = global.GVA_DB.Debug().Delete(&[]model.Rule{}, ids.Ids).Error
 	return err
 }
 
@@ -37,7 +37,6 @@ func GetRule(id uint) (err error, rule model.Rule) {
 func GetRuleInfoList(info request.RuleSearch) (err error, list interface{}, total int64) {
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
-	// 创建db
 	db := global.GVA_DB.Model(&model.Rule{})
 	var rules []model.Rule
 	if len(info.RuleType) > 0 {
