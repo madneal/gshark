@@ -45,4 +45,6 @@ alter table rule
 insert into sys_apis (created_at, updated_at, deleted_at, path, description, api_group, method) VALUES
     (current_timestamp, current_timestamp, null, '/rule/uploadRules', '规则导入', 'rule', 'POST');
 insert into casbin_rule (p_type, v0, v1, v2) VALUES ('p', '888', '/rule/uploadRules', 'POST')
+
+alter table rule drop column deleted_at;
 ```
