@@ -239,7 +239,6 @@ export default {
       }
       let result = "";
       for (let i = 0; i < val.length; i++) {
-        // result = result + val[i].fragment;
         const matches = val[i].matches;
         let index = [];
         matches.forEach(ele => {
