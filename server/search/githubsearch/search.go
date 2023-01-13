@@ -140,30 +140,41 @@ func (c *Client) SearchCode(keyword string) ([]*github.CodeSearchResult, error) 
 }
 
 func BuildQuery(query string) (string, error) {
-	err, filterRule := model.GetFilterRule()
+	err, extensionFilters := model.GetFilterByClass("extension")
+	if err != nil {
+		return query, err
+	}
 	// if there is no record, does not return err
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return query, nil
 	}
 	str := ""
-	if filterRule.Extension != "" {
-		extensions := strings.Split(filterRule.Extension, ",")
+	for _, extensionFilter := range extensionFilters {
+		extensions := strings.Split(extensionFilter.Content, ",")
+		filterType := extensionFilter.FilterType
 		for _, extension := range extensions {
-			str += " -extension:" + extension
+			if filterType == "black" {
+				str += " -extension:" + extension
+			} else {
+				str += " +extension:" + extension
+			}
 		}
 	}
-	if filterRule.WhiteExts != "" {
-		whiteExts := strings.Split(filterRule.WhiteExts, ",")
-		for _, whiteExt := range whiteExts {
-			str += " +extension:" + whiteExt
+
+	err, keywordFilters := model.GetFilterByClass("keyword")
+
+	for _, keywordFilter := range keywordFilters {
+		keywords := strings.Split(keywordFilter.Content, ",")
+		filterType := keywordFilter.FilterType
+		for _, keyword := range keywords {
+			if filterType == "black" {
+				str += " NOT " + keyword
+			} else {
+				str += " " + keyword
+			}
 		}
 	}
-	if filterRule.Keywords != "" {
-		keyswords := strings.Split(filterRule.Keywords, ",")
-		for _, keyword := range keyswords {
-			str += " NOT " + keyword
-		}
-	}
+
 	builtQuery := query + str
 	return builtQuery, err
 }
