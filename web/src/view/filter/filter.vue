@@ -44,20 +44,20 @@
       </el-table-column>
 
       <el-table-column
-        label="文件后缀（黑名单）"
-        prop="extension"
+        label="过滤类型"
+        prop="filter_type"
         width="120"
       ></el-table-column>
 
       <el-table-column
-        label="文件后缀（白名单）"
-        prop="whiteExts"
+        label="过滤种类"
+        prop="filter_class"
         width="120"
       ></el-table-column>
 
       <el-table-column
-        label="关键词（黑名单）"
-        prop="keywords"
+        label="内容"
+        prop="content"
         width="120"
       ></el-table-column>
 
@@ -99,23 +99,22 @@
       title="新增过滤规则（目前仅适用于Github）"
     >
       <el-form :model="formData" label-position="right" label-width="200px">
-        <el-form-item label="文件后缀（黑名单）:">
-          <el-input
-            v-model="formData.extension"
-            clearable
-            placeholder="css,png,md"
-          ></el-input>
+        <el-form-item label="过滤类型：">
+            <el-radio-group v-model="formData.filter_type">
+              <el-radio label="whitelist">白名单</el-radio>
+              <el-radio label="blacklist">黑名单</el-radio>
+            </el-radio-group>
         </el-form-item>
-        <el-form-item label="文件后缀（白名单）:">
-          <el-input
-            v-model="formData.whiteExts"
-            clearable
-            placeholder="css,png,md"
-          ></el-input>
+        <el-form-item label="过滤种类：">
+            <el-radio-group v-model="formData.filter_class">
+              <el-radio label="extension">文件后缀</el-radio>
+              <el-radio label="keyword">关键词</el-radio>
+              <el-radio label="sec_keyword">二次关键词</el-radio>
+            </el-radio-group>
         </el-form-item>
-        <el-form-item label="关键词（黑名单）:">
+        <el-form-item label="内容：">
           <el-input
-            v-model="formData.keywords"
+            v-model="formData.content"
             clearable
             placeholder="仅适用于Github，排除关键词，以,分隔"
           ></el-input>
@@ -151,10 +150,9 @@ export default {
       deleteVisible: false,
       multipleSelection: [],
       formData: {
-        extension: "",
-        isFork: false,
-        whiteExts: "",
-        keywords: ""
+        filter_type: "blacklist",
+        filter_class: "extension",
+        content: ""
       },
     };
   },
@@ -217,8 +215,8 @@ export default {
     async updateFilter(row) {
       const res = await findFilter({ ID: row.ID });
       this.type = "update";
-      if (res.code == 0) {
-        this.formData = res.data.refilter;
+      if (res.code === 0) {
+        this.formData = res.data.filter;
         this.dialogFormVisible = true;
       }
     },
@@ -231,7 +229,7 @@ export default {
     },
     async deleteFilter(row) {
       const res = await deleteFilter({ ID: row.ID });
-      if (res.code == 0) {
+      if (res.code === 0) {
         this.$message({
           type: "success",
           message: "删除成功",
@@ -239,7 +237,7 @@ export default {
         if (this.tableData.length == 1) {
           this.page--;
         }
-        this.getTableData();
+        await this.getTableData();
       }
     },
     async enterDialog() {
@@ -255,13 +253,13 @@ export default {
           res = await createFilter(this.formData);
           break;
       }
-      if (res.code == 0) {
+      if (res.code === 0) {
         this.$message({
           type: "success",
           message: "创建/更改成功",
         });
         this.closeDialog();
-        this.getTableData();
+        await this.getTableData();
       }
     },
     openDialog() {
