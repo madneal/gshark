@@ -1,3 +1,9 @@
+## v1.0.4
+
+```
+alter table search_result drop column textmatch_md5;
+```
+
 ## v0.9.3
 
 ```
