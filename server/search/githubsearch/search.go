@@ -85,8 +85,6 @@ func ConvertToSearchResults(results []*github.CodeSearchResult, keyword *string)
 				Status:  0,
 			}
 			if len(codeResult.TextMatches) > 0 {
-				hash := utils.GenMd5WithSpecificLen(*(codeResult.TextMatches[0].Fragment), 50)
-				searchResult.TextmatchMd5 = hash
 				b, err := json.Marshal(codeResult.TextMatches)
 				searchResult.TextMatchesJson = b
 				if err != nil {

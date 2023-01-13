@@ -104,8 +104,10 @@
 
       <el-table-column label="匹配内容" prop="matches" width="550">
         <template slot-scope="scope">
-          <pre>{{ scope.row.text_matches | fragmentsFilter }}</pre>
+<!--          <pre>{{ scope.row.text_matches | fragmentsFilter }}</pre>-->
+        <div v-html="$options.filters.fragmentsFilter(scope.row.text_matches)"></div>
         </template>
+
       </el-table-column>
 
       <el-table-column
@@ -237,7 +239,16 @@ export default {
       }
       let result = "";
       for (let i = 0; i < val.length; i++) {
-        result = result + val[i].fragment;
+        // result = result + val[i].fragment;
+        const matches = val[i].matches;
+        let index = [];
+        matches.forEach(ele => {
+          index.push(ele.indices);
+        });
+        let fragment = val[i].fragment;
+        fragment = fragment.slice(0, index[0]) + "<b>" + fragment.slice(index[0]);
+        fragment = fragment.slice(0, index[index.length-1]) + "</b>" + fragment.slice(index[index.length-1]);
+        result = result + fragment;
         if (i !== val.length - 1) {
           result = result + "\n=====================================\n";
         }
@@ -246,7 +257,6 @@ export default {
     },
   },
   methods: {
-    //条件搜索前端看此方法
     onSubmit() {
       this.page = 1;
       this.pageSize = 100;
@@ -256,7 +266,6 @@ export default {
       this.multipleSelection = val;
     },
     async onChange(isIgnore) {
-      console.log(isIgnore);
       const ids = [];
       if (this.multipleSelection.length === 0) {
         this.$message({
