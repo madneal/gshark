@@ -85,20 +85,11 @@
 
       <el-table-column label="ID" prop="ID" width="50"></el-table-column>
 
-      <!-- <el-table-column label="仓库名称" width="120">
-        <template slot-scope="scope">
-          <el-link :href="scope.row.RepoUrl" type="primary" :underline="false">
-            {{ scope.row.repo }}
-          </el-link>
-        </template>
-      </el-table-column> -->
-
       <el-table-column label="文件" width="180">
         <template slot-scope="scope">
-          <el-link :href="scope.row.url" type="primary" :underline="false">
-            {{
-            scope.row.repo + "/" + scope.row.path
-          }}</el-link>
+          <a :href="scope.row.url" target="_blank" style="color: #409EFF;">
+            {{ scope.row.repo + "/" + scope.row.path}}
+          </a>
         </template>
       </el-table-column>
 
