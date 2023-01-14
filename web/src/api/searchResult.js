@@ -99,11 +99,24 @@ export const createSearchResult = (data) => {
      })
  }
 
-
  export const updateSearchResultStatusByIds = (data) => {
      return service({
          url: '/searchResult/updateSearchResultStatusByIds',
          method: 'post',
          data
      })
+ }
+
+ export const startFilterTask = () => {
+    return service({
+        url: "/searchResult/startSecFilterTask",
+        method: "post"
+    })
+ }
+
+ export const getTaskStatus = () => {
+    return service({
+        url: "/searchResult/getTaskStatus",
+        method: "get"
+    })
  }

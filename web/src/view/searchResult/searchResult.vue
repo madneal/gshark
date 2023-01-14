@@ -62,11 +62,30 @@
               >
             </div>
             <el-button
-              icon="el-icon-delete"
               size="mini"
               slot="reference"
               type="primary"
               >批量确认</el-button
+            >
+          </el-popover>
+        </el-form-item>
+
+        <el-form-item>
+          <el-popover placement="top" v-model="taskVisible" width="160">
+            <p>确定启动过滤任务吗？过滤任务将自动忽略未匹配二次过滤关键词的结果</p>
+            <div style="text-align: right; margin: 0">
+              <el-button @click="taskVisible = false" size="mini" type="text"
+              >取消</el-button
+              >
+              <el-button @click="startFilterTask" size="mini" type="primary"
+              >确定</el-button
+              >
+            </div>
+            <el-button
+                size="mini"
+                slot="reference"
+                type="primary"
+            >启动二次过滤</el-button
             >
           </el-popover>
         </el-form-item>
@@ -161,6 +180,8 @@ import {
   getSearchResultList,
   updateSearchResult,
   updateSearchResultStatusByIds,
+  startFilterTask,
+  getTaskStatus
 } from "@/api/searchResult"; //  此处请自行替换地址
 import { formatTimeToStr } from "@/utils/date";
 import infoList from "@/mixins/infoList";
@@ -174,6 +195,8 @@ export default {
       type: "",
       deleteVisible: false,
       confirmVisible: false,
+      taskVisible: false,
+      taskButtonTxt: "启动二次过滤",
       statusOptions: [
         {
           label: "未处理",
@@ -255,6 +278,14 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },
+    async startFilterTask() {
+      await startFilterTask();
+      const resp = await getTaskStatus();
+      if (resp.data.message === "running") {
+        this.taskButtonTxt = "任务运行中";
+      }
+      this.taskVisible = false;
+    },
     async onChange(isIgnore) {
       const ids = [];
       if (this.multipleSelection.length === 0) {
@@ -310,6 +341,12 @@ export default {
   },
   async created() {
     await this.getTableData();
+    const resp = await getTaskStatus();
+    if (resp.data.message === "running") {
+      this.taskButtonTxt = "任务运行中";
+    } else {
+      this.taskButtonTxt = "启动二次过滤";
+    }
   },
 };
 </script>
