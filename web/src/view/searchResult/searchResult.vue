@@ -85,7 +85,8 @@
                 size="mini"
                 slot="reference"
                 type="primary"
-            >启动二次过滤</el-button
+                :disabled="taskBtnDisable"
+            >{{ taskButtonTxt }}</el-button
             >
           </el-popover>
         </el-form-item>
@@ -197,6 +198,7 @@ export default {
       confirmVisible: false,
       taskVisible: false,
       taskButtonTxt: "启动二次过滤",
+      taskBtnDisable: false,
       statusOptions: [
         {
           label: "未处理",
@@ -342,10 +344,12 @@ export default {
   async created() {
     await this.getTableData();
     const resp = await getTaskStatus();
-    if (resp.data.message === "running") {
+    if (resp.msg === "running") {
       this.taskButtonTxt = "任务运行中";
+      this.taskBtnDisable = true;
     } else {
       this.taskButtonTxt = "启动二次过滤";
+      this.taskBtnDisable = false;
     }
   },
 };
