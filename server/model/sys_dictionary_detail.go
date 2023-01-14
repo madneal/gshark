@@ -1,11 +1,9 @@
-// 自动生成模板SysDictionaryDetail
 package model
 
 import (
 	"github.com/madneal/gshark/global"
 )
 
-// 如果含有time.Time 请自行import time包
 type SysDictionaryDetail struct {
 	global.GVA_MODEL
 	Label           string `json:"label" form:"label" gorm:"column:label;comment:展示值"`

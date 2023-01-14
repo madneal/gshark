@@ -60,7 +60,8 @@ func (result *SearchResult) CheckPathExists() bool {
 
 func (result *SearchResult) CheckRepoExists() bool {
 	var r SearchResult
-	queryResult := global.GVA_DB.Table("search_result").Where("repo = ? and status > 0", result.Repo).First(&r)
+	queryResult := global.GVA_DB.Table("search_result").Where("repo = ? and status > ?",
+		result.Repo, global.UnhandledStatus).First(&r)
 	err := queryResult.Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return false

@@ -4,6 +4,7 @@ import (
 	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/model"
 	"github.com/madneal/gshark/model/request"
+	"go.uber.org/zap"
 )
 
 func CreateSearchResult(searchResult model.SearchResult) (err error) {
@@ -24,6 +25,12 @@ func DeleteSearchResultByIds(ids request.IdsReq) (err error) {
 func UpdateSearchResultByIds(req request.BatchUpdateReq) (err error) {
 	err = global.GVA_DB.Table("search_result").Where("id in ?", req.Ids).
 		UpdateColumn("status", req.Status).Error
+	return err
+}
+
+func IgnoreResultsByRepo(repo string) (err error) {
+	err = global.GVA_DB.Table("search_result").Where("status = 0 and repo = ?", repo).
+		UpdateColumn("status", 1).Error
 	return err
 }
 
@@ -68,6 +75,24 @@ func CheckExistOfSearchResult(searchResult *model.SearchResult) bool {
 	urlExist := searchResult.CheckPathExists()
 	repoExists := searchResult.CheckRepoExists()
 	return urlExist || repoExists
+}
+
+func SaveSearchResults(searchResults []model.SearchResult) int {
+	var insertCount int
+	for _, result := range searchResults {
+		exist := CheckExistOfSearchResult(&result)
+		if exist {
+			continue
+		}
+		err := CreateSearchResult(result)
+		if err != nil {
+			global.GVA_LOG.Error("save search result error", zap.Any("save searchResult error",
+				err))
+		} else {
+			insertCount++
+		}
+	}
+	return insertCount
 }
 
 func GetReposByStatus(status int) (error, []string) {

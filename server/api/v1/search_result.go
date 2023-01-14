@@ -7,6 +7,7 @@ import (
 	"github.com/madneal/gshark/model"
 	"github.com/madneal/gshark/model/request"
 	"github.com/madneal/gshark/model/response"
+	"github.com/madneal/gshark/search/githubsearch"
 	"github.com/madneal/gshark/service"
 	"go.uber.org/zap"
 	"strings"
@@ -57,6 +58,11 @@ func UpdateSearchResultByIds(c *gin.Context) {
 }
 
 func StartSecFilterTask(c *gin.Context) {
+	client, err := githubsearch.GetGithubClient()
+	if err != nil {
+		global.GVA_LOG.Error("GetGithubClient error", zap.Error(err))
+		return
+	}
 	err, repos := service.GetReposByStatus(0)
 	if err != nil {
 		global.GVA_LOG.Error("GetReposByStatus error", zap.Error(err))
@@ -72,9 +78,24 @@ func StartSecFilterTask(c *gin.Context) {
 		secKeywords = append(secKeywords, strings.Split(secKeywordFilter.Content, ",")...)
 	}
 	for _, repo := range repos {
+		searchResults := make([]model.SearchResult, 0)
 		for _, keyword := range secKeywords {
 			query := fmt.Sprintf("repo:%s %s in:file", repo, keyword)
-			fmt.Println(query)
+			results, err := client.SearchCode(query)
+			searchResults = append(searchResults, githubsearch.ConvertToSearchResults(results, &keyword)...)
+			if err != nil {
+				global.GVA_LOG.Error("Github search code error", zap.Error(err))
+				continue
+			}
+			githubsearch.SaveResult(results, &keyword)
+		}
+		// find results after second filter, then ignore the results by repo
+		if len(searchResults) > 0 {
+			err = service.IgnoreResultsByRepo(repo)
+			if err != nil {
+				global.GVA_LOG.Error("IgnoreResultsByRepo error", zap.Error(err))
+				continue
+			}
 		}
 	}
 }
