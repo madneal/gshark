@@ -13,6 +13,8 @@ import (
 	"strings"
 )
 
+var taskStatus = "stop"
+
 func CreateSearchResult(c *gin.Context) {
 	var searchResult model.SearchResult
 	_ = c.ShouldBindJSON(&searchResult)
@@ -57,19 +59,28 @@ func UpdateSearchResultByIds(c *gin.Context) {
 	}
 }
 
+func GetTaskStatus(c *gin.Context) {
+	response.OkWithMessage(taskStatus, c)
+}
+
 func StartSecFilterTask(c *gin.Context) {
+	taskStatus = "running"
 	client, err := githubsearch.GetGithubClient()
 	if err != nil {
+		taskStatus = "failed"
 		global.GVA_LOG.Error("GetGithubClient error", zap.Error(err))
+		response.FailWithMessage("初始化 github 客户端失败", c)
 		return
 	}
 	err, repos := service.GetReposByStatus(0)
 	if err != nil {
+		taskStatus = "failed"
 		global.GVA_LOG.Error("GetReposByStatus error", zap.Error(err))
 		return
 	}
 	err, secKeywordFilters := model.GetFilterByClass("sec_keyword")
 	if err != nil {
+		taskStatus = "failed"
 		global.GVA_LOG.Error("GetFilterByClass sec_keyword error", zap.Error(err))
 		return
 	}
@@ -98,6 +109,7 @@ func StartSecFilterTask(c *gin.Context) {
 			}
 		}
 	}
+	taskStatus = "done"
 }
 
 func UpdateSearchResult(c *gin.Context) {

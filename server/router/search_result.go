@@ -17,5 +17,6 @@ func InitSearchResultRouter(Router *gin.RouterGroup) {
 		SearchResultRouter.GET("getSearchResultList", v1.GetSearchResultList)            // 获取SearchResult列表
 		SearchResultRouter.POST("updateSearchResultStatusByIds", v1.UpdateSearchResultByIds)
 		SearchResultRouter.POST("startSecFilterTask", v1.StartSecFilterTask)
+		SearchResultRouter.GET("getTaskStatus", v1.GetTaskStatus)
 	}
 }
