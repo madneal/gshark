@@ -61,7 +61,7 @@ func GetSearchResultInfoList(info request.SearchResultSearch) (err error, list i
 		db = db.Where("`repo` LIKE ? or `text_matches_json` LIKE ?", "%"+info.Query+"%", "%"+info.Query+"%")
 	}
 	if info.Keyword != "" {
-		db = db.Where("`keyword` = ?", info.Keyword)
+		db = db.Where("`keyword` = ? or `sec_keyword` = ?", info.Keyword, info.Keyword)
 	}
 	if info.Status >= 0 {
 		db = db.Where("`status` = ?", info.Status)
