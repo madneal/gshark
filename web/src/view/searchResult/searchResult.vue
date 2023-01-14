@@ -283,8 +283,9 @@ export default {
     async startFilterTask() {
       await startFilterTask();
       const resp = await getTaskStatus();
-      if (resp.data.message === "running") {
+      if (resp.msg === "running") {
         this.taskButtonTxt = "任务运行中";
+        this.taskBtnDisable = true;
       }
       this.taskVisible = false;
     },
@@ -320,7 +321,7 @@ export default {
         } else {
           this.confirmVisible = false;
         }
-        this.getTableData();
+        await this.getTableData();
       }
     },
     async updateSearchResult(row, status) {
