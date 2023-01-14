@@ -69,3 +69,17 @@ func CheckExistOfSearchResult(searchResult *model.SearchResult) bool {
 	repoExists := searchResult.CheckRepoExists()
 	return urlExist || repoExists
 }
+
+func GetReposByStatus(status int) (error, []string) {
+	var results []model.SearchResult
+	err := global.GVA_DB.Distinct().Select("repo").Where("status = ? and rule type like %github%",
+		status).Find(&results).Error
+	repos := make([]string, 0)
+	if err != nil {
+		return err, repos
+	}
+	for _, result := range results {
+		repos = append(repos, result.Repo)
+	}
+	return err, repos
+}
