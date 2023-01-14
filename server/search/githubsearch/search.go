@@ -70,12 +70,13 @@ func ConvertToSearchResults(results []*github.CodeSearchResult, keyword, secKeyw
 		codeResults := result.CodeResults
 		for _, codeResult := range codeResults {
 			searchResult := model.SearchResult{
-				RepoUrl: *codeResult.Repository.HTMLURL,
-				Repo:    *codeResult.Repository.FullName,
-				Keyword: keyword,
-				Url:     *codeResult.HTMLURL,
-				Path:    *codeResult.Path,
-				Status:  0,
+				RepoUrl:    *codeResult.Repository.HTMLURL,
+				Repo:       *codeResult.Repository.FullName,
+				Keyword:    keyword,
+				SecKeyword: secKeyword,
+				Url:        *codeResult.HTMLURL,
+				Path:       *codeResult.Path,
+				Status:     0,
 			}
 			if len(codeResult.TextMatches) > 0 {
 				b, err := json.Marshal(codeResult.TextMatches)
