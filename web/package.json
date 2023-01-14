@@ -59,7 +59,9 @@
       "plugin:vue/essential",
       "eslint:recommended"
     ],
-    "rules": {},
+    "rules": {
+      "vue/multi-word-component-names": "off"
+    },
     "parserOptions": {
       "parser": "@babel/eslint-parser"
     }
