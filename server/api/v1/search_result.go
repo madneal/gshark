@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/model"
@@ -8,6 +9,7 @@ import (
 	"github.com/madneal/gshark/model/response"
 	"github.com/madneal/gshark/service"
 	"go.uber.org/zap"
+	"strings"
 )
 
 func CreateSearchResult(c *gin.Context) {
@@ -51,6 +53,29 @@ func UpdateSearchResultByIds(c *gin.Context) {
 		response.FailWithMessage("批量更新状态失败", c)
 	} else {
 		response.OkWithMessage("批量更新状态成功", c)
+	}
+}
+
+func StartSecFilterTask(c *gin.Context) {
+	err, repos := service.GetReposByStatus(0)
+	if err != nil {
+		global.GVA_LOG.Error("GetReposByStatus error", zap.Error(err))
+		return
+	}
+	err, secKeywordFilters := model.GetFilterByClass("sec_keyword")
+	if err != nil {
+		global.GVA_LOG.Error("GetFilterByClass sec_keyword error", zap.Error(err))
+		return
+	}
+	var secKeywords []string
+	for _, secKeywordFilter := range secKeywordFilters {
+		secKeywords = append(secKeywords, strings.Split(secKeywordFilter.Content, ",")...)
+	}
+	for _, repo := range repos {
+		for _, keyword := range secKeywords {
+			query := fmt.Sprintf("repo:%s %s in:file", repo, keyword)
+			fmt.Println(query)
+		}
 	}
 }
 
