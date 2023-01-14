@@ -14,6 +14,7 @@ type SearchResult struct {
 	RepoUrl         string         `gorm:"column:repository;type:varchar(200);"`
 	Matches         string         `json:"matches" form:"matches" gorm:"column:matches;comment:;type:text;"`
 	Keyword         string         `json:"keyword" form:"keyword" gorm:"column:keyword;comment:;type:varchar(100);size:100;"`
+	SecKeyword      string         `json:"sec_keyword" form:"sec_keyword" gorm:"column:sec_keyword;comment:;type:varchar(100);size:100;"`
 	Path            string         `json:"path" form:"path" gorm:"column:path;comment:;type:varchar(500);size:100;"`
 	Url             string         `json:"url" form:"url" gorm:"column:url;comment:;type:varchar(500);size:500;"`
 	Status          int            `json:"status" form:"status" gorm:"column:status;comment:;type:int;size:3;"`
