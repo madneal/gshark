@@ -60,20 +60,7 @@ func Search(rules []model.Rule) {
 
 func SaveResult(results []*github.CodeSearchResult, keyword *string) int {
 	searchResults := ConvertToSearchResults(results, keyword)
-	insertCount := 0
-	for _, result := range searchResults {
-		exist := service.CheckExistOfSearchResult(&result)
-		if exist {
-			continue
-		}
-		err := service.CreateSearchResult(result)
-		if err != nil {
-			global.GVA_LOG.Error("save search result error", zap.Any("save searchResult error",
-				err))
-		} else {
-			insertCount++
-		}
-	}
+	insertCount := service.SaveSearchResults(searchResults)
 	return insertCount
 }
 
