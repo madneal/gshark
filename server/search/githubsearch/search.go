@@ -26,9 +26,15 @@ func Search(rules []model.Rule) {
 	var content string
 	var counts int
 	for _, rule := range rules {
-		results, err := client.SearchCode(rule.Content)
+		query, err := BuildQuery(rule.Content)
+		if err != nil {
+			global.GVA_LOG.Error("BuildQuery error", zap.Error(err))
+			continue
+		}
+		results, err := client.SearchCode(query)
 		if err != nil {
 			global.GVA_LOG.Error("SearchCode error", zap.Error(err))
+			continue
 		}
 		counts = SaveResult(results, &rule.Content)
 		if counts > 0 {
@@ -117,14 +123,12 @@ func (c *Client) GetCommiter(ctx context.Context, owner, repo string) string {
 	return commit.Commit.Committer.GetEmail()
 }
 
-func (c *Client) SearchCode(keyword string) ([]*github.CodeSearchResult, error) {
+func (c *Client) SearchCode(query string) ([]*github.CodeSearchResult, error) {
 	var allSearchResult []*github.CodeSearchResult
 	var err error
 	ctx := context.Background()
 	listOpt := github.ListOptions{PerPage: 100}
 	opt := &github.SearchOptions{Order: "desc", TextMatch: true, ListOptions: listOpt}
-	query := keyword + " in:file"
-	query, err = BuildQuery(query)
 	global.GVA_LOG.Info("Github scan with the query:", zap.Any("github", query))
 	for {
 		result, nextPage := searchCodeByOpt(c, ctx, query, *opt)
@@ -140,6 +144,7 @@ func (c *Client) SearchCode(keyword string) ([]*github.CodeSearchResult, error) 
 }
 
 func BuildQuery(query string) (string, error) {
+	query = query + " in:file"
 	err, extensionFilters := model.GetFilterByClass("extension")
 	if err != nil {
 		return query, err
