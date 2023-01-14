@@ -19,6 +19,6 @@ func GetFilterRule() (error, Filter) {
 
 func GetFilterByClass(class string) (error, []Filter) {
 	filters := make([]Filter, 0)
-	err := global.GVA_DB.Where("class = ?", class).Find(&filters).Error
+	err := global.GVA_DB.Where("filter_class = ?", class).Find(&filters).Error
 	return err, filters
 }
