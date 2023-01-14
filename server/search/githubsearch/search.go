@@ -115,7 +115,7 @@ func (c *Client) SearchCode(query string) ([]*github.CodeSearchResult, error) {
 	var err error
 	ctx := context.Background()
 	listOpt := github.ListOptions{PerPage: 100}
-	opt := &github.SearchOptions{Order: "desc", TextMatch: true, ListOptions: listOpt}
+	opt := &github.SearchOptions{TextMatch: true, ListOptions: listOpt}
 	global.GVA_LOG.Info("Github scan with the query:", zap.Any("github", query))
 	for {
 		result, nextPage := searchCodeByOpt(c, ctx, query, *opt)
@@ -173,7 +173,6 @@ func BuildQuery(query string) (string, error) {
 
 func searchCodeByOpt(c *Client, ctx context.Context, query string, opt github.SearchOptions) (*github.CodeSearchResult,
 	int) {
-	query, err := BuildQuery(query)
 	result, res, err := c.Client.Search.Code(ctx, query, &opt)
 	if _, ok := err.(*github.RateLimitError); ok {
 		global.GVA_LOG.Warn("Trigger the github rate limit, ready to sleep 5 minutes")
