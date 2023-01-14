@@ -95,7 +95,13 @@ func StartSecFilterTask(c *gin.Context) {
 			for _, keyword := range secKeywords {
 				query := fmt.Sprintf("repo:%s %s ", repo, keyword)
 				results, err := client.SearchCode(query)
-				searchResults = append(searchResults, githubsearch.ConvertToSearchResults(results, &keyword)...)
+				originalKeyword, err := service.GetKeywordByRepo(repo)
+				if err != nil {
+					global.GVA_LOG.Error("GetKeywordByRepo error", zap.Error(err))
+					continue
+				}
+				searchResults = append(searchResults, githubsearch.ConvertToSearchResults(results,
+					originalKeyword, keyword)...)
 				if err != nil {
 					global.GVA_LOG.Error("Github search code error", zap.Error(err))
 					continue

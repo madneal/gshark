@@ -59,12 +59,12 @@ func Search(rules []model.Rule) {
 }
 
 func SaveResult(results []*github.CodeSearchResult, keyword *string) int {
-	searchResults := ConvertToSearchResults(results, keyword)
+	searchResults := ConvertToSearchResults(results, *keyword, "")
 	insertCount := service.SaveSearchResults(searchResults)
 	return insertCount
 }
 
-func ConvertToSearchResults(results []*github.CodeSearchResult, keyword *string) []model.SearchResult {
+func ConvertToSearchResults(results []*github.CodeSearchResult, keyword, secKeyword string) []model.SearchResult {
 	searchResults := make([]model.SearchResult, 0)
 	for _, result := range results {
 		codeResults := result.CodeResults
@@ -72,7 +72,7 @@ func ConvertToSearchResults(results []*github.CodeSearchResult, keyword *string)
 			searchResult := model.SearchResult{
 				RepoUrl: *codeResult.Repository.HTMLURL,
 				Repo:    *codeResult.Repository.FullName,
-				Keyword: *keyword,
+				Keyword: keyword,
 				Url:     *codeResult.HTMLURL,
 				Path:    *codeResult.Path,
 				Status:  0,
