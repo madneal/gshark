@@ -97,7 +97,7 @@ func SaveSearchResults(searchResults []model.SearchResult) int {
 
 func GetReposByStatus(status int) (error, []string) {
 	var results []model.SearchResult
-	err := global.GVA_DB.Distinct().Select("repo").Where("status = ? and rule type like %github%",
+	err := global.GVA_DB.Distinct().Select("repo").Where("status = ? and rule_type like %github%",
 		status).Find(&results).Error
 	repos := make([]string, 0)
 	if err != nil {
