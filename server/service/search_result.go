@@ -109,3 +109,9 @@ func GetReposByStatus(status int) (error, []string) {
 	}
 	return err, repos
 }
+
+func GetKeywordByRepo(repo string) (string, error) {
+	var result model.SearchResult
+	err := global.GVA_DB.Where("repo = ?", repo).First(&result).Error
+	return result.Keyword, err
+}
