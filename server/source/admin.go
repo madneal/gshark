@@ -16,7 +16,6 @@ type admin struct{}
 
 var admins = []model.SysUser{
 	{GVA_MODEL: global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, UUID: uuid.NewV4(), Username: "gshark", Password: "4e097ce13bea7674b8d828b63e4f7b8c", NickName: "超级管理员", HeaderImg: "http://qmplusimg.henrongyi.top/gva_header.jpg", AuthorityId: "888"},
-	{GVA_MODEL: global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, UUID: uuid.NewV4(), Username: "test", Password: "4e097ce13bea7674b8d828b63e4f7b8c", NickName: "QMPlusUser", HeaderImg: "http://qmplusimg.henrongyi.top/1572075907logo.png", AuthorityId: "9528"},
 }
 
 func (a *admin) Init() error {
