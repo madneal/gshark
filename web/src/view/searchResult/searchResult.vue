@@ -116,9 +116,7 @@
       <el-table-column label="匹配内容" prop="matches" width="550">
         <template slot-scope="scope">
           <pre>{{ scope.row.text_matches | fragmentsFilter }}</pre>
-<!--        <div v-html="$options.filters.fragmentsFilter(scope.row.text_matches)" style="color: #000408;"></div>-->
         </template>
-
       </el-table-column>
 
       <el-table-column
@@ -126,6 +124,8 @@
         prop="keyword"
         width="80"
       ></el-table-column>
+
+      <el-table-column label="二级关键词" prop="sec_keyword" width="100"></el-table-column>
 
       <el-table-column label="日期" width="100">
         <template slot-scope="scope">{{
