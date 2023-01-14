@@ -106,7 +106,7 @@ func StartSecFilterTask(c *gin.Context) {
 					global.GVA_LOG.Error("Github search code error", zap.Error(err))
 					continue
 				}
-				githubsearch.SaveResult(results, &keyword)
+				githubsearch.SaveResult(results, originalKeyword, keyword)
 			}
 			// find results after second filter, then ignore the results by repo
 			if len(searchResults) > 0 {

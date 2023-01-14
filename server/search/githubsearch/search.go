@@ -36,7 +36,7 @@ func Search(rules []model.Rule) {
 			global.GVA_LOG.Error("SearchCode error", zap.Error(err))
 			continue
 		}
-		counts = SaveResult(results, &rule.Content)
+		counts = SaveResult(results, rule.Content, "")
 		if counts > 0 {
 			content += fmt.Sprintf("%s: %d条<br>", rule.Content, counts)
 		}
@@ -58,8 +58,8 @@ func Search(rules []model.Rule) {
 	}
 }
 
-func SaveResult(results []*github.CodeSearchResult, keyword *string) int {
-	searchResults := ConvertToSearchResults(results, *keyword, "")
+func SaveResult(results []*github.CodeSearchResult, keyword, secKeyword string) int {
+	searchResults := ConvertToSearchResults(results, keyword, secKeyword)
 	insertCount := service.SaveSearchResults(searchResults)
 	return insertCount
 }
