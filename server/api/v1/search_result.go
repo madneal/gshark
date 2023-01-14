@@ -93,7 +93,7 @@ func StartSecFilterTask(c *gin.Context) {
 		for _, repo := range repos {
 			searchResults := make([]model.SearchResult, 0)
 			for _, keyword := range secKeywords {
-				query := fmt.Sprintf("repo:%s %s in:file", repo, keyword)
+				query := fmt.Sprintf("repo:%s %s ", repo, keyword)
 				results, err := client.SearchCode(query)
 				searchResults = append(searchResults, githubsearch.ConvertToSearchResults(results, &keyword)...)
 				if err != nil {
