@@ -133,7 +133,14 @@ To execute `./gshark scan`, you need to add a GitHub token for crawl information
 
 ### Rule Configuration
 
-For the Github or Gitlab rule, the rule will be matched by the syntax in the corresponding platforms. Directly, you config what you search at GitHub.
+For the Github or Gitlab rule, the rule will be matched by the syntax in the corresponding platforms. Directly, you config what you search at GitHub. You can download the rule import template csv file, then batch import rules.
+
+<img width="572" alt="image" src="https://user-images.githubusercontent.com/12164075/212504597-3e1ad5bd-bacf-433e-83e8-08de7eee6509.png">
+
+
+### Filter Configuration
+
+Filter is only addressed to GitHub search now. There are three classes of filter, include `extension`, `keyword`, `sec_keyword`. For `extension` and `keyword`, they can used for blacklist or whitelist.
 
 ## Configuration
 
