@@ -101,7 +101,7 @@
             v-model="scope.row.status"
             :active-value="true"
             :inactive-value="false"
-            @change="switchStatus(scope.row.ID, scope.row.status, scope.row)"
+            @change="switchStatus(scope.row.ID, scope.row.status)"
           />
         </template>
       </el-table-column>
@@ -278,17 +278,14 @@ export default {
     },
   },
   methods: {
-    async switchStatus(id, status, row) {
-      console.log(id);
-      console.log(status);
-      console.log(row);
+    async switchStatus(id, status) {
       const data = {
         id,
         status,
       };
       const res = await switchRule(data);
       if (res) {
-        this.getTableData();
+        await this.getTableData();
       }
     },
     onSubmit() {

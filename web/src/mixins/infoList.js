@@ -15,13 +15,12 @@ export default {
             this.getTableData()
         },
         handleCurrentChange(val) {
-            this.page = val
+            this.page = val;
             this.getTableData()
         },
         async getTableData(page = this.page, pageSize = this.pageSize) {
             const table = await this.listApi({ page, pageSize, ...this.searchInfo })
             if (table.code === 0) {
-                console.log(table.data.list);
                 this.tableData = table.data.list
                 this.total = table.data.total
                 this.page = table.data.page
