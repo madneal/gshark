@@ -34,7 +34,7 @@ var Scan = cli.Command{
 		&cli.StringFlag{
 			Name:  "mode, m",
 			Value: "github",
-			Usage: "scan mode: github, searchcode, gitlab, all",
+			Usage: "scan mode: github, searchcode, gitlab, postman, all",
 		},
 		&cli.IntFlag{
 			Name:  "time, t",
