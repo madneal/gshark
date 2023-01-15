@@ -291,7 +291,6 @@ export default {
           }
           if(isPreview){
             const data = await preview(this.form);
-            console.log(data.code == 0)
             this.preViewCode = data.data.autoCode
             this.previewFlag = true
           }else{
@@ -329,7 +328,7 @@ export default {
     },
     async getDb() {
       const res = await getDB();
-      if (res.code == 0) {
+      if (res.code === 0) {
         this.dbOptions = res.data.dbs;
       }
     },
