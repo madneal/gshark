@@ -57,11 +57,11 @@ func UpdateFilter(c *gin.Context) {
 func FindFilter(c *gin.Context) {
 	var filter model.Filter
 	_ = c.ShouldBindQuery(&filter)
-	if err, refilter := service.GetFilter(filter.ID); err != nil {
+	if err, filter := service.GetFilter(filter.ID); err != nil {
 		global.GVA_LOG.Error("查询失败!", zap.Any("err", err))
 		response.FailWithMessage("查询失败", c)
 	} else {
-		response.OkWithData(gin.H{"refilter": refilter}, c)
+		response.OkWithData(gin.H{"filter": filter}, c)
 	}
 }
 
