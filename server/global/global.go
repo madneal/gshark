@@ -18,5 +18,5 @@ var (
 )
 
 const UnhandledStatus int = 0
-const IgnoredStatus int = 1
-const ConfirmedStatus int = 2
+const IgnoredStatus int = 2
+const ConfirmedStatus int = 1
