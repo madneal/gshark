@@ -67,7 +67,7 @@ func GetSearchResultInfoList(info request.SearchResultSearch) (err error, list i
 		db = db.Where("`status` = ?", info.Status)
 	}
 	err = db.Count(&total).Error
-	err = db.Limit(limit).Offset(offset).Find(&searchResults).Error
+	err = db.Limit(limit).Offset(offset).Group("repo").Find(&searchResults).Error
 	return err, searchResults, total
 }
 
