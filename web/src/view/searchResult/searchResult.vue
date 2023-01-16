@@ -90,6 +90,10 @@
             >
           </el-popover>
         </el-form-item>
+
+        <el-form-item label="仅展示二次关键词结果">
+          <el-switch v-model="searchInfo.onlySecKeyword" @change="secKeywordChange"></el-switch>
+        </el-form-item>
       </el-form>
     </div>
     <el-table
@@ -186,6 +190,7 @@ import {
 } from "@/api/searchResult"; //  此处请自行替换地址
 import { formatTimeToStr } from "@/utils/date";
 import infoList from "@/mixins/infoList";
+
 export default {
   name: "SearchResult",
   mixins: [infoList],
@@ -199,6 +204,7 @@ export default {
       taskVisible: false,
       taskButtonTxt: "启动二次过滤",
       taskBtnDisable: false,
+      onlySecKeyword: false,
       statusOptions: [
         {
           label: "未处理",
@@ -220,7 +226,6 @@ export default {
         keyword: "",
         path: "",
         url: "",
-        textmatchMd5: "",
         status: 0,
       },
     };
@@ -277,6 +282,9 @@ export default {
       this.pageSize = 100;
       this.getTableData();
     },
+    secKeywordChange() {
+      this.getTableData();
+    },
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },
@@ -329,7 +337,7 @@ export default {
       this.type = "update";
       res.data.researchResult.status = status;
       if (res.code === 0) {
-        this.formData = res.data.researchResult;
+        this.formData = res.data.searchResult;
         this.dialogFormVisible = true;
         const data = {
           repo: this.formData.repo,
@@ -337,7 +345,7 @@ export default {
         };
         const updateRes = await updateSearchResult(data);
         if (updateRes.code === 0) {
-          this.getTableData();
+          await this.getTableData();
         }
       }
     },

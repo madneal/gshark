@@ -66,8 +66,11 @@ func GetSearchResultInfoList(info request.SearchResultSearch) (err error, list i
 	if info.Status >= 0 {
 		db = db.Where("`status` = ?", info.Status)
 	}
+	if info.OnlySecKeyword {
+		db = db.Where("`sec_keyword` != ''")
+	}
 	err = db.Count(&total).Error
-	err = db.Limit(limit).Offset(offset).Group("repo").Find(&searchResults).Error
+	err = db.Limit(limit).Offset(offset).Find(&searchResults).Error
 	return err, searchResults, total
 }
 
