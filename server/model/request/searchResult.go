@@ -6,7 +6,8 @@ type SearchResultSearch struct {
 }
 
 type SearchInfo struct {
-	Status  int    `json:"status" form:"status"`
-	Keyword string `json:"keyword" form:"keyword"`
-	Query   string `json:"query" form:"query"`
+	Status         int    `json:"status" form:"status"`
+	Keyword        string `json:"keyword" form:"keyword"`
+	Query          string `json:"query" form:"query"`
+	OnlySecKeyword bool   `json:"onlySecKeyword" form:"onlySecKeyword"`
 }
