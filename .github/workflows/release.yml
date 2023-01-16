@@ -5,7 +5,7 @@ name: Release
 
 on:
   release:
-    types: [prereleased, released, edited]
+    types: [prereleased, released, edited, published]
 
 
 jobs:
