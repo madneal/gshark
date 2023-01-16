@@ -146,7 +146,7 @@ func BuildQuery(query string) (string, error) {
 		extensions := strings.Split(extensionFilter.Content, ",")
 		filterType := extensionFilter.FilterType
 		for _, extension := range extensions {
-			if filterType == "black" {
+			if filterType == "blacklist" {
 				str += " -extension:" + extension
 			} else {
 				str += " +extension:" + extension
