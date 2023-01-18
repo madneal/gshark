@@ -10,7 +10,6 @@ import (
 	"github.com/madneal/gshark/model/response"
 	"github.com/madneal/gshark/service"
 	"go.uber.org/zap"
-	"strings"
 )
 
 func CreateRule(c *gin.Context) {
@@ -61,25 +60,6 @@ func convertCsvIntoRules(lines [][]string) []model.Rule {
 		})
 	}
 	return rules
-}
-
-func BatchCreateRule(c *gin.Context) {
-	var batchCreateRule request.BatchCreateRuleReq
-	_ = c.ShouldBindJSON(&batchCreateRule)
-	rules := strings.Split(batchCreateRule.Contents, "\n")
-	for _, ruleContent := range rules {
-		rule := model.Rule{
-			RuleType: batchCreateRule.Type,
-			Content:  ruleContent,
-			Status:   true,
-		}
-		if err := service.CreateRule(rule); err != nil {
-			global.GVA_LOG.Error("创建Rule失败！", zap.Error(err))
-			response.FailWithMessage("创建规则失败", c)
-			return
-		}
-	}
-	response.OkWithMessage("创建规则成功", c)
 }
 
 func DeleteRule(c *gin.Context) {
