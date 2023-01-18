@@ -2,12 +2,13 @@ package githubsearch
 
 import (
 	"context"
-	"fmt"
+	"errors"
 	"github.com/google/go-github/github"
+	"github.com/gregjones/httpcache"
 	"github.com/madneal/gshark/service"
+	"net/http"
 
 	"golang.org/x/oauth2"
-	"os"
 )
 
 var (
@@ -28,11 +29,16 @@ func InitGithubClients() (map[string]*Client, error) {
 			githubToken := token.Content
 			gitClient := &github.Client{}
 			if githubToken != "" {
-				ctx := context.Background()
 				ts := oauth2.StaticTokenSource(
 					&oauth2.Token{AccessToken: githubToken},
 				)
-				tc := oauth2.NewClient(ctx, ts)
+				//tc := oauth2.NewClient(ctx, ts)
+				tc := &http.Client{
+					Transport: &oauth2.Transport{
+						Base:   httpcache.NewMemoryCacheTransport(),
+						Source: ts,
+					},
+				}
 				gitClient = github.NewClient(tc)
 				githubClients[token.Content] = NewGitClient(gitClient, githubToken)
 			}
@@ -49,8 +55,7 @@ func GetGithubClient() (*Client, error) {
 		break
 	}
 	if c == nil {
-		fmt.Println("Github Client initial failed, please add token")
-		os.Exit(3)
+		err = errors.New("github Client initial failed, please add token")
 	}
 	return c, err
 }
