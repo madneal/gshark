@@ -89,7 +89,7 @@ export default {
     if(this.$route.query.id){
     const res = await findSearchResult({ ID: this.$route.query.id })
     if(res.code == 0){
-       this.formData = res.data.researchResult
+       this.formData = res.data.searchResult
        this.type = "update"
      }
     }else{
