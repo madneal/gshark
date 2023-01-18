@@ -15,7 +15,7 @@ func CreateRule(rule model.Rule) (err error) {
 }
 
 func DeleteRule(rule model.Rule) (err error) {
-	err = global.GVA_DB.Delete(&rule).Error
+	err = global.GVA_DB.Unscoped().Delete(&rule).Error
 	return err
 }
 
