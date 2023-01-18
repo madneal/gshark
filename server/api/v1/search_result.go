@@ -95,7 +95,7 @@ func StartSecFilterTask(c *gin.Context) {
 				query := fmt.Sprintf("repo:%s %s ", repo, keyword)
 				results, err := client.SearchCode(query)
 				// find results after second filter, then ignore the results by repo
-				if len(results) > 0 {
+				if len(results) > 0 && *results[0].Total > 0 {
 					err = service.IgnoreResultsByRepo(repo)
 					if err != nil {
 						global.GVA_LOG.Error("IgnoreResultsByRepo error", zap.Error(err))
