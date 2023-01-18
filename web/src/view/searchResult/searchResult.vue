@@ -335,7 +335,7 @@ export default {
     async updateSearchResult(row, status) {
       const res = await findSearchResult({ ID: row.ID });
       this.type = "update";
-      res.data.researchResult.status = status;
+      res.data.searchResult.status = status;
       if (res.code === 0) {
         this.formData = res.data.searchResult;
         this.dialogFormVisible = true;
