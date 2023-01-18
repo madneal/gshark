@@ -85,7 +85,6 @@ var apis = []model.SysApi{
 	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/rule/updateRule", "更新规则", "rule", "PUT"},
 	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/rule/findRule", "根据ID获取规则", "rule", "GET"},
 	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/rule/getRuleList", "获取规则列表", "rule", "GET"},
-	//{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/rule/batchCreateRule", "批量导入规则", "rule", "POST"},
 	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/rule/uploadRules", "规则导入", "rule", "POST"},
 	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/token/createToken", "新增token", "token", "POST"},
 	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/token/deleteToken", "删除token", "token", "DELETE"},
