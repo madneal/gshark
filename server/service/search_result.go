@@ -29,7 +29,7 @@ func UpdateSearchResultByIds(req request.BatchUpdateReq) (err error) {
 }
 
 func IgnoreResultsByRepo(repo string) (err error) {
-	err = global.GVA_DB.Table("search_result").Where("status = 0 and repo = ? and sec_keyword is null",
+	err = global.GVA_DB.Table("search_result").Where("status = 0 and repo = ? and sec_keyword is null or sec_keyword = ''",
 		repo).UpdateColumn("status", global.IgnoredStatus).Error
 	return err
 }
