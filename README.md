@@ -46,7 +46,15 @@ location /api/ {
 }
 ```
 
-The deployment work is very easy. Find the corresponding version zip file from [releases](https://github.com/madneal/gshark/releases). Unzip and copy the files inside `dist` to `/var/www/html` folder of Nginx. Start the Nginx and the Front-End is deployed successfully.
+The deployment work is very easy. Find the corresponding version zip file from [releases](https://github.com/madneal/gshark/releases). 
+
+Unzip and copy the files inside `dist` to `/var/www/html` folder of Nginx. 
+
+```
+unzip gshark*.zip
+```
+
+Start the Nginx and the Front-End is deployed successfully.
 
 ### Incremental Deployment
 
