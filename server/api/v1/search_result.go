@@ -91,17 +91,22 @@ func StartSecFilterTask(c *gin.Context) {
 			secKeywords = append(secKeywords, strings.Split(secKeywordFilter.Content, ",")...)
 		}
 		for _, repo := range repos {
-			searchResults := make([]model.SearchResult, 0)
 			for _, keyword := range secKeywords {
 				query := fmt.Sprintf("repo:%s %s ", repo, keyword)
 				results, err := client.SearchCode(query)
+				// find results after second filter, then ignore the results by repo
+				if len(results) > 0 {
+					err = service.IgnoreResultsByRepo(repo)
+					if err != nil {
+						global.GVA_LOG.Error("IgnoreResultsByRepo error", zap.Error(err))
+						continue
+					}
+				}
 				originalKeyword, err := service.GetKeywordByRepo(repo)
 				if err != nil {
 					global.GVA_LOG.Error("GetKeywordByRepo error", zap.Error(err))
 					continue
 				}
-				searchResults = append(searchResults, githubsearch.ConvertToSearchResults(results,
-					originalKeyword, keyword)...)
 				if err != nil {
 					global.GVA_LOG.Error("Github search code error", zap.Error(err))
 					continue
@@ -110,14 +115,7 @@ func StartSecFilterTask(c *gin.Context) {
 					githubsearch.SaveResult(results, originalKeyword, keyword)
 				}
 			}
-			// find results after second filter, then ignore the results by repo
-			if len(searchResults) > 0 {
-				err = service.IgnoreResultsByRepo(repo)
-				if err != nil {
-					global.GVA_LOG.Error("IgnoreResultsByRepo error", zap.Error(err))
-					continue
-				}
-			}
+
 		}
 		*taskStatus = "done"
 	}(&taskStatus)
