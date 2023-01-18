@@ -136,11 +136,11 @@ func UpdateSearchResult(c *gin.Context) {
 func FindSearchResult(c *gin.Context) {
 	var searchResult model.SearchResult
 	_ = c.ShouldBindQuery(&searchResult)
-	if err, researchResult := service.GetSearchResult(searchResult.ID); err != nil {
+	if err, searchResult := service.GetSearchResult(searchResult.ID); err != nil {
 		global.GVA_LOG.Error("查询失败!", zap.Any("err", err))
 		response.FailWithMessage("查询失败", c)
 	} else {
-		response.OkWithData(gin.H{"researchResult": researchResult}, c)
+		response.OkWithData(gin.H{"searchResult": searchResult}, c)
 	}
 }
 
