@@ -133,6 +133,7 @@ var carbines = []gormadapter.CasbinRule{
 	{PType: "p", V0: "888", V1: "/searchResult/findSearchResult", V2: "GET"},
 	{PType: "p", V0: "888", V1: "/searchResult/getSearchResultList", V2: "GET"},
 	{PType: "p", V0: "888", V1: "/searchResult/updateSearchResultStatusByIds", V2: "POST"},
+	{PType: "p", V0: "888", V1: "/searchResult/getTaskStatus", V2: "GET"},
 	{PType: "p", V0: "888", V1: "/subdomain/createSubdomain", V2: "POST"},
 	{PType: "p", V0: "888", V1: "/subdomain/deleteSubdomain", V2: "DELETE"},
 	{PType: "p", V0: "888", V1: "/subdomain/deleteSubdomainByIds", V2: "DELETE"},
