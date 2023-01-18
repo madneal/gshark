@@ -135,14 +135,6 @@ func GetBaseMenuById(c *gin.Context) {
 	}
 }
 
-// @Tags Menu
-// @Summary 分页获取基础menu列表
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body request.PageInfo true "页码, 每页大小"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
-// @Router /menu/getMenuList [post]
 func GetMenuList(c *gin.Context) {
 	var pageInfo request.PageInfo
 	_ = c.ShouldBindJSON(&pageInfo)
