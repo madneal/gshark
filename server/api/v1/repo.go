@@ -57,11 +57,11 @@ func UpdateRepo(c *gin.Context) {
 func FindRepo(c *gin.Context) {
 	var repo model.Repo
 	_ = c.ShouldBindQuery(&repo)
-	if err, rerepo := service.GetRepo(repo.ID); err != nil {
+	if err, repo := service.GetRepo(repo.ID); err != nil {
 		global.GVA_LOG.Error("查询失败!", zap.Any("err", err))
 		response.FailWithMessage("查询失败", c)
 	} else {
-		response.OkWithData(gin.H{"rerepo": rerepo}, c)
+		response.OkWithData(gin.H{"repo": repo}, c)
 	}
 }
 

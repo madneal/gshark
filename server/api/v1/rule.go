@@ -98,11 +98,11 @@ func UpdateRule(c *gin.Context) {
 func FindRule(c *gin.Context) {
 	var rule model.Rule
 	_ = c.ShouldBindQuery(&rule)
-	if err, rerule := service.GetRule(rule.ID); err != nil {
+	if err, rule := service.GetRule(rule.ID); err != nil {
 		global.GVA_LOG.Error("查询失败!", zap.Any("err", err))
 		response.FailWithMessage("查询失败", c)
 	} else {
-		response.OkWithData(gin.H{"rerule": rerule}, c)
+		response.OkWithData(gin.H{"rule": rule}, c)
 	}
 }
 
