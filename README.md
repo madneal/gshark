@@ -76,42 +76,6 @@ For the first time, you need to rename `config-temp.yaml` to `config.yaml`.
 
 For the scan service, it's necessary to config the corresponding rules. For example, Github or Gitlab rules.
 
-## Development
-
-### Server
-
-``` 
-git clone https://github.com/madneal/gshark.git
-
-cd server
-
-go mod tidy
-
-mv config-temp.yaml config.yaml
-
-go build
-
-./gshark web
-```
-
-If you want to set up the scan service, please run:
-
-```
-./gshark scan
-```
-
-
-
-### Web 
-
-```
-cd ../web
-
-npm install
-
-npm run serve
-```
-
 ## Run
 
 ```
