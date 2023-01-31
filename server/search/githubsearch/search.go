@@ -117,7 +117,7 @@ func (c *Client) SearchCode(query string) ([]*github.CodeSearchResult, error) {
 	ctx := context.Background()
 	listOpt := github.ListOptions{PerPage: 100}
 	opt := &github.SearchOptions{TextMatch: true, ListOptions: listOpt}
-	global.GVA_LOG.Info("Github scan with the query:", zap.Any("github", query))
+	//global.GVA_LOG.Info("Github scan with the query:", zap.Any("github", query))
 	for {
 		result, nextPage := searchCodeByOpt(c, ctx, query, *opt)
 		if result != nil {

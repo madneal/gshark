@@ -20,6 +20,7 @@ require (
 	github.com/golang-jwt/jwt/v4 v4.0.0
 	github.com/golang/protobuf v1.4.2 // indirect
 	github.com/google/go-github v17.0.0+incompatible
+	github.com/google/go-github/v50 v50.0.0 // indirect
 	github.com/google/uuid v1.1.1
 	github.com/gookit/color v1.3.1
 	github.com/gregjones/httpcache v0.0.0-20190611155906-901d90724c79
@@ -51,9 +52,7 @@ require (
 	github.com/urfave/cli/v2 v2.3.0
 	github.com/xanzy/go-gitlab v0.48.0
 	go.uber.org/zap v1.10.0
-	golang.org/x/crypto v0.0.0-20201012173705-84dcc777aaee // indirect
 	golang.org/x/image v0.0.0-20201208152932-35266b937fa6 // indirect
-	golang.org/x/net v0.0.0-20201224014010-6772e930b67b // indirect
 	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
 	golang.org/x/sys v0.0.0-20220422013727-9388b58f7150 // indirect
 	golang.org/x/tools v0.0.0-20200324003944-a576cf524670 // indirect
