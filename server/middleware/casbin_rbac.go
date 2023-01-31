@@ -8,7 +8,6 @@ import (
 	"github.com/madneal/gshark/service"
 )
 
-// 拦截器
 func CasbinHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		claims, _ := c.Get("claims")
