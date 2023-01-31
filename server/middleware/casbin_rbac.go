@@ -8,6 +8,7 @@ import (
 	"github.com/madneal/gshark/service"
 )
 
+
 func CasbinHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		claims, _ := c.Get("claims")

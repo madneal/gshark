@@ -76,6 +76,7 @@ For the first time, you need to rename `config-temp.yaml` to `config.yaml`.
 
 For the scan service, it's necessary to config the corresponding rules. For example, Github or Gitlab rules.
 
+<<<<<<< HEAD
 ## Development
 
 ### Server
@@ -112,6 +113,8 @@ npm install
 npm run serve
 ```
 
+=======
+>>>>>>> 18b49ff51aa3e2394c3f907af876d4620d17cd80
 ## Run
 
 ```

@@ -8,9 +8,11 @@ import (
 	"go.uber.org/zap"
 )
 
+
 func GetSystemConfig() (err error, conf config.Server) {
 	return nil, global.GVA_CONFIG
 }
+
 
 func SetSystemConfig(system model.System) (err error) {
 	cs := utils.StructToMap(system.Config)

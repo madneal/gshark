@@ -6,6 +6,7 @@ import (
 	"github.com/google/go-github/github"
 	"github.com/gregjones/httpcache"
 	"github.com/madneal/gshark/model"
+
 	"github.com/madneal/gshark/service"
 	"net/http"
 
@@ -52,6 +53,7 @@ func GetGithubClient() (*Client, error) {
 		return c, err
 	}
 	clients := InitGithubClients(tokens)
+
 	for _, client := range clients {
 		c = client
 		break
