@@ -279,6 +279,7 @@ export default {
   },
   methods: {
     async switchStatus(id, status) {
+      status = status ? 1 : 0;
       const data = {
         id,
         status,

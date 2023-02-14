@@ -2,7 +2,6 @@ package v1
 
 import (
 	"encoding/csv"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/model"
@@ -125,8 +124,6 @@ func GetRuleList(c *gin.Context) {
 func SwitchRuleStatus(c *gin.Context) {
 	var switchRequest request.RuleSwitch
 	_ = c.ShouldBindJSON(&switchRequest)
-	fmt.Println(switchRequest.ID)
-	fmt.Println(switchRequest.Status)
 	if err := service.SwitchRuleStatus(switchRequest.ID, switchRequest.Status); err != nil {
 		global.GVA_LOG.Error("切换状态失败", zap.Any("err", err))
 		response.FailWithMessage("切换状态失败", c)
