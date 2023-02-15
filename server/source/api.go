@@ -99,6 +99,8 @@ var apis = []model.SysApi{
 	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/searchResult/findSearchResult", "根据ID获取搜索结果", "searchResult", "GET"},
 	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/searchResult/getSearchResultList", "获取搜索结果列表", "searchResult", "GET"},
 	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/searchResult/updateSearchResultStatusByIds", "批量更新搜索结果列表", "searchResult", "POST"},
+	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/searchResult/startSecFilterTask", "开始二次过滤任务", "searchResult", "POST"},
+	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/searchResult/getTaskStatus", "获取任务状态", "searchResult", "GET"},
 	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/subdomain/createSubdomain", "新增子域名", "subdomain", "POST"},
 	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/subdomain/deleteSubdomain", "删除子域名", "subdomain", "DELETE"},
 	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/subdomain/deleteSubdomainByIds", "批量删除子域名", "subdomain", "DELETE"},
