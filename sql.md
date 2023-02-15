@@ -15,7 +15,7 @@ insert into sys_apis (created_at, updated_at, deleted_at, path, description, api
 insert into casbin_rule (p_type, v0, v1, v2) values ('p', 888, '/searchResult/startSecFilterTask', 'POST');
 
 insert into sys_apis (created_at, updated_at, deleted_at, path, description, api_group, method) VALUES
-    (current_timestamp, current_timestamp, null, '/searchResult/getTaskStatus', '开始二次过滤任务', 'searchResult', 'GET');
+    (current_timestamp, current_timestamp, null, '/searchResult/getTaskStatus', '查询任务状态', 'searchResult', 'GET');
 insert into casbin_rule (p_type, v0, v1, v2) values ('p', 888, '/searchResult/getTaskStatus', 'GET');
 ```
 
