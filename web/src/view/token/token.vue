@@ -96,6 +96,7 @@
           <el-radio-group v-model="formData.type">
             <el-radio label="github"></el-radio>
             <el-radio label="gitlab"></el-radio>
+            <el-radio label="postman"></el-radio>
           </el-radio-group>
         </el-form-item>
 
