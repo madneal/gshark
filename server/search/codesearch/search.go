@@ -78,7 +78,10 @@ func GetResult(request *gorequest.SuperAgent, url string) ([]*model.SearchResult
 		fmt.Printf("Request to %s error, status code: %d", url, resp.StatusCode)
 	}
 	var result model.SearchCodeRes
-	json.Unmarshal([]byte(body), &result)
+	jErr := json.Unmarshal([]byte(body), &result)
+	if jErr != nil {
+		global.GVA_LOG.Error("json unmarshal searchCodeRes err", zap.Error(jErr))
+	}
 	results := result.Results
 	if len(results) == 0 {
 		hasResult = false
