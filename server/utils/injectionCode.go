@@ -51,10 +51,10 @@ func AutoInjectionCode(filepath string, funcName string, codeData string) error 
 	// 遍历所有注释
 	for _, comment := range fparser.Comments {
 		if int(comment.Pos()) > codeStartPos && int(comment.End()) <= codeEndPos {
-			if startComment != "" && strings.Contains(comment.Text(), startComment) {
+			if strings.Contains(comment.Text(), startComment) {
 				startCommentPos = int(comment.Pos()) // Note: Pos is the second '/'
 			}
-			if endComment != "" && strings.Contains(comment.Text(), endComment) {
+			if strings.Contains(comment.Text(), endComment) {
 				endCommentPos = int(comment.Pos()) // Note: Pos is the second '/'
 			}
 		}

@@ -1,3 +1,4 @@
+//go:build !windows
 // +build !windows
 
 package utils
@@ -10,11 +11,6 @@ import (
 	"path"
 	"time"
 )
-
-//@author: [SliverHorn](https://github.com/SliverHorn)
-//@function: GetWriteSyncer
-//@description: zap logger中加入file-rotatelogs
-//@return: zapcore.WriteSyncer, error
 
 func GetWriteSyncer() (zapcore.WriteSyncer, error) {
 	fileWriter, err := zaprotatelogs.New(

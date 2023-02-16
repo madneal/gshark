@@ -54,12 +54,6 @@ func BotSend(content string) error {
 	return err
 }
 
-//@author: [maplepie](https://github.com/maplepie)
-//@function: send
-//@description: Email发送方法
-//@param: subject string, body string
-//@return: error
-
 func send(to []string, subject string, body string) error {
 	from := global.GVA_CONFIG.Email.From
 	nickname := global.GVA_CONFIG.Email.Nickname
