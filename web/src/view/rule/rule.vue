@@ -255,8 +255,8 @@ export default {
   },
   filters: {
     formatDate: function (time) {
-      if (time != null && time != "") {
-        var date = new Date(time);
+      if (time != null && time !== "") {
+        const date = new Date(time);
         return formatTimeToStr(date, "yyyy-MM-dd hh:mm:ss");
       } else {
         return "";

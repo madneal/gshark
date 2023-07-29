@@ -263,13 +263,13 @@ export default {
           res = await createToken(this.formData);
           break;
       }
-      if (res.code == 0) {
+      if (res.code === 0) {
         this.$message({
           type: "success",
           message: "创建/更改成功",
         });
         this.closeDialog();
-        this.getTableData();
+        await this.getTableData();
       }
     },
     openDialog() {

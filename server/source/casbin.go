@@ -146,6 +146,9 @@ var carbines = []gormadapter.CasbinRule{
 	{PType: "p", V0: "888", V1: "/filter/updateFilter", V2: "PUT"},
 	{PType: "p", V0: "888", V1: "/filter/findFilter", V2: "GET"},
 	{PType: "p", V0: "888", V1: "/filter/getFilterList", V2: "GET"},
+	{PType: "p", V0: "888", V1: "/filter/getTaskList", V2: "GET"},
+	{PType: "p", V0: "888", V1: "/filter/createTask", V2: "POST"},
+	{PType: "p", V0: "888", V1: "/filter/switchTaskStatus", V2: "POST"},
 }
 
 func (c *casbin) Init() error {
