@@ -73,21 +73,21 @@
     >
       <el-form :model="formData" label-position="right" label-width="100px">
         <el-form-item label="任务类型:" required>
-          <el-radio-group v-model="formData.ruleType">
+          <el-radio-group v-model="formData.taskType">
             <el-radio v-for="ruleType in types" :label="ruleType" :key="ruleType">{{ ruleType }}</el-radio>
           </el-radio-group>
         </el-form-item>
 
         <el-form-item label="任务名称:" required>
           <el-input
-              v-model="formData.content"
+              v-model="formData.name"
               clearable
               placeholder="请输入任务名称"
           ></el-input>
         </el-form-item>
 
         <el-form-item label="状态:">
-          <el-switch v-model="formData.status"></el-switch>
+          <el-switch v-model="formData.taskStatus"></el-switch>
         </el-form-item>
       </el-form>
       <div class="dialog-footer" slot="footer">
@@ -116,11 +116,9 @@ export default {
       deleteVisible: false,
       multipleSelection: [],
       formData: {
-        ruleType: [],
-        content: "",
         name: "",
-        desc: "",
-        status: true,
+        taskType: "",
+        taskStatus: true
       },
       batchRulesForm: {
         type: [],
@@ -212,17 +210,14 @@ export default {
     closeDialog() {
       this.dialogFormVisible = false;
       this.formData = {
-        ruleType: [],
-        content: "",
         name: "",
-        desc: "",
-        status: 0,
+        taskType: "",
+        taskStatus: 0,
       };
     },
     openDialog() {
       this.type = "create";
       this.dialogFormVisible = true;
-      this.formData.ruleType = [];
     }
   },
   async created() {
