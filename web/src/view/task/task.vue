@@ -20,12 +20,12 @@
 
       <el-table-column
           label="类型"
-          prop="ruleType"
+          prop="taskType"
       ></el-table-column>
 
       <el-table-column
           label="名称"
-          prop="content"
+          prop="name"
       ></el-table-column>
 
       <el-table-column label="创建日期">

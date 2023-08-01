@@ -10,9 +10,9 @@ type CreateTaskReq struct {
 
 type Task struct {
 	global.GVA_MODEL
-	TaskType   string `json:"taskType" form:"task_type" gorm:"column:task_type;type:varchar(10);"`
+	TaskType   string `json:"taskType" form:"taskType" gorm:"column:task_type;type:varchar(10);"`
 	Name       string `json:"name" form:"string" gorm:"column:name;type:varchar(20);"`
-	TaskStatus bool   `json:"taskStatus" form:"task_status" gorm:"column:task_status;type:tinyint(1);"`
+	TaskStatus bool   `json:"taskStatus" form:"taskStatus" gorm:"column:task_status;type:tinyint(1);"`
 }
 
 func (Task) TableName() string {
