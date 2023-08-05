@@ -18,12 +18,12 @@ func GetTaskList() (error, interface{}, int64) {
 	if err != nil {
 		return err, tasks, total
 	}
-	err = db.Debug().Limit(10).Offset(0).Find(&tasks).Error
+	err = db.Limit(10).Offset(0).Find(&tasks).Error
 	return err, tasks, total
 }
 
 func SwitchTaskStatus(id int, status int) error {
-	err := global.GVA_DB.Table("task").Where("id = ?", id).
-		UpdateColumn("status", status).Error
+	err := global.GVA_DB.Debug().Table("task").Where("id = ?", id).
+		UpdateColumn("task_status", status).Error
 	return err
 }
