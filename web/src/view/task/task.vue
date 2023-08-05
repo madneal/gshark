@@ -9,15 +9,12 @@
     </div>
     <el-table
         :data="tableData"
-        @selection-change="handleSelectionChange"
         border
         ref="multipleTable"
         stripe
         style="width: 100%"
         tooltip-effect="dark"
     >
-
-
       <el-table-column
           label="类型"
           prop="taskType"
@@ -38,18 +35,18 @@
         <template slot-scope="scope">
           <el-button
               class="table-button"
-              @click="updateRule(scope.row)"
+              @click="switchStatus(scope.row.ID, true)"
               size="small"
               type="primary"
-              icon="el-icon-edit"
-          >变更</el-button
+              v-if="!scope.row.taskStatus"
+          >启动</el-button
           >
           <el-button
               type="danger"
-              icon="el-icon-delete"
               size="mini"
-              @click="deleteRow(scope.row)"
-          >删除</el-button
+              v-else
+              @click="switchStatus(scope.row.ID, false)"
+          >停止</el-button
           >
         </template>
       </el-table-column>
@@ -102,7 +99,7 @@
 import { formatTimeToStr } from "@/utils/date";
 import infoList from "@/mixins/infoList";
 import { store } from '@/store/index';
-import {createTask, getTaskList} from "@/api/task";
+import {createTask, getTaskList, switchTaskStatus} from "@/api/task";
 
 export default {
   name: "Rule",
@@ -197,7 +194,7 @@ export default {
         id,
         status,
       };
-      const res = await switchRule(data);
+      const res = await switchTaskStatus(data);
       if (res) {
         await this.getTableData();
       }
