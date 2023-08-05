@@ -62,3 +62,9 @@ func SwitchRuleStatus(id uint, status int) error {
 	err := global.GVA_DB.Table("rule").Where("id = ?", id).UpdateColumn("status", status).Error
 	return err
 }
+
+func CheckRuleByType(ruleType string) (bool, error) {
+	var rule model.Rule
+	result := global.GVA_DB.Where("rule_type = ?", ruleType).First(&rule)
+	return result.RowsAffected > 0, result.Error
+}

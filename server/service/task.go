@@ -1,12 +1,22 @@
 package service
 
 import (
+	"errors"
+	"fmt"
 	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/model"
 )
 
 func CreateTask(task *model.Task) error {
-	err := global.GVA_DB.Create(task).Error
+	hasRule, err := CheckRuleByType(task.TaskType)
+	if err != nil {
+		return err
+	}
+	if !hasRule {
+		err = errors.New(fmt.Sprintf("暂无%s类型规则，请至少创建一条规则", task.TaskType))
+		return err
+	}
+	err = global.GVA_DB.Create(task).Error
 	return err
 }
 
