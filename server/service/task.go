@@ -37,3 +37,8 @@ func SwitchTaskStatus(id int, status int) error {
 		UpdateColumn("task_status", status).Error
 	return err
 }
+
+func CheckTaskStatus(taskType string) (bool, error) {
+	result := global.GVA_DB.Table("task").Where("task_type = ? and task_status = 1", taskType)
+	return result.RowsAffected > 0, result.Error
+}
