@@ -60,18 +60,14 @@ Start the Nginx and the Front-End is deployed successfully.
 
 For the incremental deployment, [sql.md](https://github.com/madneal/gshark/blob/master/sql.md) should be executed for the corresponding database operations.
 
-### Web service
+### Server service
 
 For the first time, you need to rename `config-temp.yaml` to `config.yaml`.
 
 ```
-./gshark web
-```
-
-### Scan service
-
-```
-./gshark scan
+go build && ./gshark
+or
+go run main.go
 ```
 
 For the scan service, it's necessary to config the corresponding rules. For example, Github or Gitlab rules.
