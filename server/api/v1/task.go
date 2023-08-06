@@ -1,6 +1,8 @@
 package v1
 
 import (
+	"errors"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/model"
@@ -8,6 +10,7 @@ import (
 	"github.com/madneal/gshark/model/response"
 	"github.com/madneal/gshark/service"
 	"go.uber.org/zap"
+	"gorm.io/gorm"
 )
 
 func CreateTask(c *gin.Context) {
@@ -20,7 +23,11 @@ func CreateTask(c *gin.Context) {
 	}
 	if err := service.CreateTask(&task); err != nil {
 		global.GVA_LOG.Error("CreateTask err", zap.Error(err))
-		response.FailWithMessage("创建失败", c)
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			response.FailWithMessage(fmt.Sprintf("暂无%s类型规则，请至少创建一条规则", task.TaskType), c)
+		} else {
+			response.FailWithMessage("创建失败", c)
+		}
 	} else {
 		response.OkWithMessage("创建成功", c)
 	}
