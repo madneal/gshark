@@ -1,64 +1,42 @@
 package search
 
 import (
+	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/search/codesearch"
 	"github.com/madneal/gshark/search/githubsearch"
 	"github.com/madneal/gshark/search/gitlabsearch"
 	"github.com/madneal/gshark/search/gobuster"
 	"github.com/madneal/gshark/search/postman"
-	"github.com/urfave/cli/v2"
-	"strings"
+	"github.com/madneal/gshark/service"
+	"go.uber.org/zap"
 	"time"
 )
 
-func Scan(ctx *cli.Context) error {
-	var scanMode string
-	// seconds
+func ScanTask() {
 	var Interval time.Duration = 900
-
-	if ctx.IsSet("mode") {
-		scanMode = strings.ToLower(ctx.String("mode"))
+	if enable, err := service.CheckTaskStatus("gitlab"); enable {
+		gitlabsearch.RunTask(Interval)
+	} else if err != nil {
+		global.GVA_LOG.Error("CheckTaskStatus for gitlab err", zap.Error(err))
 	}
-
-	if ctx.IsSet("time") {
-		Interval = time.Duration(ctx.Int("time"))
+	if enable, err := service.CheckTaskStatus("codesearch"); enable {
+		codesearch.RunTask(Interval)
+	} else if err != nil {
+		global.GVA_LOG.Error("CheckTaskStatus for codesearch err", zap.Error(err))
 	}
-
-	switch scanMode {
-	case "github":
-		for {
-			githubsearch.RunTask(Interval)
-		}
-	case "searchcode":
-		for {
-			codesearch.RunTask(Interval)
-		}
-	case "gitlab":
-		for {
-			gitlabsearch.RunTask(Interval)
-		}
-	case "subdomain":
-		for {
-			gobuster.RunTask(Interval)
-		}
-	case "postman":
-		for {
-			postman.RunTask()
-		}
-	case "all":
-		for {
-			gitlabsearch.RunTask(Interval)
-			codesearch.RunTask(Interval)
-			githubsearch.RunTask(Interval)
-			gobuster.RunTask(Interval)
-			postman.RunTask()
-		}
-	default:
-		for {
-			githubsearch.RunTask(Interval)
-			codesearch.RunTask(Interval)
-			gobuster.RunTask(Interval)
-		}
+	if enable, err := service.CheckTaskStatus("github"); enable {
+		githubsearch.RunTask(Interval)
+	} else if err != nil {
+		global.GVA_LOG.Error("CheckTaskStatus for github err", zap.Error(err))
 	}
-	return nil
+	if enable, err := service.CheckTaskStatus("gobuster"); enable {
+		gobuster.RunTask(Interval)
+	} else if err != nil {
+		global.GVA_LOG.Error("CheckTaskStatus for gobuster err", zap.Error(err))
+	}
+	if enable, err := service.CheckTaskStatus("postman"); enable {
+		postman.RunTask()
+	} else if err != nil {
+		global.GVA_LOG.Error("CheckTaskStatus for postman err", zap.Error(err))
+	}
 }

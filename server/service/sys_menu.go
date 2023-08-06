@@ -12,7 +12,7 @@ import (
 func getMenuTreeMap(authorityId string) (err error, treeMap map[string][]model.SysMenu) {
 	var allMenus []model.SysMenu
 	treeMap = make(map[string][]model.SysMenu)
-	err = global.GVA_DB.Debug().Where("authority_id = ?", authorityId).Order("sort").
+	err = global.GVA_DB.Where("authority_id = ?", authorityId).Order("sort").
 		Preload("Parameters").Find(&allMenus).Error
 	for _, v := range allMenus {
 		treeMap[v.ParentId] = append(treeMap[v.ParentId], v)

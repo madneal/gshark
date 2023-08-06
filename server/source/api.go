@@ -113,6 +113,9 @@ var apis = []model.SysApi{
 	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/filter/updateFilter", "更新过滤规则", "filter", "PUT"},
 	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/filter/findFilter", "根据ID获取过滤规则", "filter", "GET"},
 	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/filter/getFilterList", "获取过滤规则列表", "filter", "GET"},
+	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/task/getTaskList", "获取任务列表", "task", "GET"},
+	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/task/createTask", "创建任务", "task", "POST"},
+	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/task/switchTaskStatus", "切换任务状态", "task", "POST"},
 }
 
 func (a *api) Init() error {

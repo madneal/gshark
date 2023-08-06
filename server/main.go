@@ -1,13 +1,10 @@
 package main
 
 import (
-	"github.com/madneal/gshark/cmd"
 	"github.com/madneal/gshark/core"
 	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/initialize"
-	"github.com/urfave/cli/v2"
-	"go.uber.org/zap"
-	"os"
+	"github.com/madneal/gshark/search"
 )
 
 func main() {
@@ -19,14 +16,6 @@ func main() {
 		db, _ := global.GVA_DB.DB()
 		defer db.Close()
 	}
-	app := cli.NewApp()
-	app.Name = "GShark"
-	app.Usage = "Scan for sensitive information easily and effectively."
-	app.Commands = []*cli.Command{&cmd.Web, &cmd.Scan}
-	app.Flags = append(app.Flags, cmd.Web.Flags...)
-	app.Flags = append(app.Flags, cmd.Scan.Flags...)
-	err := app.Run(os.Args)
-	if err != nil {
-		global.GVA_LOG.Error("app start error", zap.Any("err", err))
-	}
+	go search.ScanTask()
+	core.RunServer()
 }

@@ -107,7 +107,8 @@ export const findRule = (params) => {
 // @Param data body request.PageInfo true "分页获取Rule列表"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
 // @Router /rule/getRuleList [get]
-export const getRuleList = (params) => {
+export const
+    getRuleList = (params) => {
     return service({
         url: "/rule/getRuleList",
         method: 'get',
