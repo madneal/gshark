@@ -87,13 +87,11 @@ mv config-temp.yaml config.yaml
 
 go build
 
-./gshark web
-```
+./gshark
 
-If you want to set up the scan service, please run:
+or
 
-```
-./gshark scan
+go run main.go
 ```
 
 
