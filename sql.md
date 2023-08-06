@@ -69,6 +69,30 @@ insert into sys_apis (created_at, updated_at, deleted_at, path, description, api
 (current_timestamp, current_timestamp, null, '/email/botTest', '企业微信测试', 'email', 'GET');
 ```
 
+## v1.2.0
+create table gshark.task
+(
+id          bigint unsigned auto_increment
+primary key,
+created_at  datetime    null,
+updated_at  datetime    null,
+name        varchar(50) null,
+task_status tinyint     null,
+task_type   varchar(20) null,
+deleted_at  datetime    null,
+constraint task_type
+unique (task_type)
+);
+
+create index idx_task_deleted_at
+on gshark.task (deleted_at);
+
+insert into sys_base_menus (created_at, updated_at, deleted_at, menu_level, parent_id, path, name, hidden, component, sort, keep_alive, default_menu, title, icon, close_tab)
+values (current_timestamp, current_timestamp, null, 0, 24, 'task', 'task', 0, 'view/token/task.vue', 4, 0, 0, '任务管理', 's-flag', 0);
+insert into casbin_rule (p_type, v0, v1, v2) values ('p', 888, '/task/getTaskList', 'GET');
+insert into casbin_rule (p_type, v0, v1, v2) values ('p', 888, '/task/createTask', 'POST');
+insert into casbin_rule (p_type, v0, v1, v2) values ('p', 888, '/task/switchTaskStatus', 'POST');
+
 
 
 
