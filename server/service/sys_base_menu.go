@@ -7,12 +7,6 @@ import (
 	"gorm.io/gorm"
 )
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: DeleteBaseMenu
-//@description: 删除基础路由
-//@param: id float64
-//@return: err error
-
 func DeleteBaseMenu(id float64) (err error) {
 	err = global.GVA_DB.Preload("Parameters").Where("parent_id = ?", id).First(&model.SysBaseMenu{}).Error
 	if err != nil {
@@ -29,12 +23,6 @@ func DeleteBaseMenu(id float64) (err error) {
 	}
 	return err
 }
-
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: UpdateBaseMenu
-//@description: 更新路由
-//@param: menu model.SysBaseMenu
-//@return:err error
 
 func UpdateBaseMenu(menu model.SysBaseMenu) (err error) {
 	var oldMenu model.SysBaseMenu
@@ -83,12 +71,6 @@ func UpdateBaseMenu(menu model.SysBaseMenu) (err error) {
 	})
 	return err
 }
-
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: GetBaseMenuById
-//@description: 返回当前选中menu
-//@param: id float64
-//@return: err error, menu model.SysBaseMenu
 
 func GetBaseMenuById(id float64) (err error, menu model.SysBaseMenu) {
 	err = global.GVA_DB.Preload("Parameters").Where("id = ?", id).First(&menu).Error

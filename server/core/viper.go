@@ -38,7 +38,6 @@ func Viper(path ...string) *viper.Viper {
 	v := viper.New()
 	v.SetConfigFile(configFilename)
 	err := v.ReadInConfig()
-	fmt.Println(os.Getwd())
 	if err != nil {
 		panic(fmt.Errorf("Fatal error configFilename file: %s \n", err))
 	}

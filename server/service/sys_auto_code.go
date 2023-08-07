@@ -27,12 +27,6 @@ type tplData struct {
 	autoMoveFilePath string
 }
 
-//@author: [songzhibin97](https://github.com/songzhibin97)
-//@function: PreviewTemp
-//@description: 预览创建代码
-//@param: model.AutoCodeStruct
-//@return: map[string]string, error
-
 func PreviewTemp(autoCode model.AutoCodeStruct) (map[string]string, error) {
 	dataList, _, needMkdir, err := getNeedList(&autoCode)
 	if err != nil {
@@ -92,12 +86,6 @@ func PreviewTemp(autoCode model.AutoCodeStruct) (map[string]string, error) {
 	return ret, nil
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: CreateTemp
-//@description: 创建代码
-//@param: model.AutoCodeStruct
-//@return: error
-
 func CreateTemp(autoCode model.AutoCodeStruct) (err error) {
 	dataList, fileList, needMkdir, err := getNeedList(&autoCode)
 	if err != nil {
@@ -155,12 +143,6 @@ func CreateTemp(autoCode model.AutoCodeStruct) (err error) {
 	return nil
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: GetAllTplFile
-//@description: 获取 pathName 文件夹下所有 tpl 文件
-//@param: pathName string, fileList []string
-//@return: []string, error
-
 func GetAllTplFile(pathName string, fileList []string) ([]string, error) {
 	files, err := ioutil.ReadDir(pathName)
 	for _, fi := range files {
@@ -178,48 +160,20 @@ func GetAllTplFile(pathName string, fileList []string) ([]string, error) {
 	return fileList, err
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: GetTables
-//@description: 获取数据库的所有表名
-//@param: pathName string
-//@param: fileList []string
-//@return: []string, error
-
 func GetTables(dbName string) (err error, TableNames []request.TableReq) {
 	err = global.GVA_DB.Raw("select table_name as table_name from information_schema.tables where table_schema = ?", dbName).Scan(&TableNames).Error
 	return err, TableNames
 }
-
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: GetDB
-//@description: 获取数据库的所有数据库名
-//@param: pathName string
-//@param: fileList []string
-//@return: []string, error
 
 func GetDB() (err error, DBNames []request.DBReq) {
 	err = global.GVA_DB.Raw("SELECT SCHEMA_NAME AS `database` FROM INFORMATION_SCHEMA.SCHEMATA;").Scan(&DBNames).Error
 	return err, DBNames
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: GetDB
-//@description: 获取指定数据库和指定数据表的所有字段名,类型值等
-//@param: pathName string
-//@param: fileList []string
-//@return: []string, error
-
 func GetColumn(tableName string, dbName string) (err error, Columns []request.ColumnReq) {
 	err = global.GVA_DB.Raw("SELECT COLUMN_NAME column_name,DATA_TYPE data_type,CASE DATA_TYPE WHEN 'longtext' THEN c.CHARACTER_MAXIMUM_LENGTH WHEN 'varchar' THEN c.CHARACTER_MAXIMUM_LENGTH WHEN 'double' THEN CONCAT_WS( ',', c.NUMERIC_PRECISION, c.NUMERIC_SCALE ) WHEN 'decimal' THEN CONCAT_WS( ',', c.NUMERIC_PRECISION, c.NUMERIC_SCALE ) WHEN 'int' THEN c.NUMERIC_PRECISION WHEN 'bigint' THEN c.NUMERIC_PRECISION ELSE '' END AS data_type_long,COLUMN_COMMENT column_comment FROM INFORMATION_SCHEMA.COLUMNS c WHERE table_name = ? AND table_schema = ?", tableName, dbName).Scan(&Columns).Error
 	return err, Columns
 }
-
-//@author: [SliverHorn](https://github.com/SliverHorn)
-//@author: [songzhibin97](https://github.com/songzhibin97)
-//@function: addAutoMoveFile
-//@description: 生成对应的迁移文件路径
-//@param: *tplData
-//@return: null
 
 func addAutoMoveFile(data *tplData) {
 	base := filepath.Base(data.autoCodePath)
@@ -258,13 +212,6 @@ func addAutoMoveFile(data *tplData) {
 		}
 	}
 }
-
-//@author: [piexlmax](https://github.com/piexlmax)
-//@author: [SliverHorn](https://github.com/SliverHorn)
-//@function: CreateApi
-//@description: 自动创建api数据,
-//@param: a *model.AutoCodeStruct
-//@return: error
 
 func AutoCreateApi(a *model.AutoCodeStruct) (err error) {
 	var apiList = []model.SysApi{
