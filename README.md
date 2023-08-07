@@ -14,7 +14,7 @@ For the usage of GShark, please refer to [wiki](https://github.com/madneal/gshar
 
 # Features
 
-* Support multi platforms, including Gitlab, Github, Searchcode, Postman
+* Support multi-platforms, including Gitlab, Github, Searchcode, Postman
 * Flexible menu and API permission setting
 * Flexible rules and filter rules
 * Utilize gobuster to brute force subdomain
@@ -48,7 +48,7 @@ location /api/ {
 }
 ```
 
-The deployment work is very easy. Find the corresponding version zip file from [releases](https://github.com/madneal/gshark/releases). 
+The deployment work is straightforward. Find the corresponding version zip file from [releases](https://github.com/madneal/gshark/releases). 
 
 Unzip and copy the files inside `dist` to `/var/www/html` folder of Nginx. 
 
@@ -111,20 +111,20 @@ npm run serve
 ## Usage
 ### Add Token
 
-To execute `./gshark scan`, you need to add a GitHub token for crawl information in GitHub. You can generate a token in [tokens](https://github.com/settings/tokens). Most access scopes are enough. For GitLab search, remember to add token too.
+To execute the scan task for GitHub, you need to add a GitHub token for crawl information in GitHub. You can generate a token in [tokens](https://github.com/settings/tokens). Most access scopes are enough. For the GitLab search, remember to add a token too.
 
 [![iR2TMt.md.png](https://s1.ax1x.com/2018/10/31/iR2TMt.md.png)](https://imgchr.com/i/iR2TMt)
 
 ### Rule Configuration
 
-For the Github or Gitlab rule, the rule will be matched by the syntax in the corresponding platforms. Directly, you config what you search at GitHub. You can download the rule import template csv file, then batch import rules.
+For the Github or Gitlab rule, the rule will be matched by the syntax in the corresponding platforms. Directly, you config what you search at GitHub. You can download the rule import template CSV file, then batch import rules.
 
 <img width="572" alt="image" src="https://user-images.githubusercontent.com/12164075/212504597-3e1ad5bd-bacf-433e-83e8-08de7eee6509.png">
 
 
 ### Filter Configuration
 
-Filter is only addressed to GitHub search now. There are three classes of filter, include `extension`, `keyword`, `sec_keyword`. For `extension` and `keyword`, they can used for blacklist or whitelist.
+Filter is only addressed to GitHub search now. There are three classes of filters, including `extension`, `keyword`, `sec_keyword`. For `extension` and `keyword`, they can used for blacklist or whitelist.
 
 For more information, you can refer to this [video](https://www.bilibili.com/video/BV1aG4y1c72N/?vd_source=ef4657ebf0549af8755f75118b6e81bb).
 
@@ -145,7 +145,7 @@ gshark/gshark
 
 2. Database initial failed
 
-make sure the version of mysql is over 5.6. And remove the database before initial the second time.
+make sure the version of MySQL is over 5.6. And remove the database before initialing the second time.
 
 3. `go get ./... connection error`
 
@@ -155,7 +155,7 @@ It's suggested to enable GOPROXY(refer this [article](https://madneal.com/post/g
 go env -w GOPROXY=https://goproxy.cn,direct
 go env -w GO111MODULE=on
 ```
-4. When deployed the web to `nginx`, the page was empty
+4. When deploying the web to `nginx`, the page was empty
 
 try to clear the LocalStorage
 
@@ -183,7 +183,7 @@ try to clear the LocalStorage
 
 ## Wechat
 
-If you would like to join WeChat group, you can add my WeChat `mmadneal` with the message `gshark`. But I would strongly suggest you to raise an issue directly instead of just asking in WeChat.
+If you would like to join the WeChat group, you can add my WeChat `mmadneal` with the message `gshark`. But I would strongly suggest you to raise an issue directly instead of just asking in WeChat.
 
 ## License
 
