@@ -1,4 +1,4 @@
-package v1
+package api
 
 import (
 	"github.com/gin-gonic/gin"
@@ -11,10 +11,10 @@ import (
 	"go.uber.org/zap"
 )
 
-func CreateSysDictionaryDetail(c *gin.Context) {
-	var detail model.SysDictionaryDetail
-	_ = c.ShouldBindJSON(&detail)
-	if err := service.CreateSysDictionaryDetail(detail); err != nil {
+func CreateSysDictionary(c *gin.Context) {
+	var dictionary model.SysDictionary
+	_ = c.ShouldBindJSON(&dictionary)
+	if err := service.CreateSysDictionary(dictionary); err != nil {
 		global.GVA_LOG.Error("创建失败!", zap.Any("err", err))
 		response.FailWithMessage("创建失败", c)
 	} else {
@@ -22,10 +22,10 @@ func CreateSysDictionaryDetail(c *gin.Context) {
 	}
 }
 
-func DeleteSysDictionaryDetail(c *gin.Context) {
-	var detail model.SysDictionaryDetail
-	_ = c.ShouldBindJSON(&detail)
-	if err := service.DeleteSysDictionaryDetail(detail); err != nil {
+func DeleteSysDictionary(c *gin.Context) {
+	var dictionary model.SysDictionary
+	_ = c.ShouldBindJSON(&dictionary)
+	if err := service.DeleteSysDictionary(dictionary); err != nil {
 		global.GVA_LOG.Error("删除失败!", zap.Any("err", err))
 		response.FailWithMessage("删除失败", c)
 	} else {
@@ -33,10 +33,10 @@ func DeleteSysDictionaryDetail(c *gin.Context) {
 	}
 }
 
-func UpdateSysDictionaryDetail(c *gin.Context) {
-	var detail model.SysDictionaryDetail
-	_ = c.ShouldBindJSON(&detail)
-	if err := service.UpdateSysDictionaryDetail(&detail); err != nil {
+func UpdateSysDictionary(c *gin.Context) {
+	var dictionary model.SysDictionary
+	_ = c.ShouldBindJSON(&dictionary)
+	if err := service.UpdateSysDictionary(&dictionary); err != nil {
 		global.GVA_LOG.Error("更新失败!", zap.Any("err", err))
 		response.FailWithMessage("更新失败", c)
 	} else {
@@ -44,25 +44,25 @@ func UpdateSysDictionaryDetail(c *gin.Context) {
 	}
 }
 
-func FindSysDictionaryDetail(c *gin.Context) {
-	var detail model.SysDictionaryDetail
-	_ = c.ShouldBindQuery(&detail)
-	if err := utils.Verify(detail, utils.IdVerify); err != nil {
-		response.FailWithMessage(err.Error(), c)
-		return
-	}
-	if err, resysDictionaryDetail := service.GetSysDictionaryDetail(detail.ID); err != nil {
+func FindSysDictionary(c *gin.Context) {
+	var dictionary model.SysDictionary
+	_ = c.ShouldBindQuery(&dictionary)
+	if err, sysDictionary := service.GetSysDictionary(dictionary.Type, dictionary.ID); err != nil {
 		global.GVA_LOG.Error("查询失败!", zap.Any("err", err))
 		response.FailWithMessage("查询失败", c)
 	} else {
-		response.OkWithDetailed(gin.H{"resysDictionaryDetail": resysDictionaryDetail}, "查询成功", c)
+		response.OkWithDetailed(gin.H{"resysDictionary": sysDictionary}, "查询成功", c)
 	}
 }
 
-func GetSysDictionaryDetailList(c *gin.Context) {
-	var pageInfo request.SysDictionaryDetailSearch
+func GetSysDictionaryList(c *gin.Context) {
+	var pageInfo request.SysDictionarySearch
 	_ = c.ShouldBindQuery(&pageInfo)
-	if err, list, total := service.GetSysDictionaryDetailInfoList(pageInfo); err != nil {
+	if err := utils.Verify(pageInfo.PageInfo, utils.PageInfoVerify); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	if err, list, total := service.GetSysDictionaryInfoList(pageInfo); err != nil {
 		global.GVA_LOG.Error("获取失败!", zap.Any("err", err))
 		response.FailWithMessage("获取失败", c)
 	} else {

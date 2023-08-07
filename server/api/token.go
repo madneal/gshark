@@ -1,4 +1,4 @@
-package v1
+package api
 
 import (
 	"github.com/gin-gonic/gin"
@@ -10,10 +10,10 @@ import (
 	"go.uber.org/zap"
 )
 
-func CreateRepo(c *gin.Context) {
-	var repo model.Repo
-	_ = c.ShouldBindJSON(&repo)
-	if err := service.CreateRepo(repo); err != nil {
+func CreateToken(c *gin.Context) {
+	var token model.Token
+	_ = c.ShouldBindJSON(&token)
+	if err := service.CreateToken(token); err != nil {
 		global.GVA_LOG.Error("创建失败!", zap.Any("err", err))
 		response.FailWithMessage("创建失败", c)
 	} else {
@@ -21,10 +21,10 @@ func CreateRepo(c *gin.Context) {
 	}
 }
 
-func DeleteRepo(c *gin.Context) {
-	var repo model.Repo
-	_ = c.ShouldBindJSON(&repo)
-	if err := service.DeleteRepo(repo); err != nil {
+func DeleteToken(c *gin.Context) {
+	var token model.Token
+	_ = c.ShouldBindJSON(&token)
+	if err := service.DeleteToken(token); err != nil {
 		global.GVA_LOG.Error("删除失败!", zap.Any("err", err))
 		response.FailWithMessage("删除失败", c)
 	} else {
@@ -32,10 +32,10 @@ func DeleteRepo(c *gin.Context) {
 	}
 }
 
-func DeleteRepoByIds(c *gin.Context) {
+func DeleteTokenByIds(c *gin.Context) {
 	var IDS request.IdsReq
 	_ = c.ShouldBindJSON(&IDS)
-	if err := service.DeleteRepoByIds(IDS); err != nil {
+	if err := service.DeleteTokenByIds(IDS); err != nil {
 		global.GVA_LOG.Error("批量删除失败!", zap.Any("err", err))
 		response.FailWithMessage("批量删除失败", c)
 	} else {
@@ -43,10 +43,10 @@ func DeleteRepoByIds(c *gin.Context) {
 	}
 }
 
-func UpdateRepo(c *gin.Context) {
-	var repo model.Repo
-	_ = c.ShouldBindJSON(&repo)
-	if err := service.UpdateRepo(repo); err != nil {
+func UpdateToken(c *gin.Context) {
+	var token model.Token
+	_ = c.ShouldBindJSON(&token)
+	if err := service.UpdateToken(token); err != nil {
 		global.GVA_LOG.Error("更新失败!", zap.Any("err", err))
 		response.FailWithMessage("更新失败", c)
 	} else {
@@ -54,21 +54,21 @@ func UpdateRepo(c *gin.Context) {
 	}
 }
 
-func FindRepo(c *gin.Context) {
-	var repo model.Repo
-	_ = c.ShouldBindQuery(&repo)
-	if err, repo := service.GetRepo(repo.ID); err != nil {
+func FindToken(c *gin.Context) {
+	var token model.Token
+	_ = c.ShouldBindQuery(&token)
+	if err, retoken := service.GetToken(token.ID); err != nil {
 		global.GVA_LOG.Error("查询失败!", zap.Any("err", err))
 		response.FailWithMessage("查询失败", c)
 	} else {
-		response.OkWithData(gin.H{"repo": repo}, c)
+		response.OkWithData(gin.H{"retoken": retoken}, c)
 	}
 }
 
-func GetRepoList(c *gin.Context) {
-	var pageInfo request.RepoSearch
+func GetTokenList(c *gin.Context) {
+	var pageInfo request.TokenSearch
 	_ = c.ShouldBindQuery(&pageInfo)
-	if err, list, total := service.GetRepoInfoList(pageInfo); err != nil {
+	if err, list, total := service.GetTokenInfoList(pageInfo); err != nil {
 		global.GVA_LOG.Error("获取失败", zap.Any("err", err))
 		response.FailWithMessage("获取失败", c)
 	} else {

@@ -2,7 +2,7 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	v1 "github.com/madneal/gshark/api/v1"
+	v1 "github.com/madneal/gshark/api"
 	"github.com/madneal/gshark/middleware"
 )
 
