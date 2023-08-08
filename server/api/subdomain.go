@@ -10,14 +10,6 @@ import (
 	"go.uber.org/zap"
 )
 
-// @Tags Subdomain
-// @Summary 创建Subdomain
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body model.Subdomain true "创建Subdomain"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
-// @Router /subdomain/createSubdomain [post]
 func CreateSubdomain(c *gin.Context) {
 	var subdomain model.Subdomain
 	_ = c.ShouldBindJSON(&subdomain)
@@ -29,14 +21,6 @@ func CreateSubdomain(c *gin.Context) {
 	}
 }
 
-// @Tags Subdomain
-// @Summary 删除Subdomain
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body model.Subdomain true "删除Subdomain"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"删除成功"}"
-// @Router /subdomain/deleteSubdomain [delete]
 func DeleteSubdomain(c *gin.Context) {
 	var subdomain model.Subdomain
 	_ = c.ShouldBindJSON(&subdomain)
@@ -48,14 +32,6 @@ func DeleteSubdomain(c *gin.Context) {
 	}
 }
 
-// @Tags Subdomain
-// @Summary 批量删除Subdomain
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body request.IdsReq true "批量删除Subdomain"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"批量删除成功"}"
-// @Router /subdomain/deleteSubdomainByIds [delete]
 func DeleteSubdomainByIds(c *gin.Context) {
 	var IDS request.IdsReq
 	_ = c.ShouldBindJSON(&IDS)
@@ -67,14 +43,6 @@ func DeleteSubdomainByIds(c *gin.Context) {
 	}
 }
 
-// @Tags Subdomain
-// @Summary 更新Subdomain
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body model.Subdomain true "更新Subdomain"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"更新成功"}"
-// @Router /subdomain/updateSubdomain [put]
 func UpdateSubdomain(c *gin.Context) {
 	var subdomain model.Subdomain
 	_ = c.ShouldBindJSON(&subdomain)
@@ -86,14 +54,6 @@ func UpdateSubdomain(c *gin.Context) {
 	}
 }
 
-// @Tags Subdomain
-// @Summary 用id查询Subdomain
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body model.Subdomain true "用id查询Subdomain"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"查询成功"}"
-// @Router /subdomain/findSubdomain [get]
 func FindSubdomain(c *gin.Context) {
 	var subdomain model.Subdomain
 	_ = c.ShouldBindQuery(&subdomain)
@@ -105,14 +65,6 @@ func FindSubdomain(c *gin.Context) {
 	}
 }
 
-// @Tags Subdomain
-// @Summary 分页获取Subdomain列表
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body request.SubdomainSearch true "分页获取Subdomain列表"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
-// @Router /subdomain/getSubdomainList [get]
 func GetSubdomainList(c *gin.Context) {
 	var pageInfo request.SubdomainSearch
 	_ = c.ShouldBindQuery(&pageInfo)
