@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/gookit/color"
 	"github.com/madneal/gshark/core"
 	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/initialize"
@@ -15,6 +16,8 @@ func main() {
 		initialize.MysqlTables(global.GVA_DB)
 		db, _ := global.GVA_DB.DB()
 		defer db.Close()
+	} else {
+		color.Danger.Println("数据库连接失败，请确定在 config.yaml 配置正确数据库信息")
 	}
 	go search.ScanTask()
 	core.RunServer()
