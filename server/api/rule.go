@@ -37,7 +37,7 @@ func UploadRules(c *gin.Context) {
 	rules := convertCsvIntoRules(csvLines)
 	for _, rule := range rules {
 		if err := service.CreateRule(rule); err != nil {
-			global.GVA_LOG.Error("创建Rule失败！", zap.Error(err))
+			global.GVA_LOG.Error("创建规则失败！", zap.Error(err))
 			response.FailWithMessage("创建规则失败", c)
 			return
 		}
