@@ -177,14 +177,6 @@ try to clear the LocalStorage
 * [GShark v1.1.0 更新内容介绍](https://www.bilibili.com/video/BV1aG4y1c72N/)
 
 
-## Reference
-
-* [gin-vue-admin](https://github.com/flipped-aurora/gin-vue-admin)
-
-## Wechat
-
-If you would like to join the WeChat group, you can add my WeChat `mmadneal` with the message `gshark`. But I would strongly suggest you to raise an issue directly instead of just asking in WeChat.
-
 ## License
 
 [Apache License 2.0](https://github.com/madneal/gshark/blob/master/LICENSE)
