@@ -61,6 +61,13 @@ jobs:
         run: |
           go mod tidy && GOOS=darwin GOARCH=amd64 go build -o gshark && cp gshark ../release/gshark_darwin_amd64
 
+      - name: Go build for darwin arm64
+        env:
+          GO111MODULE: on
+        working-directory: ./server
+        run: |
+          go mod tidy && GOOS =darwim GOARCH=arm64 go build -o gshark && cp gshark ../release/gshark_darwin_arm64
+
       - name: Go Build for windows
         env:
           GO111MODULE: on
@@ -79,7 +86,8 @@ jobs:
         run: |
           7z a -r ./release/gshark_darwin_amd64.zip ./release/gshark_darwin_amd64/ &&
           7z a -r ./release/gshark_windows_amd64.zip ./release/gshark_windows_amd64/ &&
-          7z a -r ./release/gshark_linux_amd64.zip ./release/gshark_linux_amd64
+          7z a -r ./release/gshark_linux_amd64.zip ./release/gshark_linux_amd64/ &&
+          7z a -r ./release/gshark_darwin_arm64.zip ./release/gshark_darwin_arm64
           
       - name: Remove release directory
         run: |
