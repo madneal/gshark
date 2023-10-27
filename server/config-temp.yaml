@@ -1,5 +1,5 @@
 autocode:
-  root: /Users/neal/project
+  root: /Users/neal/project/gshark
   server: /server
   server-api: /api/v1
   server-initialize: /initialize
@@ -18,11 +18,7 @@ captcha:
   img-height: 80
 casbin:
   model-path: ./resource/rbac_model.conf
-wechat:
-  url:
-  enable: false
 email:
-  enable: false
   to: xxx@qq.com
   port: 465
   from: xxx@qq.com
@@ -30,6 +26,7 @@ email:
   is-ssl: true
   secret: xxx
   nickname: test
+  enable: false
 excel:
   dir: ./resource/excel/
 jwt:
@@ -48,13 +45,20 @@ mysql:
   max-open-conns: 0
   log-mode: false
   log-zap: ""
+search:
+  gobuster-filepath: ""
+  subdomain-wordlist: ""
+  searchnum: 10
 system:
   env: public
   addr: 8888
   db-type: mysql
   oss-type: local
   use-multipoint: false
-  gitlab-base: https://gitlab.com
+  gitlab-base: ""
+wechat:
+  url: ""
+  enable: false
 zap:
   level: info
   format: console
@@ -65,7 +69,3 @@ zap:
   encode-level: LowercaseColorLevelEncoder
   stacktrace-key: stacktrace
   log-in-console: true
-search:
-  gobuster-filepath:
-  subdomain-wordlist:
-  searchnum: 10

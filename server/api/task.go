@@ -24,7 +24,7 @@ func CreateTask(c *gin.Context) {
 	if err := service.CreateTask(&task); err != nil {
 		global.GVA_LOG.Error("CreateTask err", zap.Error(err))
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			response.FailWithMessage(fmt.Sprintf("暂无%s类型规则，请至少创建一条规则", task.TaskType), c)
+			response.FailWithMessage(fmt.Sprintf("暂无 %s 类型规则，请至少创建一条规则", task.TaskType), c)
 		} else {
 			response.FailWithMessage("创建失败", c)
 		}
