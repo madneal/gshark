@@ -49,10 +49,9 @@ require (
 	github.com/tebeka/strftime v0.1.3 // indirect
 	github.com/ugorji/go v1.1.7 // indirect
 	github.com/unrolled/secure v1.0.7
-	github.com/urfave/cli/v2 v2.3.0
 	github.com/xanzy/go-gitlab v0.48.0
 	go.uber.org/zap v1.10.0
-	golang.org/x/image v0.5.0 // indirect
+	golang.org/x/image v0.10.0 // indirect
 	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
 	google.golang.org/appengine v1.6.7 // indirect
 	gopkg.in/ini.v1 v1.55.0 // indirect
