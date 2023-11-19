@@ -34,22 +34,22 @@ jobs:
       - name: Mkdir
         run: |
           mkdir -p release/gshark_darwin_amd64 && mkdir -p release/gshark_windows_amd64 &&
-          mkdir -p release/gshark_linux_amd64
+          mkdir -p release/gshark_linux_amd64 && mkdir -p release/gshark_darwin_arm64
 
       - name: Move config
         run: |
           cp ./server/config-temp.yaml ./release/gshark_darwin_amd64/ && cp ./server/config-temp.yaml ./release/gshark_windows_amd64/ &&
-          cp ./server/config-temp.yaml ./release/gshark_linux_amd64/
+          cp ./server/config-temp.yaml ./release/gshark_linux_amd64/ && cp ./server/config-temp.yaml ./release/gshark_darwin_arm64/ 
 
       - name: Move resource
         run: |
           cp -rf ./server/resource ./release/gshark_darwin_amd64/ && cp -rf ./server/resource ./release/gshark_windows_amd64/ &&
-          cp -rf ./server/resource ./release/gshark_linux_amd64/
+          cp -rf ./server/resource ./release/gshark_linux_amd64/ && cp -rf ./server/resource ./release/gshark_darwin_arm64/ 
 
       - name: Copy dist
         run: |
           cp -rf ./web/dist ./release/gshark_darwin_amd64/ && cp -rf ./web/dist ./release/gshark_windows_amd64/ &&
-          cp -rf ./web/dist ./release/gshark_linux_amd64/
+          cp -rf ./web/dist ./release/gshark_linux_amd64/ && cp -rf ./web/dist ./release/gshark_darwin_arm64/
 
       - name: Go Setup
         uses: actions/setup-go@v3.1.0
