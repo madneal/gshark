@@ -87,7 +87,7 @@ jobs:
           7z a -r ./release/gshark_darwin_amd64.zip ./release/gshark_darwin_amd64/ &&
           7z a -r ./release/gshark_windows_amd64.zip ./release/gshark_windows_amd64/ &&
           7z a -r ./release/gshark_linux_amd64.zip ./release/gshark_linux_amd64/ &&
-          7z a -r ./release/gshark_darwin_arm64.zip ./release/gshark_darwin_arm64
+          7z a -r ./release/gshark_darwin_arm64.zip ./release/gshark_darwin_arm64/
           
       - name: Remove release directory
         run: |
