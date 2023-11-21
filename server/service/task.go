@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/model"
+	"gorm.io/gorm"
 )
 
 func CreateTask(task *model.Task) error {
@@ -39,6 +40,11 @@ func SwitchTaskStatus(id int, status int) error {
 }
 
 func CheckTaskStatus(taskType string) (bool, error) {
-	result := global.GVA_DB.Table("task").Where("task_type = ? and task_status = 1", taskType)
-	return result.RowsAffected > 0, result.Error
+	var task model.Task
+	result := global.GVA_DB.Table("task").Where("task_type = ? and task_status = 1", taskType).Take(&task)
+	err := result.Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		err = nil
+	}
+	return result.RowsAffected > 0, err
 }

@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/google/go-github/github"
+	"github.com/gookit/color"
 	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/model"
 	"github.com/madneal/gshark/service"
@@ -97,8 +98,9 @@ func RunTask(duration time.Duration) {
 		global.GVA_LOG.Error("GetValidRulesByType github err", zap.Error(err))
 		return
 	}
+	color.Debug.Print(fmt.Sprintf("Github fetch %d rules, begin the scan task", len(rules)))
 	Search(rules)
-	global.GVA_LOG.Info(fmt.Sprintf("Comple the scan of Github, start to sleep %d seconds", duration))
+	color.Debug.Print(fmt.Sprintf("Comple the scan of Github, start to sleep %d seconds", duration))
 	time.Sleep(duration * time.Second)
 }
 
