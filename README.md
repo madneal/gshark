@@ -31,21 +31,51 @@ For the usage of GShark, please refer to [wiki](https://github.com/madneal/gshar
 * Nginx
 * MySQL(version above **8.0**)
 
-It's suggested to deploy the frontend project by nginx. Place the `dist` folder under `/var/www/html`, modify the `nginx.conf` to reverse proxy the backend service. For the detailed deployment videos, refer to [bilibili](https://www.bilibili.com/video/BV1Py4y1s7ap/) or [youtube](https://youtu.be/bFrKm5t4M54). For the deployment in windows, refer to [here](https://www.bilibili.com/video/BV1CA411L7ux/).
+It's suggested to deploy the frontend project by nginx. Place the `dist` folder under `/var/www/html`, modify the `nginx.conf` (/etc/nginx/nginx.conf for linux) to reverse proxy the backend service. For the detailed deployment videos, refer to [bilibili](https://www.bilibili.com/video/BV1Py4y1s7ap/) or [youtube](https://youtu.be/bFrKm5t4M54). For the deployment in windows, refer to [here](https://www.bilibili.com/video/BV1CA411L7ux/).
 
 ### Nginx
 
 Modify the `nginx.conf`:
 
 ```
-location /api/ {
-   proxy_set_header Host $http_host;
-   proxy_set_header X-Real-IP $remote_addr;
-   proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-   proxy_set_header X-Forwarded-Proto $scheme;
-   rewrite ^/api/(.*)$ /$1 break;
-   proxy_pass http://127.0.0.1:8888;
+// config the user accoring to your need
+user  www www;
+worker_processes  1;
+
+events {
+    worker_connections  1024;
 }
+
+http {
+    include       mime.types;
+    default_type  application/octet-stream;
+    sendfile        on;
+    keepalive_timeout  65;
+    server {
+        listen       8080;
+        server_name  localhost;
+
+        location / {
+            autoindex on;
+            root   html;
+            index  index.html index.htm;
+        }
+        location /api/ {
+               proxy_set_header Host $http_host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto $scheme;
+                rewrite ^/api/(.*)$ /$1 break;
+                proxy_pass http://127.0.0.1:8888;
+        }
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   html;
+        }
+    }
+    include servers/*;
+}
+
 ```
 
 The deployment work is straightforward. Find the corresponding version zip file from [releases](https://github.com/madneal/gshark/releases). 
