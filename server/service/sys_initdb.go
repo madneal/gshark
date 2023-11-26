@@ -120,6 +120,7 @@ func InitDB(conf request.InitDB) error {
 		model.Subdomain{},
 		model.Filter{},
 		model.Repo{},
+		model.Task{},
 	)
 	if err != nil {
 		return err
