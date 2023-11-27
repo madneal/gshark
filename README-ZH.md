@@ -92,24 +92,6 @@ npm run serve
 
 ## 运行
 
-```
-USAGE:
-   gshark [global options] command [command options] [arguments...]
-
-COMMANDS:
-     web      Startup a web Service
-     scan     Start to scan github leak info
-     help, h  Show a list of commands or help for one command
-
-GLOBAL OPTIONS:
-   --debug, -d             Debug Mode
-   --host value, -H value  web listen address (default: "0.0.0.0")
-   --port value, -p value  web listen port (default: 8000)
-   --time value, -t value  scan interval(second) (default: 900)
-   --help, -h              show help
-   --version, -v           print the version
-```
-
 ### 添加 Token
 
 执行扫描任务需要在 Github 的 Github token。你可以在 [tokens](https://github.com/settings/tokens) 中生成令牌，只需要 public_repo 的读权限即可。对于 Gitlab 扫描，请记得添加令牌。
