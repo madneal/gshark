@@ -22,8 +22,6 @@ For the usage of GShark, please refer to [wiki](https://github.com/madneal/gshar
 
 # Quick start
 
-![GShark](https://user-images.githubusercontent.com/12164075/114326875-58e1da80-9b69-11eb-82a5-b2e3751a2304.png)
-
 ## Deployment
 
 ### Requirements
