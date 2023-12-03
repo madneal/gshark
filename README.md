@@ -22,6 +22,14 @@ For the usage of GShark, please refer to [wiki](https://github.com/madneal/gshar
 
 # Quick start
 
+## Docker
+
+```
+git clone https://github.com/madneal/gshark
+cd gshark
+docker-compose up -d
+```
+
 ## Deployment
 
 ### Requirements
