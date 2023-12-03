@@ -46,10 +46,10 @@ export default {
     return {
       form: {
         sqlType: "mysql",
-        host: "127.0.0.1",
+        host: "177.7.0.13",
         port: "3306",
         userName: "root",
-        password: "",
+        password: "madneal",
         dbName: "gshark",
       },
     };
