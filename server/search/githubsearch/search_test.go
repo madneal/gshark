@@ -3,7 +3,7 @@ package githubsearch
 import (
 	"context"
 	"fmt"
-	"github.com/google/go-github/github"
+	"github.com/google/go-github/v57/github"
 	"github.com/madneal/gshark/model"
 	"os"
 	"testing"

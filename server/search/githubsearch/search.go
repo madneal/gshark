@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/google/go-github/github"
+	"github.com/google/go-github/v57/github"
 	"github.com/gookit/color"
 	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/model"
@@ -98,14 +98,14 @@ func RunTask(duration time.Duration) {
 		global.GVA_LOG.Error("GetValidRulesByType github err", zap.Error(err))
 		return
 	}
-	color.Debug.Print(fmt.Sprintf("Github fetch %d rules, begin the scan task", len(rules)))
+	color.Debug.Print(fmt.Sprintf("Github fetch %d rules, begin the scan task\n", len(rules)))
 	Search(rules)
 	color.Debug.Print(fmt.Sprintf("Comple the scan of Github, start to sleep %d seconds", duration))
 	time.Sleep(duration * time.Second)
 }
 
 func (c *Client) GetCommiter(ctx context.Context, owner, repo string) string {
-	commit, _, err := c.Client.Repositories.GetCommit(ctx, owner, repo, "master")
+	commit, _, err := c.Client.Repositories.GetCommit(ctx, owner, repo, "master", nil)
 	if err != nil {
 		global.GVA_LOG.Error("get github commit err", zap.Error(err))
 		return ""
