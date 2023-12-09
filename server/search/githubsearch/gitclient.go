@@ -3,14 +3,10 @@ package githubsearch
 import (
 	"context"
 	"errors"
-	"github.com/google/go-github/github"
-	"github.com/gregjones/httpcache"
+	"github.com/google/go-github/v57/github"
 	"github.com/madneal/gshark/model"
 
 	"github.com/madneal/gshark/service"
-	"net/http"
-
-	"golang.org/x/oauth2"
 )
 
 var (
@@ -27,19 +23,8 @@ func InitGithubClients(tokens []model.Token) map[string]*Client {
 	githubClients := make(map[string]*Client)
 	for _, token := range tokens {
 		githubToken := token.Content
-		gitClient := &github.Client{}
 		if githubToken != "" {
-			ts := oauth2.StaticTokenSource(
-				&oauth2.Token{AccessToken: githubToken},
-			)
-			//tc := oauth2.NewClient(ctx, ts)
-			tc := &http.Client{
-				Transport: &oauth2.Transport{
-					Base:   httpcache.NewMemoryCacheTransport(),
-					Source: ts,
-				},
-			}
-			gitClient = github.NewClient(tc)
+			gitClient := github.NewClient(nil).WithAuthToken(githubToken)
 			githubClients[token.Content] = NewGitClient(gitClient, githubToken)
 		}
 	}
