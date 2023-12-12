@@ -19,6 +19,7 @@ For the usage of GShark, please refer to [wiki](https://github.com/madneal/gshar
 * Flexible rules and filter rules
 * Utilize gobuster to brute force subdomain
 * Easily used management system
+* Support for docket deployment
 
 # Quick start
 
