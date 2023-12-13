@@ -3,6 +3,7 @@ FROM node:16
 WORKDIR /gshark_web/
 COPY . .
 
+RUN npm config set registry https://registry.npmmirror.com
 RUN npm install --legacy-peer-deps && npm run build
 
 FROM nginx:alpine
