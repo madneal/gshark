@@ -18,7 +18,7 @@ require (
 	github.com/gookit/color v1.3.1
 	github.com/jordan-wright/email v0.0.0-20200824153738-3f5bafa1cd84
 	github.com/lestrrat-go/file-rotatelogs v2.3.0+incompatible
-	github.com/mojocn/base64Captcha v1.3.1
+	github.com/mojocn/base64Captcha v1.3.6
 	github.com/parnurzeal/gorequest v0.2.16
 	github.com/satori/go.uuid v1.2.0
 	github.com/shirou/gopsutil v3.21.1+incompatible
@@ -102,7 +102,7 @@ require (
 	go.uber.org/multierr v1.5.0 // indirect
 	golang.org/x/arch v0.3.0 // indirect
 	golang.org/x/crypto v0.14.0 // indirect
-	golang.org/x/image v0.10.0 // indirect
+	golang.org/x/image v0.13.0 // indirect
 	golang.org/x/net v0.17.0 // indirect
 	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45 // indirect
 	golang.org/x/sys v0.13.0 // indirect
