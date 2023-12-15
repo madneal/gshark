@@ -198,7 +198,6 @@ import {
 } from "@/api/rule";
 import { formatTimeToStr } from "@/utils/date";
 import infoList from "@/mixins/infoList";
-import { store } from '@/store/index';
 
 export default {
   name: "Rule",
@@ -344,6 +343,7 @@ export default {
       this.type = "update";
       if (res.code === 0) {
         this.formData = res.data.rule;
+        this.formData.ruleType = this.formData.ruleType.split(',');
         this.dialogFormVisible = true;
       }
     },
