@@ -68,12 +68,12 @@ http {
             index  index.html index.htm;
         }
         location /api/ {
-               proxy_set_header Host $http_host;
-                proxy_set_header X-Real-IP $remote_addr;
-                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                proxy_set_header X-Forwarded-Proto $scheme;
-                rewrite ^/api/(.*)$ /$1 break;
-                proxy_pass http://127.0.0.1:8888;
+            proxy_set_header Host $http_host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            rewrite ^/api/(.*)$ /$1 break;
+            proxy_pass http://127.0.0.1:8888;
         }
         error_page   500 502 503 504  /50x.html;
         location = /50x.html {
