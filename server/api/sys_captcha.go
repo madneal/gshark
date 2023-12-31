@@ -16,7 +16,7 @@ func Captcha(c *gin.Context) {
 	driver := base64Captcha.NewDriverDigit(global.GVA_CONFIG.Captcha.ImgHeight, global.GVA_CONFIG.Captcha.ImgWidth,
 		global.GVA_CONFIG.Captcha.KeyLong, 0.7, 80)
 	cp := base64Captcha.NewCaptcha(driver, store)
-	if id, b64s, err := cp.Generate(); err != nil {
+	if id, b64s, _, err := cp.Generate(); err != nil {
 		global.GVA_LOG.Error("验证码获取失败!", zap.Any("err", err))
 		response.FailWithMessage("验证码获取失败", c)
 	} else {
