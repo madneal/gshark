@@ -16,6 +16,5 @@ func NeedInit() gin.HandlerFunc {
 		} else {
 			c.Next()
 		}
-		// 处理请求
 	}
 }
