@@ -40,7 +40,7 @@ mysql:
   config: charset=utf8mb4&parseTime=True&loc=Local
   db-name: gshark
   username: root
-  password: dongbing903
+  password: madneal
   max-idle-conns: 0
   max-open-conns: 0
   log-mode: false
