@@ -136,7 +136,7 @@ func (client *Client) SearchAPI(rule string) (*[]PostmanRes, error) {
 	var err error
 	for {
 		body := fmt.Sprintf(`{"service":"search","method":"POST","path":"/search-all",
-"body":{"queryIndices":["runtime.collection"],"queryText":"%s","size":100,"from": %d, "mergeEntities":true}}`,
+"body":{"queryIndices":["runtime.collection","runtime.request"],"queryText":"%s","size":100,"from": %d, "mergeEntities":true}}`,
 			rule, page)
 		res, err := client.client.Post(postmanUrl, "application/json", bytes.NewBufferString(body))
 		if err != nil {
