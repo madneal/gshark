@@ -13,6 +13,28 @@ volumes:
   mysql:
 
 services:
+  mysql:
+    image: mysql:8.0.21       # 如果您是 arm64 架构：如 MacOS 的 M1，请修改镜像为 image: mysql/mysql-server:8.0.21
+    container_name: gshark-mysql
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    restart: always
+    ports:
+      - "13306:3306"  # host物理直接映射端口为13306
+    environment:
+      MYSQL_DATABASE: 'gshark' # 初始化启动时要创建的数据库的名称
+      MYSQL_ROOT_PASSWORD: 'madneal'
+      MYSQL_USER: 'gshark'
+      MYSQL_PASSWORD: 'gshark'
+    volumes:
+      - ./mysql:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 2s
+      retries: 10
+    networks:
+      network:
+        ipv4_address: 177.7.0.13
+
   web:
     build:
       context: ./web
@@ -33,29 +55,17 @@ services:
       context: ./server
       dockerfile: ./Dockerfile
     container_name: gshark-server
+    volumes:
+      - ./server/config.docker.yaml:/go/src/github.com/madneal/gshark/server/config.docker.yaml
     restart: always
     ports:
       - '8888:8888'
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     links:
       - mysql
     networks:
       network:
         ipv4_address: 177.7.0.12
 
-  mysql:
-    image: mysql:8.0.21       # 如果您是 arm64 架构：如 MacOS 的 M1，请修改镜像为 image: mysql/mysql-server:8.0.21
-    container_name: gshark-mysql
-    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
-    restart: always
-    ports:
-      - "13306:3306"  # host物理直接映射端口为13306
-    environment:
-      MYSQL_DATABASE: 'gshark' # 初始化启动时要创建的数据库的名称
-      MYSQL_ROOT_PASSWORD: 'madneal'
-      MYSQL_USER: 'gshark'
-      MYSQL_PASSWORD: 'gshark'
-    networks:
-      network:
-        ipv4_address: 177.7.0.13

@@ -1,5 +1,6 @@
 # Created by .ignore support plugin (hsz.mobi)
 /releases
+/mysql
 /server/gshark
 .idea
 *.exe
