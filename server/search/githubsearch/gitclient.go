@@ -2,9 +2,11 @@ package githubsearch
 
 import (
 	"context"
+	"crypto/tls"
 	"errors"
 	"github.com/google/go-github/v57/github"
 	"github.com/madneal/gshark/model"
+	"net/http"
 
 	"github.com/madneal/gshark/service"
 )
@@ -21,10 +23,14 @@ type Client struct {
 
 func InitGithubClients(tokens []model.Token) map[string]*Client {
 	githubClients := make(map[string]*Client)
+	httpTransport := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+	httpClient := &http.Client{Transport: httpTransport}
 	for _, token := range tokens {
 		githubToken := token.Content
 		if githubToken != "" {
-			gitClient := github.NewClient(nil).WithAuthToken(githubToken)
+			gitClient := github.NewClient(httpClient).WithAuthToken(githubToken)
 			githubClients[token.Content] = NewGitClient(gitClient, githubToken)
 		}
 	}
