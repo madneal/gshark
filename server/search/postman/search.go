@@ -11,11 +11,9 @@ import (
 	"io/ioutil"
 	"math"
 	"net/http"
-	"net/http/cookiejar"
-	"net/url"
 )
 
-var postmanUrl = "https://bifrost-web-https-v4.gw.postman.com/ws/proxy"
+var postmanUrl = "https://www.postman.com/_api/ws/proxy"
 
 type Document struct {
 	Summary            string        `json:"summary"`
@@ -61,7 +59,7 @@ type Requests struct {
 type PostmanRes struct {
 	Data []struct {
 		Score           float64  `json:"score"`
-		NormalizedScore int      `json:"normalizedScore"`
+		NormalizedScore float64  `json:"normalizedScore"`
 		Document        Document `json:"document"`
 		Requests        Requests `json:"requests"`
 	} `json:"data"`
@@ -135,13 +133,19 @@ func (client *Client) SearchAPI(rule string) (*[]PostmanRes, error) {
 	resList := make([]PostmanRes, 0)
 	var err error
 	for {
-		body := fmt.Sprintf(`{"service":"search","method":"POST","path":"/search-all",
-"body":{"queryIndices":["runtime.collection","runtime.request"],"queryText":"%s","size":100,"from": %d, "mergeEntities":true}}`,
+		body := fmt.Sprintf(`{"service":"search","method":"POST","path":"/search-all","body":{"queryIndices":["runtime.collection","runtime.request"],"queryText":"%s","size":100,"from": %d, "mergeEntities":true}}`,
 			rule, page)
-		res, err := client.client.Post(postmanUrl, "application/json", bytes.NewBufferString(body))
+
+		req, err := http.NewRequest("POST", postmanUrl, bytes.NewBufferString(body))
+		req.Header.Set("Cookie", "postman.sid="+client.sid)
+		req.Header.Set("Host", "www.postman.com")
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0")
 		if err != nil {
 			return &resList, err
 		}
+		httpClient := http.Client{}
+		res, err := httpClient.Do(req)
 
 		resBody, err := ioutil.ReadAll(res.Body)
 		if err != nil {
@@ -172,20 +176,9 @@ func GetPostmanClient() *Client {
 	if len(tokens) > 0 {
 		sid = tokens[0].Content
 	}
-	jar, _ := cookiejar.New(nil)
-	u, _ := url.Parse("https://bifrost-web-https-v4.gw.postman.com")
-	cookies := []*http.Cookie{{
-		Name:  "postman.sid",
-		Value: sid,
-	}}
-	jar.SetCookies(u, cookies)
-	httpClient := http.Client{
-		Jar: jar,
-	}
 
 	client := Client{
-		sid:    sid,
-		client: &httpClient,
+		sid: sid,
 	}
 	return &client
 }

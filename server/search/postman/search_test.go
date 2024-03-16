@@ -1,6 +1,7 @@
 package postman
 
 import (
+	"fmt"
 	"github.com/madneal/gshark/core"
 	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/initialize"
@@ -15,7 +16,11 @@ func TestRunTask(t *testing.T) {
 func TestClient_SearchAPI(t *testing.T) {
 	InitialDataBase()
 	client := GetPostmanClient()
-	client.SearchAPI("mihoyo")
+	res, err := client.SearchAPI("mihoyo")
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println((*res)[0])
 }
 
 func InitialDataBase() {
