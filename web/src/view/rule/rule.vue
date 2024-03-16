@@ -231,7 +231,7 @@ export default {
           value: 1,
         },
       ],
-      types: ['github', 'gitlab', 'searchcode', 'domain'],
+      types: ['github', 'gitlab', 'searchcode', 'domain', 'postman'],
       typeOptions: [
         {
           label: "github",
