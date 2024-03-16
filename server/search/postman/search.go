@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/gookit/color"
 	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/model"
 	"github.com/madneal/gshark/service"
@@ -11,6 +12,7 @@ import (
 	"io/ioutil"
 	"math"
 	"net/http"
+	"time"
 )
 
 var postmanUrl = "https://www.postman.com/_api/ws/proxy"
@@ -84,7 +86,10 @@ func RunTask() {
 		global.GVA_LOG.Error("GetValidRulesByType postman err", zap.Error(err))
 		return
 	}
+	color.Infoln("begin the postman search task")
 	Search(&rules)
+	color.Infof("finish the postman search task, ready to sleep\n")
+	time.Sleep(900 * time.Second)
 }
 
 func Search(rules *[]model.Rule) {
@@ -96,7 +101,7 @@ func Search(rules *[]model.Rule) {
 			return
 		}
 		for _, res := range *resList {
-			results := res.CovertToSearchResult()
+			results := res.CovertToSearchResult(rule.Content)
 			for _, result := range *results {
 				err = service.CreateSearchResult(result)
 				if err != nil {
@@ -112,7 +117,7 @@ type Client struct {
 	sid    string
 }
 
-func (res *PostmanRes) CovertToSearchResult() *[]model.SearchResult {
+func (res *PostmanRes) CovertToSearchResult(keyword string) *[]model.SearchResult {
 	results := make([]model.SearchResult, 0)
 	for _, data := range res.Data {
 		document := data.Document
@@ -122,6 +127,7 @@ func (res *PostmanRes) CovertToSearchResult() *[]model.SearchResult {
 			Path:    data.Requests.Document.Name + "/" + data.Requests.Document.Name,
 			Url:     requestURL,
 			Matches: data.Requests.Document.Url,
+			Keyword: keyword,
 		}
 		results = append(results, result)
 	}
@@ -133,9 +139,9 @@ func (client *Client) SearchAPI(rule string) (*[]PostmanRes, error) {
 	resList := make([]PostmanRes, 0)
 	var err error
 	for {
+		color.Infof("search for the rule %s of page %d\n", rule, page)
 		body := fmt.Sprintf(`{"service":"search","method":"POST","path":"/search-all","body":{"queryIndices":["runtime.collection","runtime.request"],"queryText":"%s","size":100,"from": %d, "mergeEntities":true}}`,
 			rule, page)
-
 		req, err := http.NewRequest("POST", postmanUrl, bytes.NewBufferString(body))
 		req.Header.Set("Cookie", "postman.sid="+client.sid)
 		req.Header.Set("Host", "www.postman.com")
