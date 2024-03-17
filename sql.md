@@ -1,3 +1,10 @@
+## v1.4.3
+
+```
+alter table token
+    modify content varchar(1000) null;
+```
+
 ## v1.2.0
 ```
 create table gshark.task
