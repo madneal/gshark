@@ -12,7 +12,6 @@ import (
 	"github.com/spf13/viper"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"path/filepath"
 )
 
 func writeConfig(viper *viper.Viper, mysql config.Mysql) error {
@@ -139,7 +138,6 @@ func InitDB(conf request.InitDB) error {
 		_ = writeConfig(global.GVA_VP, BaseMysql)
 		return err
 	}
-	global.GVA_CONFIG.AutoCode.Root, _ = filepath.Abs("..")
 	return nil
 }
 

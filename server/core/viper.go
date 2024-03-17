@@ -3,14 +3,12 @@ package core
 import (
 	"flag"
 	"fmt"
+	"github.com/fsnotify/fsnotify"
 	"github.com/madneal/gshark/config"
 	"github.com/madneal/gshark/global"
 	_ "github.com/madneal/gshark/packfile"
-	"os"
-	"path/filepath"
-
-	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
+	"os"
 )
 
 func Viper(path ...string) *viper.Viper {
@@ -52,6 +50,5 @@ func Viper(path ...string) *viper.Viper {
 	if err := v.Unmarshal(&global.GVA_CONFIG); err != nil {
 		fmt.Println(err)
 	}
-	global.GVA_CONFIG.AutoCode.Root, _ = filepath.Abs("..")
 	return v
 }
