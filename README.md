@@ -148,9 +148,18 @@ npm run serve
 ## Usage
 ### Add Token
 
+#### GitHub
+
 To execute the scan task for GitHub, you need to add a GitHub token for crawl information in GitHub. You can generate a token in [tokens](https://github.com/settings/tokens). Most access scopes are enough. For the GitLab search, remember to add a token too.
 
 [![iR2TMt.md.png](https://s1.ax1x.com/2018/10/31/iR2TMt.md.png)](https://imgchr.com/i/iR2TMt)
+
+#### Postman
+
+Obtain the `postman.sid` cookie:
+
+<img width="653" alt="image" src="https://github.com/madneal/gshark/assets/12164075/7775c8bb-79da-4e2b-b341-3c5b8395a6d0">
+
 
 ### Rule Configuration
 
