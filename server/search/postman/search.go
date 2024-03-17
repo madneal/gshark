@@ -73,7 +73,7 @@ type PostmanRes struct {
 			Api        int `json:"api"`
 			Team       int `json:"team"`
 			User       int `json:"user"`
-			Flow       int `json:"flow"`
+			Request    int `json:"request"`
 		} `json:"total"`
 		State              string `json:"state"`
 		CorrectedQueryText string `json:"correctedQueryText"`
@@ -95,18 +95,23 @@ func RunTask() {
 func Search(rules *[]model.Rule) {
 	postmanClient := GetPostmanClient()
 	for _, rule := range *rules {
-		resList, err := postmanClient.SearchAPI(rule.Content)
-		if err != nil {
-			global.GVA_LOG.Error("postman SearchAPI err", zap.Error(err))
-			return
-		}
-		for _, res := range *resList {
-			results := res.CovertToSearchResult(rule.Content)
-			for _, result := range *results {
-				err = service.CreateSearchResult(result)
-				if err != nil {
-					global.GVA_LOG.Error("CreateSearchResult err", zap.Error(err))
-				}
+		postmanClient.SearchByType(rule.Content, "collection")
+		postmanClient.SearchByType(rule.Content, "request")
+	}
+}
+
+func (postmanClient *Client) SearchByType(keyword, searchType string) {
+	resList, err := postmanClient.SearchAPI(keyword, "collection")
+	if err != nil {
+		global.GVA_LOG.Error("postman SearchAPI err", zap.Error(err))
+		return
+	}
+	for _, res := range *resList {
+		results := res.CovertToSearchResult(keyword)
+		for _, result := range *results {
+			err = service.CreateSearchResult(result)
+			if err != nil {
+				global.GVA_LOG.Error("CreateSearchResult err", zap.Error(err))
 			}
 		}
 	}
@@ -121,27 +126,30 @@ func (res *PostmanRes) CovertToSearchResult(keyword string) *[]model.SearchResul
 	results := make([]model.SearchResult, 0)
 	for _, data := range res.Data {
 		document := data.Document
-		requestURL := fmt.Sprintf("https://www.postman.com/%s/workspace/%s/request/%s", document.PublisherHandle,
-			document.Workspaces[0].Slug, data.Requests.Document.Id)
+		var requestURL string
+		if document.DocumentType == "collection" {
+			requestURL = fmt.Sprintf("https://www.postman.com/workspace/collection/%s", document.Id)
+		}
 		result := model.SearchResult{
-			Path:    data.Requests.Document.Name + "/" + data.Requests.Document.Name,
+			Path:    document.PublisherName,
 			Url:     requestURL,
-			Matches: data.Requests.Document.Url,
+			Matches: document.PublisherName,
 			Keyword: keyword,
+			Repo:    document.PublisherName,
 		}
 		results = append(results, result)
 	}
 	return &results
 }
 
-func (client *Client) SearchAPI(rule string) (*[]PostmanRes, error) {
+func (client *Client) SearchAPI(rule, searchType string) (*[]PostmanRes, error) {
 	page := 0
 	resList := make([]PostmanRes, 0)
 	var err error
 	for {
 		color.Infof("search for the rule %s of page %d\n", rule, page)
-		body := fmt.Sprintf(`{"service":"search","method":"POST","path":"/search-all","body":{"queryIndices":["runtime.collection","runtime.request"],"queryText":"%s","size":100,"from": %d, "mergeEntities":true}}`,
-			rule, page)
+		body := fmt.Sprintf(`{"service":"search","method":"POST","path":"/search-all","body":{"queryIndices":["runtime.%s"],"queryText":"%s","size":100,"from": %d, "mergeEntities":true}}`,
+			searchType, rule, page)
 		req, err := http.NewRequest("POST", postmanUrl, bytes.NewBufferString(body))
 		req.Header.Set("Cookie", "postman.sid="+client.sid)
 		req.Header.Set("Host", "www.postman.com")
@@ -164,7 +172,12 @@ func (client *Client) SearchAPI(rule string) (*[]PostmanRes, error) {
 		}
 		resList = append(resList, postRes)
 		page = page + 1
-		total := float64(postRes.Meta.Total.Collection)
+		var total float64
+		if searchType == "collection" {
+			total = float64(postRes.Meta.Total.Collection)
+		} else if searchType == "request" {
+			total = float64(postRes.Meta.Total.Request)
+		}
 		if float64(page) > math.Ceil(total/100) {
 			break
 		}

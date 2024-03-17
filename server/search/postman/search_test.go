@@ -10,13 +10,13 @@ import (
 
 func TestRunTask(t *testing.T) {
 	InitialDataBase()
-
+	RunTask()
 }
 
 func TestClient_SearchAPI(t *testing.T) {
 	InitialDataBase()
 	client := GetPostmanClient()
-	res, err := client.SearchAPI("mihoyo")
+	res, err := client.SearchAPI("mihoyo", "collection")
 	if err != nil {
 		fmt.Println(err)
 	}
