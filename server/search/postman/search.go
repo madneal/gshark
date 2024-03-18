@@ -60,10 +60,10 @@ type Requests struct {
 
 type PostmanRes struct {
 	Data []struct {
-		Score           float64  `json:"score"`
-		NormalizedScore float64  `json:"normalizedScore"`
-		Document        Document `json:"document"`
-		Requests        Requests `json:"requests"`
+		Score           float64   `json:"score"`
+		NormalizedScore float64   `json:"normalizedScore"`
+		Document        Document  `json:"document"`
+		Requests        *Requests `json:"requests"`
 	} `json:"data"`
 	Meta struct {
 		QueryText string `json:"queryText"`
@@ -95,13 +95,13 @@ func RunTask() {
 func Search(rules *[]model.Rule) {
 	postmanClient := GetPostmanClient()
 	for _, rule := range *rules {
-		postmanClient.SearchByType(rule.Content, "collection")
+		//postmanClient.SearchByType(rule.Content, "collection")
 		postmanClient.SearchByType(rule.Content, "request")
 	}
 }
 
 func (postmanClient *Client) SearchByType(keyword, searchType string) {
-	resList, err := postmanClient.SearchAPI(keyword, "collection")
+	resList, err := postmanClient.SearchAPI(keyword, searchType)
 	if err != nil {
 		global.GVA_LOG.Error("postman SearchAPI err", zap.Error(err))
 		return
@@ -130,12 +130,18 @@ func (res *PostmanRes) CovertToSearchResult(keyword string) *[]model.SearchResul
 		if document.DocumentType == "collection" {
 			requestURL = fmt.Sprintf("https://www.postman.com/workspace/collection/%s", document.Id)
 		}
+		requests := data.Requests
+		matches := document.PublisherName + " | " + document.Summary
+		if requests != nil {
+			matches = requests.Document.Name + " | " + requests.Document.Url
+		}
+		fmt.Println(matches)
 		result := model.SearchResult{
 			Path:    document.PublisherName,
 			Url:     requestURL,
-			Matches: document.PublisherName,
+			Matches: matches,
 			Keyword: keyword,
-			Repo:    document.PublisherName,
+			Repo:    document.PublisherName + "/" + document.Name,
 		}
 		results = append(results, result)
 	}

@@ -119,7 +119,8 @@
 
       <el-table-column label="匹配内容" prop="matches" width="550">
         <template slot-scope="scope">
-          <pre>{{ scope.row.text_matches | fragmentsFilter }}</pre>
+          <pre v-if="scope.row.text_matches">{{ scope.row.text_matches | fragmentsFilter }}</pre>
+          <pre v-if="scope.row.matches">{{ scope.row.matches }}</pre>
         </template>
       </el-table-column>
 
@@ -257,6 +258,9 @@ export default {
     fragmentsFilter: function (val) {
       if (!val) {
         return "";
+      }
+      if (val instanceof String) {
+        return val;
       }
       let result = "";
       for (let i = 0; i < val.length; i++) {
