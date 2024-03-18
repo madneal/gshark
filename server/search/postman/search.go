@@ -135,7 +135,6 @@ func (res *PostmanRes) CovertToSearchResult(keyword string) *[]model.SearchResul
 		if requests != nil {
 			matches = requests.Document.Name + " | " + requests.Document.Url
 		}
-		fmt.Println(matches)
 		result := model.SearchResult{
 			Path:    document.PublisherName,
 			Url:     requestURL,
