@@ -28,7 +28,7 @@ For the usage of GShark, please refer to [wiki](https://github.com/madneal/gshar
 ```
 git clone https://github.com/madneal/gshark
 cd gshark
-docker-compose build && docker-compose up -d
+docker-compose build && docker-compose up 
 ```
 
 ## Deployment
