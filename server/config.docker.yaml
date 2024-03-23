@@ -9,9 +9,9 @@ autocode:
   server-service: /service
   web: /web/src
   web-api: /api
+  web-flow: /view
   web-form: /view
   web-table: /view
-  web-flow: /view
 captcha:
   key-long: 6
   img-width: 240

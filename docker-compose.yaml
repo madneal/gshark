@@ -9,8 +9,8 @@ networks:
         - subnet: '177.7.0.0/16'
 
 # 设置mysql，redis持久化保存
-volumes:
-  mysql:
+#volumes:
+#  mysql:
 
 services:
   mysql:
