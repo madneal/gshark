@@ -14,12 +14,12 @@ For the usage of GShark, please refer to [wiki](https://github.com/madneal/gshar
 
 # Features
 
-* Support multi-platforms, including GitLab, Github, Searchcode, Postman
+* Support multi-platforms, including GitLab, GitHub, Searchcode, Postman
 * Flexible menu and API permission setting
 * Flexible rules and filter rules
 * Utilize gobuster to brute force subdomain
 * Easily used management system
-* Support for docket deployment
+* Support for docker deployment
 
 # Quick start
 
