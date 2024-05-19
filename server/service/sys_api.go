@@ -40,6 +40,7 @@ func DeleteApi(api model.SysApi) (err error) {
 //@return: err error
 
 func GetAPIInfoList(api model.SysApi, info request.PageInfo, order string, desc bool) (err error, list interface{}, total int64) {
+
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
 	db := global.GVA_DB.Model(&model.SysApi{})

@@ -48,6 +48,17 @@ func GetApiList(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
+	whiteKeys := []string{"ID", "path", "description", "apiGroup", "method"}
+	matchWhite := false
+	for _, key := range whiteKeys {
+		if pageInfo.OrderKey == key {
+			matchWhite = true
+		}
+	}
+	if !matchWhite {
+		response.FailWithMessage("请求参数非法", c)
+		return
+	}
 	if err, list, total := service.GetAPIInfoList(pageInfo.SysApi, pageInfo.PageInfo, pageInfo.OrderKey, pageInfo.Desc); err != nil {
 		global.GVA_LOG.Error("获取失败!", zap.Any("err", err))
 		response.FailWithMessage("获取失败", c)
