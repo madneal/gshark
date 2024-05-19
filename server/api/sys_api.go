@@ -48,7 +48,7 @@ func GetApiList(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	whiteKeys := []string{"ID", "path", "description", "apiGroup", "method"}
+	whiteKeys := []string{"ID", "path", "description", "api_group", "method"}
 	matchWhite := false
 	for _, key := range whiteKeys {
 		if pageInfo.OrderKey == key {
