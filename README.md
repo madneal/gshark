@@ -1,5 +1,3 @@
-[ZH](README-ZH.md) | EN
-
 <p align="center">
    <img alt="GgShark logo" src="https://s1.ax1x.com/2018/10/17/idhZvj.png" />
    <h3 align="center">GShark</h3>
