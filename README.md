@@ -97,28 +97,26 @@ mv dist /usr/local/www/html/
 
 Start the Nginx and the Front-End is deployed successfully.
 
-### Incremental Deployment
-
-For the incremental deployment, [sql.md](https://github.com/madneal/gshark/blob/master/sql.md) should be executed for the corresponding database operations.
-
-### Server service
-
-For the first time, you need to rename `config-temp.yaml` to `config.yaml`.
-
-```
-go build && ./gshark
-or
-go run main.go
-```
-
-For the scan service, it's necessary to config the corresponding rules. For example, Github or Gitlab rules.
-
 > [!TIP]
 > If you installed Nginx by Homebrew, you need to stop Nginx by:
 > ```shell
 > brew services stop nginx
 > ```
 
+### Server service
+
+For the first time, you need to rename `config-temp.yaml` to `config.yaml`. Then you can run the binary file `gshark` directly. Then access to `localhost:8080` for local deployment.
+
+If you have not initial the database in the before, you will be redirec to the database initial page at first.
+
+<img width="936" alt="image" src="https://github.com/user-attachments/assets/dfa7e53e-dc4a-4697-831f-a4f4f3810c3c">
+
+
+For the scan service, it's necessary to config the corresponding rules. For example, Github or Gitlab rules.
+
+### Incremental Deployment
+
+For the incremental deployment, [sql.md](https://github.com/madneal/gshark/blob/master/sql.md) should be executed for the corresponding database operations.
 
 ## Development
 
