@@ -36,7 +36,7 @@ docker-compose build && docker-compose up
 * Nginx
 * MySQL(version above **8.0**)
 
-It's suggested to deploy the Front-End project by nginx. Place the `dist` folder under `/var/www/html`, modify the `nginx.conf` (/etc/nginx/nginx.conf for linux) to reverse proxy the backend service. For the detailed deployment videos, refer to [bilibili](https://www.bilibili.com/video/BV1Py4y1s7ap/) or [youtube](https://youtu.be/bFrKm5t4M54). For the deployment in windows, refer to [here](https://www.bilibili.com/video/BV1CA411L7ux/).
+It is recommended to deploy the Front-End project using nginx. Place the `dist` folder in `/var/www/html`, and adjust the `nginx.conf` file (/etc/nginx/nginx.conf for Linux) to set up reverse proxy for the backend service. For detailed deployment tutorials, you can watch videos on [bilibili](https://www.bilibili.com/video/BV1Py4y1s7ap/) or [youtube](https://youtu.be/bFrKm5t4M54). For deployment on Windows, refer to [this link](https://www.bilibili.com/video/BV1CA411L7ux/).
 
 ### Nginx
 
