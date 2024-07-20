@@ -23,9 +23,8 @@ func RunTask(duration time.Duration) {
 		global.GVA_LOG.Error("GetValidRulesByType gitlab err", zap.Error(err))
 		return
 	}
-	RunSearchTask(&rules)
-	global.GVA_LOG.Info(fmt.Sprintf("Complete the scan of Gitlab, start to sleep %d seconds", duration))
-	time.Sleep(duration * time.Second)
+	RunSearchTask(&rules, duration)
+	global.GVA_LOG.Info(fmt.Sprintf("Complete the scan of GitLab, start to sleep %d seconds", duration))
 }
 
 func GenerateSearchCodeTask() (map[int][]model.Rule, error) {
@@ -44,7 +43,7 @@ func GenerateSearchCodeTask() (map[int][]model.Rule, error) {
 	return result, err
 }
 
-func RunSearchTask(rules *[]model.Rule) {
+func RunSearchTask(rules *[]model.Rule, duration time.Duration) {
 	client := GetClient()
 	if client == nil {
 		color.Warnln("There is no client for Gitlab, please check if you specify Gitlab token")
@@ -55,6 +54,7 @@ func RunSearchTask(rules *[]model.Rule) {
 		results := ConvertBlobsToResults(client, blobs, rule.Content)
 		SaveResult(results, &rule.Content)
 	}
+	time.Sleep(duration * time.Second)
 }
 
 func RunSearchTaskByProject(mapRules map[int][]model.Rule, err error) {
