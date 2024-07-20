@@ -89,6 +89,10 @@ Unzip and copy the files inside `dist` to `/var/www/html` folder of Nginx.
 
 ```
 unzip gshark*.zip
+cd gshark*
+mv dist /var/www/html/
+# for Mac
+mv dist /usr/local/www/html/
 ```
 
 Start the Nginx and the Front-End is deployed successfully.
@@ -108,6 +112,13 @@ go run main.go
 ```
 
 For the scan service, it's necessary to config the corresponding rules. For example, Github or Gitlab rules.
+
+> [!TIP]
+> If you installed Nginx by Homebrew, you need to stop Nginx by:
+> ```shell
+> brew services stop nginx
+> ```
+
 
 ## Development
 
