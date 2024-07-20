@@ -12,12 +12,12 @@ For the usage of GShark, please refer to the [wiki](https://github.com/madneal/g
 
 # Features
 
-* Support multi-platforms, including GitLab, GitHub, Searchcode, Postman
-* Flexible menu and API permission setting
-* Flexible rules and filter rules
-* Utilize gobuster to brute force subdomain
-* Easily used management system
-* Support for docker deployment
+* Support multiple platforms, such as GitLab, GitHub, Searchcode, and Postman
+* Flexible menu and API permission settings
+* Flexible rules and filtering rules
+* Utilize gobuster for subdomain brute force
+* Easy-to-use management system
+* Support for Docker deployment
 
 # Quick start
 
@@ -29,7 +29,7 @@ cd gshark
 docker-compose build && docker-compose up 
 ```
 
-## Deployment
+## Manual Deployment
 
 ### Requirements
 
@@ -40,7 +40,7 @@ It's suggested to deploy the Front-End project by nginx. Place the `dist` folder
 
 ### Nginx
 
-Modify the `nginx.conf`:
+Can use `nginx -t` to locate the `nginx.conf` file, then modify the `nginx.conf`:
 
 ```
 // config the user accoring to your need
