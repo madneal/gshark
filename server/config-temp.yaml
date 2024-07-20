@@ -1,17 +1,3 @@
-autocode:
-  root: /go/src/github.com/madneal/gshark
-  server: /server
-  server-api: /api/v1
-  server-initialize: /initialize
-  server-model: /model
-  server-request: /model/request/
-  server-router: /router
-  server-service: /service
-  web: /web/src
-  web-api: /api
-  web-form: /view
-  web-table: /view
-  web-flow: /view
 captcha:
   key-long: 6
   img-width: 240
