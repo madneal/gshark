@@ -33,7 +33,6 @@ var menus = []model.SysBaseMenu{
 	{GVA_MODEL: global.GVA_MODEL{ID: 2, CreatedAt: time.Now(), UpdatedAt: time.Now()}, MenuLevel: 0, ParentId: "24", Path: "token", Name: "token", Hidden: false, Component: "view/token/token.vue", Sort: 2, Meta: model.Meta{Title: "token管理", Icon: "collection"}},
 	{GVA_MODEL: global.GVA_MODEL{ID: 9, CreatedAt: time.Now(), UpdatedAt: time.Now()}, MenuLevel: 0, ParentId: "26", Path: "subdomain", Name: "subdomain", Hidden: false, Component: "view/subdomain/subdomain.vue", Sort: 2, Meta: model.Meta{Title: "子域名资产报告", Icon: "s-data"}},
 	{GVA_MODEL: global.GVA_MODEL{ID: 10, CreatedAt: time.Now(), UpdatedAt: time.Now()}, MenuLevel: 0, ParentId: "24", Path: "filter", Name: "filter", Hidden: false, Component: "view/filter/filter.vue", Sort: 3, Meta: model.Meta{Title: "过滤规则", Icon: "s-opportunity"}},
-	{GVA_MODEL: global.GVA_MODEL{ID: 11, CreatedAt: time.Now(), UpdatedAt: time.Now()}, MenuLevel: 0, ParentId: "24", Path: "task", Name: "task", Hidden: false, Component: "view/task/task.vue", Sort: 4, Meta: model.Meta{Title: "任务管理", Icon: "s-flag"}},
 }
 
 func (m *menu) Init() error {
