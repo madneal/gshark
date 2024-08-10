@@ -309,7 +309,7 @@ func GetProjects(client *gitlab.Client) {
 			if !has {
 				err := service.CreateRepo(repo)
 				if err != nil {
-					global.GVA_LOG.Error("creareRepo error", zap.Error(err))
+					global.GVA_LOG.Error("CreateRepo error", zap.Error(err))
 				}
 				projectNum++
 			}
