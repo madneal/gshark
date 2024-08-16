@@ -8,10 +8,6 @@ networks:
       config:
         - subnet: '177.7.0.0/16'
 
-# 设置mysql，redis持久化保存
-#volumes:
-#  mysql:
-
 services:
   mysql:
     image: mysql:8.0.21       # 如果您是 arm64 架构：如 MacOS 的 M1，请修改镜像为 image: mysql/mysql-server:8.0.21
@@ -21,7 +17,7 @@ services:
     ports:
       - "13306:3306"  # host物理直接映射端口为13306
     environment:
-      MYSQL_DATABASE: 'gshark' # 初始化启动时要创建的数据库的名称
+      MYSQL_DATABASE:
       MYSQL_ROOT_PASSWORD: 'madneal'
       MYSQL_USER: 'gshark'
       MYSQL_PASSWORD: 'gshark'
@@ -45,7 +41,7 @@ services:
       - '8080:8080'
     depends_on:
       - server
-    command: [ 'nginx-debug', '-g', 'daemon off;' ]
+    command: [ 'nginx', '-g', 'daemon off;' ]
     networks:
       network:
         ipv4_address: 177.7.0.11
@@ -53,7 +49,9 @@ services:
   server:
     build:
       context: ./server
-      dockerfile: ./Dockerfile
+      dockerfile: deploy/serve/Dockerfile
+    environment:
+      - GSHARK_CONFIG=config.docker.yaml
     container_name: gshark-server
     volumes:
       - ./server/config.docker.yaml:/go/src/github.com/madneal/gshark/server/config.docker.yaml
@@ -69,3 +67,21 @@ services:
       network:
         ipv4_address: 177.7.0.12
 
+  scan:
+    build:
+      context: ./server
+      dockerfile: deploy/scan/Dockerfile
+    environment:
+      - GSHARK_CONFIG=config.docker.yaml
+    container_name: gshark-scanner
+    volumes:
+      - ./server/config.docker.yaml:/go/src/github.com/madneal/gshark/server/config.docker.yaml
+    restart: no
+    depends_on:
+      mysql:
+        condition: service_healthy
+    links:
+      - mysql
+    networks:
+      network:
+        ipv4_address: 177.7.0.14
