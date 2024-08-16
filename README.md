@@ -29,6 +29,11 @@ cd gshark
 docker-compose build && docker-compose up 
 ```
 
+> [!IMPORTANT]
+> Before the MySQL database initial, the scanner container will exit.
+> 
+> Need to restart the scanner after the MySQL database initial.
+
 ## Manual Deployment
 
 ### Requirements
