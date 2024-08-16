@@ -105,14 +105,23 @@ Start the Nginx and the Front-End is deployed successfully.
 
 ### Server service
 
-For the first time, you need to rename `config-temp.yaml` to `config.yaml`. Then you can run the binary file `gshark` directly. Then access to `localhost:8080` for local deployment.
+```shell
+./gshark serve
+```
 
-If you have not initial the database in the before, you will be redirec to the database initial page at first.
+Initially, rename `config-temp.yaml` to `config.yaml`. After that, you can run the `gshark` binary file directly. Then, access `localhost:8080` for local deployment.
+
+If you haven't initialized the database before, you will be redirected to the database initialization page first.
 
 <img width="936" alt="image" src="https://github.com/user-attachments/assets/dfa7e53e-dc4a-4697-831f-a4f4f3810c3c">
 
+### Scan service
 
-For the scan service, it's necessary to config the corresponding rules. For example, Github or Gitlab rules.
+```shell
+./gshark scan
+```
+
+For the scan service, it's necessary to config the corresponding rules. For example, GitHub or Gitlab rules.
 
 ### Incremental Deployment
 
@@ -122,25 +131,25 @@ For the incremental deployment, [sql.md](https://github.com/madneal/gshark/blob/
 
 ### Server
 
-``` 
+```shell
 git clone https://github.com/madneal/gshark.git
-
 cd server
-
 go mod tidy
-
 mv config-temp.yaml config.yaml
-
 go build
-
-./gshark
-
-or
-
-go run main.go
 ```
 
+Run the web server:
 
+```shell
+./gshark serve or go run main.go serve
+```
+
+Run the scan task:
+
+```shell
+./gshark scan or go run main.go scan
+```
 
 ### Web 
 
