@@ -13,6 +13,7 @@ import (
 func ScanTask() {
 	for {
 		if global.GVA_DB == nil {
+			global.GVA_LOG.Info("have not init db")
 			return
 		}
 		var Interval time.Duration = 900

@@ -3,12 +3,11 @@ package initialize
 import (
 	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/model"
-	"os"
-
 	"go.uber.org/zap"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
+	"os"
 )
 
 func Gorm() *gorm.DB {
@@ -61,9 +60,7 @@ func GormMysql() *gorm.DB {
 		SkipInitializeWithVersion: false, // 根据版本自动配置
 	}
 	if db, err := gorm.Open(mysql.New(mysqlConfig), gormConfig(m.LogMode)); err != nil {
-		//global.GVA_LOG.Error("MySQL启动异常", zap.Any("err", err))
-		//os.Exit(0)
-		//return nil
+		global.GVA_LOG.Error("mysql connect failed", zap.Error(err))
 		return nil
 	} else {
 		sqlDB, _ := db.DB()
