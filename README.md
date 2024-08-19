@@ -1,5 +1,5 @@
 <p align="center">
-   <img alt="GgShark logo" src="https://s1.ax1x.com/2018/10/17/idhZvj.png" />
+   <img alt="GShark logo" src="https://s1.ax1x.com/2018/10/17/idhZvj.png" />
    <h3 align="center">GShark</h3>
    <p align="center">Scan for sensitive information easily and effectively.</p>
 </p>
@@ -31,7 +31,7 @@ docker-compose build && docker-compose up
 
 > [!IMPORTANT]
 > Before the MySQL database initial, the scanner container will exit.
-> 
+
 > Need to restart the scanner after the MySQL database initial.
 
 ## Manual Deployment
