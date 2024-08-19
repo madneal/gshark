@@ -13,7 +13,7 @@ services:
     image: mysql:8.0.21       # 如果您是 arm64 架构：如 MacOS 的 M1，请修改镜像为 image: mysql/mysql-server:8.0.21
     container_name: gshark-mysql
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
-    restart: always
+    restart: "always"
     ports:
       - "13306:3306"  # host物理直接映射端口为13306
     environment:
@@ -36,7 +36,7 @@ services:
       context: ./web
       dockerfile: ./Dockerfile
     container_name: gshark-web
-    restart: always
+    restart: "always"
     ports:
       - '8080:8080'
     depends_on:
@@ -55,7 +55,7 @@ services:
     container_name: gshark-server
     volumes:
       - ./server/config.docker.yaml:/go/src/github.com/madneal/gshark/server/config.docker.yaml
-    restart: always
+    restart: "always"
     ports:
       - '8888:8888'
     depends_on:
@@ -76,7 +76,7 @@ services:
     container_name: gshark-scanner
     volumes:
       - ./server/config.docker.yaml:/go/src/github.com/madneal/gshark/server/config.docker.yaml
-    restart: no
+    restart: "no"
     depends_on:
       mysql:
         condition: service_healthy
