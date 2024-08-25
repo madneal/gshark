@@ -32,7 +32,7 @@ import {
     createRule,
     updateRule,
     findRule
-} from "@/api/rule";  //  此处请自行替换地址
+} from "@/api/rule";
 import infoList from "@/mixins/infoList";
 export default {
   name: "Rule",
@@ -89,6 +89,5 @@ export default {
 }
 };
 </script>
-
 <style>
 </style>

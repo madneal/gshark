@@ -246,6 +246,10 @@ export default {
           value: "searchcode",
         },
         {
+          label: 'domain',
+          value: 'domain'
+        },
+        {
           label: "postman",
           value: "postman"
         }
@@ -397,18 +401,6 @@ export default {
       this.type = "create";
       this.dialogFormVisible = true;
       this.formData.ruleType = [];
-    },
-    async batchCreateRules() {
-      this.batchRulesForm.type = this.batchRulesForm.type.join(',');
-      const res = await batchCreateRules(this.batchRulesForm);
-      if (res.code === 0) {
-        this.dialogBatchRules = false;
-        this.$message({
-          type: 'success',
-          message: '批量创建规则成功'
-        });
-        await this.getTableData();
-      }
     }
   },
   async created() {
