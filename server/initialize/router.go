@@ -1,7 +1,6 @@
 package initialize
 
 import (
-	_ "github.com/madneal/gshark/docs"
 	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/middleware"
 	"github.com/madneal/gshark/router"
