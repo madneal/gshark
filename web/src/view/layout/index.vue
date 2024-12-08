@@ -44,12 +44,6 @@
                     <i class="el-icon-arrow-down"></i>
                   </span>
                   <el-dropdown-menu class="dropdown-group" slot="dropdown">
-                    <el-dropdown-item>
-                      <span>
-                        更多信息
-                        <el-badge is-dot />
-                      </span>
-                    </el-dropdown-item>
                     <el-dropdown-item @click.native="toPerson" icon="el-icon-s-custom">个人信息</el-dropdown-item>
                     <el-dropdown-item @click.native="LoginOut" icon="el-icon-table-lamp">登 出</el-dropdown-item>
                   </el-dropdown-menu>
