@@ -107,6 +107,10 @@ Start the Nginx and the Front-End is deployed successfully.
 > ```shell
 > brew services stop nginx
 > ```
+> Start Nginx for Ubuntu:
+> ```shell
+> systemctl start nginx
+> ```
 
 ### Server service
 
