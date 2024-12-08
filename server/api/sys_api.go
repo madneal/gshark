@@ -55,7 +55,7 @@ func GetApiList(c *gin.Context) {
 			matchWhite = true
 		}
 	}
-	if !matchWhite {
+	if !matchWhite && pageInfo.OrderKey != "" {
 		response.FailWithMessage("请求参数非法", c)
 		return
 	}
