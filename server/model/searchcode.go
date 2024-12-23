@@ -1,7 +1,7 @@
 package model
 
 type SearchCodeRes struct {
-	Previouspage string             `json:"previouspage"`
+	Previouspage int                `json:"previouspage"`
 	Query        string             `json:"query"`
 	Total        int                `json:"total"`
 	Page         int                `json:"page"`

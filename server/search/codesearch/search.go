@@ -30,6 +30,7 @@ func RunTask(duration time.Duration) {
 		SaveResults(codeResults, &rule.Content)
 	}
 	global.GVA_LOG.Info(fmt.Sprintf("Compelete the scan of searchcode"))
+	time.Sleep(duration * time.Second)
 }
 
 func SaveResults(results []*model.SearchResult, keyword *string) {
@@ -57,6 +58,7 @@ func SearchForSearchCode(rule model.Rule, request *gorequest.SuperAgent) []*mode
 	page := 0
 	for {
 		url := "https://searchcode.com/api/codesearch_I/?q=" + keyword + "&p=" + strconv.Itoa(page)
+		global.GVA_LOG.Info("search searchcode result for page " + strconv.Itoa(page))
 		codeResults, hasResult := GetResult(request, url)
 		totalCodeResults = append(totalCodeResults, codeResults...)
 		page++
@@ -90,7 +92,6 @@ func GetResult(request *gorequest.SuperAgent, url string) ([]*model.SearchResult
 		if strings.Contains(val.Repo, "github") {
 			continue
 		}
-		//fmt.Println(val.Filename)
 		var lines string
 		for _, line := range val.Lines {
 			lines += fmt.Sprint(line) + "\n"
