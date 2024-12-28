@@ -1,6 +1,7 @@
 package api
 
 import (
+	"encoding/csv"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/madneal/gshark/global"
@@ -10,10 +11,16 @@ import (
 	"github.com/madneal/gshark/search/githubsearch"
 	"github.com/madneal/gshark/service"
 	"go.uber.org/zap"
+	"net/http"
 	"strings"
 )
 
 var taskStatus = "stop"
+var statusOptions = map[int]string{
+	0: "未处理", // Unprocessed
+	1: "已处理", // Processed
+	2: "已忽略", // Ignored
+}
 
 func CreateSearchResult(c *gin.Context) {
 	var searchResult model.SearchResult
@@ -157,5 +164,51 @@ func GetSearchResultList(c *gin.Context) {
 			Page:     pageInfo.Page,
 			PageSize: pageInfo.PageSize,
 		}, "获取成功", c)
+	}
+}
+
+func ExportSearchResult(c *gin.Context) {
+	var searchInfo request.SearchResultSearch
+	_ = c.ShouldBindQuery(&searchInfo)
+	searchInfo.PageInfo.Page = 1
+	searchInfo.PageInfo.PageSize = 10000
+	c.Header("Content-Type", "text/csv")
+	c.Header("Content-Disposition", `attachment; filename="search_results.csv"`)
+	writer := csv.NewWriter(c.Writer)
+	headers := []string{"Repo", "RepoUrl", "Matches", "Keyword", "SecKeyword", "Path",
+		"Url", "Status", "TextMatchesJson"}
+	if err := writer.Write(headers); err != nil {
+		response.FailWithMessage("导出失败", c)
+		return
+	}
+	err, list, _ := service.GetSearchResultInfoList(searchInfo)
+	if err != nil {
+		global.GVA_LOG.Error("GetSearchResultInfoList  err", zap.Any("err", err))
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	searchResults, _ := list.([]model.SearchResult)
+	for _, result := range searchResults {
+		row := []string{
+			result.Repo,
+			result.RepoUrl,
+			result.Matches,
+			result.Keyword,
+			result.SecKeyword,
+			result.Path,
+			result.Url,
+			statusOptions[result.Status],
+			string(result.TextMatchesJson),
+		}
+		if err := writer.Write(row); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"message": "Failed to write CSV row",
+			})
+			return
+		}
+	}
+	writer.Flush()
+	if err = writer.Error(); err != nil {
+		response.FailWithMessage(err.Error(), c)
 	}
 }

@@ -15,6 +15,7 @@ func InitSearchResultRouter(Router *gin.RouterGroup) {
 		SearchResultRouter.POST("updateSearchResult", api.UpdateSearchResult)             // 更新SearchResult
 		SearchResultRouter.GET("findSearchResult", api.FindSearchResult)                  // 根据ID获取SearchResult
 		SearchResultRouter.GET("getSearchResultList", api.GetSearchResultList)            // 获取SearchResult列表
+		SearchResultRouter.GET("exportSearchResult", api.ExportSearchResult)
 		SearchResultRouter.POST("updateSearchResultStatusByIds", api.UpdateSearchResultByIds)
 		SearchResultRouter.POST("startSecFilterTask", api.StartSecFilterTask)
 		SearchResultRouter.GET("getTaskStatus", api.GetTaskStatus)
