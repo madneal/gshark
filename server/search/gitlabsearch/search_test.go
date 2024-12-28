@@ -64,5 +64,5 @@ func TestRunSearchTask(t *testing.T) {
 	rules := []model.Rule{model.Rule{
 		Content: "mihoyo",
 	}}
-	RunSearchTask(&rules)
+	RunSearchTask(&rules, 0)
 }
