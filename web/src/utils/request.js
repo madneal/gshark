@@ -75,14 +75,17 @@ service.interceptors.response.use(
                     router.push({name:"init"})
             }
         }
-        if (response.data.code == 0 || response.headers.success === "true") {
+        if (response.data.code == 0 || response.headers.success === "true" ) {
             return response.data
         } else {
-            Message({
-                showClose: true,
-                message: response.data.msg || decodeURI(response.headers.msg),
-                type: response.headers.msgtype||'error',
-            })
+            if (response.headers['content-type'] !== 'text/csv') {
+                Message({
+                    showClose: true,
+                    message: response.data.msg || decodeURI(response.headers.msg),
+                    type: response.headers.msgtype||'error',
+                })
+            }
+
             if (response.data.data && response.data.data.reload) {
                 store.commit('user/LoginOut')
             }

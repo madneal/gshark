@@ -1,13 +1,5 @@
 import service from '@/utils/request'
 
-// @Tags SearchResult
-// @Summary 创建SearchResult
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body model.SearchResult true "创建SearchResult"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
-// @Router /searchResult/createSearchResult [post]
 export const createSearchResult = (data) => {
      return service({
          url: "/searchResult/createSearchResult",
@@ -16,15 +8,6 @@ export const createSearchResult = (data) => {
      })
  }
 
-
-// @Tags SearchResult
-// @Summary 删除SearchResult
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body model.SearchResult true "删除SearchResult"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"删除成功"}"
-// @Router /searchResult/deleteSearchResult [delete]
  export const deleteSearchResult = (data) => {
      return service({
          url: "/searchResult/deleteSearchResult",
@@ -33,14 +16,6 @@ export const createSearchResult = (data) => {
      })
  }
 
-// @Tags SearchResult
-// @Summary 删除SearchResult
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body request.IdsReq true "批量删除SearchResult"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"删除成功"}"
-// @Router /searchResult/deleteSearchResult [delete]
  export const deleteSearchResultByIds = (data) => {
      return service({
          url: "/searchResult/deleteSearchResultByIds",
@@ -49,14 +24,6 @@ export const createSearchResult = (data) => {
      })
  }
 
-// @Tags SearchResult
-// @Summary 更新SearchResult
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body model.SearchResult true "更新SearchResult"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"更新成功"}"
-// @Router /searchResult/updateSearchResult [put]
  export const updateSearchResult = (data) => {
      return service({
          url: "/searchResult/updateSearchResult",
@@ -65,15 +32,6 @@ export const createSearchResult = (data) => {
      })
  }
 
-
-// @Tags SearchResult
-// @Summary 用id查询SearchResult
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body model.SearchResult true "用id查询SearchResult"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"查询成功"}"
-// @Router /searchResult/findSearchResult [get]
  export const findSearchResult = (params) => {
      return service({
          url: "/searchResult/findSearchResult",
@@ -82,15 +40,6 @@ export const createSearchResult = (data) => {
      })
  }
 
-
-// @Tags SearchResult
-// @Summary 分页获取SearchResult列表
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body request.PageInfo true "分页获取SearchResult列表"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
-// @Router /searchResult/getSearchResultList [get]
  export const getSearchResultList = (params) => {
      return service({
          url: "/searchResult/getSearchResultList",
@@ -98,6 +47,40 @@ export const createSearchResult = (data) => {
          params
      })
  }
+
+export const exportSearchResult = async (params) => {
+    try {
+        const response = await service({
+            url: '/searchResult/exportSearchResult',
+            method: 'get',
+            params,
+            responseType: 'blob',  // Set response type to blob
+            headers: {
+                'Accept': 'text/csv'
+            }
+        });
+        const contentDisposition = response.headers?.['content-disposition'] || response.headers?.get('content-disposition');
+        const filename = contentDisposition
+            ? contentDisposition.split('filename=')[1]?.replace(/"/g, '')
+            : 'export.csv';
+        const blob = new Blob([response.data], {
+            type: 'text/csv;charset=utf-8;'
+        });
+        const downloadUrl = window.URL.createObjectURL(blob);
+
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(downloadUrl);
+    } catch (error) {
+        console.error('Export failed:', error);
+        throw error; // Propagate error to caller
+    }
+};
 
  export const updateSearchResultStatusByIds = (data) => {
      return service({

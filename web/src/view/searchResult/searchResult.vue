@@ -27,6 +27,7 @@
         </el-form-item>
         <el-form-item>
           <el-button @click="onSubmit" type="primary">查询</el-button>
+          <el-button @click="exportResult" type="primary">导出</el-button>
         </el-form-item>
 
         <el-form-item>
@@ -187,7 +188,7 @@ import {
   updateSearchResult,
   updateSearchResultStatusByIds,
   startFilterTask,
-  getTaskStatus
+  getTaskStatus, exportSearchResult
 } from "@/api/searchResult"; //  此处请自行替换地址
 import { formatTimeToStr } from "@/utils/date";
 import infoList from "@/mixins/infoList";
@@ -285,6 +286,9 @@ export default {
       this.page = 1;
       this.pageSize = 100;
       this.getTableData();
+    },
+    async exportResult() {
+      await exportSearchResult(this.formData);
     },
     secKeywordChange() {
       this.getTableData();

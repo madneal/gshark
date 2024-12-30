@@ -176,7 +176,7 @@ func ExportSearchResult(c *gin.Context) {
 	c.Header("Content-Disposition", `attachment; filename="search_results.csv"`)
 	writer := csv.NewWriter(c.Writer)
 	headers := []string{"Repo", "RepoUrl", "Matches", "Keyword", "SecKeyword", "Path",
-		"Url", "Status", "TextMatchesJson"}
+		"Url", "Status"}
 	if err := writer.Write(headers); err != nil {
 		response.FailWithMessage("导出失败", c)
 		return
@@ -198,7 +198,6 @@ func ExportSearchResult(c *gin.Context) {
 			result.Path,
 			result.Url,
 			statusOptions[result.Status],
-			string(result.TextMatchesJson),
 		}
 		if err := writer.Write(row); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
