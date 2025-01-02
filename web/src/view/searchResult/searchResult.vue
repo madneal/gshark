@@ -265,17 +265,21 @@ export default {
       }
       let result = "";
       for (let i = 0; i < val.length; i++) {
-        const matches = val[i].matches;
-        let index = [];
-        matches.forEach(ele => {
-          index = index.concat(ele.indices);
-        });
-        let fragment = val[i].fragment;
-        fragment = fragment.slice(0, index[0]) + "【" + fragment.slice(index[0]);
-        fragment = fragment.slice(0, index[index.length-1]+1) + "】" + fragment.slice(index[index.length-1]+1);
-        result = result + fragment;
+        const fragment = val[i].fragment;
+        if (!val[i].matches) {
+          result += fragment;
+        } else {
+          const matches = val[i].matches;
+          let index = [];
+          matches.forEach(ele => {
+            index = index.concat(ele.indices);
+          });
+          let processedFragment = fragment.slice(0, index[0]) + "【" + fragment.slice(index[0]);
+          processedFragment = processedFragment.slice(0, index[index.length-1]+1) + "】" + processedFragment.slice(index[index.length-1]+1);
+          result += processedFragment;
+        }
         if (i !== val.length - 1) {
-          result = result + "\n=====================================\n";
+          result += "\n=====================================\n";
         }
       }
       return result;
