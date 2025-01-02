@@ -95,9 +95,9 @@ Unzip and copy the files inside `dist` to `/var/www/html` folder of Nginx.
 ```
 unzip gshark*.zip
 cd gshark*
-mv dist /var/www/html/
+mv dist/* /var/www/html/
 # for Mac
-mv dist /usr/local/www/html/
+mv dist/* /usr/local/www/html/
 ```
 
 Start the Nginx and the Front-End is deployed successfully.
