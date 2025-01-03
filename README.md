@@ -151,13 +151,27 @@ go build
 Run the web server:
 
 ```shell
-./gshark serve or go run main.go serve
+go build
+./gshark serve 
+```
+
+Or
+
+```shell
+go run main.go serve
 ```
 
 Run the scan task:
 
 ```shell
-./gshark scan or go run main.go scan
+go build
+./gshark scan 
+```
+
+Or
+
+```shell
+go run main.go scan
 ```
 
 ### Web 
