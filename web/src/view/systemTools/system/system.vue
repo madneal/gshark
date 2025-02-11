@@ -25,9 +25,6 @@
           <el-option value="aliyun-oss"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="配置文件环境变量名">
-        <el-input v-model.number="config.system.configEnv"></el-input>
-      </el-form-item>
       <el-form-item label="数据初始化">
         <el-checkbox v-model="config.system.needInitData">开启</el-checkbox>
       </el-form-item>
@@ -143,7 +140,7 @@
 
       <!--  dbType start  -->
       <template v-if="config.system.dbType == 'mysql'">
-        <h2>mysql admin数据库配置</h2>
+        <h2>mysql 数据库配置</h2>
         <el-form-item label="username">
           <el-input v-model="config.mysql.username"></el-input>
         </el-form-item>
