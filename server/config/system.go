@@ -7,4 +7,6 @@ type System struct {
 	OssType       string `mapstructure:"oss-type" json:"ossType" yaml:"oss-type"`
 	UseMultipoint bool   `mapstructure:"use-multipoint" json:"useMultipoint" yaml:"use-multipoint"`
 	GitlabBase    string `json:"gitlabBase" yaml:"gitlab-base"`
+	AiServer      string `json:"ai_server" yaml:"ai_server"`
+	AiToken       string `json:"ai_token" yaml:"ai_token"`
 }
