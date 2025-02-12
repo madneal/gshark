@@ -90,13 +90,13 @@ func StartAITask(c *gin.Context) {
 			for _, textMatch := range textMatches {
 				content += *textMatch.Fragment + "\n"
 			}
-			question := "please judge if the below content contains sensitive information, and the sensitive information " +
-				"could be exploited. Just answer yes or no.\n" + content
-			ans := service.Question("You are a security operation engineer, you are expected to assistant",
-				question)
-			global.GVA_LOG.Info(question)
+			ans := service.Question("You are a security operation engineer, you are expected to assistant."+
+				"please judge if the below content contains sensitive information, "+
+				"and the sensitive information could be exploited. Just answer yes or no.",
+				content)
+			global.GVA_LOG.Info(content)
 			global.GVA_LOG.Info(ans)
-			if ans == "yes" {
+			if strings.ToLower(ans) == "yes" {
 				service.UpdateSearchResultById(int(result.ID), 1)
 			} else {
 				service.UpdateSearchResultById(int(result.ID), 2)

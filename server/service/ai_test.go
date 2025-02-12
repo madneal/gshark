@@ -6,8 +6,7 @@ import (
 )
 
 func TestQuestion(t *testing.T) {
-	result := Question("You are a helpful assistant",
-		"请编写一个Python函数 find_prime_numbers，该函数接受一个整数 n 作为参数，"+
-			"并返回一个包含所有小于 n 的质数（素数）的列表。质数是指仅能被1和其自身整除的正整数，如2, 3, 5, 7等。不要输出非代码的内容。")
+	result := Question("You are a security operation engineer, you are expected to assistant.please judge if the below content contains sensitive information, and the sensitive information \" +\n\t\t\t\t\"could be exploited. Just answer yes or no.",
+		"# PopWin_MeiTuan\n仿美团做的一个下拉选择页，类似于电商app中筛选距离的下拉菜单。很常见。\n#效果图\n![](https://github.com/reallin/PopWin_MeiTuan/blob/master/cam.gif)\n#功能点\n* popwindow下拉列表\n* 加载progressBar的生成")
 	fmt.Println(result)
 }
