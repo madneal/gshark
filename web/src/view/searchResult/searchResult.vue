@@ -72,6 +72,8 @@
         </el-form-item>
 
         <el-form-item>
+          <el-button size="mini" type="primary" @click="startAITask"
+          style="margin-right: .5rem">启动AI分析</el-button>
           <el-popover placement="top" v-model="taskVisible" width="160">
             <p>确定启动过滤任务吗？过滤任务将自动忽略未匹配二次过滤关键词的结果</p>
             <div style="text-align: right; margin: 0">
@@ -188,7 +190,7 @@ import {
   updateSearchResult,
   updateSearchResultStatusByIds,
   startFilterTask,
-  getTaskStatus, exportSearchResult
+  getTaskStatus, exportSearchResult, startAITask
 } from "@/api/searchResult"; //  此处请自行替换地址
 import { formatTimeToStr } from "@/utils/date";
 import infoList from "@/mixins/infoList";
@@ -299,6 +301,9 @@ export default {
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;
+    },
+    async startAITask() {
+      await startAITask();
     },
     async startFilterTask() {
       await startFilterTask();

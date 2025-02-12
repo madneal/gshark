@@ -50,6 +50,11 @@ func GetSearchResult(id uint) (err error, searchResult model.SearchResult) {
 	return
 }
 
+func ListSearchResultByStatus(status int) (err error, list []model.SearchResult) {
+	err = global.GVA_DB.Where("status = ?", status).Find(&list).Error
+	return err, list
+}
+
 func GetSearchResultInfoList(info request.SearchResultSearch) (err error, list interface{}, total int64) {
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)

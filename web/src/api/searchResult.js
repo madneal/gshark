@@ -103,3 +103,10 @@ export const exportSearchResult = async (params) => {
         method: "get"
     })
  }
+
+ export const startAITask = () => {
+     return service({
+         url: "/searchResult/startAITask",
+         method: "post"
+     })
+ }

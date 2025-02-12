@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/csv"
+	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/madneal/gshark/global"
@@ -68,6 +69,40 @@ func UpdateSearchResultByIds(c *gin.Context) {
 
 func GetTaskStatus(c *gin.Context) {
 	response.OkWithMessage(taskStatus, c)
+}
+
+func StartAITask(c *gin.Context) {
+	response.Ok(c)
+	go func() {
+		err, list := service.ListSearchResultByStatus(0)
+		if err != nil {
+			global.GVA_LOG.Error("ListSearchResultByStatus error", zap.Any("err", err))
+			return
+		}
+		for _, result := range list {
+			textMatches := make([]model.TextMatch, 0)
+			err = json.Unmarshal(result.TextMatchesJson, &textMatches)
+			if err != nil {
+				global.GVA_LOG.Error("json unmarshal error", zap.Any("err", err))
+				return
+			}
+			var content string
+			for _, textMatch := range textMatches {
+				content += *textMatch.Fragment + "\n"
+			}
+			question := "please judge if the below content contains sensitive information, and the sensitive information " +
+				"could be exploited. Just answer yes or no.\n" + content
+			ans := service.Question("You are a security operation engineer, you are expected to assistant",
+				question)
+			global.GVA_LOG.Info(question)
+			global.GVA_LOG.Info(ans)
+			if ans == "yes" {
+				service.UpdateSearchResultById(int(result.ID), 1)
+			} else {
+				service.UpdateSearchResultById(int(result.ID), 2)
+			}
+		}
+	}()
 }
 
 func StartSecFilterTask(c *gin.Context) {
