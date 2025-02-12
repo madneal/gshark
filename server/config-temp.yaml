@@ -42,6 +42,8 @@ system:
   oss-type: local
   use-multipoint: false
   gitlab-base: ""
+  ai_server: ""
+  ai_token: ""
 wechat:
   url: ""
   enable: false
