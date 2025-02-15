@@ -107,9 +107,6 @@
       <el-form-item label="host">
         <el-input v-model="config.email.host"></el-input>
       </el-form-item>
-      <el-form-item label="是否为ssl">
-        <el-checkbox v-model="config.email.isSSL"></el-checkbox>
-      </el-form-item>
       <el-form-item label="secret">
         <el-input v-model="config.email.secret"></el-input>
       </el-form-item>
