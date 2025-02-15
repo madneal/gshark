@@ -6,24 +6,10 @@ import (
 	"errors"
 	"fmt"
 	"github.com/madneal/gshark/global"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/smtp"
-	"strings"
 )
-
-func Email(subject string, body string) error {
-	to := strings.Split(global.GVA_CONFIG.Email.To, ",")
-	return send(to, subject, body)
-}
-
-func ErrorToEmail(subject string, body string) error {
-	to := strings.Split(global.GVA_CONFIG.Email.To, ",")
-	if to[len(to)-1] == "" { // 判断切片的最后一个元素是否为空,为空则移除
-		to = to[:len(to)-1]
-	}
-	return send(to, subject, body)
-}
 
 func EmailSend(subject string, body string) error {
 	to := []string{global.GVA_CONFIG.Email.From}
@@ -48,7 +34,7 @@ func BotSend(content string) error {
 		return err
 	}
 	defer res.Body.Close()
-	body, _ := ioutil.ReadAll(res.Body)
+	body, _ := io.ReadAll(res.Body)
 	fmt.Println(string(body))
 	return err
 }
