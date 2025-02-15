@@ -5,7 +5,6 @@ import (
 	"crypto/tls"
 	"errors"
 	"fmt"
-	"github.com/jordan-wright/email"
 	"github.com/madneal/gshark/global"
 	"io/ioutil"
 	"net/http"
@@ -56,28 +55,53 @@ func BotSend(content string) error {
 
 func send(to []string, subject string, body string) error {
 	from := global.GVA_CONFIG.Email.From
-	nickname := global.GVA_CONFIG.Email.Nickname
 	secret := global.GVA_CONFIG.Email.Secret
 	host := global.GVA_CONFIG.Email.Host
 	port := global.GVA_CONFIG.Email.Port
-	isSSL := global.GVA_CONFIG.Email.IsSSL
+	smtpServer := fmt.Sprintf("%s:%d", host, port)
 
 	auth := smtp.PlainAuth("", from, secret, host)
-	e := email.NewEmail()
-	if nickname != "" {
-		e.From = fmt.Sprintf("%s <%s>", nickname, from)
-	} else {
-		e.From = from
+	tlsConfig := &tls.Config{
+		InsecureSkipVerify: true,
+		ServerName:         host,
 	}
-	e.To = to
-	e.Subject = subject
-	e.HTML = []byte(body)
-	var err error
-	hostAddr := fmt.Sprintf("%s:%d", host, port)
-	if isSSL {
-		err = e.SendWithTLS(hostAddr, auth, &tls.Config{ServerName: host})
-	} else {
-		err = e.Send(hostAddr, auth)
+	conn, err := tls.Dial("tcp", smtpServer, tlsConfig)
+	if err != nil {
+		return fmt.Errorf("dial err: %v", err)
 	}
-	return err
+	defer conn.Close()
+
+	c, err := smtp.NewClient(conn, host)
+	if err != nil {
+		return fmt.Errorf("smtp client err: %v", err)
+	}
+	defer c.Quit()
+
+	if err = c.Auth(auth); err != nil {
+		return fmt.Errorf("auth err: %v", err)
+	}
+
+	if err = c.Mail(from); err != nil {
+		return fmt.Errorf("mail err: %v", err)
+	}
+	if err = c.Rcpt(to[0]); err != nil {
+		return fmt.Errorf("rcpt err: %v", err)
+	}
+
+	w, err := c.Data()
+	if err != nil {
+		return fmt.Errorf("data err: %v", err)
+	}
+	defer w.Close()
+
+	msg := []byte("From: Sender Name <" + from + ">\r\n" +
+		"To: " + to[0] + "\r\n" +
+		"Subject: " + subject + "\r\n" +
+		"\r\n" +
+		body + "\r\n")
+	_, err = w.Write([]byte(msg))
+	if err != nil {
+		return fmt.Errorf("write body err: %v", err)
+	}
+	return nil
 }

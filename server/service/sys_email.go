@@ -5,8 +5,8 @@ import (
 )
 
 func EmailTest() (err error) {
-	subject := "test"
-	body := "test"
+	subject := "[GShark] email test"
+	body := "This is a test email from GShark to verify the email send function."
 	err = utils.EmailSend(subject, body)
 	return err
 }

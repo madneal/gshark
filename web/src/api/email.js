@@ -8,7 +8,7 @@ import service from '@/utils/request'
 // @Router /email/emailTest [post]
 export const emailTest = (data) => {
     return service({
-        url: "/email/emailTest",
+        url: "/system/emailTest",
         method: 'post',
         data
     })
@@ -16,7 +16,7 @@ export const emailTest = (data) => {
 
 export const botTest = () => {
     return service({
-        url: "/email/botTest",
+        url: "/system/botTest",
         method: "get"
     })
 }
