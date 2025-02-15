@@ -97,9 +97,12 @@ func StartAITask(c *gin.Context) {
 			global.GVA_LOG.Info(content)
 			global.GVA_LOG.Info(ans)
 			if strings.ToLower(ans) == "yes" {
-				service.UpdateSearchResultById(int(result.ID), 1)
+				err = service.UpdateSearchResultById(int(result.ID), 1)
 			} else {
-				service.UpdateSearchResultById(int(result.ID), 2)
+				err = service.UpdateSearchResultById(int(result.ID), 2)
+			}
+			if err != nil {
+				global.GVA_LOG.Error("UpdateSearchResultByIds error", zap.Any("err", err))
 			}
 		}
 	}()

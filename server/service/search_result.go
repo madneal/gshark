@@ -41,7 +41,8 @@ func UpdateSearchResult(updateReq request.UpdateReq) (err error) {
 }
 
 func UpdateSearchResultById(id, status int) (err error) {
-	err = global.GVA_DB.UpdateColumn("status", status).Where("id = ?", id).Error
+	err = global.GVA_DB.Table("search_result").Where("id = ?", id).
+		UpdateColumn("status", status).Error
 	return err
 }
 
