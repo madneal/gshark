@@ -38,7 +38,6 @@ func Routers() *gin.Engine {
 		router.InitSysDictionaryRouter(PrivateGroup)       // 字典管理
 		router.InitSysOperationRecordRouter(PrivateGroup)  // 操作记录
 		router.InitSysDictionaryDetailRouter(PrivateGroup) // 字典详情管理
-		router.InitEmailRouter(PrivateGroup)
 		router.InitRuleRouter(PrivateGroup)
 		router.InitTokenRouter(PrivateGroup)
 		router.InitSearchResultRouter(PrivateGroup)

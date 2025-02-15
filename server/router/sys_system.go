@@ -9,9 +9,11 @@ import (
 func InitSystemRouter(Router *gin.RouterGroup) {
 	SystemRouter := Router.Group("system").Use(middleware.OperationRecord())
 	{
-		SystemRouter.POST("getSystemConfig", api.GetSystemConfig) // 获取配置文件内容
-		SystemRouter.POST("setSystemConfig", api.SetSystemConfig) // 设置配置文件内容
-		SystemRouter.POST("getServerInfo", api.GetServerInfo)     // 获取服务器信息
-		SystemRouter.POST("reloadSystem", api.ReloadSystem)       // 重启服务
+		SystemRouter.POST("getSystemConfig", api.GetSystemConfig)
+		SystemRouter.POST("setSystemConfig", api.SetSystemConfig)
+		SystemRouter.POST("getServerInfo", api.GetServerInfo)
+		SystemRouter.POST("reloadSystem", api.ReloadSystem)
+		SystemRouter.POST("emailTest", api.EmailTest) // 发送测试邮件
+		SystemRouter.GET("botTest", api.BotTest)
 	}
 }
