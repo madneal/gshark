@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/madneal/gshark/global"
-	"go.uber.org/zap"
 	"io"
 	"net/http"
 )
@@ -31,12 +30,12 @@ type Choice struct {
 func Question(command, question string) string {
 	result, err := callChatCompletion(command, question)
 	if err != nil {
-		global.GVA_LOG.Error("callChatCompletion failed", zap.Error(err))
+		//global.GVA_LOG.Error("callChatCompletion failed", zap.Error(err))
 		return ""
 	}
 	answer, err := handleResponse(result)
 	if err != nil {
-		global.GVA_LOG.Error("handleResponse failed", zap.Error(err))
+		//global.GVA_LOG.Error("handleResponse failed", zap.Error(err))
 		return ""
 	}
 	return answer
