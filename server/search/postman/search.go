@@ -9,7 +9,7 @@ import (
 	"github.com/madneal/gshark/model"
 	"github.com/madneal/gshark/service"
 	"go.uber.org/zap"
-	"io/ioutil"
+	"io"
 	"math"
 	"net/http"
 	"time"
@@ -93,15 +93,13 @@ func RunTask() {
 }
 
 func Search(rules *[]model.Rule) {
-	postmanClient := GetPostmanClient()
 	for _, rule := range *rules {
-		//postmanClient.SearchByType(rule.Content, "collection")
-		postmanClient.SearchByType(rule.Content, "request")
+		SearchByType(rule.Content, "request")
 	}
 }
 
-func (postmanClient *Client) SearchByType(keyword, searchType string) {
-	resList, err := postmanClient.SearchAPI(keyword, searchType)
+func SearchByType(keyword, searchType string) {
+	resList, err := SearchAPI(keyword, searchType)
 	if err != nil {
 		global.GVA_LOG.Error("postman SearchAPI err", zap.Error(err))
 		return
@@ -147,16 +145,16 @@ func (res *PostmanRes) CovertToSearchResult(keyword string) *[]model.SearchResul
 	return &results
 }
 
-func (client *Client) SearchAPI(rule, searchType string) (*[]PostmanRes, error) {
+func SearchAPI(rule, searchType string) (*[]PostmanRes, error) {
 	page := 0
 	resList := make([]PostmanRes, 0)
 	var err error
 	for {
 		color.Infof("search for the rule %s of page %d\n", rule, page)
-		body := fmt.Sprintf(`{"service":"search","method":"POST","path":"/search-all","body":{"queryIndices":["runtime.%s"],"queryText":"%s","size":100,"from": %d, "mergeEntities":true}}`,
+		body := fmt.Sprintf(`{"service":"search","method":"POST","path":"/search-all",
+		"body":{"queryIndices":["runtime.%s"],"queryText":"%s","size":25,"from": %d, "mergeEntities":true}}`,
 			searchType, rule, page)
 		req, err := http.NewRequest("POST", postmanUrl, bytes.NewBufferString(body))
-		req.Header.Set("Cookie", "postman.sid="+client.sid)
 		req.Header.Set("Host", "www.postman.com")
 		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0")
@@ -166,7 +164,7 @@ func (client *Client) SearchAPI(rule, searchType string) (*[]PostmanRes, error) 
 		httpClient := http.Client{}
 		res, err := httpClient.Do(req)
 
-		resBody, err := ioutil.ReadAll(res.Body)
+		resBody, err := io.ReadAll(res.Body)
 		if err != nil {
 			global.GVA_LOG.Error("postman ReadAll err", zap.Error(err))
 			return &resList, err
@@ -188,21 +186,4 @@ func (client *Client) SearchAPI(rule, searchType string) (*[]PostmanRes, error) 
 		}
 	}
 	return &resList, err
-}
-
-func GetPostmanClient() *Client {
-	var sid string
-	err, tokens := service.ListTokenByType("postman")
-	if err != nil {
-		global.GVA_LOG.Error("ListTokenByType postman err", zap.Error(err))
-		return nil
-	}
-	if len(tokens) > 0 {
-		sid = tokens[0].Content
-	}
-
-	client := Client{
-		sid: sid,
-	}
-	return &client
 }

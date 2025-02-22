@@ -14,9 +14,8 @@ func TestRunTask(t *testing.T) {
 }
 
 func TestClient_SearchAPI(t *testing.T) {
-	InitialDataBase()
-	client := GetPostmanClient()
-	res, err := client.SearchAPI("mihoyo", "collection")
+	//InitialDataBase()
+	res, err := SearchAPI("mihoyo", "collection")
 	if err != nil {
 		fmt.Println(err)
 	}
