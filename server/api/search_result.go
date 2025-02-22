@@ -92,7 +92,7 @@ func StartAITask(c *gin.Context) {
 			}
 			ans := service.Question("You are a security operation engineer, you are expected to assistant."+
 				"please judge if the below content contains sensitive information,including password, credentials,token,etc. "+
-				"The sensitive information could be exploited. Just answer yes or no.",
+				"The sensitive information could be exploited. Just answer yes or no",
 				content)
 			global.GVA_LOG.Info(content)
 			global.GVA_LOG.Info(ans)

@@ -12,6 +12,7 @@ import (
 type Message struct {
 	Role    string `json:"role"`
 	Content string `json:"content"`
+	Reason  string `json:"reasoning_content"`
 }
 
 type ChatCompletionRequest struct {
