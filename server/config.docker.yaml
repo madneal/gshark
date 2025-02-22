@@ -41,9 +41,11 @@ system:
   db-type: mysql
   oss-type: local
   use-multipoint: false
-  gitlab-base: ""
+  gitlab-base:
+  ai_server:
+  ai_token:
 wechat:
-  url: ""
+  url:
   enable: false
 zap:
   level: info

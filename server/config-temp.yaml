@@ -30,10 +30,10 @@ mysql:
   max-idle-conns: 0
   max-open-conns: 0
   log-mode: false
-  log-zap: ""
+  log-zap:
 search:
-  gobuster-filepath: ""
-  subdomain-wordlist: ""
+  gobuster-filepath:
+  subdomain-wordlist:
   searchnum: 10
 system:
   env: public
@@ -41,11 +41,11 @@ system:
   db-type: mysql
   oss-type: local
   use-multipoint: false
-  gitlab-base: ""
-  ai_server: ""
-  ai_token: ""
+  gitlab-base:
+  ai_server:
+  ai_token:
 wechat:
-  url: ""
+  url:
   enable: false
 zap:
   level: info
