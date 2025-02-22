@@ -113,7 +113,7 @@
       <el-table-column label="ID" prop="ID" width="50"></el-table-column>
 
       <el-table-column label="文件" width="180">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           <a :href="scope.row.url" target="_blank" style="color: #409EFF;">
             {{ scope.row.repo + "/" + scope.row.path}}
           </a>
@@ -121,7 +121,7 @@
       </el-table-column>
 
       <el-table-column label="匹配内容" prop="matches" width="550">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           <pre v-if="scope.row.text_matches">{{ scope.row.text_matches | fragmentsFilter }}</pre>
           <pre v-if="scope.row.matches">{{ scope.row.matches }}</pre>
         </template>
@@ -136,13 +136,13 @@
       <el-table-column label="二级关键词" prop="sec_keyword" width="100"></el-table-column>
 
       <el-table-column label="日期" width="100">
-        <template slot-scope="scope">{{
+        <template v-slot="scope">{{
           scope.row.CreatedAt | formatDate
         }}</template>
       </el-table-column>
 
       <el-table-column label="状态" prop="status" width="80">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           {{ scope.row.status | statusFilter }}
         </template>
       </el-table-column>
