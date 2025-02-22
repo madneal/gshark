@@ -29,7 +29,7 @@ func main() {
 		"config file")
 	serveCmd := &cobra.Command{
 		Use:   "serve",
-		Short: "Start the gshark server",
+		Short: "Start the GShark server",
 		Long:  "Start the GShark web server, supports for the management platform",
 		Run: func(cmd *cobra.Command, args []string) {
 			core.RunServer()
