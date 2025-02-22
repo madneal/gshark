@@ -148,9 +148,8 @@
       </el-table-column>
 
       <el-table-column label="Review">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           <el-button
-            class="table-button"
             @click="updateSearchResult(scope.row, 1)"
             size="small"
             type="primary"
@@ -161,7 +160,7 @@
           <el-button
             type="danger"
             icon="el-icon-delete"
-            size="mini"
+            size="small"
             @click="updateSearchResult(scope.row, 2)"
             :disabled="scope.row.status === 2 ? true : false"
             >忽略</el-button
