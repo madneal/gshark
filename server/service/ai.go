@@ -98,6 +98,5 @@ func handleResponse(respBody []byte) (string, error) {
 		return "", fmt.Errorf("no choices found in response")
 	}
 
-	// 返回第一个 choice 的 message content
 	return res.Choices[0].Message.Content, nil
 }

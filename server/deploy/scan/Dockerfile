@@ -1,4 +1,4 @@
-FROM golang:1.20 as builder
+FROM golang:1.22 as builder
 
 ENV GSHARK_CONFIG=config.docker.yaml
 WORKDIR /go/src/github.com/madneal/gshark/server

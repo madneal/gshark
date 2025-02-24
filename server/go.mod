@@ -1,8 +1,6 @@
 module github.com/madneal/gshark
 
-go 1.21
-
-toolchain go1.22.5
+go 1.22
 
 require (
 	github.com/casbin/casbin v1.9.1
@@ -17,7 +15,6 @@ require (
 	github.com/google/go-github/v57 v57.0.0
 	github.com/google/uuid v1.6.0
 	github.com/gookit/color v1.3.1
-	github.com/jordan-wright/email v0.0.0-20200824153738-3f5bafa1cd84
 	github.com/lestrrat-go/file-rotatelogs v2.3.0+incompatible
 	github.com/mojocn/base64Captcha v1.3.6
 	github.com/parnurzeal/gorequest v0.2.16
