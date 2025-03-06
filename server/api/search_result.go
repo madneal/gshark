@@ -13,6 +13,7 @@ import (
 	"github.com/madneal/gshark/service"
 	"go.uber.org/zap"
 	"net/http"
+	"strconv"
 	"strings"
 )
 
@@ -99,6 +100,7 @@ func StartAITask(c *gin.Context) {
 				"please judge if the below content contains sensitive information,including password, credentials,token,etc. "+
 				"The sensitive information could be exploited. Just answer yes or no",
 				content)
+			global.GVA_LOG.Info(strconv.Itoa(int(result.ID)))
 			global.GVA_LOG.Info(content)
 			global.GVA_LOG.Info(ans)
 			if strings.ToLower(ans) == "yes" {
