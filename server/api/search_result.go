@@ -81,15 +81,20 @@ func StartAITask(c *gin.Context) {
 		}
 		for _, result := range list {
 			textMatches := make([]model.TextMatch, 0)
-			err = json.Unmarshal(result.TextMatchesJson, &textMatches)
-			if err != nil {
-				global.GVA_LOG.Error("json unmarshal error", zap.Error(err), zap.Any("result", result))
-				continue
-			}
 			var content string
-			for _, textMatch := range textMatches {
-				content += *textMatch.Fragment + "\n"
+			if json.Valid(result.TextMatchesJson) {
+				err = json.Unmarshal(result.TextMatchesJson, &textMatches)
+				if err != nil {
+					global.GVA_LOG.Error("json unmarshal error", zap.Error(err), zap.Any("result", result))
+					continue
+				}
+				for _, textMatch := range textMatches {
+					content += *textMatch.Fragment + "\n"
+				}
+			} else {
+				content = string(result.TextMatchesJson)
 			}
+
 			ans := service.Question("You are a security operation engineer, you are expected to assistant."+
 				"please judge if the below content contains sensitive information,including password, credentials,token,etc. "+
 				"The sensitive information could be exploited. Just answer yes or no",
