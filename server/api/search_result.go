@@ -95,6 +95,9 @@ func StartAITask(c *gin.Context) {
 			} else {
 				content = string(result.TextMatchesJson)
 			}
+			if content == "" {
+				content = result.Matches
+			}
 
 			ans := service.Question("You are a security operation engineer, you are expected to assistant."+
 				"please judge if the below content contains sensitive information,including password, credentials,token,etc. "+
