@@ -2,6 +2,7 @@
 /releases
 /mysql
 /server/gshark
+**/log/
 .idea
 *.exe
 *.exe*
