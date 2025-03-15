@@ -18,7 +18,7 @@ func TestSearch(t *testing.T) {
 	}
 	rules := make([]model.Rule, 0)
 	rules = append(rules, model.Rule{
-		Content: "mihoyo",
+		Content: "meituan",
 	})
 	Search(rules)
 }

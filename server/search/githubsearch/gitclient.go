@@ -12,24 +12,26 @@ import (
 	"github.com/madneal/gshark/service"
 )
 
-var (
-	GithubClients map[string]*Client
-	GithubClient  *Client
-)
-
 type Client struct {
 	Client *github.Client
 	Token  string
 }
 
-func InitGithubClient(token string) *Client {
+func InitClient(token string) *Client {
+	githubClient := InitGithubClient(token)
+	return &Client{
+		Client: githubClient,
+		Token:  token,
+	}
+}
+
+func InitGithubClient(token string) *github.Client {
 	httpTransport := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
 	httpClient := &http.Client{Transport: httpTransport}
 	gitClient := github.NewClient(httpClient).WithAuthToken(token)
-	client := NewGitClient(gitClient, token)
-	return client
+	return gitClient
 }
 
 func GetGithubClient() (*Client, error) {
@@ -37,23 +39,19 @@ func GetGithubClient() (*Client, error) {
 	if err != nil {
 		return nil, err
 	}
-	client := InitGithubClient(tokens[0].Content)
+	client := InitClient(tokens[0].Content)
 	if client == nil {
 		err = errors.New("github Client initial failed, please add token")
 	}
 	return client, err
 }
 
-func NewGitClient(GithubClient *github.Client, token string) *Client {
-	return &Client{Client: GithubClient, Token: token}
-}
-
-func (c *Client) NextClient() *Client {
+func (c *Client) NextClient() (*github.Client, string) {
 	currentToken := c.Token
 	err, tokens := service.ListTokenByType("github")
 	if err != nil {
 		global.GVA_LOG.Error("github Client initial failed, please add token", zap.Error(err))
-		return nil
+		return nil, ""
 	}
 	var currentIndex int
 	for index, token := range tokens {
@@ -63,7 +61,7 @@ func (c *Client) NextClient() *Client {
 	}
 	nextIndex := (currentIndex + 1) % len(tokens)
 	nextToken := tokens[nextIndex]
-	return InitGithubClient(nextToken.Content)
+	return InitGithubClient(nextToken.Content), nextToken.Content
 }
 
 func (c *Client) GetUserInfo(username string) (*github.User, *github.Response, error) {

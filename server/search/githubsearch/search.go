@@ -121,7 +121,7 @@ func (c *Client) SearchCode(query string) ([]*github.CodeSearchResult, error) {
 	opt := &github.SearchOptions{TextMatch: true, ListOptions: listOpt}
 	global.GVA_LOG.Info("Github scan with the query:", zap.Any("github", query))
 	for {
-		result, nextPage := searchCodeByOpt(c, ctx, query, *opt)
+		result, nextPage := c.searchCodeByOpt(ctx, query, *opt)
 		if result != nil {
 			allSearchResult = append(allSearchResult, result)
 		}
@@ -174,13 +174,15 @@ func BuildQuery(query string) (string, error) {
 	return builtQuery, err
 }
 
-func searchCodeByOpt(c *Client, ctx context.Context, query string, opt github.SearchOptions) (*github.CodeSearchResult,
+func (c *Client) searchCodeByOpt(ctx context.Context, query string, opt github.SearchOptions) (*github.CodeSearchResult,
 	int) {
 	result, res, err := c.Client.Search.Code(ctx, query, &opt)
 	// https://docs.github.com/en/rest/guides/best-practices-for-integrators#dealing-with-abuse-rate-limits
 	if res.Rate.Remaining < 3 {
 		color.Info.Print("the remaining is less than 3, switch to another token\n")
-		c = c.NextClient()
+		newGithubClient, newToken := c.NextClient()
+		c.Client = newGithubClient
+		c.Token = newToken
 	}
 	var rateLimitError *github.RateLimitError
 	if errors.As(err, &rateLimitError) {
