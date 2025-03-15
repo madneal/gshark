@@ -11,8 +11,8 @@ import (
 )
 
 func init() {
-	global.GVA_VP = core.Viper()
-	global.GVA_LOG = core.Zap()
+	global.GVA_VP = initialize.Viper()
+	global.GVA_LOG = initialize.Zap()
 	global.GVA_DB = initialize.Gorm()
 }
 

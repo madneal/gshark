@@ -3,7 +3,7 @@ package core
 import (
 	"fmt"
 	"github.com/madneal/gshark/global"
-	"github.com/madneal/gshark/initialize"
+	"github.com/madneal/gshark/router"
 	"go.uber.org/zap"
 )
 
@@ -12,7 +12,7 @@ type server interface {
 }
 
 func RunServer() {
-	Router := initialize.Routers()
+	Router := router.Routers()
 	// Router.Static("/form-generator", "./resource/page")
 
 	address := fmt.Sprintf(":%d", global.GVA_CONFIG.System.Addr)
