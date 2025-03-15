@@ -1,39 +1,24 @@
 package githubsearch
 
 import (
-	"context"
 	"fmt"
-	"github.com/google/go-github/v57/github"
+	"github.com/madneal/gshark/global"
+	"github.com/madneal/gshark/initialize"
 	"github.com/madneal/gshark/model"
-	"os"
 	"testing"
-	"time"
 )
 
 func TestSearch(t *testing.T) {
-	token := os.Getenv("TOKEN")
-	tokens := make([]model.Token, 0)
-	tokens = append(tokens, model.Token{
-		Content: token,
-	})
-	githubClients := InitGithubClients(tokens)
-	ctx := context.Background()
-	for _, client := range githubClients {
-		i := 10
-		for i > 0 {
-			_, resp, err := client.Client.Search.Code(ctx, "repo:madneal/gshark security", &github.SearchOptions{
-				ListOptions: github.ListOptions{
-					Page:    1,
-					PerPage: 100,
-				},
-			})
-			fmt.Println(resp.StatusCode)
-			time.Sleep(100 * time.Second)
-			if err != nil {
-				fmt.Println(err)
-			}
-			i--
-		}
+	global.GVA_VP = initialize.Viper("../../config.yaml") // 初始化Viper
+	global.GVA_LOG = initialize.Zap()
+	global.GVA_DB = initialize.Gorm()
+	if global.GVA_DB == nil {
+		fmt.Println("init db failed")
+		return
 	}
-	fmt.Println(token)
+	rules := make([]model.Rule, 0)
+	rules = append(rules, model.Rule{
+		Content: "mihoyo",
+	})
+	Search(rules)
 }

@@ -119,7 +119,7 @@ func (c *Client) SearchCode(query string) ([]*github.CodeSearchResult, error) {
 	ctx := context.Background()
 	listOpt := github.ListOptions{PerPage: 100}
 	opt := &github.SearchOptions{TextMatch: true, ListOptions: listOpt}
-	//global.GVA_LOG.Info("Github scan with the query:", zap.Any("github", query))
+	global.GVA_LOG.Info("Github scan with the query:", zap.Any("github", query))
 	for {
 		result, nextPage := searchCodeByOpt(c, ctx, query, *opt)
 		if result != nil {
@@ -177,19 +177,18 @@ func BuildQuery(query string) (string, error) {
 func searchCodeByOpt(c *Client, ctx context.Context, query string, opt github.SearchOptions) (*github.CodeSearchResult,
 	int) {
 	result, res, err := c.Client.Search.Code(ctx, query, &opt)
-	if _, ok := err.(*github.RateLimitError); ok {
-		global.GVA_LOG.Warn("Trigger the github rate limit, ready to sleep 5 minutes")
-		time.Sleep(5 * time.Minute)
+	// https://docs.github.com/en/rest/guides/best-practices-for-integrators#dealing-with-abuse-rate-limits
+	if res.Rate.Remaining < 3 {
+		color.Info.Print("the remaining is less than 3, switch to another token\n")
+		c = c.NextClient()
 	}
-	if err == nil {
-		// https://docs.github.com/en/rest/guides/best-practices-for-integrators#dealing-with-abuse-rate-limits
+	var rateLimitError *github.RateLimitError
+	if errors.As(err, &rateLimitError) {
+		global.GVA_LOG.Warn("Trigger the github rate limit")
 		resetTimeStamp := res.Rate.Reset
-		time.Sleep(resetTimeStamp.Sub(time.Now()))
-		time.Sleep(5 * time.Second)
-	}
-
-	if res != nil && res.Rate.Remaining < 10 {
-		time.Sleep(45 * time.Second)
+		sleepDuration := resetTimeStamp.Sub(time.Now()) + 10*time.Second
+		global.GVA_LOG.Warn(fmt.Sprintf("Ready to sleep for %v", sleepDuration))
+		time.Sleep(sleepDuration)
 	}
 
 	if err == nil {

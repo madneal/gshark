@@ -5,7 +5,8 @@ import (
 	"crypto/tls"
 	"errors"
 	"github.com/google/go-github/v57/github"
-	"github.com/madneal/gshark/model"
+	"github.com/madneal/gshark/global"
+	"go.uber.org/zap"
 	"net/http"
 
 	"github.com/madneal/gshark/service"
@@ -21,42 +22,48 @@ type Client struct {
 	Token  string
 }
 
-func InitGithubClients(tokens []model.Token) map[string]*Client {
-	githubClients := make(map[string]*Client)
+func InitGithubClient(token string) *Client {
 	httpTransport := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
 	httpClient := &http.Client{Transport: httpTransport}
-	for _, token := range tokens {
-		githubToken := token.Content
-		if githubToken != "" {
-			gitClient := github.NewClient(httpClient).WithAuthToken(githubToken)
-			githubClients[token.Content] = NewGitClient(gitClient, githubToken)
-		}
-	}
-	return githubClients
+	gitClient := github.NewClient(httpClient).WithAuthToken(token)
+	client := NewGitClient(gitClient, token)
+	return client
 }
 
 func GetGithubClient() (*Client, error) {
-	var c *Client
 	err, tokens := service.ListTokenByType("github")
 	if err != nil {
-		return c, err
+		return nil, err
 	}
-	clients := InitGithubClients(tokens)
-
-	for _, client := range clients {
-		c = client
-		break
-	}
-	if c == nil {
+	client := InitGithubClient(tokens[0].Content)
+	if client == nil {
 		err = errors.New("github Client initial failed, please add token")
 	}
-	return c, err
+	return client, err
 }
 
 func NewGitClient(GithubClient *github.Client, token string) *Client {
 	return &Client{Client: GithubClient, Token: token}
+}
+
+func (c *Client) NextClient() *Client {
+	currentToken := c.Token
+	err, tokens := service.ListTokenByType("github")
+	if err != nil {
+		global.GVA_LOG.Error("github Client initial failed, please add token", zap.Error(err))
+		return nil
+	}
+	var currentIndex int
+	for index, token := range tokens {
+		if token.Content == currentToken {
+			currentIndex = index
+		}
+	}
+	nextIndex := (currentIndex + 1) % len(tokens)
+	nextToken := tokens[nextIndex]
+	return InitGithubClient(nextToken.Content)
 }
 
 func (c *Client) GetUserInfo(username string) (*github.User, *github.Response, error) {
@@ -78,26 +85,6 @@ func (c *Client) GetUserRepos(username string) ([]*github.Repository, *github.Re
 	ctx := context.Background()
 	return c.Client.Repositories.List(ctx, username, nil)
 }
-
-//func (c *Client) GetUsersRepos(users []*github.User) map[string][]*github.Repository {
-//	result := make(map[string][]*github.Repository)
-//	for _, u := range users {
-//		repos, resp, _ := c.GetUserRepos(*u.Login)
-//		model.UpdateRate(c.Token, resp)
-//		result[*u.Login] = repos
-//	}
-//	return result
-//}
-//
-//func (c *Client) GetStrUsersRepos(users []string) map[string][]*github.Repository {
-//	result := make(map[string][]*github.Repository)
-//	for _, u := range users {
-//		repos, resp, _ := c.GetUserRepos(u)
-//		model.UpdateRate(c.Token, resp)
-//		result[u] = repos
-//	}
-//	return result
-//}
 
 func (c *Client) GetUserOrgs(username string) ([]*github.Organization, *github.Response, error) {
 	ctx := context.Background()
