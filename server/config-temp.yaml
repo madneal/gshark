@@ -44,6 +44,7 @@ system:
   gitlab-base:
   ai_server:
   ai_token:
+  model:
 wechat:
   url:
   enable: false

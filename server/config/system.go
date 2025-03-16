@@ -9,4 +9,5 @@ type System struct {
 	GitlabBase    string `mapstructure:"gitlab-base" yaml:"gitlab-base"`
 	AiServer      string `mapstructure:"ai_server" yaml:"ai_server"`
 	AiToken       string `mapstructure:"ai_token" yaml:"ai_token"`
+	Model         string `mapstructure:"model" json:"model" yaml:"model"`
 }

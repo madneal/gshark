@@ -45,7 +45,7 @@ func Question(command, question string) string {
 func callChatCompletion(command, question string) ([]byte, error) {
 	var result []byte
 	requestData := ChatCompletionRequest{
-		Model: "deepseek-r1",
+		Model: global.GVA_CONFIG.System.Model,
 		Messages: []Message{
 			{
 				Role:    "system",
