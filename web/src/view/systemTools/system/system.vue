@@ -9,22 +9,6 @@
       <el-form-item label="端口值">
         <el-input v-model.number="config.system.addr"></el-input>
       </el-form-item>
-      <el-form-item label="数据库类型">
-        <el-select v-model="config.system.dbType">
-          <el-option value="mysql"></el-option>
-          <el-option value="sqlite"></el-option>
-          <el-option value="sqlserver"></el-option>
-          <el-option value="postgresql"></el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="Oss类型">
-        <el-select v-model="config.system.ossType">
-          <el-option value="local"></el-option>
-          <el-option value="qiniu"></el-option>
-          <el-option value="tencent-cos"></el-option>
-          <el-option value="aliyun-oss"></el-option>
-        </el-select>
-      </el-form-item>
       <el-form-item label="数据初始化">
         <el-checkbox v-model="config.system.needInitData">开启</el-checkbox>
       </el-form-item>
