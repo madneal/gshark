@@ -10,29 +10,31 @@ The project is based on Go and Vue to build a management system for sensitive in
 
 For the usage of GShark, please refer to the [wiki](https://github.com/madneal/gshark/wiki).
 
-# Features
+# Key Features
 
-* Support multiple platforms, such as GitLab, GitHub, Searchcode, and Postman
-* Flexible menu and API permission settings
-* Flexible rules and filtering rules
-* Utilize gobuster for subdomain brute force
-* Easy-to-use management system
-* Support for Docker deployment
+* 🌐 Multi-Platform Support: GitHub, GitLab, Searchcode, Postman, and more* 
+* 🔍 Flexible Rule Management: Custom scanning rules and filtering with whitelist/blacklist support*
+* 🔑 Fine-grained Access Control: Configurable menu and API permissions
+* 🔄 Subdomain Discovery: Integrated gobuster for subdomain enumeration
+* 🚀 Docker Deployment: Containerized deployment for easy setup
+* 📊 Visual Management Interface: Intuitive web interface for task and result management
 
 # Quick start
 
-## Docker
+## Docker Deployment
 
 ```
+# Clone the repository
 git clone https://github.com/madneal/gshark
+
 cd gshark
+
+# Build and start the container
 docker-compose build && docker-compose up 
 ```
 
 > [!IMPORTANT]
-> Before the MySQL database initial, the scanner container will exit.
-
-> Need to restart the scanner after the MySQL database initial.
+> Before the MySQL database initial, the scanner container will exit. Need to restart the scanner after the MySQL database initial.
 
 ## Manual Deployment
 
@@ -41,7 +43,7 @@ docker-compose build && docker-compose up
 * Nginx
 * MySQL(version above **8.0**)
 
-It is recommended to deploy the Front-End project using nginx. Place the `dist` folder in `/var/www/html`, and adjust the `nginx.conf` file (/etc/nginx/nginx.conf for Linux) to set up reverse proxy for the backend service. For detailed deployment tutorials, you can watch videos on [bilibili](https://www.bilibili.com/video/BV1Py4y1s7ap/) or [youtube](https://youtu.be/bFrKm5t4M54). For deployment on Windows, refer to [this link](https://www.bilibili.com/video/BV1CA411L7ux/).
+It is recommended to deploy the Front-End project using Nginx. Place the `dist` folder in `/var/www/html`, and adjust the `nginx.conf` file (/etc/nginx/nginx.conf for Linux) to set up reverse proxy for the backend service. For detailed deployment tutorials, you can watch videos on [bilibili](https://www.bilibili.com/video/BV1Py4y1s7ap/) or [youtube](https://youtu.be/bFrKm5t4M54). For deployment on Windows, refer to [this link](https://www.bilibili.com/video/BV1CA411L7ux/).
 
 ### Nginx
 
