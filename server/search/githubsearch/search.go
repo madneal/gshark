@@ -177,29 +177,41 @@ func BuildQuery(query string) (string, error) {
 func (c *Client) searchCodeByOpt(ctx context.Context, query string, opt github.SearchOptions) (*github.CodeSearchResult,
 	int) {
 	result, res, err := c.Client.Search.Code(ctx, query, &opt)
-	// https://docs.github.com/en/rest/guides/best-practices-for-integrators#dealing-with-abuse-rate-limits
+
+	// Handle error first
+	if err != nil {
+		var rateLimitError *github.RateLimitError
+		if errors.As(err, &rateLimitError) {
+			global.GVA_LOG.Warn("Trigger the github rate limit")
+			if res != nil {
+				resetTimeStamp := res.Rate.Reset
+				sleepDuration := resetTimeStamp.Sub(time.Now()) + 10*time.Second
+				global.GVA_LOG.Warn(fmt.Sprintf("Ready to sleep for %v", sleepDuration))
+				time.Sleep(sleepDuration)
+			}
+		} else {
+			global.GVA_LOG.Error("Search error", zap.Any("github search error", err))
+			time.Sleep(30 * time.Second)
+			return nil, 0
+		}
+	}
+
+	// Check if response is nil before accessing its fields
+	if res == nil {
+		global.GVA_LOG.Error("Received nil response from GitHub API")
+		return nil, 0
+	}
+
+	// Now safe to access res.Rate
 	if res.Rate.Remaining < 3 {
 		color.Info.Print("the remaining is less than 3, switch to another token\n")
 		newGithubClient, newToken := c.NextClient()
 		c.Client = newGithubClient
 		c.Token = newToken
 	}
-	var rateLimitError *github.RateLimitError
-	if errors.As(err, &rateLimitError) {
-		global.GVA_LOG.Warn("Trigger the github rate limit")
-		resetTimeStamp := res.Rate.Reset
-		sleepDuration := resetTimeStamp.Sub(time.Now()) + 10*time.Second
-		global.GVA_LOG.Warn(fmt.Sprintf("Ready to sleep for %v", sleepDuration))
-		time.Sleep(sleepDuration)
-	}
 
-	if err == nil {
-		global.GVA_LOG.Info("Search for "+query, zap.Any("remaining", res.Rate.Remaining), zap.Any("nextPage",
-			res.NextPage), zap.Any("lastPage", res.LastPage))
-	} else {
-		global.GVA_LOG.Error("Search error", zap.Any("github search error", err))
-		time.Sleep(30 * time.Second)
-		return nil, 0
-	}
+	global.GVA_LOG.Info("Search for "+query, zap.Any("remaining", res.Rate.Remaining), zap.Any("nextPage",
+		res.NextPage), zap.Any("lastPage", res.LastPage))
+
 	return result, res.NextPage
 }
