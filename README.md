@@ -4,6 +4,10 @@
    <p align="center">Scan for sensitive information easily and effectively.</p>
 </p>
 
+<div align="center">
+   <a href="README_CN.md">🇨🇳 中文版</a> | <strong>🇺🇸 English</strong>
+</div>
+
 # GShark [![Go Report Card](https://goreportcard.com/badge/github.com/madneal/gshark)](https://goreportcard.com/report/github.com/madneal/gshark)  [![Release](https://github.com/madneal/gshark/actions/workflows/release.yml/badge.svg)](https://github.com/madneal/gshark/actions/workflows/release.yml)
 
 The project is based on Go and Vue to build a management system for sensitive information detection. For the full introduction, please refer to [articles](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI3MjA3MTY3Mw==&action=getalbum&album_id=2376148333116850178#wechat_redirect) and [videos](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI3MjA3MTY3Mw==&action=getalbum&album_id=1834365721464651778#wechat_redirect). For now, all the scans are only targeted to the public environments, not local environments.
