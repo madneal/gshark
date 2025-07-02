@@ -61,7 +61,7 @@ worker_processes  1;
 events {
     worker_connections  1024;
 }
-
+`
 http {
     include       mime.types;
     default_type  application/octet-stream;
