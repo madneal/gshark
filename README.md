@@ -199,13 +199,6 @@ To execute the scan task for GitHub, you need to add a GitHub token for crawl in
 
 [![iR2TMt.md.png](https://s1.ax1x.com/2018/10/31/iR2TMt.md.png)](https://imgchr.com/i/iR2TMt)
 
-#### Postman
-
-Obtain the `postman.sid` cookie:
-
-<img width="653" alt="image" src="https://github.com/madneal/gshark/assets/12164075/7775c8bb-79da-4e2b-b341-3c5b8395a6d0">
-
-
 ### Rule Configuration
 
 For the Github or Gitlab rule, the rule will be matched by the syntax in the corresponding platforms. Directly, you config what you search at GitHub. You can download the rule import template CSV file, then batch import rules.
