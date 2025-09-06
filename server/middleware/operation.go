@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"bytes"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -21,7 +22,7 @@ func OperationRecord() gin.HandlerFunc {
 		var userId int
 		if c.Request.Method != http.MethodGet {
 			var err error
-			body, err = ioutil.ReadAll(c.Request.Body)
+			body, err = io.ReadAll(c.Request.Body)
 			if err != nil {
 				global.GVA_LOG.Error("read body from request error:", zap.Any("err", err))
 			} else {
