@@ -2,16 +2,17 @@ package middleware
 
 import (
 	"bytes"
+	"io/ioutil"
+	"net/http"
+	"strconv"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/model"
 	"github.com/madneal/gshark/model/request"
 	"github.com/madneal/gshark/service"
 	"go.uber.org/zap"
-	"io/ioutil"
-	"net/http"
-	"strconv"
-	"time"
 )
 
 func OperationRecord() gin.HandlerFunc {

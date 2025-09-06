@@ -3,12 +3,13 @@ package initialize
 import (
 	"flag"
 	"fmt"
+	"os"
+
 	"github.com/fsnotify/fsnotify"
 	"github.com/madneal/gshark/config"
 	"github.com/madneal/gshark/global"
 	_ "github.com/madneal/gshark/packfile"
 	"github.com/spf13/viper"
-	"os"
 )
 
 func Viper(path ...string) *viper.Viper {

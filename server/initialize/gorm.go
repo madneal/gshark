@@ -1,13 +1,14 @@
 package initialize
 
 import (
+	"os"
+
 	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/model"
 	"go.uber.org/zap"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
-	"os"
 )
 
 func Gorm() *gorm.DB {

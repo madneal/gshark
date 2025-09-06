@@ -3,14 +3,15 @@ package initialize
 import (
 	"context"
 	"fmt"
-	"github.com/madneal/gshark/global"
-	"go.uber.org/zap"
-	"gorm.io/gorm/logger"
-	"gorm.io/gorm/utils"
 	"io/ioutil"
 	"log"
 	"os"
 	"time"
+
+	"github.com/madneal/gshark/global"
+	"go.uber.org/zap"
+	"gorm.io/gorm/logger"
+	"gorm.io/gorm/utils"
 )
 
 // writer log writer interface

@@ -2,11 +2,10 @@ package middleware
 
 import (
 	"fmt"
+
 	"github.com/gin-gonic/gin"
 	"github.com/unrolled/secure"
 )
-
-// 用https把这个中间件在router里面use一下就好
 
 func LoadTls() gin.HandlerFunc {
 	return func(c *gin.Context) {
