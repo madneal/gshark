@@ -1,10 +1,11 @@
 package source
 
 import (
+	"time"
+
 	"github.com/gookit/color"
 	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/model"
-	"time"
 
 	"gorm.io/gorm"
 )
@@ -73,6 +74,7 @@ var apis = []model.SysApi{
 	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/rule/findRule", "根据ID获取规则", "rule", "GET"},
 	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/rule/getRuleList", "获取规则列表", "rule", "GET"},
 	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/rule/uploadRules", "规则导入", "rule", "POST"},
+	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/rule/switchRuleStatus", "变更规则状态", "rule", "POST"},
 	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/token/createToken", "新增token", "token", "POST"},
 	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/token/deleteToken", "删除token", "token", "DELETE"},
 	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/token/deleteTokenByIds", "批量删除token", "token", "DELETE"},
