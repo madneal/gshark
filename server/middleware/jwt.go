@@ -2,6 +2,9 @@ package middleware
 
 import (
 	"errors"
+	"strconv"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/madneal/gshark/global"
@@ -10,8 +13,6 @@ import (
 	"github.com/madneal/gshark/model/response"
 	"github.com/madneal/gshark/service"
 	"go.uber.org/zap"
-	"strconv"
-	"time"
 )
 
 func JWTAuth() gin.HandlerFunc {
@@ -76,10 +77,10 @@ type JWT struct {
 }
 
 var (
-	TokenExpired     = errors.New("Token is expired")
-	TokenNotValidYet = errors.New("Token not active yet")
-	TokenMalformed   = errors.New("That's not even a token")
-	TokenInvalid     = errors.New("Couldn't handle this token:")
+	TokenExpired     = errors.New("token is expired")
+	TokenNotValidYet = errors.New("token not active yet")
+	TokenMalformed   = errors.New("that's not even a token")
+	TokenInvalid     = errors.New("couldn't handle this token")
 )
 
 func NewJWT() *JWT {
@@ -88,7 +89,6 @@ func NewJWT() *JWT {
 	}
 }
 
-// 创建一个token
 func (j *JWT) CreateToken(claims request.CustomClaims) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString(j.SigningKey)
@@ -99,7 +99,8 @@ func (j *JWT) ParseToken(tokenString string) (*request.CustomClaims, error) {
 		return j.SigningKey, nil
 	})
 	if err != nil {
-		if ve, ok := err.(*jwt.ValidationError); ok {
+		var ve *jwt.ValidationError
+		if errors.As(err, &ve) {
 			if ve.Errors&jwt.ValidationErrorMalformed != 0 {
 				return nil, TokenMalformed
 			} else if ve.Errors&jwt.ValidationErrorExpired != 0 {
