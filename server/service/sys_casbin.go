@@ -2,6 +2,8 @@ package service
 
 import (
 	"errors"
+	"strings"
+
 	"github.com/casbin/casbin/util"
 	"github.com/casbin/casbin/v2"
 	gormadapter "github.com/casbin/gorm-adapter/v3"
@@ -9,14 +11,7 @@ import (
 	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/model"
 	"github.com/madneal/gshark/model/request"
-	"strings"
 )
-
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: UpdateCasbin
-//@description: 更新casbin权限
-//@param: authorityId string, casbinInfos []request.CasbinInfo
-//@return: error
 
 func UpdateCasbin(authorityId string, casbinInfos []request.CasbinInfo) error {
 	ClearCasbin(0, authorityId)
@@ -38,12 +33,6 @@ func UpdateCasbin(authorityId string, casbinInfos []request.CasbinInfo) error {
 	return nil
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: UpdateCasbinApi
-//@description: API更新随动
-//@param: oldPath string, newPath string, oldMethod string, newMethod string
-//@return: error
-
 func UpdateCasbinApi(oldPath string, newPath string, oldMethod string, newMethod string) error {
 	err := global.GVA_DB.Table("casbin_rule").Model(&model.CasbinModel{}).Where("v1 = ? AND v2 = ?", oldPath, oldMethod).Updates(map[string]interface{}{
 		"v1": newPath,
@@ -51,12 +40,6 @@ func UpdateCasbinApi(oldPath string, newPath string, oldMethod string, newMethod
 	}).Error
 	return err
 }
-
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: GetPolicyPathByAuthorityId
-//@description: 获取权限列表
-//@param: authorityId string
-//@return: pathMaps []request.CasbinInfo
 
 func GetPolicyPathByAuthorityId(authorityId string) (pathMaps []request.CasbinInfo) {
 	e := Casbin()
@@ -70,23 +53,12 @@ func GetPolicyPathByAuthorityId(authorityId string) (pathMaps []request.CasbinIn
 	return pathMaps
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: ClearCasbin
-//@description: 清除匹配的权限
-//@param: v int, p ...string
-//@return: bool
-
 func ClearCasbin(v int, p ...string) bool {
 	e := Casbin()
 	success, _ := e.RemoveFilteredPolicy(v, p...)
 	return success
 
 }
-
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: Casbin
-//@description: 持久化到数据库  引入自定义规则
-//@return: *casbin.Enforcer
 
 func Casbin() *casbin.Enforcer {
 	admin := global.GVA_CONFIG.Mysql
@@ -97,23 +69,11 @@ func Casbin() *casbin.Enforcer {
 	return e
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: ParamsMatch
-//@description: 自定义规则函数
-//@param: fullNameKey1 string, key2 string
-//@return: bool
-
 func ParamsMatch(fullNameKey1 string, key2 string) bool {
 	key1 := strings.Split(fullNameKey1, "?")[0]
 	// 剥离路径后再使用casbin的keyMatch2
 	return util.KeyMatch2(key1, key2)
 }
-
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: ParamsMatchFunc
-//@description: 自定义规则函数
-//@param: args ...interface{}
-//@return: interface{}, error
 
 func ParamsMatchFunc(args ...interface{}) (interface{}, error) {
 	name1 := args[0].(string)

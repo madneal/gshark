@@ -3,6 +3,7 @@ package service
 import (
 	"database/sql"
 	"fmt"
+
 	"github.com/madneal/gshark/config"
 	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/model"

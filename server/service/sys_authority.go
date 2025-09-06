@@ -2,12 +2,13 @@ package service
 
 import (
 	"errors"
+	"strconv"
+
 	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/model"
 	"github.com/madneal/gshark/model/request"
 	"github.com/madneal/gshark/model/response"
 	"gorm.io/gorm"
-	"strconv"
 )
 
 func CreateAuthority(auth model.SysAuthority) (err error, authority model.SysAuthority) {

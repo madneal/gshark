@@ -2,10 +2,11 @@ package service
 
 import (
 	"errors"
+	"time"
+
 	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/model"
 	"gorm.io/gorm"
-	"time"
 )
 
 func JsonInBlacklist(jwtList model.JwtBlacklist) (err error) {

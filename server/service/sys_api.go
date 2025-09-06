@@ -2,17 +2,12 @@ package service
 
 import (
 	"errors"
+
 	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/model"
 	"github.com/madneal/gshark/model/request"
 	"gorm.io/gorm"
 )
-
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: CreateApi
-//@description: 新增基础api
-//@param: api model.SysApi
-//@return: err error
 
 func CreateApi(api model.SysApi) (err error) {
 	if !errors.Is(global.GVA_DB.Where("path = ? AND method = ?", api.Path, api.Method).First(&model.SysApi{}).Error, gorm.ErrRecordNotFound) {
@@ -21,23 +16,11 @@ func CreateApi(api model.SysApi) (err error) {
 	return global.GVA_DB.Create(&api).Error
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: DeleteApi
-//@description: 删除基础api
-//@param: api model.SysApi
-//@return: err error
-
 func DeleteApi(api model.SysApi) (err error) {
 	err = global.GVA_DB.Delete(&api).Error
 	ClearCasbin(1, api.Path, api.Method)
 	return err
 }
-
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: GetAPIInfoList
-//@description: 分页获取数据,
-//@param: api model.SysApi, info request.PageInfo, order string, desc bool
-//@return: err error
 
 func GetAPIInfoList(api model.SysApi, info request.PageInfo, order string, desc bool) (err error, list interface{}, total int64) {
 
@@ -83,32 +66,15 @@ func GetAPIInfoList(api model.SysApi, info request.PageInfo, order string, desc 
 	return err, apiList, total
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: GetAllApis
-//@description: 获取所有的api
-//@return: err error, apis []model.SysApi
-
 func GetAllApis() (err error, apis []model.SysApi) {
 	err = global.GVA_DB.Find(&apis).Error
 	return
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: GetApiById
-//@description: 根据id获取api
-//@param: id float64
-//@return: err error, api model.SysApi
-
 func GetApiById(id float64) (err error, api model.SysApi) {
 	err = global.GVA_DB.Where("id = ?", id).First(&api).Error
 	return
 }
-
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: UpdateApi
-//@description: 根据id更新api
-//@param: api model.SysApi
-//@return: err error
 
 func UpdateApi(api model.SysApi) (err error) {
 	var oldA model.SysApi

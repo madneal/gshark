@@ -2,17 +2,12 @@ package service
 
 import (
 	"errors"
+
 	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/model"
 	"github.com/madneal/gshark/model/request"
 	"gorm.io/gorm"
 )
-
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: DeleteSysDictionary
-//@description: 创建字典数据
-//@param: sysDictionary model.SysDictionary
-//@return: err error
 
 func CreateSysDictionary(sysDictionary model.SysDictionary) (err error) {
 	if (!errors.Is(global.GVA_DB.First(&model.SysDictionary{}, "type = ?", sysDictionary.Type).Error, gorm.ErrRecordNotFound)) {
@@ -22,22 +17,10 @@ func CreateSysDictionary(sysDictionary model.SysDictionary) (err error) {
 	return err
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: DeleteSysDictionary
-//@description: 删除字典数据
-//@param: sysDictionary model.SysDictionary
-//@return: err error
-
 func DeleteSysDictionary(sysDictionary model.SysDictionary) (err error) {
 	err = global.GVA_DB.Delete(&sysDictionary).Delete(&sysDictionary.SysDictionaryDetails).Error
 	return err
 }
-
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: UpdateSysDictionary
-//@description: 更新字典数据
-//@param: sysDictionary *model.SysDictionary
-//@return: err error
 
 func UpdateSysDictionary(sysDictionary *model.SysDictionary) (err error) {
 	var dict model.SysDictionary
@@ -60,23 +43,10 @@ func UpdateSysDictionary(sysDictionary *model.SysDictionary) (err error) {
 	return err
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: GetSysDictionary
-//@description: 根据id或者type获取字典单条数据
-//@param: Type string, Id uint
-//@return: err error, sysDictionary model.SysDictionary
-
 func GetSysDictionary(Type string, Id uint) (err error, sysDictionary model.SysDictionary) {
 	err = global.GVA_DB.Where("type = ? OR id = ?", Type, Id).Preload("SysDictionaryDetails").First(&sysDictionary).Error
 	return
 }
-
-//@author: [piexlmax](https://github.com/piexlmax)
-//@author: [SliverHorn](https://github.com/SliverHorn)
-//@function: GetSysDictionaryInfoList
-//@description: 分页获取字典列表
-//@param: info request.SysDictionarySearch
-//@return: err error, list interface{}, total int64
 
 func GetSysDictionaryInfoList(info request.SysDictionarySearch) (err error, list interface{}, total int64) {
 	limit := info.PageSize

@@ -1,11 +1,12 @@
 package utils
 
 import (
+	"runtime"
+	"time"
+
 	"github.com/shirou/gopsutil/cpu"
 	"github.com/shirou/gopsutil/disk"
 	"github.com/shirou/gopsutil/mem"
-	"runtime"
-	"time"
 )
 
 const (
@@ -35,7 +36,6 @@ type Cpu struct {
 	Cores int       `json:"cores"`
 }
 
-
 type Rrm struct {
 	UsedMB      int `json:"usedMb"`
 	TotalMB     int `json:"totalMb"`
@@ -50,11 +50,6 @@ type Disk struct {
 	UsedPercent int `json:"usedPercent"`
 }
 
-//@author: [SliverHorn](https://github.com/SliverHorn)
-//@function: InitCPU
-//@description: OS信息
-//@return: o Os, err error
-
 func InitOS() (o Os) {
 	o.GOOS = runtime.GOOS
 	o.NumCPU = runtime.NumCPU()
@@ -63,11 +58,6 @@ func InitOS() (o Os) {
 	o.NumGoroutine = runtime.NumGoroutine()
 	return o
 }
-
-//@author: [SliverHorn](https://github.com/SliverHorn)
-//@function: InitCPU
-//@description: CPU信息
-//@return: c Cpu, err error
 
 func InitCPU() (c Cpu, err error) {
 	if cores, err := cpu.Counts(false); err != nil {
@@ -89,9 +79,9 @@ func InitCPU() (c Cpu, err error) {
 //@return: r Rrm, err error
 
 func InitRAM() (r Rrm, err error) {
-	if u, err := mem.VirtualMemory(); err != nil{
+	if u, err := mem.VirtualMemory(); err != nil {
 		return r, err
-	}else {
+	} else {
 		r.UsedMB = int(u.Used) / MB
 		r.TotalMB = int(u.Total) / MB
 		r.UsedPercent = int(u.UsedPercent)
@@ -105,7 +95,7 @@ func InitRAM() (r Rrm, err error) {
 //@return: d Disk, err error
 
 func InitDisk() (d Disk, err error) {
-	if u, err := disk.Usage("/"); err != nil{
+	if u, err := disk.Usage("/"); err != nil {
 		return d, err
 	} else {
 		d.UsedMB = int(u.Used) / MB
