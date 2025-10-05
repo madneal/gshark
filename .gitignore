@@ -26,5 +26,6 @@ latest_log
 /server/log/
 /server/main
 /server/latest_log
+gshark_*
 
 *.iml
