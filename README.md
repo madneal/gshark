@@ -51,7 +51,8 @@ cd gshark
 chmod +x deployment.sh  
 
 # Run the script to build and start the service  
-./deployment.sh  
+./deployment.sh
+```
 
 ## Manual Deployment
 
