@@ -40,6 +40,19 @@ docker-compose build && docker-compose up
 > [!IMPORTANT]
 > Before the MySQL database initial, the scanner container will exit. Need to restart the scanner after the MySQL database initial.
 
+## Local Deployment 
+
+```bash  
+# Clone the repository  
+git clone https://github.com/madneal/gshark.git  
+cd gshark  
+
+# Make the script executable (only needed once)  
+chmod +x deployment.sh  
+
+# Run the script to build and start the service  
+./deployment.sh  
+
 ## Manual Deployment
 
 ### Requirements
