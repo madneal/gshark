@@ -3,12 +3,14 @@ package utils
 import (
 	"bytes"
 	"crypto/tls"
+	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/madneal/gshark/global"
 	"io"
 	"net/http"
 	"net/smtp"
+
+	"github.com/madneal/gshark/global"
 )
 
 func EmailSend(subject string, body string) error {
@@ -19,24 +21,36 @@ func EmailSend(subject string, body string) error {
 func BotSend(content string) error {
 	url := global.GVA_CONFIG.Wechat.Url
 	if url == "" {
-		err := errors.New("url is empty")
+		return errors.New("url is empty")
+	}
+
+	payload := map[string]any{
+		"msgtype": "markdown",
+		"markdown": map[string]string{
+			"content": content,
+		},
+	}
+	jsonStr, err := json.Marshal(payload)
+	if err != nil {
 		return err
 	}
-	jsonStr := []byte(fmt.Sprintf(`{"msgtype": "markdown", "markdown":{"content":"%s"}}`, content))
+
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
 	if err != nil {
 		return err
 	}
 	req.Header.Set("Content-Type", "application/json")
+
 	c := &http.Client{}
 	res, err := c.Do(req)
 	if err != nil {
 		return err
 	}
 	defer res.Body.Close()
+
 	body, _ := io.ReadAll(res.Body)
 	fmt.Println(string(body))
-	return err
+	return nil
 }
 
 func send(to []string, subject string, body string) error {
