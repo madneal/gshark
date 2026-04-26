@@ -8,9 +8,9 @@
    <strong>🇨🇳 中文版</strong> | <a href="README.md">🇺🇸 English</a>
 </div>
 
-# GShark [![Go Report Card](https://goreportcard.com/badge/github.com/madneal/gshark)](https://goreportcard.com/report/github.com/madneal/gshark)  [![Release](https://github.com/madneal/gshark/actions/workflows/release.yml/badge.svg)](https://github.com/madneal/gshark/actions/workflows/release.yml)
+# GShark [![Go Report Card](https://goreportcard.com/badge/github.com/madneal/gshark)](https://goreportcard.com/report/github.com/madneal/gshark) [![Release](https://github.com/madneal/gshark/actions/workflows/release.yml/badge.svg)](https://github.com/madneal/gshark/actions/workflows/release.yml)
 
-该项目基于 Go 和 Vue 构建敏感信息检测管理系统。完整介绍请参考[文章](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI3MjA3MTY3Mw==&action=getalbum&album_id=2376148333116850178#wechat_redirect)和[视频](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI3MjA3MTY3Mw==&action=getalbum&album_id=1834365721464651778#wechat_redirect)。目前，所有扫描仅针对公共环境，不针对本地环境。
+GShark 是一个敏感信息检测和管理平台。后端基于 Go 和 Gin 构建，当前前端基于 Vue 3、Vite、Vue Router 4、Vuex 4 和 Element Plus 构建。完整介绍请参考[文章](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI3MjA3MTY3Mw==&action=getalbum&album_id=2376148333116850178#wechat_redirect)和[视频](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI3MjA3MTY3Mw==&action=getalbum&album_id=1834365721464651778#wechat_redirect)。目前，所有扫描仅针对公共环境，不针对本地环境。
 
 关于 GShark 的使用，请参考 [wiki](https://github.com/madneal/gshark/wiki)。
 
@@ -21,9 +21,15 @@
 * 🔑 细粒度访问控制：可配置的菜单和 API 权限
 * 🔄 子域名发现：集成 gobuster 进行子域名枚举
 * 🚀 Docker 部署：容器化部署，易于设置
-* 📊 可视化管理界面：直观的 Web 界面，用于任务和结果管理
+* 📊 Vue 3 管理界面：基于 Vite 的 Web 界面，用于任务和结果管理
 
 # 快速开始
+
+初始化后的默认登录账号：
+
+```text
+gshark / gshark
+```
 
 ## Docker 部署
 
@@ -40,14 +46,30 @@ docker-compose build && docker-compose up
 > [!IMPORTANT]
 > 在 MySQL 数据库初始化之前，扫描器容器会退出。需要在 MySQL 数据库初始化后重启扫描器。
 
+## 本地部署
+
+```bash
+# 克隆仓库
+git clone https://github.com/madneal/gshark.git
+cd gshark
+
+# 添加执行权限（只需要执行一次）
+chmod +x deployment.sh
+
+# 执行脚本构建并启动服务
+./deployment.sh
+```
+
 ## 手动部署
 
 ### 环境要求
 
 * Nginx
-* MySQL（版本 **8.0** 以上）
+* MySQL **8.0+**
+* Go **1.25+**，用于构建后端
+* Node.js **20+** 和 npm，用于构建前端
 
-建议使用 Nginx 部署前端项目。将 `dist` 文件夹放置在 `/var/www/html` 中，并调整 `nginx.conf` 文件（Linux 下为 /etc/nginx/nginx.conf）以设置后端服务的反向代理。详细的部署教程可以观看 [bilibili](https://www.bilibili.com/video/BV1Py4y1s7ap/) 或 [youtube](https://youtu.be/bFrKm5t4M54) 上的视频。Windows 部署请参考[此链接](https://www.bilibili.com/video/BV1CA411L7ux/)。
+建议使用 Nginx 部署前端。构建 Vite 项目后，将生成的 `web/dist` 文件放置在 `/var/www/html` 中，并配置 Nginx 将 `/api/` 反向代理到后端服务。详细的部署教程可以观看 [bilibili](https://www.bilibili.com/video/BV1Py4y1s7ap/) 或 [youtube](https://youtu.be/bFrKm5t4M54) 上的视频。Windows 部署请参考[此链接](https://www.bilibili.com/video/BV1CA411L7ux/)。
 
 ### Nginx
 
@@ -61,7 +83,7 @@ worker_processes  1;
 events {
     worker_connections  1024;
 }
-`
+
 http {
     include       mime.types;
     default_type  application/octet-stream;
@@ -124,7 +146,7 @@ mv dist/* /usr/local/www/html/
 ./gshark serve
 ```
 
-初始时，将 `config-temp.yaml` 重命名为 `config.yaml`。之后，您可以直接运行 `gshark` 二进制文件。然后，访问 `localhost:8080` 进行本地部署。
+初始时，将 `config-temp.yaml` 复制为 `config.yaml`，并根据环境修改配置。之后，您可以直接运行 `gshark` 二进制文件。然后，访问 `localhost:8080` 进行本地部署。
 
 如果您之前没有初始化数据库，您将首先被重定向到数据库初始化页面。
 
@@ -148,9 +170,9 @@ mv dist/* /usr/local/www/html/
 
 ```shell
 git clone https://github.com/madneal/gshark.git
-cd server
+cd gshark/server
 go mod tidy
-mv config-temp.yaml config.yaml
+cp config-temp.yaml config.yaml
 go build
 ```
 
@@ -180,6 +202,13 @@ go build
 go run main.go scan
 ```
 
+> [!NOTE]
+> 在 macOS ARM 上，服务器状态页面的 CPU 百分比采集依赖 cgo。如果需要显示 CPU 使用率，请在运行或构建后端时启用 `CGO_ENABLED=1`：
+>
+> ```shell
+> CGO_ENABLED=1 go run main.go serve
+> ```
+
 ### Web 前端
 
 ```
@@ -199,12 +228,6 @@ npm run serve
 
 [![iR2TMt.md.png](https://s1.ax1x.com/2018/10/31/iR2TMt.md.png)](https://imgchr.com/i/iR2TMt)
 
-#### Postman
-
-获取 `postman.sid` cookie：
-
-<img width="653" alt="image" src="https://github.com/madneal/gshark/assets/12164075/7775c8bb-79da-4e2b-b341-3c5b8395a6d0">
-
 ### 规则配置
 
 对于 Github 或 Gitlab 规则，规则将按照相应平台的语法进行匹配。您可以直接配置在 GitHub 中搜索的内容。您可以下载规则导入模板 CSV 文件，然后批量导入规则。
@@ -219,7 +242,7 @@ npm run serve
 
 ## 配置
 
-您应该将 `config-temp.yaml` 重命名为 `config.yaml`，并根据您的环境配置数据库信息和其他信息。
+您应该将 `config-temp.yaml` 复制为 `config.yaml`，并根据您的环境配置数据库信息和其他信息。
 
 ### GitLab 基础 URL
 
@@ -233,7 +256,7 @@ gshark/gshark
 
 2. 数据库初始化失败
 
-确保 MySQL 版本超过 5.6。并在第二次初始化前删除数据库。
+确保 MySQL 版本为 8.0 或更高。并在第二次初始化前删除数据库。
 
 3. `go get ./... connection error`
 
@@ -246,7 +269,15 @@ go env -w GO111MODULE=on
 
 4. 将 Web 部署到 `nginx` 时，页面为空
 
-尝试清除 LocalStorage
+尝试清除 LocalStorage，并确认 Nginx 的 `/api/` 反向代理指向后端服务。
+
+5. macOS ARM 上服务器状态页面的 CPU 使用率显示为 0
+
+运行或构建后端时启用 cgo：
+
+```shell
+CGO_ENABLED=1 go run main.go serve
+```
 
 ## 资源
 
@@ -276,4 +307,4 @@ go env -w GO111MODULE=on
 
 GShark 是 404Team [星链计划2.0](https://github.com/knownsec/404StarLink2.0-Galaxy)中的一环，如果对 GShark 有任何疑问又或是想要找小伙伴交流，可以参考星链计划的加群方式。
 
-- [https://github.com/knownsec/404StarLink2.0-Galaxy#community](https://github.com/knownsec/404StarLink2.0-Galaxy#community) 
+- [https://github.com/knownsec/404StarLink2.0-Galaxy#community](https://github.com/knownsec/404StarLink2.0-Galaxy#community)
