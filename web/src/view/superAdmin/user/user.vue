@@ -50,7 +50,7 @@
       layout="total, sizes, prev, pager, next, jumper"
     ></el-pagination>
 
-    <el-dialog :visible.sync="addUserDialog" custom-class="user-dialog" title="新增用户">
+    <el-dialog v-model="addUserDialog" custom-class="user-dialog" title="新增用户">
       <el-form :rules="rules" ref="userForm" :model="userInfo">
         <el-form-item label="用户名" label-width="80px" prop="username">
           <el-input v-model="userInfo.username"></el-input>

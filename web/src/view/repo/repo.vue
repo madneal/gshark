@@ -67,7 +67,7 @@
       layout="total, sizes, prev, pager, next, jumper"
     ></el-pagination>
 
-    <el-dialog :before-close="closeDialog" :visible.sync="dialogFormVisible" title="弹窗操作">
+    <el-dialog :before-close="closeDialog" v-model="dialogFormVisible" title="弹窗操作">
       <el-form :model="formData" label-position="right" label-width="80px">
          <el-form-item label="项目ID:"><el-input v-model.number="formData.projectId" clearable placeholder="请输入"></el-input>
       </el-form-item>
@@ -169,7 +169,7 @@ export default {
           type: 'warning'
         }).then(() => {
            this.deleteRepo(row);
-        });
+        }).catch(() => {});
       },
       async onDelete() {
         const ids = []

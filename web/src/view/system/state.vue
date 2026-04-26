@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="server-state-page">
     <el-empty v-if="stateError && !hasStateData" :description="stateError"></el-empty>
     <el-row :gutter="15" class="system_state">
       <el-col :span="12">
@@ -174,12 +174,119 @@ export default {
 };
 </script>
 
-<style>
-.system_state {
-  padding: 10px;
+<style lang="scss">
+.server-state-page {
+  .system_state {
+    padding: 0;
+    margin: 0 -8px 16px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    > .el-col {
+      padding-bottom: 16px;
+    }
+  }
+
+  .card_item {
+    min-height: 280px;
+    height: 100%;
+    background: var(--gs-dark-panel);
+    border: 1px solid var(--gs-dark-border-soft);
+    border-radius: 8px;
+    color: var(--gs-dark-text);
+    overflow: hidden;
+
+    .el-card__header {
+      padding: 14px 18px;
+      color: #ffffff;
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.3;
+      background: rgba(15, 23, 42, .34);
+      border-bottom: 1px solid var(--gs-dark-border-soft);
+    }
+
+    .el-card__body {
+      padding: 16px 18px;
+    }
+
+    .el-row {
+      padding: 5px 0;
+      align-items: center;
+      row-gap: 8px;
+    }
+
+    .el-col {
+      min-width: 0;
+      line-height: 1.45;
+      color: var(--gs-dark-text);
+      overflow-wrap: anywhere;
+    }
+
+    .el-col:nth-child(odd) {
+      color: var(--gs-dark-muted);
+    }
+
+    .el-progress {
+      width: 100%;
+    }
+
+    .el-progress-bar__outer {
+      background-color: var(--gs-dark-bg-soft);
+    }
+
+    .el-progress__text {
+      min-width: 40px;
+      color: var(--gs-dark-text);
+    }
+
+    .el-progress--dashboard {
+      display: flex;
+      justify-content: center;
+      padding: 4px 0;
+    }
+  }
+
+  .el-empty {
+    padding: 36px 0;
+  }
 }
 
-.card_item {
-  height: 280px;
+@media screen and (max-width: 900px) {
+  .server-state-page {
+    .system_state {
+      margin-bottom: 0;
+
+      > .el-col {
+        flex: 0 0 100%;
+        max-width: 100%;
+      }
+    }
+
+    .card_item {
+      min-height: 0;
+    }
+  }
+}
+
+@media screen and (max-width: 520px) {
+  .server-state-page {
+    .card_item {
+      .el-card__header {
+        padding: 12px 14px;
+      }
+
+      .el-card__body {
+        padding: 12px 14px;
+      }
+
+      .el-row .el-col {
+        flex: 0 0 100%;
+        max-width: 100%;
+      }
+    }
+  }
 }
 </style>

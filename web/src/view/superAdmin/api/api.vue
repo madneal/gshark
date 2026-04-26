@@ -72,8 +72,13 @@
       layout="total, sizes, prev, pager, next, jumper"
     ></el-pagination>
 
-    <el-dialog :before-close="closeDialog" :title="dialogTitle" :visible.sync="dialogFormVisible">
-      <el-form :inline="true" :model="form" :rules="rules" label-width="80px" ref="apiForm">
+    <el-dialog
+      :before-close="closeDialog"
+      :title="dialogTitle"
+      v-model="dialogFormVisible"
+      custom-class="api-dialog"
+    >
+      <el-form :model="form" :rules="rules" label-position="top" ref="apiForm" class="api-dialog-form">
         <el-form-item label="路径" prop="path">
           <el-input autocomplete="off" v-model="form.path"></el-input>
         </el-form-item>
@@ -315,7 +320,63 @@ export default {
 .el-tag--mini {
   margin-left: 5px;
 }
+
+:deep(.api-dialog) {
+  width: min(760px, calc(100vw - 64px)) !important;
+}
+
+.api-dialog-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(240px, 1fr));
+  gap: 18px 22px;
+
+  :deep(.el-form-item) {
+    margin-bottom: 0;
+  }
+
+  :deep(.el-form-item__label) {
+    height: auto;
+    margin-bottom: 7px;
+    padding: 0;
+    color: var(--gs-dark-muted);
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.35;
+  }
+
+  :deep(.el-form-item__content) {
+    min-width: 0;
+    display: block;
+  }
+
+  :deep(.el-input),
+  :deep(.el-select) {
+    width: 100%;
+  }
+
+  :deep(.el-form-item__error) {
+    position: static;
+    min-height: 18px;
+    margin-top: 5px;
+    padding-top: 0;
+    line-height: 1.25;
+  }
+}
+
 .warning {
-  color: #dc143c;
+  margin-top: 18px;
+  color: #fb7185;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+@media screen and (max-width: 700px) {
+  :deep(.api-dialog) {
+    width: calc(100vw - 24px) !important;
+  }
+
+  .api-dialog-form {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 </style>

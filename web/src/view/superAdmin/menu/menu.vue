@@ -52,7 +52,7 @@
       </el-table-column>
     </el-table>
 
-    <el-dialog :before-close="handleClose" :title="dialogTitle" :visible.sync="dialogFormVisible">
+    <el-dialog :before-close="handleClose" :title="dialogTitle" v-model="dialogFormVisible">
       <el-form
         :inline="true"
         :model="form"

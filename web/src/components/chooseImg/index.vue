@@ -1,5 +1,5 @@
 <template>
-  <el-drawer title="媒体库" :visible.sync="drawer">
+  <el-drawer title="媒体库" v-model="drawer">
     <div style="display:flex;justify-content:space-around;flex-wrap:wrap;padding-top:40px">
       <el-image
         class="header-img-box-list"

@@ -43,7 +43,7 @@
 
     <ChooseImg ref="chooseImg" @enter-img="enterImg" />
 
-    <el-dialog :visible.sync="showPassword" @close="clearPassword" title="修改密码" width="360px">
+    <el-dialog v-model="showPassword" @close="clearPassword" title="修改密码" width="360px">
       <el-form :model="pwdModify" :rules="rules" label-width="80px" ref="modifyPwdForm">
         <el-form-item :minlength="6" label="原密码" prop="password">
           <el-input show-password v-model="pwdModify.password"></el-input>

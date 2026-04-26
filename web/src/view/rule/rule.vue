@@ -140,7 +140,7 @@
 
     <el-dialog
       :before-close="closeDialog"
-      :visible.sync="dialogFormVisible"
+      v-model="dialogFormVisible"
       title="新增规则"
     >
       <el-form :model="formData" label-position="right" label-width="100px">
@@ -307,7 +307,7 @@ export default {
         type: "warning",
       }).then(() => {
         this.deleteRule(row);
-      });
+      }).catch(() => {});
     },
     uploadSuccess() {
       this.$message({

@@ -88,7 +88,7 @@
 
     <el-dialog
       :before-close="closeDialog"
-      :visible.sync="dialogFormVisible"
+      v-model="dialogFormVisible"
       title="添加token"
     >
       <el-form :model="formData" label-position="right" label-width="80px">
@@ -190,7 +190,7 @@ export default {
         type: "warning",
       }).then(() => {
         this.deleteToken(row);
-      });
+      }).catch(() => {});
     },
     async onDelete() {
       const ids = [];

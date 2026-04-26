@@ -106,8 +106,8 @@ export default {
   width: 17px;
   height: 17px;
   cursor: pointer;
-  fill: #606266;
+  fill: currentColor;
   vertical-align: middle;
-  margin-right: 15px;
+  margin-right: 0;
 }
 </style>

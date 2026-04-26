@@ -95,7 +95,7 @@
 
     <el-dialog
       :before-close="closeDialog"
-      :visible.sync="dialogFormVisible"
+      v-model="dialogFormVisible"
       title="新增过滤规则（目前仅适用于Github）"
     >
       <el-form :model="formData" label-position="right" label-width="200px">
@@ -184,7 +184,7 @@ export default {
         type: "warning",
       }).then(() => {
         this.deleteFilter(row);
-      });
+      }).catch(() => {});
     },
     async onDelete() {
       const ids = [];
