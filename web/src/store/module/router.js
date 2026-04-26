@@ -58,7 +58,7 @@ export const router = {
             formatRouter(asyncRouter)
             baseRouter[0].children = asyncRouter
             baseRouter.push({
-                path: '*',
+                path: '/:pathMatch(.*)*',
                 redirect: '/layout/404'
 
             })

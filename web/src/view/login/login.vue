@@ -15,11 +15,13 @@
         <el-form
           :model="loginForm"
           ref="loginForm"
-          @keyup.enter.native="submitForm"
+          @keyup.enter="submitForm"
         >
           <el-form-item prop="username">
             <el-input placeholder="请输入用户名" v-model="loginForm.username">
-              <i class="el-input__icon el-icon-user" slot="suffix"></i
+              <template #suffix>
+                <el-icon><User /></el-icon>
+              </template>
             ></el-input>
           </el-form-item>
           <el-form-item prop="password">
@@ -28,11 +30,12 @@
               placeholder="请输入密码"
               v-model="loginForm.password"
             >
-              <i
-                :class="'el-input__icon el-icon-' + lock"
-                @click="changeLock"
-                slot="suffix"
-              ></i>
+              <template #suffix>
+                <el-icon class="password-toggle" @click="changeLock">
+                  <Unlock v-if="lock === 'lock'" />
+                  <Lock v-else />
+                </el-icon>
+              </template>
             </el-input>
           </el-form-item>
           <el-form-item style="position: relative">
@@ -133,4 +136,8 @@ export default {
 
 <style scoped lang="scss">
 @import "@/style/login.scss";
+
+.password-toggle {
+  cursor: pointer;
+}
 </style>

@@ -4,9 +4,9 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/shirou/gopsutil/cpu"
-	"github.com/shirou/gopsutil/disk"
-	"github.com/shirou/gopsutil/mem"
+	"github.com/shirou/gopsutil/v3/cpu"
+	"github.com/shirou/gopsutil/v3/disk"
+	"github.com/shirou/gopsutil/v3/mem"
 )
 
 const (
@@ -60,16 +60,26 @@ func InitOS() (o Os) {
 }
 
 func InitCPU() (c Cpu, err error) {
-	if cores, err := cpu.Counts(false); err != nil {
-		return c, err
-	} else {
-		c.Cores = cores
+	cores, err := cpu.Counts(false)
+	if err != nil || cores <= 0 {
+		cores = runtime.NumCPU()
 	}
-	if cpus, err := cpu.Percent(time.Duration(200)*time.Millisecond, true); err != nil {
-		return c, err
-	} else {
+	c.Cores = cores
+
+	if cpus, err := cpu.Percent(time.Duration(200)*time.Millisecond, true); err == nil && len(cpus) > 0 {
 		c.Cpus = cpus
+		return c, nil
 	}
+
+	if cpus, err := cpu.Percent(time.Duration(200)*time.Millisecond, false); err == nil && len(cpus) > 0 {
+		c.Cpus = make([]float64, cores)
+		for i := range c.Cpus {
+			c.Cpus[i] = cpus[0]
+		}
+		return c, nil
+	}
+
+	c.Cpus = make([]float64, cores)
 	return c, nil
 }
 

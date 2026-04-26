@@ -63,11 +63,11 @@
   </div>
 </template>
 <script>
-import ChooseImg from "@/components/chooseImg";
+import ChooseImg from "@/components/chooseImg/index.vue";
 import { setUserInfo,changePassword } from "@/api/user";
 
 import { mapGetters, mapMutations } from "vuex";
-const path = process.env.VUE_APP_BASE_API;
+const path = import.meta.env.VITE_BASE_API;
 export default {
   name: "Person",
   data() {

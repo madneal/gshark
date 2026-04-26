@@ -1,11 +1,11 @@
 import axios from 'axios'; // 引入axios
-import { Message } from 'element-ui';
+import { ElMessage } from 'element-plus';
 import { store } from '@/store/index'
-import context from '@/main.js'
 import router from '@/router/index'
+import { bus } from '@/utils/bus'
 
 const service = axios.create({
-    baseURL: process.env.VUE_APP_BASE_API,
+    baseURL: import.meta.env.VITE_BASE_API,
     timeout: 99999
 })
 let acitveAxios = 0
@@ -17,7 +17,7 @@ const showLoading = () => {
     }
     timer = setTimeout(() => {
         if (acitveAxios > 0) {
-            context.$bus.emit("showLoading")
+            bus.emit("showLoading")
         }
     }, 400);
 }
@@ -26,7 +26,7 @@ const closeLoading = () => {
         acitveAxios--
         if (acitveAxios <= 0) {
             clearTimeout(timer)
-            context.$bus.emit("closeLoading")
+            bus.emit("closeLoading")
         }
     }
     //http request 拦截器
@@ -47,7 +47,7 @@ service.interceptors.request.use(
     },
     error => {
         closeLoading()
-        Message({
+        ElMessage({
             showClose: true,
             message: error,
             type: 'error'
@@ -67,7 +67,7 @@ service.interceptors.response.use(
         }
         if(response.data.code == 0){
             if(response.data.data.needInit){
-                Message({
+                ElMessage({
                     type:"info",
                     message:"您是第一次使用，请初始化"
                 })
@@ -79,7 +79,7 @@ service.interceptors.response.use(
             return response.data
         } else {
             if (response.headers['content-type'] !== 'text/csv') {
-                Message({
+                ElMessage({
                     showClose: true,
                     message: response.data.msg || decodeURI(response.headers.msg),
                     type: response.headers.msgtype||'error',
@@ -94,7 +94,7 @@ service.interceptors.response.use(
     },
     error => {
         closeLoading()
-        Message({
+        ElMessage({
             showClose: true,
             message: error,
             type: 'error'

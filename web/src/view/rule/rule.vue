@@ -66,7 +66,7 @@
     >
       <el-table-column type="selection" width="55"></el-table-column>
       <el-table-column label="日期" width="180">
-        <template slot-scope="scope">{{
+        <template #default="scope">{{
           scope.row.CreatedAt | formatDate
         }}</template>
       </el-table-column>
@@ -107,7 +107,7 @@
       </el-table-column>
 
       <el-table-column label="按钮组">
-        <template slot-scope="scope">
+        <template #default="scope">
           <el-button
             class="table-button"
             @click="updateRule(scope.row)"

@@ -32,7 +32,7 @@
     >
       <el-table-column type="selection" width="55"></el-table-column>
       <el-table-column label="日期" width="180">
-        <template slot-scope="scope">{{scope.row.CreatedAt|formatDate}}</template>
+        <template #default="scope">{{scope.row.CreatedAt|formatDate}}</template>
       </el-table-column>
 
       <el-table-column label="展示值" prop="label" width="120"></el-table-column>
@@ -40,13 +40,13 @@
       <el-table-column label="字典值" prop="value" width="120"></el-table-column>
 
       <el-table-column label="启用状态" prop="status" width="120">
-        <template slot-scope="scope">{{scope.row.status|formatBoolean}}</template>
+        <template #default="scope">{{scope.row.status|formatBoolean}}</template>
       </el-table-column>
 
       <el-table-column label="排序标记" prop="sort" width="120"></el-table-column>
 
       <el-table-column label="按钮组">
-        <template slot-scope="scope">
+        <template #default="scope">
           <el-button @click="updateSysDictionaryDetail(scope.row)" size="small" type="primary">变更</el-button>
           <el-popover placement="top" width="160" v-model="scope.row.visible">
             <p>确定要删除吗？</p>

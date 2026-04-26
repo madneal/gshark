@@ -1,6 +1,12 @@
 import { login } from '@/api/user'
 import { jsonInBlacklist } from '@/api/jwt'
 import router from '@/router/index'
+
+const defaultRouterPath = userInfo => {
+    const defaultRouter = userInfo.authority.defaultRouter
+    return defaultRouter.startsWith('/layout') ? defaultRouter : `/layout/${defaultRouter}`
+}
+
 export const user = {
     namespaced: true,
     state: {
@@ -55,7 +61,7 @@ export const user = {
                 // if (redirect) {
                 //     router.push({ path: redirect })
                 // } else {
-                    router.push({ name: getters["userInfo"].authority.defaultRouter })
+                    router.push({ path: defaultRouterPath(getters["userInfo"]) })
                 // }
                 return true
             }

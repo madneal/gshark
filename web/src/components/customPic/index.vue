@@ -2,11 +2,11 @@
     <span class="headerAvatar">
         <template v-if="picType === 'avatar'">
             <el-avatar :size="30" :src="avatar" v-if="userInfo.headerImg"></el-avatar>
-            <el-avatar :size="30" :src="require('@/assets/noBody.png')" v-else></el-avatar>
+            <el-avatar :size="30" :src="noBody" v-else></el-avatar>
         </template>
         <template v-if="picType === 'img'">
             <img :src="avatar" class="avatar" v-if="userInfo.headerImg" />
-            <img :src="require('@/assets/noBody.png')" class="avatar" v-else/>
+            <img :src="noBody" class="avatar" v-else/>
         </template>
         <template v-if="picType === 'file'">
             <img :src="file" class="file"/>
@@ -16,7 +16,8 @@
 
 <script>
 import { mapGetters } from 'vuex'
-const path = process.env.VUE_APP_BASE_API
+import noBody from '@/assets/noBody.png'
+const path = import.meta.env.VITE_BASE_API
 export default {
     name: "customPic",
     props: {
@@ -34,6 +35,7 @@ export default {
     data(){
         return{
             path: path,
+            noBody,
         }
     },
     computed:{

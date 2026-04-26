@@ -1,14 +1,18 @@
 <template>
-  <el-submenu :popper-append-to-body="false" ref="subMenu" :index="routerInfo.name">
-    <template slot="title">
-      <i :class="'el-icon-'+routerInfo.meta.icon"></i>
-      <span slot="title">{{routerInfo.meta.title}}</span>
+  <el-sub-menu :popper-append-to-body="false" ref="subMenu" :index="routerInfo.name">
+    <template #title>
+      <el-icon>
+        <component :is="iconName" />
+      </el-icon>
+      <span>{{routerInfo.meta.title}}</span>
     </template>
     <slot></slot>
-  </el-submenu>
+  </el-sub-menu>
 </template>
 
 <script>
+import { menuIcon } from '@/utils/menuIcon'
+
 export default {
   name: 'AsyncSubmenu',
   props: {
@@ -17,6 +21,11 @@ export default {
         return null
       },
       type: Object
+    }
+  },
+  computed: {
+    iconName() {
+      return menuIcon(this.routerInfo.meta?.icon)
     }
   }
 }

@@ -5,14 +5,39 @@ import getPageTitle from '@/utils/page'
 let asyncRouterFlag = 0
 
 const whiteList = ['login','init']
+const loadAsyncRoutes = async() => {
+    if (!asyncRouterFlag && store.getters['router/asyncRouters'].length == 0) {
+        asyncRouterFlag++
+        await store.dispatch('router/SetAsyncRouter')
+        const asyncRouters = store.getters['router/asyncRouters']
+        router.addRoutes(asyncRouters)
+    }
+}
+
+const defaultRouterPath = () => {
+    const defaultRouter = store.getters["user/userInfo"].authority.defaultRouter
+    return defaultRouter.startsWith('/layout') ? defaultRouter : `/layout/${defaultRouter}`
+}
+
 router.beforeEach(async(to, from, next) => {
     const token = store.getters['user/token']
         // 在白名单中的判断情况
         //修改网页标签名称
     document.title = getPageTitle(to.meta.title)
+    if (to.path === '/') {
+        if (token) {
+            await loadAsyncRoutes()
+            next({ path: defaultRouterPath(), replace: true })
+        } else {
+            next({ name: 'login', replace: true })
+        }
+        return
+    }
+
     if (whiteList.indexOf(to.name) > -1) {
         if (token) {
-            next({ name: store.getters["user/userInfo"].authority.defaultRouter })
+            await loadAsyncRoutes()
+            next({ path: defaultRouterPath() })
         } else {
             next()
         }
@@ -21,10 +46,7 @@ router.beforeEach(async(to, from, next) => {
         if (token) {
             // 添加flag防止多次获取动态路由和栈溢出
             if (!asyncRouterFlag && store.getters['router/asyncRouters'].length == 0) {
-                asyncRouterFlag++
-                await store.dispatch('router/SetAsyncRouter')
-                const asyncRouters = store.getters['router/asyncRouters']
-                router.addRoutes(asyncRouters)
+                await loadAsyncRoutes()
                 next({...to, replace: true })
             } else {
                 next()

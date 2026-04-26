@@ -20,13 +20,12 @@
       </div>
     </transition>
     <div
-      :style="{display:'inline-block',float:'right',width:'31px',textAlign:'left',fontSize:'16px',paddingTop:'2px'}"
-      class="user-box"
+      class="search-action"
     >
-      <i @click="$bus.$emit('reload')" :style="{cursor:'pointer'}" class="el-icon-refresh" />
+      <el-icon @click="$bus.emit('reload')" :style="{cursor:'pointer'}"><Refresh /></el-icon>
     </div>
-    <div :style="{display:'inline-block',float:'right'}" class="user-box">
-      <i :style="{cursor:'pointer'}" @click="showSearch()" class="el-icon-search search-icon"></i>
+    <div class="search-action">
+      <el-icon :style="{cursor:'pointer'}" @click="showSearch()" class="search-icon"><Search /></el-icon>
     </div>
   </div>
 </template>
