@@ -8,22 +8,28 @@
    <a href="README_CN.md">🇨🇳 中文版</a> | <strong>🇺🇸 English</strong>
 </div>
 
-# GShark [![Go Report Card](https://goreportcard.com/badge/github.com/madneal/gshark)](https://goreportcard.com/report/github.com/madneal/gshark)  [![Release](https://github.com/madneal/gshark/actions/workflows/release.yml/badge.svg)](https://github.com/madneal/gshark/actions/workflows/release.yml)
+# GShark [![Go Report Card](https://goreportcard.com/badge/github.com/madneal/gshark)](https://goreportcard.com/report/github.com/madneal/gshark) [![Release](https://github.com/madneal/gshark/actions/workflows/release.yml/badge.svg)](https://github.com/madneal/gshark/actions/workflows/release.yml)
 
-The project is based on Go and Vue to build a management system for sensitive information detection. For the full introduction, please refer to [articles](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI3MjA3MTY3Mw==&action=getalbum&album_id=2376148333116850178#wechat_redirect) and [videos](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI3MjA3MTY3Mw==&action=getalbum&album_id=1834365721464651778#wechat_redirect). For now, all the scans are only targeted to the public environments, not local environments.
+GShark is a sensitive information detection and management platform. The backend is built with Go and Gin, and the current frontend is built with Vue 3, Vite, Vue Router 4, Vuex 4, and Element Plus. For the full introduction, please refer to [articles](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI3MjA3MTY3Mw==&action=getalbum&album_id=2376148333116850178#wechat_redirect) and [videos](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI3MjA3MTY3Mw==&action=getalbum&album_id=1834365721464651778#wechat_redirect). For now, all scans target public environments, not local environments.
 
 For the usage of GShark, please refer to the [wiki](https://github.com/madneal/gshark/wiki).
 
 # Key Features
 
-* 🌐 Multi-Platform Support: GitHub, GitLab, Searchcode, Postman, and more* 
-* 🔍 Flexible Rule Management: Custom scanning rules and filtering with whitelist/blacklist support*
+* 🌐 Multi-Platform Support: GitHub, GitLab, Searchcode, Postman, and more
+* 🔍 Flexible Rule Management: Custom scanning rules and filtering with whitelist/blacklist support
 * 🔑 Fine-grained Access Control: Configurable menu and API permissions
 * 🔄 Subdomain Discovery: Integrated gobuster for subdomain enumeration
 * 🚀 Docker Deployment: Containerized deployment for easy setup
-* 📊 Visual Management Interface: Intuitive web interface for task and result management
+* 📊 Vue 3 Management Interface: Vite-powered web interface for task and result management
 
 # Quick start
+
+Default login after initialization:
+
+```text
+gshark / gshark
+```
 
 ## Docker Deployment
 
@@ -59,9 +65,11 @@ chmod +x deployment.sh
 ### Requirements
 
 * Nginx
-* MySQL(version above **8.0**)
+* MySQL **8.0+**
+* Go **1.25+** for building the backend
+* Node.js **20+** and npm for building the frontend
 
-It is recommended to deploy the Front-End project using Nginx. Place the `dist` folder in `/var/www/html`, and adjust the `nginx.conf` file (/etc/nginx/nginx.conf for Linux) to set up reverse proxy for the backend service. For detailed deployment tutorials, you can watch videos on [bilibili](https://www.bilibili.com/video/BV1Py4y1s7ap/) or [youtube](https://youtu.be/bFrKm5t4M54). For deployment on Windows, refer to [this link](https://www.bilibili.com/video/BV1CA411L7ux/).
+It is recommended to deploy the frontend with Nginx. Build the Vite project, place the generated `web/dist` files in `/var/www/html`, and configure Nginx to reverse proxy `/api/` to the backend service. For detailed deployment tutorials, you can watch videos on [bilibili](https://www.bilibili.com/video/BV1Py4y1s7ap/) or [youtube](https://youtu.be/bFrKm5t4M54). For deployment on Windows, refer to [this link](https://www.bilibili.com/video/BV1CA411L7ux/).
 
 ### Nginx
 
@@ -108,7 +116,7 @@ http {
 
 ```
 
-The deployment work is straightforward. Find the corresponding version zip file from [releases](https://github.com/madneal/gshark/releases). 
+The deployment work is straightforward. Find the corresponding version zip file from [releases](https://github.com/madneal/gshark/releases).
 
 Unzip and copy the files inside `dist` to `/var/www/html` folder of Nginx. 
 
@@ -138,7 +146,7 @@ Start the Nginx and the Front-End is deployed successfully.
 ./gshark serve
 ```
 
-Initially, rename `config-temp.yaml` to `config.yaml`. After that, you can run the `gshark` binary file directly. Then, access `localhost:8080` for local deployment.
+Initially, copy `config-temp.yaml` to `config.yaml` and update it for your environment. After that, you can run the `gshark` binary file directly. Then, access `localhost:8080` for local deployment.
 
 If you haven't initialized the database before, you will be redirected to the database initialization page first.
 
@@ -162,9 +170,9 @@ For the incremental deployment, [sql.md](https://github.com/madneal/gshark/blob/
 
 ```shell
 git clone https://github.com/madneal/gshark.git
-cd server
+cd gshark/server
 go mod tidy
-mv config-temp.yaml config.yaml
+cp config-temp.yaml config.yaml
 go build
 ```
 
@@ -193,6 +201,13 @@ Or
 ```shell
 go run main.go scan
 ```
+
+> [!NOTE]
+> On macOS ARM, CPU percentage collection in the server-info page depends on cgo. Use `CGO_ENABLED=1` when running or building the backend if you need CPU usage percentages:
+>
+> ```shell
+> CGO_ENABLED=1 go run main.go serve
+> ```
 
 ### Web 
 
@@ -243,7 +258,7 @@ gshark/gshark
 
 2. Database initial failed
 
-make sure the version of MySQL is over 5.6. And remove the database before initialing the second time.
+Make sure the MySQL version is 8.0 or later. Remove the database before initializing a second time.
 
 3. `go get ./... connection error`
 
@@ -255,7 +270,15 @@ go env -w GO111MODULE=on
 ```
 4. When deploying the web to `nginx`, the page was empty
 
-try to clear the LocalStorage
+Try to clear LocalStorage and confirm the Nginx `/api/` reverse proxy points to the backend service.
+
+5. Server info page shows CPU usage as zero on macOS ARM
+
+Run or build the backend with cgo enabled:
+
+```shell
+CGO_ENABLED=1 go run main.go serve
+```
 
 ## Resources 
 
