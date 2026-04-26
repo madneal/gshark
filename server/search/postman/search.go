@@ -106,12 +106,8 @@ func SearchByType(keyword, searchType string) {
 	}
 	for _, res := range *resList {
 		results := res.CovertToSearchResult(keyword)
-		for _, result := range *results {
-			err = service.CreateSearchResult(result)
-			if err != nil {
-				global.GVA_LOG.Error("CreateSearchResult err", zap.Error(err))
-			}
-		}
+		insertCount := service.SaveSearchResults(*results)
+		global.GVA_LOG.Info(fmt.Sprintf("Has inserted %d postman results", insertCount))
 	}
 }
 

@@ -7,37 +7,29 @@ import (
 )
 
 func CreateSubdomain(subdomain model.Subdomain) (err error) {
-	err = global.GVA_DB.Create(&subdomain).Error
-	return err
+	return Create(&subdomain)
 }
 
 func DeleteSubdomain(subdomain model.Subdomain) (err error) {
-	err = global.GVA_DB.Delete(&subdomain).Error
-	return err
+	return Delete(&subdomain)
 }
 
 func DeleteSubdomainByIds(ids request.IdsReq) (err error) {
-	err = global.GVA_DB.Delete(&[]model.Subdomain{}, "id in ?", ids.Ids).Error
-	return err
+	return DeleteByIds[model.Subdomain](ids)
 }
 
 func UpdateSubdomain(subdomain model.Subdomain) (err error) {
-	err = global.GVA_DB.Save(&subdomain).Error
-	return err
+	return Update(&subdomain)
 }
 
 func GetSubdomain(id uint) (err error, subdomain model.Subdomain) {
-	err = global.GVA_DB.Where("id = ?", id).First(&subdomain).Error
+	subdomain, err = GetByID[model.Subdomain](id)
 	return
 }
 
 func GetSubdomainInfoList(info request.SubdomainSearch) (err error, list interface{}, total int64) {
-	limit := info.PageSize
-	offset := info.PageSize * (info.Page - 1)
-	// 创建db
 	db := global.GVA_DB.Model(&model.Subdomain{})
 	var subdomains []model.Subdomain
-	// 如果有条件搜索 下方会自动创建搜索语句
 	if info.Subdomain.Subdomain != "" {
 		db = db.Where("`subdomain` LIKE ?", "%"+info.Subdomain.Subdomain+"%")
 	}
@@ -47,7 +39,6 @@ func GetSubdomainInfoList(info request.SubdomainSearch) (err error, list interfa
 	if info.Status != 0 {
 		db = db.Where("`status` = ?", info.Status)
 	}
-	err = db.Count(&total).Error
-	err = db.Limit(limit).Offset(offset).Find(&subdomains).Error
+	total, err = Paginate(db, info.Page, info.PageSize, &subdomains, "")
 	return err, subdomains, total
 }

@@ -2,64 +2,51 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/model"
 	"github.com/madneal/gshark/model/request"
 	"github.com/madneal/gshark/model/response"
 	"github.com/madneal/gshark/service"
-	"go.uber.org/zap"
 )
 
 func CreateFilter(c *gin.Context) {
 	var filter model.Filter
-	_ = c.ShouldBindJSON(&filter)
-	if err := service.CreateFilter(filter); err != nil {
-		global.GVA_LOG.Error("创建失败!", zap.Any("err", err))
-		response.FailWithMessage("创建失败", c)
-	} else {
-		response.OkWithMessage("创建成功", c)
+	if !bindJSON(c, &filter) {
+		return
 	}
+	respondMutation(c, service.CreateFilter(filter), "创建失败!", "创建失败", "创建成功")
 }
 
 func DeleteFilter(c *gin.Context) {
 	var filter model.Filter
-	_ = c.ShouldBindJSON(&filter)
-	if err := service.DeleteFilter(filter); err != nil {
-		global.GVA_LOG.Error("删除失败!", zap.Any("err", err))
-		response.FailWithMessage("删除失败", c)
-	} else {
-		response.OkWithMessage("删除成功", c)
+	if !bindJSON(c, &filter) {
+		return
 	}
+	respondMutation(c, service.DeleteFilter(filter), "删除失败!", "删除失败", "删除成功")
 }
 
 func DeleteFilterByIds(c *gin.Context) {
 	var IDS request.IdsReq
-	_ = c.ShouldBindJSON(&IDS)
-	if err := service.DeleteFilterByIds(IDS); err != nil {
-		global.GVA_LOG.Error("批量删除失败!", zap.Any("err", err))
-		response.FailWithMessage("批量删除失败", c)
-	} else {
-		response.OkWithMessage("批量删除成功", c)
+	if !bindJSON(c, &IDS) {
+		return
 	}
+	respondMutation(c, service.DeleteFilterByIds(IDS), "批量删除失败!", "批量删除失败", "批量删除成功")
 }
 
 func UpdateFilter(c *gin.Context) {
 	var filter model.Filter
-	_ = c.ShouldBindJSON(&filter)
-	if err := service.UpdateFilter(filter); err != nil {
-		global.GVA_LOG.Error("更新失败!", zap.Any("err", err))
-		response.FailWithMessage("更新失败", c)
-	} else {
-		response.OkWithMessage("更新成功", c)
+	if !bindJSON(c, &filter) {
+		return
 	}
+	respondMutation(c, service.UpdateFilter(filter), "更新失败!", "更新失败", "更新成功")
 }
 
 func FindFilter(c *gin.Context) {
 	var filter model.Filter
-	_ = c.ShouldBindQuery(&filter)
+	if !bindQuery(c, &filter) {
+		return
+	}
 	if err, filter := service.GetFilter(filter.ID); err != nil {
-		global.GVA_LOG.Error("查询失败!", zap.Any("err", err))
-		response.FailWithMessage("查询失败", c)
+		respondMutation(c, err, "查询失败!", "查询失败", "")
 	} else {
 		response.OkWithData(gin.H{"filter": filter}, c)
 	}
@@ -67,16 +54,9 @@ func FindFilter(c *gin.Context) {
 
 func GetFilterList(c *gin.Context) {
 	var pageInfo request.FilterSearch
-	_ = c.ShouldBindQuery(&pageInfo)
-	if err, list, total := service.GetFilterInfoList(pageInfo); err != nil {
-		global.GVA_LOG.Error("获取失败", zap.Any("err", err))
-		response.FailWithMessage("获取失败", c)
-	} else {
-		response.OkWithDetailed(response.PageResult{
-			List:     list,
-			Total:    total,
-			Page:     pageInfo.Page,
-			PageSize: pageInfo.PageSize,
-		}, "获取成功", c)
+	if !bindQuery(c, &pageInfo) {
+		return
 	}
+	err, list, total := service.GetFilterInfoList(pageInfo)
+	respondPage(c, err, list, total, pageInfo.Page, pageInfo.PageSize)
 }

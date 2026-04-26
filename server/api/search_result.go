@@ -26,46 +26,34 @@ var statusOptions = map[int]string{
 
 func CreateSearchResult(c *gin.Context) {
 	var searchResult model.SearchResult
-	_ = c.ShouldBindJSON(&searchResult)
-	if err := service.CreateSearchResult(searchResult); err != nil {
-		global.GVA_LOG.Error("创建失败!", zap.Any("err", err))
-		response.FailWithMessage("创建失败", c)
-	} else {
-		response.OkWithMessage("创建成功", c)
+	if !bindJSON(c, &searchResult) {
+		return
 	}
+	respondMutation(c, service.CreateSearchResult(searchResult), "创建失败!", "创建失败", "创建成功")
 }
 
 func DeleteSearchResult(c *gin.Context) {
 	var searchResult model.SearchResult
-	_ = c.ShouldBindJSON(&searchResult)
-	if err := service.DeleteSearchResult(searchResult); err != nil {
-		global.GVA_LOG.Error("删除失败!", zap.Any("err", err))
-		response.FailWithMessage("删除失败", c)
-	} else {
-		response.OkWithMessage("删除成功", c)
+	if !bindJSON(c, &searchResult) {
+		return
 	}
+	respondMutation(c, service.DeleteSearchResult(searchResult), "删除失败!", "删除失败", "删除成功")
 }
 
 func DeleteSearchResultByIds(c *gin.Context) {
 	var IDS request.IdsReq
-	_ = c.ShouldBindJSON(&IDS)
-	if err := service.DeleteSearchResultByIds(IDS); err != nil {
-		global.GVA_LOG.Error("批量删除失败!", zap.Any("err", err))
-		response.FailWithMessage("批量删除失败", c)
-	} else {
-		response.OkWithMessage("批量删除成功", c)
+	if !bindJSON(c, &IDS) {
+		return
 	}
+	respondMutation(c, service.DeleteSearchResultByIds(IDS), "批量删除失败!", "批量删除失败", "批量删除成功")
 }
 
 func UpdateSearchResultByIds(c *gin.Context) {
 	var batchUpdateReq request.BatchUpdateReq
-	_ = c.ShouldBindJSON(&batchUpdateReq)
-	if err := service.UpdateSearchResultByIds(batchUpdateReq); err != nil {
-		global.GVA_LOG.Error("批量更新状态失败！", zap.Any("err", err))
-		response.FailWithMessage("批量更新状态失败", c)
-	} else {
-		response.OkWithMessage("批量更新状态成功", c)
+	if !bindJSON(c, &batchUpdateReq) {
+		return
 	}
+	respondMutation(c, service.UpdateSearchResultByIds(batchUpdateReq), "批量更新状态失败！", "批量更新状态失败", "批量更新状态成功")
 }
 
 func GetTaskStatus(c *gin.Context) {
@@ -179,21 +167,19 @@ func StartSecFilterTask(c *gin.Context) {
 
 func UpdateSearchResult(c *gin.Context) {
 	var updateReq request.UpdateReq
-	_ = c.ShouldBindJSON(&updateReq)
-	if err := service.UpdateSearchResult(updateReq); err != nil {
-		global.GVA_LOG.Error("更新失败!", zap.Any("err", err))
-		response.FailWithMessage("更新失败", c)
-	} else {
-		response.OkWithMessage("更新成功", c)
+	if !bindJSON(c, &updateReq) {
+		return
 	}
+	respondMutation(c, service.UpdateSearchResult(updateReq), "更新失败!", "更新失败", "更新成功")
 }
 
 func FindSearchResult(c *gin.Context) {
 	var searchResult model.SearchResult
-	_ = c.ShouldBindQuery(&searchResult)
+	if !bindQuery(c, &searchResult) {
+		return
+	}
 	if err, searchResult := service.GetSearchResult(searchResult.ID); err != nil {
-		global.GVA_LOG.Error("查询失败!", zap.Any("err", err))
-		response.FailWithMessage("查询失败", c)
+		respondMutation(c, err, "查询失败!", "查询失败", "")
 	} else {
 		response.OkWithData(gin.H{"searchResult": searchResult}, c)
 	}
@@ -201,23 +187,18 @@ func FindSearchResult(c *gin.Context) {
 
 func GetSearchResultList(c *gin.Context) {
 	var pageInfo request.SearchResultSearch
-	_ = c.ShouldBindQuery(&pageInfo)
-	if err, list, total := service.GetSearchResultInfoList(pageInfo); err != nil {
-		global.GVA_LOG.Error("获取失败", zap.Any("err", err))
-		response.FailWithMessage("获取失败", c)
-	} else {
-		response.OkWithDetailed(response.PageResult{
-			List:     list,
-			Total:    total,
-			Page:     pageInfo.Page,
-			PageSize: pageInfo.PageSize,
-		}, "获取成功", c)
+	if !bindQuery(c, &pageInfo) {
+		return
 	}
+	err, list, total := service.GetSearchResultInfoList(pageInfo)
+	respondPage(c, err, list, total, pageInfo.Page, pageInfo.PageSize)
 }
 
 func ExportSearchResult(c *gin.Context) {
 	var searchInfo request.SearchResultSearch
-	_ = c.ShouldBindQuery(&searchInfo)
+	if !bindQuery(c, &searchInfo) {
+		return
+	}
 	searchInfo.PageInfo.Page = 1
 	searchInfo.PageInfo.PageSize = 10000
 	c.Header("Content-Type", "text/csv")

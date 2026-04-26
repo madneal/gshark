@@ -34,22 +34,11 @@ func RunTask(duration time.Duration) {
 }
 
 func SaveResults(results []*model.SearchResult, keyword *string) {
-	insertCount := 0
-	for _, result := range results {
-		if result != nil {
-			var err error
-			exist := service.CheckExistOfSearchResult(result)
-			result.Keyword = *keyword
-			if !exist {
-				err = service.CreateSearchResult(*result)
-				insertCount++
-			}
-			if err != nil {
-				global.GVA_LOG.Error("search code save result error", zap.Any("err", err))
-			}
-		}
-		global.GVA_LOG.Info(fmt.Sprintf("Has inserted %d results into code_result", insertCount))
+	if len(results) == 0 {
+		return
 	}
+	insertCount := service.SaveSearchResultPointers(results, *keyword)
+	global.GVA_LOG.Info(fmt.Sprintf("Has inserted %d results into code_result", insertCount))
 }
 
 func SearchForSearchCode(rule model.Rule, request *gorequest.SuperAgent) []*model.SearchResult {

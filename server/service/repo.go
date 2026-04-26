@@ -10,39 +10,30 @@ import (
 )
 
 func CreateRepo(repo model.Repo) (err error) {
-	err = global.GVA_DB.Create(&repo).Error
-	return err
+	return Create(&repo)
 }
 
 func DeleteRepo(repo model.Repo) (err error) {
-	err = global.GVA_DB.Delete(&repo).Error
-	return err
+	return Delete(&repo)
 }
 
 func DeleteRepoByIds(ids request.IdsReq) (err error) {
-	err = global.GVA_DB.Delete(&[]model.Repo{}, "id in ?", ids.Ids).Error
-	return err
+	return DeleteByIds[model.Repo](ids)
 }
 
 func UpdateRepo(repo model.Repo) (err error) {
-	err = global.GVA_DB.Save(&repo).Error
-	return err
+	return Update(&repo)
 }
 
 func GetRepo(id uint) (err error, repo model.Repo) {
-	err = global.GVA_DB.Where("id = ?", id).First(&repo).Error
+	repo, err = GetByID[model.Repo](id)
 	return
 }
 
 func GetRepoInfoList(info request.RepoSearch) (err error, list interface{}, total int64) {
-	limit := info.PageSize
-	offset := info.PageSize * (info.Page - 1)
-	// 创建db
 	db := global.GVA_DB.Model(&model.Repo{})
 	var repos []model.Repo
-	// 如果有条件搜索 下方会自动创建搜索语句
-	err = db.Count(&total).Error
-	err = db.Limit(limit).Offset(offset).Find(&repos).Error
+	total, err = Paginate(db, info.Page, info.PageSize, &repos, "")
 	return err, repos, total
 }
 

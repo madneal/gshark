@@ -101,21 +101,11 @@ func SearchInsideProjects(keyword string, client *gitlab.Client) {
 }
 
 func SaveResult(results []*model.SearchResult, keyword *string) {
-	insertCount := 0
-	if len(results) > 0 {
-		for _, resultItem := range results {
-			has := service.CheckExistOfSearchResult(resultItem)
-			if !has {
-				resultItem.Keyword = *keyword
-				err := service.CreateSearchResult(*resultItem)
-				if err != nil {
-				}
-				insertCount++
-			}
-
-		}
-		global.GVA_LOG.Info(fmt.Sprintf("Has inserted %d results", insertCount))
+	if len(results) == 0 {
+		return
 	}
+	insertCount := service.SaveSearchResultPointers(results, *keyword)
+	global.GVA_LOG.Info(fmt.Sprintf("Has inserted %d results", insertCount))
 }
 
 func SearchCode(keyword string, project model.Repo, client *gitlab.Client) []*model.SearchResult {

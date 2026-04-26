@@ -7,38 +7,29 @@ import (
 )
 
 func CreateFilter(filter model.Filter) (err error) {
-	err = global.GVA_DB.Create(&filter).Error
-	return err
+	return Create(&filter)
 }
 
 func DeleteFilter(filter model.Filter) (err error) {
-	err = global.GVA_DB.Delete(&filter).Error
-	return err
+	return Delete(&filter)
 }
 
 func DeleteFilterByIds(ids request.IdsReq) (err error) {
-	err = global.GVA_DB.Delete(&[]model.Filter{}, "id in ?", ids.Ids).Error
-	return err
+	return DeleteByIds[model.Filter](ids)
 }
 
 func UpdateFilter(filter model.Filter) (err error) {
-	err = global.GVA_DB.Save(&filter).Error
-	return err
+	return Update(&filter)
 }
 
 func GetFilter(id uint) (err error, filter model.Filter) {
-	err = global.GVA_DB.Where("id = ?", id).First(&filter).Error
+	filter, err = GetByID[model.Filter](id)
 	return
 }
 
 func GetFilterInfoList(info request.FilterSearch) (err error, list interface{}, total int64) {
-	limit := info.PageSize
-	offset := info.PageSize * (info.Page - 1)
-	// 创建db
 	db := global.GVA_DB.Model(&model.Filter{})
 	var filters []model.Filter
-	// 如果有条件搜索 下方会自动创建搜索语句
-	err = db.Count(&total).Error
-	err = db.Limit(limit).Offset(offset).Find(&filters).Error
+	total, err = Paginate(db, info.Page, info.PageSize, &filters, "")
 	return err, filters, total
 }

@@ -8,18 +8,15 @@ import (
 )
 
 func CreateSearchResult(searchResult model.SearchResult) (err error) {
-	err = global.GVA_DB.Create(&searchResult).Error
-	return err
+	return Create(&searchResult)
 }
 
 func DeleteSearchResult(searchResult model.SearchResult) (err error) {
-	err = global.GVA_DB.Delete(&searchResult).Error
-	return err
+	return Delete(&searchResult)
 }
 
 func DeleteSearchResultByIds(ids request.IdsReq) (err error) {
-	err = global.GVA_DB.Delete(&[]model.SearchResult{}, "id in ?", ids.Ids).Error
-	return err
+	return DeleteByIds[model.SearchResult](ids)
 }
 
 func UpdateSearchResultByIds(req request.BatchUpdateReq) (err error) {
@@ -29,8 +26,9 @@ func UpdateSearchResultByIds(req request.BatchUpdateReq) (err error) {
 }
 
 func IgnoreResultsByRepo(repo string) (err error) {
-	err = global.GVA_DB.Table("search_result").Where("status = 0 and repo = ? and sec_keyword is null or sec_keyword = ''",
-		repo).UpdateColumn("status", global.IgnoredStatus).Error
+	err = global.GVA_DB.Table("search_result").
+		Where("status = ? and repo = ? and (sec_keyword is null or sec_keyword = '')", global.UnhandledStatus, repo).
+		UpdateColumn("status", global.IgnoredStatus).Error
 	return err
 }
 
@@ -47,7 +45,7 @@ func UpdateSearchResultById(id, status int) (err error) {
 }
 
 func GetSearchResult(id uint) (err error, searchResult model.SearchResult) {
-	err = global.GVA_DB.Where("id = ?", id).First(&searchResult).Error
+	searchResult, err = GetByID[model.SearchResult](id)
 	return
 }
 
@@ -57,9 +55,6 @@ func ListSearchResultByStatus(status int) (err error, list []model.SearchResult)
 }
 
 func GetSearchResultInfoList(info request.SearchResultSearch) (err error, list interface{}, total int64) {
-	limit := info.PageSize
-	offset := info.PageSize * (info.Page - 1)
-	// 创建db
 	db := global.GVA_DB.Model(&model.SearchResult{})
 	var searchResults []model.SearchResult
 	if info.Query != "" {
@@ -75,8 +70,7 @@ func GetSearchResultInfoList(info request.SearchResultSearch) (err error, list i
 	if info.OnlySecKeyword {
 		db = db.Where("`sec_keyword` != ''")
 	}
-	err = db.Count(&total).Error
-	err = db.Limit(limit).Offset(offset).Order("id desc").Find(&searchResults).Error
+	total, err = Paginate(db, info.Page, info.PageSize, &searchResults, "id desc")
 	return err, searchResults, total
 }
 
@@ -102,6 +96,20 @@ func SaveSearchResults(searchResults []model.SearchResult) int {
 		}
 	}
 	return insertCount
+}
+
+func SaveSearchResultPointers(searchResults []*model.SearchResult, keyword string) int {
+	results := make([]model.SearchResult, 0, len(searchResults))
+	for _, result := range searchResults {
+		if result == nil {
+			continue
+		}
+		if keyword != "" {
+			result.Keyword = keyword
+		}
+		results = append(results, *result)
+	}
+	return SaveSearchResults(results)
 }
 
 func GetReposByStatus(status int) (error, []string) {

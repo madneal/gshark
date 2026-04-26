@@ -20,23 +20,19 @@ func DeleteRule(rule model.Rule) (err error) {
 }
 
 func DeleteRuleByIds(ids request.IdsReq) (err error) {
-	err = global.GVA_DB.Debug().Delete(&[]model.Rule{}, ids.Ids).Error
-	return err
+	return DeleteByIds[model.Rule](ids)
 }
 
 func UpdateRule(rule model.Rule) (err error) {
-	err = global.GVA_DB.Save(&rule).Error
-	return err
+	return Update(&rule)
 }
 
 func GetRule(id uint) (err error, rule model.Rule) {
-	err = global.GVA_DB.Where("id = ?", id).First(&rule).Error
+	rule, err = GetByID[model.Rule](id)
 	return
 }
 
 func GetRuleInfoList(info request.RuleSearch) (err error, list interface{}, total int64) {
-	limit := info.PageSize
-	offset := info.PageSize * (info.Page - 1)
 	db := global.GVA_DB.Model(&model.Rule{})
 	var rules []model.Rule
 	if len(info.RuleType) > 0 {
@@ -48,8 +44,7 @@ func GetRuleInfoList(info request.RuleSearch) (err error, list interface{}, tota
 	if info.Name != "" {
 		db = db.Where("`name` = ?", info.Name)
 	}
-	err = db.Count(&total).Error
-	err = db.Limit(limit).Offset(offset).Find(&rules).Error
+	total, err = Paginate(db, info.Page, info.PageSize, &rules, "")
 	return err, rules, total
 }
 

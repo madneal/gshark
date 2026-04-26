@@ -7,27 +7,23 @@ import (
 )
 
 func CreateToken(token model.Token) (err error) {
-	err = global.GVA_DB.Create(&token).Error
-	return err
+	return Create(&token)
 }
 
 func DeleteToken(token model.Token) (err error) {
-	err = global.GVA_DB.Delete(&token).Error
-	return err
+	return Delete(&token)
 }
 
 func DeleteTokenByIds(ids request.IdsReq) (err error) {
-	err = global.GVA_DB.Delete(&[]model.Token{}, "id in ?", ids.Ids).Error
-	return err
+	return DeleteByIds[model.Token](ids)
 }
 
 func UpdateToken(token model.Token) (err error) {
-	err = global.GVA_DB.Save(&token).Error
-	return err
+	return Update(&token)
 }
 
 func GetToken(id uint) (err error, token model.Token) {
-	err = global.GVA_DB.Where("id = ?", id).First(&token).Error
+	token, err = GetByID[model.Token](id)
 	return
 }
 
@@ -38,13 +34,8 @@ func ListTokenByType(tokenType string) (err error, tokens []model.Token) {
 }
 
 func GetTokenInfoList(info request.TokenSearch) (err error, list interface{}, total int64) {
-	limit := info.PageSize
-	offset := info.PageSize * (info.Page - 1)
-	// 创建db
 	db := global.GVA_DB.Model(&model.Token{})
 	var tokens []model.Token
-	// 如果有条件搜索 下方会自动创建搜索语句
-	err = db.Count(&total).Error
-	err = db.Limit(limit).Offset(offset).Find(&tokens).Error
+	total, err = Paginate(db, info.Page, info.PageSize, &tokens, "")
 	return err, tokens, total
 }
