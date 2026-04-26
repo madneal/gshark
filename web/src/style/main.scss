@@ -595,7 +595,7 @@ li {
         .el-menu-vertical {
             background-color: $bg-aside;
         }
-        .el-submenu {
+        .el-sub-menu {
             background-color: $bg-aside;
             .el-menu {
                 .el-menu-item {
@@ -627,12 +627,12 @@ li {
             color: #fff;
         }
 
-        .el-submenu__title:hover {
+        .el-sub-menu__title:hover {
             background-color: $bg-aside;
         }
 
-        .el-submenu__title:hover i,
-        .el-submenu__title:hover span {
+        .el-sub-menu__title:hover i,
+        .el-sub-menu__title:hover span {
             color: #fff;
         }
         .el-menu--inline {
@@ -1204,14 +1204,6 @@ $mainHight: 100vh;
     top: 0;
     box-sizing: border-box;
     z-index: 999;
-    >.el-row{
-        padding: 0;
-        .el-col-lg-14{
-            height: 60px;
-        }
-    }
-   
-
 }
 
 
@@ -1222,11 +1214,16 @@ $mainHight: 100vh;
 
 .layout-cont {
     .right-box {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 12px;
+        flex: 0 0 auto;
         height: $height-header;
-        line-height: $height-header;
+        line-height: normal;
         text-align: center;
         vertical-align: middle;
-        margin-right: 40px;
+        margin-right: 24px;
 
         img {
             vertical-align: middle;
@@ -1236,15 +1233,31 @@ $mainHight: 100vh;
     }
 
     .header-cont {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
         height: $height-header;
         background: #fff;
+        padding: 0;
     }
 
     .main-cont {
+        .header-left {
+            display: flex;
+            align-items: center;
+            min-width: 0;
+            flex: 1 1 auto;
+            height: $height-header;
+        }
+
         .breadcrumb {
+            flex: 1 1 auto;
+            min-width: 0;
             height: $height-header;
             line-height: $height-header;
-            display: inline-block;
+            display: flex;
+            align-items: center;
             background-color: #fff;
             padding: 0 24px;
         }
@@ -1264,12 +1277,16 @@ $mainHight: 100vh;
         position: relative;
 
         .menu-total {
-            float: left;
-            margin-top: 10px;
+            flex: 0 0 54px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 0;
             width: 30px;
-            height: 30px;
-            line-height: 30px;
+            height: $height-header;
+            line-height: $height-header;
             font-size: 30px;
+            cursor: pointer;
         }
 
         .aside {
@@ -1296,7 +1313,7 @@ $mainHight: 100vh;
             li {
 
                 .el-tooltip,
-                .el-submenu__title {
+                .el-sub-menu__title {
                     padding: 0px 15px !important;
                 }
             }
@@ -1337,13 +1354,19 @@ $mainHight: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    cursor: pointer;
 }
 
 .search-component {
-    display: inline-block;
-    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    overflow: visible;
     height: 60px;
-    width: 120px;
+    width: auto;
     text-align: center;
 
     .el-input__inner {
@@ -1369,6 +1392,15 @@ $mainHight: 100vh;
     }
 }
 
+.search-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 60px;
+    color: #606266;
+}
+
 .transition-box {
     overflow: hidden;
     width: 120px;
@@ -1376,8 +1408,12 @@ $mainHight: 100vh;
 }
 
 .screenfull {
-    overflow: hidden;
-    width: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
+    width: 24px;
+    height: 60px;
     text-align: center;
 }
 

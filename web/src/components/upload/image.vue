@@ -25,7 +25,7 @@
   </div>
 </template>
 <script>
-const path = process.env.VUE_APP_BASE_API;
+const path = import.meta.env.VITE_BASE_API;
 import { mapGetters } from "vuex";
 import ImageCompress from "@/utils/image.js";
 export default {

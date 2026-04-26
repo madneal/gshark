@@ -96,7 +96,7 @@ export default {
       this.isShow = !screenfull.isFullscreen
     },
   },
-  destroyed() {
+  beforeUnmount() {
     screenfull.off('change', this.changeFullShow)
   },
 }

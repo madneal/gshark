@@ -1,4 +1,4 @@
-const _import = require('./_import') //获取组件的方法
+import _import from './_import' //获取组件的方法
 export const asyncRouterHandle = (asyncRouter) => {
     asyncRouter.map(item => {
         if (item.component) {

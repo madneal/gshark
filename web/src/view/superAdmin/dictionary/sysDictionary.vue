@@ -35,7 +35,7 @@
     >
       <el-table-column type="selection" width="55"></el-table-column>
       <el-table-column label="日期" width="180">
-        <template slot-scope="scope">{{scope.row.CreatedAt|formatDate}}</template>
+        <template #default="scope">{{scope.row.CreatedAt|formatDate}}</template>
       </el-table-column>
 
       <el-table-column label="字典名（中）" prop="name" width="120"></el-table-column>
@@ -43,13 +43,13 @@
       <el-table-column label="字典名（英）" prop="type" width="120"></el-table-column>
 
       <el-table-column label="状态" prop="status" width="120">
-        <template slot-scope="scope">{{scope.row.status|formatBoolean}}</template>
+        <template #default="scope">{{scope.row.status|formatBoolean}}</template>
       </el-table-column>
 
       <el-table-column label="描述" prop="desc" width="280"></el-table-column>
 
       <el-table-column label="按钮组">
-        <template slot-scope="scope">
+        <template #default="scope">
           <el-button @click="toDetile(scope.row)" size="small" type="success">详情</el-button>
           <el-button @click="updateSysDictionary(scope.row)" size="small" type="primary">变更</el-button>
           <el-popover placement="top" width="160" v-model="scope.row.visible">

@@ -14,7 +14,7 @@
       <el-table-column label="角色id" min-width="180" prop="authorityId"></el-table-column>
       <el-table-column label="角色名称" min-width="180" prop="authorityName"></el-table-column>
       <el-table-column fixed="right" label="操作" width="460">
-        <template slot-scope="scope">
+        <template #default="scope">
           <el-button @click="opdendrawer(scope.row)" size="small" type="primary">设置权限</el-button>
           <el-button
             @click="addAuthority(scope.row.authorityId)"
@@ -96,9 +96,9 @@ import {
   copyAuthority
 } from "@/api/authority";
 
-import Menus from "@/view/superAdmin/authority/components/menus";
-import Apis from "@/view/superAdmin/authority/components/apis";
-import Datas from "@/view/superAdmin/authority/components/datas";
+import Menus from "@/view/superAdmin/authority/components/menus.vue";
+import Apis from "@/view/superAdmin/authority/components/apis.vue";
+import Datas from "@/view/superAdmin/authority/components/datas.vue";
 
 import infoList from "@/mixins/infoList";
 export default {

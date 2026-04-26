@@ -22,8 +22,8 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations } from "vuex";
-import AsideComponent from "@/view/layout/aside/asideComponent";
+import { mapGetters } from "vuex";
+import AsideComponent from "@/view/layout/aside/asideComponent/index.vue";
 export default {
   name: "Aside",
   data() {
@@ -33,12 +33,12 @@ export default {
     };
   },
   methods: {
-    ...mapMutations("history", ["addHistory"]),
     selectMenuItem(index, _, ele) {
       const query = {};
       const params = {};
-      ele.route.parameters &&
-        ele.route.parameters.map(item => {
+      const parameters = ele?.route?.parameters || [];
+      parameters &&
+        parameters.map(item => {
           if (item.type == "query") {
             query[item.key] = item.value;
           } else {
@@ -75,7 +75,7 @@ export default {
       this.active = this.$route.name;
     }
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.$bus.off("collapse");
   }
 };

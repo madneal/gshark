@@ -2,7 +2,7 @@
   <div class="router-history">
     <el-tabs
       :closable="!(historys.length==1&&this.$route.name==defaultRouter)"
-      @contextmenu.prevent.native="openContextMenu($event)"
+      @contextmenu.prevent="openContextMenu($event)"
       @tab-click="changeTab"
       @tab-remove="removeTab"
       type="card"
@@ -76,7 +76,7 @@ export default {
     this.setTab(this.$route);
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     this.$bus.off("collapse");
     this.$bus.off("mobile");
   },

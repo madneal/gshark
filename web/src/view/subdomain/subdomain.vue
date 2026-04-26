@@ -40,7 +40,7 @@
     >
     <el-table-column type="selection" width="55"></el-table-column>
     <el-table-column label="日期" width="180">
-         <template slot-scope="scope">{{scope.row.CreatedAt|formatDate}}</template>
+         <template #default="scope">{{scope.row.CreatedAt|formatDate}}</template>
     </el-table-column>
     
     <el-table-column label="子域名" prop="subdomain" width="120"></el-table-column> 
@@ -50,7 +50,7 @@
     <el-table-column label="状态" prop="status" width="120"></el-table-column> 
     
       <el-table-column label="按钮组">
-        <template slot-scope="scope">
+        <template #default="scope">
           <el-button class="table-button" @click="updateSubdomain(scope.row)" size="small" type="primary" icon="el-icon-edit">变更</el-button>
           <el-button type="danger" icon="el-icon-delete" size="mini" @click="deleteRow(scope.row)">删除</el-button>
         </template>

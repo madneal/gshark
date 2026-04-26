@@ -14,7 +14,8 @@
       ref="menuTree"
       show-checkbox
     >
-     <span class="custom-tree-node" slot-scope="{ node , data }">
+      <template #default="{ node, data }">
+        <span class="custom-tree-node">
         <span>{{ node.label }}</span>
         <span>
           <el-button
@@ -26,7 +27,8 @@
             {{row.defaultRouter == data.name?"首页":"设为首页"}}
           </el-button>
         </span>
-      </span>
+        </span>
+      </template>
     </el-tree>
   </div>
 </template>

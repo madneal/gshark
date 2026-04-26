@@ -35,7 +35,7 @@
       <el-table-column label="api分组" min-width="150" prop="apiGroup" sortable="custom"></el-table-column>
       <el-table-column label="api简介" min-width="150" prop="description" sortable="custom"></el-table-column>
       <el-table-column label="请求" min-width="150" prop="method" sortable="custom">
-        <template slot-scope="scope">
+        <template #default="scope">
           <div>
             {{scope.row.method}}
             <el-tag
@@ -50,7 +50,7 @@
       </el-table-column>
 
       <el-table-column fixed="right" label="操作" width="200">
-        <template slot-scope="scope">
+        <template #default="scope">
           <el-button @click="editApi(scope.row)" size="small" type="primary" icon="el-icon-edit">编辑</el-button>
           <el-button
             @click="deleteApi(scope.row)"
