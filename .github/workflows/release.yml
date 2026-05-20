@@ -1,105 +1,71 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
-
 name: Release
 
 on:
   release:
     types: [prereleased, edited, published]
 
-
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [20.x]
 
     steps:
       - name: Fetch Sources
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.event.release.tag_name }}
 
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 20.x
           cache: npm
           cache-dependency-path: web/package-lock.json
-          
 
-      - run: cd web && npm install --legacy-peer-deps && npm run build
+      - name: Build Frontend
+        run: cd web && npm install --legacy-peer-deps && npm run build
 
-      - name: Mkdir
-        run: |
-          mkdir -p release/gshark_darwin_amd64 && mkdir -p release/gshark_windows_amd64 &&
-          mkdir -p release/gshark_linux_amd64 && mkdir -p release/gshark_darwin_arm64
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.25"
+          cache-dependency-path: server/go.sum
 
-      - name: Move config
-        run: |
-          cp ./server/config-temp.yaml ./release/gshark_darwin_amd64/ && cp ./server/config-temp.yaml ./release/gshark_windows_amd64/ &&
-          cp ./server/config-temp.yaml ./release/gshark_linux_amd64/ && cp ./server/config-temp.yaml ./release/gshark_darwin_arm64/ 
+      - name: Go Mod Tidy
+        working-directory: ./server
+        run: go mod tidy
 
-      - name: Move resource
-        run: |
-          cp -rf ./server/resource ./release/gshark_darwin_amd64/ && cp -rf ./server/resource ./release/gshark_windows_amd64/ &&
-          cp -rf ./server/resource ./release/gshark_linux_amd64/ && cp -rf ./server/resource ./release/gshark_darwin_arm64/ 
-
-      - name: Copy dist
-        run: |
-          cp -rf ./web/dist ./release/gshark_darwin_amd64/ && cp -rf ./web/dist ./release/gshark_windows_amd64/ &&
-          cp -rf ./web/dist ./release/gshark_linux_amd64/ && cp -rf ./web/dist ./release/gshark_darwin_arm64/
-
-      - name: Go Setup
-        uses: actions/setup-go@v3.1.0
-
-      - name: Go Build for darwin
-        env:
-          GO111MODULE: on
+      - name: Build Binaries
         working-directory: ./server
         run: |
-          go mod tidy && GOOS=darwin GOARCH=amd64 go build -o gshark && cp gshark ../release/gshark_darwin_amd64
+          GOOS=darwin GOARCH=amd64 go build -o gshark_darwin_amd64
+          GOOS=darwin GOARCH=arm64 go build -o gshark_darwin_arm64
+          GOOS=windows GOARCH=amd64 go build -o gshark_windows_amd64.exe
+          GOOS=linux GOARCH=amd64 go build -o gshark_linux_amd64
 
-      - name: Go build for darwin arm64
-        env:
-          GO111MODULE: on
-        working-directory: ./server
+      - name: Prepare Release Directories
         run: |
-          go mod tidy && GOOS=darwin GOARCH=arm64 go build -o gshark && cp gshark ../release/gshark_darwin_arm64
+          for platform in darwin_amd64 darwin_arm64 windows_amd64 linux_amd64; do
+            mkdir -p "release/gshark_${platform}"
+            cp ./server/config-temp.yaml "release/gshark_${platform}/config.yaml"
+            cp -rf ./server/resource "release/gshark_${platform}/"
+            cp -rf ./web/dist "release/gshark_${platform}/"
+          done
 
-      - name: Go Build for windows
-        env:
-          GO111MODULE: on
-        working-directory: ./server
+      - name: Move Binaries
         run: |
-          go mod tidy && GOOS=windows GOARCH=amd64 go build && cp gshark.exe ../release/gshark_windows_amd64
-
-      - name: Go Build for linux
-        env:
-          GO111MODULE: on
-        working-directory: ./server
-        run: |
-          go mod tidy && GOOS=linux GOARCH=amd64 go build -o gshark && cp gshark ../release/gshark_linux_amd64
+          cp ./server/gshark_darwin_amd64 release/gshark_darwin_amd64/gshark
+          cp ./server/gshark_darwin_arm64 release/gshark_darwin_arm64/gshark
+          cp ./server/gshark_windows_amd64.exe release/gshark_windows_amd64/gshark.exe
+          cp ./server/gshark_linux_amd64 release/gshark_linux_amd64/gshark
 
       - name: Compress
         run: |
-          7z a -r ./release/gshark_darwin_amd64.zip ./release/gshark_darwin_amd64/ &&
-          7z a -r ./release/gshark_windows_amd64.zip ./release/gshark_windows_amd64/ &&
-          7z a -r ./release/gshark_linux_amd64.zip ./release/gshark_linux_amd64/ &&
-          7z a -r ./release/gshark_darwin_arm64.zip ./release/gshark_darwin_arm64/
-          
-      - name: Remove release directory
-        run: |
-          rm -rf release/gshark_*/
+          cd release
+          for platform in darwin_amd64 darwin_arm64 windows_amd64 linux_amd64; do
+            cd "gshark_${platform}" && 7z a -r "../gshark_${platform}.zip" . && cd ..
+          done
 
-      - name: Upload Release Asset
+      - name: Upload Release Assets
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release upload ${{ github.event.release.tag_name }} ./release/*
-        
-    
-    
-        
+        run: gh release upload ${{ github.event.release.tag_name }} ./release/*.zip
