@@ -19,7 +19,7 @@ jobs:
 
     steps:
       - name: Fetch Sources
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.event.release.tag_name }}
 
@@ -54,35 +54,41 @@ jobs:
           cp -rf ./web/dist ./release/gshark_linux_amd64/ && cp -rf ./web/dist ./release/gshark_darwin_arm64/
 
       - name: Go Setup
-        uses: actions/setup-go@v3.1.0
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: server/go.mod
+
+      - name: Go Mod Tidy
+        working-directory: ./server
+        run: go mod tidy
 
       - name: Go Build for darwin
         env:
           GO111MODULE: on
         working-directory: ./server
         run: |
-          go mod tidy && GOOS=darwin GOARCH=amd64 go build -o gshark && cp gshark ../release/gshark_darwin_amd64
+          GOOS=darwin GOARCH=amd64 go build -o gshark && cp gshark ../release/gshark_darwin_amd64
 
       - name: Go build for darwin arm64
         env:
           GO111MODULE: on
         working-directory: ./server
         run: |
-          go mod tidy && GOOS=darwin GOARCH=arm64 go build -o gshark && cp gshark ../release/gshark_darwin_arm64
+          GOOS=darwin GOARCH=arm64 go build -o gshark && cp gshark ../release/gshark_darwin_arm64
 
       - name: Go Build for windows
         env:
           GO111MODULE: on
         working-directory: ./server
         run: |
-          go mod tidy && GOOS=windows GOARCH=amd64 go build && cp gshark.exe ../release/gshark_windows_amd64
+          GOOS=windows GOARCH=amd64 go build -o gshark.exe && cp gshark.exe ../release/gshark_windows_amd64
 
       - name: Go Build for linux
         env:
           GO111MODULE: on
         working-directory: ./server
         run: |
-          go mod tidy && GOOS=linux GOARCH=amd64 go build -o gshark && cp gshark ../release/gshark_linux_amd64
+          GOOS=linux GOARCH=amd64 go build -o gshark && cp gshark ../release/gshark_linux_amd64
 
       - name: Compress
         run: |
