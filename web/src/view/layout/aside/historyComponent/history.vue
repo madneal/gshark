@@ -300,25 +300,19 @@ export default {
 </script>
 <style lang="scss">
 .contextmenu {
-  width: 100px;
+  width: 120px;
   margin: 0;
-  border: 1px solid #ccc;
-  background: #fff;
   z-index: 3000;
   position: absolute;
   list-style-type: none;
-  padding: 5px 0;
-  border-radius: 4px;
-  font-size: 14px;
-  color: #333;
-  box-shadow: 2px 2px 3px 0 rgba(0, 0, 0, 0.2);
+  padding: 4px 0;
+  border-radius: 6px;
+  font-size: 13px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 }
 .contextmenu li {
   margin: 0;
-  padding: 7px 16px;
-}
-.contextmenu li:hover {
-  background: #f2f2f2;
+  padding: 7px 14px;
   cursor: pointer;
 }
 </style>
