@@ -1,24 +1,25 @@
 package model
 
 import (
+	"encoding/json"
 	"errors"
+
 	"github.com/madneal/gshark/global"
 	"go.uber.org/zap"
-	"gorm.io/datatypes"
 	"gorm.io/gorm"
 )
 
 type SearchResult struct {
 	global.GVA_MODEL
-	Repo            string         `json:"repo" form:"repo" gorm:"column:repo;comment:;type:varchar(200);size:200;"`
-	RepoUrl         string         `gorm:"column:repository;type:varchar(200);"`
-	Matches         string         `json:"matches" form:"matches" gorm:"column:matches;comment:;type:text;"`
-	Keyword         string         `json:"keyword" form:"keyword" gorm:"column:keyword;comment:;type:varchar(100);size:100;"`
-	SecKeyword      string         `json:"sec_keyword" form:"sec_keyword" gorm:"column:sec_keyword;comment:;type:varchar(100);size:100;"`
-	Path            string         `json:"path" form:"path" gorm:"column:path;comment:;type:varchar(500);size:100;"`
-	Url             string         `json:"url" form:"url" gorm:"column:url;comment:;type:varchar(500);size:500;"`
-	Status          int            `json:"status" form:"status" gorm:"column:status;comment:;type:int;size:3;"`
-	TextMatchesJson datatypes.JSON `json:"text_matches,omitempty" gorm:"type:json;"`
+	Repo            string          `json:"repo" form:"repo" gorm:"column:repo;comment:;type:varchar(200);size:200;"`
+	RepoUrl         string          `gorm:"column:repository;type:varchar(200);"`
+	Matches         string          `json:"matches" form:"matches" gorm:"column:matches;comment:;type:text;"`
+	Keyword         string          `json:"keyword" form:"keyword" gorm:"column:keyword;comment:;type:varchar(100);size:100;"`
+	SecKeyword      string          `json:"sec_keyword" form:"sec_keyword" gorm:"column:sec_keyword;comment:;type:varchar(100);size:100;"`
+	Path            string          `json:"path" form:"path" gorm:"column:path;comment:;type:varchar(500);size:100;"`
+	Url             string          `json:"url" form:"url" gorm:"column:url;comment:;type:varchar(500);size:500;"`
+	Status          int             `json:"status" form:"status" gorm:"column:status;comment:;type:int;size:3;"`
+	TextMatchesJson json.RawMessage `json:"text_matches,omitempty" gorm:"type:json;"`
 }
 
 type TextMatchesJson struct {
