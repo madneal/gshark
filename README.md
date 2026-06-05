@@ -52,12 +52,6 @@ Use one of the two quick deployment entries:
 ./scripts/quick-release.sh --file ./gshark_linux_amd64.zip
 ```
 
-The old one-click entry still works and forwards to Release quick:
-
-```bash
-./deployment.sh
-```
-
 ## Docker Deployment
 
 ```
@@ -80,11 +74,9 @@ cd gshark
 git clone https://github.com/madneal/gshark.git  
 cd gshark  
 
-# Make the script executable (only needed once)  
-chmod +x deployment.sh  
-
-# Run the script to build and start the service  
-./deployment.sh
+# Run Release quick to download the release package, configure Nginx,
+# and start the backend.
+./scripts/quick-release.sh
 ```
 
 ## Manual Deployment

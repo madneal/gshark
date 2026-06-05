@@ -52,12 +52,6 @@ gshark / gshark
 ./scripts/quick-release.sh --file ./gshark_linux_amd64.zip
 ```
 
-旧的一键入口仍然可用，并会转发到 Release quick：
-
-```bash
-./deployment.sh
-```
-
 ## Docker 部署
 
 ```
@@ -80,11 +74,8 @@ cd gshark
 git clone https://github.com/madneal/gshark.git
 cd gshark
 
-# 添加执行权限（只需要执行一次）
-chmod +x deployment.sh
-
-# 执行脚本构建并启动服务
-./deployment.sh
+# 执行 Release quick 脚本下载发布包、配置 Nginx 并启动后端
+./scripts/quick-release.sh
 ```
 
 ## 手动部署
