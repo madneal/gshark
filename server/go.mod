@@ -26,6 +26,7 @@ require (
 	github.com/unrolled/secure v1.0.7
 	github.com/xanzy/go-gitlab v0.48.0
 	go.uber.org/zap v1.13.0
+	gorm.io/datatypes v1.2.7
 	gorm.io/driver/mysql v1.6.0
 	gorm.io/gorm v1.31.1
 )
