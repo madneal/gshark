@@ -6,6 +6,7 @@ import (
 
 	"github.com/casbin/casbin/util"
 	"github.com/casbin/casbin/v2"
+	gormadapter "github.com/casbin/gorm-adapter/v3"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/model"
@@ -60,7 +61,8 @@ func ClearCasbin(v int, p ...string) bool {
 }
 
 func Casbin() *casbin.Enforcer {
-	a := NewGormCasbinAdapter(global.GVA_DB)
+	admin := global.GVA_CONFIG.Mysql
+	a, _ := gormadapter.NewAdapter(global.GVA_CONFIG.System.DbType, admin.Username+":"+admin.Password+"@("+admin.Path+")/"+admin.Dbname, true)
 	e, _ := casbin.NewEnforcer(global.GVA_CONFIG.Casbin.ModelPath, a)
 	e.AddFunction("ParamsMatch", ParamsMatchFunc)
 	_ = e.LoadPolicy()
