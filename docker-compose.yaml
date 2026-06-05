@@ -1,5 +1,3 @@
-version: "3"
-
 # 声明一个名为network的networks,subnet为network的子网地址,默认网关是177.7.0.1
 networks:
   network:

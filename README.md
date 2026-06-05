@@ -31,6 +31,33 @@ Default login after initialization:
 gshark / gshark
 ```
 
+## Quick one-click deployment
+
+Use one of the two quick deployment entries:
+
+```bash
+# Option 1: Docker quick. Build and start mysql/server/web in the background.
+./scripts/quick-docker.sh
+
+# Start the scan container too.
+./scripts/quick-docker.sh --with-scan
+```
+
+```bash
+# Option 2: Release quick. Download the matching release package,
+# configure Nginx, and start the gshark backend in the background.
+./scripts/quick-release.sh
+
+# Or deploy from a local release zip.
+./scripts/quick-release.sh --file ./gshark_linux_amd64.zip
+```
+
+The old one-click entry still works and forwards to Release quick:
+
+```bash
+./deployment.sh
+```
+
 ## Docker Deployment
 
 ```
@@ -39,8 +66,8 @@ git clone https://github.com/madneal/gshark
 
 cd gshark
 
-# Build and start the container
-docker-compose build && docker-compose up 
+# Build and start the containers
+./scripts/quick-docker.sh
 ```
 
 > [!IMPORTANT]
