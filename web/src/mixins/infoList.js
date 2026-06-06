@@ -1,4 +1,3 @@
-import { getDict } from "@/utils/dictionary";
 export default {
     data() {
         return {

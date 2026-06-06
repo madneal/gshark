@@ -40,24 +40,32 @@
             {{scope.row.method}}
             <el-tag
               :key="scope.row.methodFiletr"
-              :type="scope.row.method|tagTypeFiletr"
+              :type="tagTypeFiletr(scope.row.method)"
               effect="dark"
               size="mini"
-            >{{scope.row.method|methodFiletr}}</el-tag>
-            <!-- {{scope.row.method|methodFiletr}} -->
+            >{{ methodFiletr(scope.row.method) }}</el-tag>
           </div>
         </template>
       </el-table-column>
 
       <el-table-column fixed="right" label="操作" width="200">
         <template #default="scope">
-          <el-button @click="editApi(scope.row)" size="small" type="primary" icon="el-icon-edit">编辑</el-button>
+          <el-button @click="editApi(scope.row)" size="small" type="primary">
+            <template #icon>
+              <el-icon><Edit /></el-icon>
+            </template>
+            编辑
+          </el-button>
           <el-button
             @click="deleteApi(scope.row)"
             size="small"
             type="danger"
-            icon="el-icon-delete"
-          >删除</el-button>
+          >
+            <template #icon>
+              <el-icon><Delete /></el-icon>
+            </template>
+            删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -100,17 +108,18 @@
         </el-form-item>
       </el-form>
       <div class="warning">新增Api需要在角色管理内配置权限才可使用</div>
-      <div class="dialog-footer" slot="footer">
-        <el-button @click="closeDialog">取 消</el-button>
-        <el-button @click="enterDialog" type="primary">确 定</el-button>
-      </div>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="closeDialog">取 消</el-button>
+          <el-button @click="enterDialog" type="primary">确 定</el-button>
+        </div>
+      </template>
     </el-dialog>
   </div>
 </template>
 
 
 <script>
-// 获取列表内容封装在mixins内部  getTableData方法 初始化已封装完成 条件搜索时候 请把条件安好后台定制的结构体字段 放到 this.searchInfo 中即可实现条件搜索
 
 import {
   getApiById,
@@ -175,7 +184,6 @@ export default {
     };
   },
   methods: {
-    // 排序
     sortChange({ prop, order }) {
       if (prop) {
         this.searchInfo.orderKey = toSQLLine(prop);
@@ -183,7 +191,6 @@ export default {
       }
       this.getTableData();
     },
-    //条件搜索前端看此方法
     onSubmit() {
       this.page = 1;
       this.pageSize = 10;
@@ -247,6 +254,14 @@ export default {
           });
         });
     },
+    methodFiletr(value) {
+      const target = methodOptions.filter(item => item.value === value)[0];
+      return target && `${target.label}`;
+    },
+    tagTypeFiletr(value) {
+      const target = methodOptions.filter(item => item.value === value)[0];
+      return target && `${target.type}`;
+    },
     async enterDialog() {
       this.$refs.apiForm.validate(async valid => {
         if (valid) {
@@ -292,17 +307,6 @@ export default {
           }
         }
       });
-    }
-  },
-  filters: {
-    methodFiletr(value) {
-      const target = methodOptions.filter(item => item.value === value)[0];
-      // return target && `${target.label}(${target.value})`
-      return target && `${target.label}`;
-    },
-    tagTypeFiletr(value) {
-      const target = methodOptions.filter(item => item.value === value)[0];
-      return target && `${target.type}`;
     }
   },
   created() {

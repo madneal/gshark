@@ -43,7 +43,6 @@
         </template>
       </el-table-column>
     </el-table>
-    <!-- 新增角色弹窗 -->
     <el-dialog :title="dialogTitle" v-model="dialogFormVisible">
       <el-form :model="form" :rules="rules" ref="authorityForm">
         <el-form-item label="父级角色" prop="parentId">
@@ -63,10 +62,12 @@
           <el-input autocomplete="off" v-model="form.authorityName"></el-input>
         </el-form-item>
       </el-form>
-      <div class="dialog-footer" slot="footer">
+      <template #footer>
+        <div class="dialog-footer">
         <el-button @click="closeDialog">取 消</el-button>
         <el-button @click="enterDialog" type="primary">确 定</el-button>
-      </div>
+        </div>
+      </template>
     </el-dialog>
 
     <el-drawer v-model="drawer" :with-header="false" size="40%" title="角色配置" v-if="drawer">
@@ -86,7 +87,6 @@
 </template>
 
 <script>
-// 获取列表内容封装在mixins内部  getTableData方法 初始化已封装完成
 
 import {
   getAuthorityList,

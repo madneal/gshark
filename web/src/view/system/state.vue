@@ -8,23 +8,23 @@
           <div>
             <el-row :gutter="10">
               <el-col :span="12">os:</el-col>
-              <el-col :span="12" v-text="state.os.goos"></el-col>
+              <el-col :span="12">{{ state.os.goos }}</el-col>
             </el-row>
             <el-row :gutter="10">
               <el-col :span="12">cpu nums:</el-col>
-              <el-col :span="12" v-text="state.os.numCpu"></el-col>
+              <el-col :span="12">{{ state.os.numCpu }}</el-col>
             </el-row>
             <el-row :gutter="10">
               <el-col :span="12">compiler:</el-col>
-              <el-col :span="12" v-text="state.os.compiler"></el-col>
+              <el-col :span="12">{{ state.os.compiler }}</el-col>
             </el-row>
             <el-row :gutter="10">
               <el-col :span="12">go version:</el-col>
-              <el-col :span="12" v-text="state.os.goVersion"></el-col>
+              <el-col :span="12">{{ state.os.goVersion }}</el-col>
             </el-row>
             <el-row :gutter="10">
               <el-col :span="12">goroutine nums:</el-col>
-              <el-col :span="12" v-text="state.os.numGoroutine"></el-col>
+              <el-col :span="12">{{ state.os.numGoroutine }}</el-col>
             </el-row>
           </div>
         </el-card>
@@ -37,19 +37,19 @@
               <el-col :span="12">
                 <el-row :gutter="10">
                   <el-col :span="12">total (MB)</el-col>
-                  <el-col :span="12" v-text="state.disk.totalMb"></el-col>
+                  <el-col :span="12">{{ state.disk.totalMb }}</el-col>
                 </el-row>
                 <el-row :gutter="10">
                   <el-col :span="12">used (MB)</el-col>
-                  <el-col :span="12" v-text="state.disk.usedMb"></el-col>
+                  <el-col :span="12">{{ state.disk.usedMb }}</el-col>
                 </el-row>
                 <el-row :gutter="10">
                   <el-col :span="12">total (GB)</el-col>
-                  <el-col :span="12" v-text="state.disk.totalGb"></el-col>
+                  <el-col :span="12">{{ state.disk.totalGb }}</el-col>
                 </el-row>
                 <el-row :gutter="10">
                   <el-col :span="12">used (GB)</el-col>
-                  <el-col :span="12" v-text="state.disk.usedGb"></el-col>
+                  <el-col :span="12">{{ state.disk.usedGb }}</el-col>
                 </el-row>
               </el-col>
               <el-col :span="12">
@@ -75,8 +75,9 @@
           <div>
             <el-row :gutter="10">
               <el-col :span="12">physical number of cores:</el-col>
-              <el-col :span="12" v-text="state.cpu.cores"> </el-col>
+              <el-col :span="12">{{ state.cpu.cores }}</el-col>
             </el-row>
+            <!-- eslint-disable-next-line vue/no-v-for-template-key -->
             <template v-for="(item, index) in state.cpu.cpus" :key="index">
               <el-row :gutter="10">
                 <el-col :span="12">core {{ index }}:</el-col>
@@ -100,22 +101,21 @@
               <el-col :span="12">
                 <el-row :gutter="10">
                   <el-col :span="12">total (MB)</el-col>
-                  <el-col :span="12" v-text="state.ram.totalMb"></el-col>
+                  <el-col :span="12">{{ state.ram.totalMb }}</el-col>
                 </el-row>
                 <el-row :gutter="10">
                   <el-col :span="12">used (MB)</el-col>
-                  <el-col :span="12" v-text="state.ram.usedMb"></el-col>
+                  <el-col :span="12">{{ state.ram.usedMb }}</el-col>
                 </el-row>
                 <el-row :gutter="10">
                   <el-col :span="12">total (GB)</el-col>
-                  <el-col :span="12" v-text="state.ram.totalMb / 1024"></el-col>
+                  <el-col :span="12">{{ state.ram.totalMb / 1024 }}</el-col>
                 </el-row>
                 <el-row :gutter="10">
                   <el-col :span="12">used (GB)</el-col>
                   <el-col
                     :span="12"
-                    v-text="(state.ram.usedMb / 1024).toFixed(2)"
-                  ></el-col>
+                   >{{ (state.ram.usedMb / 1024).toFixed(2) }}</el-col>
                 </el-row>
               </el-col>
               <el-col :span="12">

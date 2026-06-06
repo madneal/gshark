@@ -32,7 +32,7 @@
     >
       <el-table-column type="selection" width="55"></el-table-column>
       <el-table-column label="日期" width="180">
-        <template #default="scope">{{scope.row.CreatedAt|formatDate}}</template>
+        <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
       </el-table-column>
 
       <el-table-column label="展示值" prop="label" width="120"></el-table-column>
@@ -40,7 +40,7 @@
       <el-table-column label="字典值" prop="value" width="120"></el-table-column>
 
       <el-table-column label="启用状态" prop="status" width="120">
-        <template #default="scope">{{scope.row.status|formatBoolean}}</template>
+        <template #default="scope">{{ scope.row.status ? "是" : "否" }}</template>
       </el-table-column>
 
       <el-table-column label="排序标记" prop="sort" width="120"></el-table-column>
@@ -98,10 +98,12 @@
           <el-input-number v-model.number="formData.sort" placeholder="排序标记"></el-input-number>
         </el-form-item>
       </el-form>
-      <div class="dialog-footer" slot="footer">
+      <template #footer>
+        <div class="dialog-footer">
         <el-button @click="closeDialog">取 消</el-button>
         <el-button @click="enterDialog" type="primary">确 定</el-button>
-      </div>
+        </div>
+      </template>
     </el-dialog>
   </div>
 </template>
@@ -113,8 +115,8 @@ import {
   updateSysDictionaryDetail,
   findSysDictionaryDetail,
   getSysDictionaryDetailList
-} from "@/api/sysDictionaryDetail"; //  此处请自行替换地址
-import { formatTimeToStr } from "@/utils/date";
+} from "@/api/sysDictionaryDetail";
+import { formatDate } from "@/utils/date";
 import infoList from "@/mixins/infoList";
 
 export default {
@@ -156,25 +158,8 @@ export default {
       }
     };
   },
-  filters: {
-    formatDate: function(time) {
-      if (time != null && time != "") {
-        var date = new Date(time);
-        return formatTimeToStr(date, "yyyy-MM-dd hh:mm:ss");
-      } else {
-        return "";
-      }
-    },
-    formatBoolean: function(bool) {
-      if (bool != null) {
-        return bool ? "是" : "否";
-      } else {
-        return "";
-      }
-    }
-  },
   methods: {
-    //条件搜索前端看此方法
+    formatDate,
     onSubmit() {
       this.page = 1;
       this.pageSize = 10;

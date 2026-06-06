@@ -25,5 +25,7 @@ export const checkDB = () => {
     return service({
         url: "/init/checkdb",
         method: 'post',
+        donNotShowLoading: true,
+        hideErrorMessage: true,
     })
 }
