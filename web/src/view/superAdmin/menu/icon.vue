@@ -9,10 +9,10 @@
       <el-form-item prop="icon" style="width:100%">
         <i
           class="icon"
-          :class="'el-icon-'+ meta.icon"
+          :class="'el-icon-'+ selectedIcon"
           style="position: absolute; z-index: 9999; padding: 5px 10px; "
         ></i>
-        <el-select clearable filterable class="gva-select" v-model="meta.icon" placeholder="请选择">
+        <el-select clearable filterable class="gva-select" v-model="selectedIcon" placeholder="请选择">
           <el-option v-for="item in options" :key="item.key" :label="item.key" :value="item.key">
             <span class="icon" :class="item.label"></span>
             <span style="float: left">{{ item.key }}</span>
@@ -29,6 +29,7 @@ export default {
   data() {
     return {
       input: "",
+      selectedIcon: this.meta.icon,
       options: [
         { key: "platform-eleme", label: "el-icon-platform-eleme" },
         { key: "eleme", label: "el-icon-eleme" },
@@ -322,6 +323,14 @@ export default {
         return {};
       },
       type: Object
+    }
+  },
+  watch: {
+    "meta.icon"(value) {
+      this.selectedIcon = value;
+    },
+    selectedIcon(value) {
+      this.$emit("change", value);
     }
   },
   methods: {}

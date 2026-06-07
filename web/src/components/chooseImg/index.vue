@@ -6,11 +6,13 @@
         :src="(item.url && item.url.slice(0, 4) !== 'http')?path+item.url:item.url"
         v-for="(item,key) in picList"
         :key="key"
-        @click.native="chooseImg(item.url,target,targetKey)"
+        @click="chooseImg(item.url,target,targetKey)"
       >
-        <div slot="error" class="header-img-box-list">
-          <i class="el-icon-picture-outline"></i>
-        </div>
+        <template #error>
+          <div class="header-img-box-list">
+            <el-icon><Picture /></el-icon>
+          </div>
+        </template>
       </el-image>
     </div>
   </el-drawer>

@@ -45,16 +45,24 @@
               placeholder="请输入验证码"
               style="width: 60%"
             />
-            <div class="vPic">
+            <button
+              class="vPic"
+              type="button"
+              role="button"
+              title="刷新验证码"
+              @click.prevent.stop="loginVefify"
+            >
               <img
                 v-if="picPath"
                 :src="picPath"
                 width="100%"
                 height="100%"
                 alt="请输入验证码"
-                @click="loginVefify()"
               />
-            </div>
+              <span v-else class="captcha-placeholder">
+                {{ captchaLoading ? "加载中" : "刷新" }}
+              </span>
+            </button>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="submitForm" style="width: 100%"
@@ -85,6 +93,7 @@ export default {
       },
       logVerify: "",
       picPath: "",
+      captchaLoading: false,
     };
   },
   created() {
@@ -97,10 +106,6 @@ export default {
       return await this.LoginIn(this.loginForm);
     },
     async submitForm() {
-      // const flag = await this.login();
-      // if (!flag) {
-      //   this.loginVefify();
-      // }
       this.$refs.loginForm.validate(async (v) => {
         if (v) {
           const flag = await this.login();
@@ -122,13 +127,25 @@ export default {
       this.lock === "lock" ? (this.lock = "unlock") : (this.lock = "lock");
     },
     async loginVefify() {
-      const result = await captcha({});
-      this.picPath = result.data.picPath;
-      this.loginForm.captchaId = result.data.captchaId;
-      // captcha({}).then((ele) => {
-      //   this.picPath = ele.data.picPath;
-      //   this.loginForm.captchaId = ele.data.captchaId;
-      // });
+      if (this.captchaLoading) {
+        return;
+      }
+      this.captchaLoading = true;
+      try {
+        const result = await captcha({});
+        const captchaData = result?.data;
+        if (!captchaData?.picPath || !captchaData?.captchaId) {
+          if (!this.picPath) {
+            this.loginForm.captchaId = "";
+          }
+          return;
+        }
+        this.picPath = captchaData.picPath;
+        this.loginForm.captchaId = captchaData.captchaId;
+        this.loginForm.captcha = "";
+      } finally {
+        this.captchaLoading = false;
+      }
     },
   },
 };

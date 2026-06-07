@@ -3,8 +3,6 @@
     <div class="button-box clearflex">
       <el-button @click="addMenu('0')" type="primary">新增根菜单</el-button>
     </div>
-
-    <!-- 由于此处菜单跟左侧列表一一对应所以不需要分页 pageSize默认999 -->
     <el-table :data="tableData" border row-key="ID" stripe>
       <el-table-column label="ID" min-width="100" prop="ID"></el-table-column>
       <el-table-column label="路由Name" min-width="160" prop="name"></el-table-column>
@@ -70,10 +68,12 @@
           ></el-input>
         </el-form-item>
         <el-form-item prop="path" style="width:30%">
-          <div style="display:inline-block" slot="label">
-            路由path
-            <el-checkbox style="float:right;margin-left:20px;" v-model="checkFlag">添加参数</el-checkbox>
-          </div>
+          <template #label>
+            <div style="display:inline-block">
+              路由path
+              <el-checkbox style="float:right;margin-left:20px;" v-model="checkFlag">添加参数</el-checkbox>
+            </div>
+          </template>
           <el-input
             :disabled="!checkFlag"
             autocomplete="off"
@@ -105,8 +105,8 @@
           <el-input autocomplete="off" v-model="form.meta.title"></el-input>
         </el-form-item>
         <el-form-item label="图标" prop="meta.icon" style="width:30%">
-          <icon :meta="form.meta">
-            <template slot="prepend">el-icon-</template>
+          <icon :meta="form.meta" @change="form.meta.icon = $event">
+            <template #prepend>el-icon-</template>
           </icon>
         </el-form-item>
         <el-form-item label="排序标记" prop="sort" style="width:30%">
@@ -170,16 +170,17 @@
           </el-table-column>
         </el-table>
       </div>
-      <div class="dialog-footer" slot="footer">
+      <template #footer>
+        <div class="dialog-footer">
         <el-button @click="closeDialog">取 消</el-button>
         <el-button @click="enterDialog" type="primary">确 定</el-button>
-      </div>
+        </div>
+      </template>
     </el-dialog>
   </div>
 </template>
 
 <script>
-// 获取列表内容封装在mixins内部  getTableData方法 初始化已封装完成
 
 import {
   updateBaseMenu,

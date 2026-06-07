@@ -1,134 +1,90 @@
-.login-register-box {
-    height: 100vh;
-    .login-box {
-      width: 40vw;
-      position: absolute;
-      left: 50%;
-      margin-left: -22vw;
-      top: 5vh;
-      .logo {
-        height: 35vh;
-        width: 35vh;
-      }
-    }
-  }
-  
-  .link-icon {
-    width: 20px;
-    min-width: 20px;
-    height: 20px;
-    border-radius: 10px;
-  }
-  
-  .vPic {
-    width: 33%;
-    height: 38px;
-    float: right !important;
-    background: #ccc;
-    img {
-      cursor: pointer;
-      vertical-align: middle;
-    }
-  }
-  
-  .logo_login {
-    width: 100px;
-  }
-  
-  #userLayout.user-layout-wrapper {
+.vPic {
+  width: 33%;
+  height: 42px;
+  float: right;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  overflow: hidden;
+  cursor: pointer;
+  background: #eef8fc;
+  border: 1px solid #a8d4e6;
+  border-radius: 4px;
+
+  img {
+    width: 100%;
     height: 100%;
-    position: relative;
-    &.mobile {
-      .container {
-        .main {
-          max-width: 368px;
-          width: 98%;
-        }
+    object-fit: cover;
+  }
+
+  .captcha-placeholder {
+    color: #245066;
+    font-size: 13px;
+  }
+}
+
+.logo_login {
+  width: 64px;
+  height: 64px;
+}
+
+#userLayout.user-layout-wrapper {
+  height: 100%;
+
+  .container {
+    width: 100%;
+    min-height: 100%;
+    padding: 48px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: url("@/assets/background.jpg") center / cover no-repeat #0b1530;
+
+    a {
+      text-decoration: none;
+    }
+
+    .top {
+      margin-bottom: 28px;
+      text-align: center;
+
+      .desc {
+        margin-bottom: 14px;
+      }
+
+      .title {
+        color: #f2f7f8;
+        font-size: 31px;
+        font-weight: 700;
+        letter-spacing: 0;
       }
     }
-  
-    .container {
-      position: relative;
-      overflow: auto;
-      width: 100%;
-      min-height: 100%;
-      background-image: url('@/assets/background.jpg');
-      background-size: 100%;
-      padding: 110px 0 144px;
-      a {
-        text-decoration: none;
-      }
-  
-      .top {
-        text-align: center;
-        margin-top: -40px;
-        .header {
-          height: 44px;
-          line-height: 44px;
-          margin-bottom: 30px;
-          .badge {
-            position: absolute;
-            display: inline-block;
-            line-height: 1;
-            vertical-align: middle;
-            margin-left: -12px;
-            margin-top: -10px;
-            opacity: 0.8;
-          }
-  
-          .logo {
-            height: 44px;
-            vertical-align: top;
-            margin-right: 16px;
-            border-style: none;
-          }
-  
-          .title {
-            font-size: 33px;
-            color: #fff;
-            font-family: Avenir, "Helvetica Neue", Arial, Helvetica, sans-serif;
-            font-weight: 600;
-            position: relative;
-            top: 2px;
-          }
-        }
-        .desc {
-          font-size: 14px;
-          color: rgba(0, 0, 0, 0.45);
-          margin-top: 12px;
-        }
-      }
-  
-      .main {
-        min-width: 260px;
-        width: 368px;
-        margin: 0 auto;
-      }
-  
-      .footer {
-        position: relative;
-        width: 100%;
-        padding: 0 20px;
-        margin: 40px 0 10px;
-        text-align: center;
-        .links {
-          margin-bottom: 8px;
-          font-size: 14px;
-          width: 330px;
-          display: inline-flex;
-          flex-direction: row;
-          justify-content: space-between;
-          padding-right: 40px;
-          a {
-            color: rgba(0, 0, 0, 0.45);
-            transition: all 0.3s;
-          }
-        }
-        .copyright {
-          color: rgba(0, 0, 0, 0.45);
-          font-size: 14px;
-          padding-right: 40px;
-        }
+
+    .main {
+      width: 392px;
+      max-width: calc(100vw - 32px);
+      padding: 34px 30px 30px;
+      background: rgba(13, 36, 52, .78);
+      border: 1px solid rgba(139, 184, 204, .28);
+      border-radius: 8px;
+
+      .el-form-item {
+        margin-bottom: 20px;
       }
     }
   }
+}
+
+@media (max-width: 640px) {
+  #userLayout.user-layout-wrapper {
+    .container {
+      padding: 32px 14px;
+
+      .main {
+        padding: 28px 22px 24px;
+      }
+    }
+  }
+}
