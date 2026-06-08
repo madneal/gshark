@@ -1,16 +1,26 @@
 .vPic {
   width: 33%;
-  height: 38px;
-  float: right !important;
-  background: rgba(255, 255, 255, .06);
-  border-radius: 4px;
+  height: 42px;
+  float: right;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
   overflow: hidden;
+  cursor: pointer;
+  background: rgba(255, 255, 255, .06);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 4px;
+
   img {
-    cursor: pointer;
-    vertical-align: middle;
     width: 100%;
     height: 100%;
     object-fit: cover;
+  }
+
+  .captcha-placeholder {
+    color: #94a3b8;
+    font-size: 13px;
   }
 }
 
@@ -33,12 +43,12 @@
     position: relative;
     width: 100%;
     min-height: 100%;
-    background: linear-gradient(135deg, #0b1120 0%, #0f172a 50%, #111827 100%);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     padding: 40px 16px;
+    background: linear-gradient(135deg, #0b1120 0%, #0f172a 50%, #111827 100%);
 
     a {
       text-decoration: none;
@@ -58,7 +68,7 @@
           color: #f1f5f9;
           font-family: "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
           font-weight: 700;
-          letter-spacing: -0.5px;
+          letter-spacing: 0;
         }
       }
     }
@@ -67,10 +77,10 @@
       min-width: 260px;
       width: 380px;
       max-width: calc(100vw - 32px);
+      padding: 32px 28px;
       background: rgba(24, 34, 53, 0.8);
       border: 1px solid rgba(148, 163, 184, 0.12);
       border-radius: 12px;
-      padding: 32px 28px;
       box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4);
       backdrop-filter: blur(12px);
 
@@ -79,7 +89,7 @@
       }
 
       .el-input__wrapper {
-        background: rgba(15, 23, 42, 0.7) !important;
+        background: rgba(15, 23, 42, 0.7);
         border-color: rgba(148, 163, 184, 0.18);
         box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.18) inset;
       }
@@ -101,17 +111,29 @@
       }
 
       .el-button--primary {
-        background: #2563eb;
-        border-color: #2563eb;
-        font-weight: 600;
-        letter-spacing: 0.5px;
         height: 40px;
         font-size: 15px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        background: #2563eb;
+        border-color: #2563eb;
 
         &:hover {
           background: #3b82f6;
           border-color: #3b82f6;
         }
+      }
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  #userLayout.user-layout-wrapper {
+    .container {
+      padding: 32px 14px;
+
+      .main {
+        padding: 28px 22px 24px;
       }
     }
   }

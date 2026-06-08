@@ -42,7 +42,7 @@
         </template>
       </el-table-column>
       <el-table-column label="日期" width="180">
-        <template #default="scope">{{scope.row.CreatedAt|formatDate}}</template>
+        <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
       </el-table-column>
       <el-table-column label="状态码" prop="status" width="120">
         <template #default="scope">
@@ -112,8 +112,8 @@ import {
   deleteSysOperationRecord,
   getSysOperationRecordList,
   deleteSysOperationRecordByIds
-} from "@/api/sysOperationRecord"; //  此处请自行替换地址
-import { formatTimeToStr } from "@/utils/date";
+} from "@/api/sysOperationRecord";
+import { formatDate } from "@/utils/date";
 import infoList from "@/mixins/infoList";
 
 export default {
@@ -138,25 +138,8 @@ export default {
       }
     };
   },
-  filters: {
-    formatDate: function(time) {
-      if (time != null && time != "") {
-        var date = new Date(time);
-        return formatTimeToStr(date, "yyyy-MM-dd hh:mm:ss");
-      } else {
-        return "";
-      }
-    },
-    formatBoolean: function(bool) {
-      if (bool != null) {
-        return bool ? "是" : "否";
-      } else {
-        return "";
-      }
-    }
-  },
   methods: {
-    //条件搜索前端看此方法
+    formatDate,
     onSubmit() {
       this.page = 1;
       this.pageSize = 10;

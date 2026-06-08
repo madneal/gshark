@@ -122,7 +122,7 @@
 
       <el-table-column label="匹配内容" prop="matches" width="550">
         <template v-slot="scope">
-          <pre v-if="scope.row.text_matches">{{ scope.row.text_matches | fragmentsFilter }}</pre>
+          <pre v-if="scope.row.text_matches">{{ fragmentsFilter(scope.row.text_matches) }}</pre>
           <pre v-if="scope.row.matches">{{ scope.row.matches }}</pre>
         </template>
       </el-table-column>
@@ -136,14 +136,12 @@
       <el-table-column label="二级关键词" prop="sec_keyword" width="100"></el-table-column>
 
       <el-table-column label="日期" width="100">
-        <template v-slot="scope">{{
-          scope.row.CreatedAt | formatDate
-        }}</template>
+        <template v-slot="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
       </el-table-column>
 
       <el-table-column label="状态" prop="status" width="80">
         <template v-slot="scope">
-          {{ scope.row.status | statusFilter }}
+          {{ statusFilter(scope.row.status) }}
         </template>
       </el-table-column>
 
@@ -189,8 +187,8 @@ import {
   updateSearchResultStatusByIds,
   startFilterTask,
   getTaskStatus, exportSearchResult, startAITask
-} from "@/api/searchResult"; //  此处请自行替换地址
-import { formatTimeToStr } from "@/utils/date";
+} from "@/api/searchResult";
+import { formatDate } from "@/utils/date";
 import infoList from "@/mixins/infoList";
 
 export default {
@@ -232,60 +230,44 @@ export default {
       },
     };
   },
-  filters: {
-    formatDate: function (time) {
-      if (time != null && time != "") {
-        var date = new Date(time);
-        return formatTimeToStr(date, "yyyy-MM-dd hh:mm:ss");
-      } else {
-        return "";
-      }
-    },
-    formatBoolean: function (bool) {
-      if (bool != null) {
-        return bool ? "是" : "否";
-      } else {
-        return "";
-      }
-    },
-    statusFilter: function (val) {
-      const statusOptions = {
-        0: "未处理",
-        1: "已处理",
-        2: "已忽略",
-      };
-      return statusOptions[val];
-    },
-    fragmentsFilter: function (val) {
-      if (!val) {
-        return "";
-      }
-      if (val instanceof String) {
-        return val;
-      }
-      let result = "";
-      for (let i = 0; i < val.length; i++) {
-        const fragment = val[i].fragment;
-        if (!val[i].matches) {
-          result += fragment;
-        } else {
-          const matches = val[i].matches;
-          let index = [];
-          matches.forEach(ele => {
-            index = index.concat(ele.indices);
-          });
-          let processedFragment = fragment.slice(0, index[0]) + "【" + fragment.slice(index[0]);
-          processedFragment = processedFragment.slice(0, index[index.length-1]+1) + "】" + processedFragment.slice(index[index.length-1]+1);
-          result += processedFragment;
-        }
-        if (i !== val.length - 1) {
-          result += "\n=====================================\n";
-        }
-      }
-      return result;
-    },
-  },
   methods: {
+    formatDate,
+        statusFilter: function (val) {
+          const statusOptions = {
+            0: "未处理",
+            1: "已处理",
+            2: "已忽略",
+          };
+          return statusOptions[val];
+        },
+        fragmentsFilter: function (val) {
+          if (!val) {
+            return "";
+          }
+          if (val instanceof String) {
+            return val;
+          }
+          let result = "";
+          for (let i = 0; i < val.length; i++) {
+            const fragment = val[i].fragment;
+            if (!val[i].matches) {
+              result += fragment;
+            } else {
+              const matches = val[i].matches;
+              let index = [];
+              matches.forEach(ele => {
+                index = index.concat(ele.indices);
+              });
+              let processedFragment = fragment.slice(0, index[0]) + "【" + fragment.slice(index[0]);
+              processedFragment = processedFragment.slice(0, index[index.length-1]+1) + "】" + processedFragment.slice(index[index.length-1]+1);
+              result += processedFragment;
+            }
+            if (i !== val.length - 1) {
+              result += "\n=====================================\n";
+            }
+          }
+          return result;
+        },
     onSubmit() {
       this.page = 1;
       this.pageSize = 100;

@@ -28,3 +28,10 @@ export function formatTimeToStr(times, pattern) {
     }
     return d.toLocaleString();
 }
+
+export function formatDate(time) {
+    if (time === null || time === undefined || time === "") {
+        return "";
+    }
+    return formatTimeToStr(new Date(time), "yyyy-MM-dd hh:mm:ss");
+}

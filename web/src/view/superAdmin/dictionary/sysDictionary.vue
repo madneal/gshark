@@ -35,7 +35,7 @@
     >
       <el-table-column type="selection" width="55"></el-table-column>
       <el-table-column label="日期" width="180">
-        <template #default="scope">{{scope.row.CreatedAt|formatDate}}</template>
+        <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
       </el-table-column>
 
       <el-table-column label="字典名（中）" prop="name" width="120"></el-table-column>
@@ -43,7 +43,7 @@
       <el-table-column label="字典名（英）" prop="type" width="120"></el-table-column>
 
       <el-table-column label="状态" prop="status" width="120">
-        <template #default="scope">{{scope.row.status|formatBoolean}}</template>
+        <template #default="scope">{{ scope.row.status ? "是" : "否" }}</template>
       </el-table-column>
 
       <el-table-column label="描述" prop="desc" width="280"></el-table-column>
@@ -101,10 +101,15 @@
         </el-form-item>
       </el-form>
 
-      <div class="dialog-footer" slot="footer">
+      <template #footer>
+
+        <div class="dialog-footer">
         <el-button @click="closeDialog">取 消</el-button>
         <el-button @click="enterDialog" type="primary">确 定</el-button>
-      </div>
+
+        </div>
+
+      </template>
     </el-dialog>
 
     <div style="margin-top:40px;color:red">获取字典且缓存方法已在前端utils/dictionary 已经封装完成 不必自己书写 使用方法查看文件内注释</div>
@@ -118,8 +123,8 @@ import {
   updateSysDictionary,
   findSysDictionary,
   getSysDictionaryList
-} from "@/api/sysDictionary"; //  此处请自行替换地址
-import { formatTimeToStr } from "@/utils/date";
+} from "@/api/sysDictionary";
+import { formatDate } from "@/utils/date";
 import infoList from "@/mixins/infoList";
 export default {
   name: "SysDictionary",
@@ -160,24 +165,8 @@ export default {
       }
     };
   },
-  filters: {
-    formatDate: function(time) {
-      if (time != null && time != "") {
-        var date = new Date(time);
-        return formatTimeToStr(date, "yyyy-MM-dd hh:mm:ss");
-      } else {
-        return "";
-      }
-    },
-    formatBoolean: function(bool) {
-      if (bool != null) {
-        return bool ? "是" : "否";
-      } else {
-        return "";
-      }
-    }
-  },
   methods: {
+    formatDate,
     toDetile(row) {
       this.$router.push({
         name: "dictionaryDetail",
@@ -186,7 +175,6 @@ export default {
         }
       });
     },
-    //条件搜索前端看此方法
     onSubmit() {
       this.page = 1;
       this.pageSize = 10;

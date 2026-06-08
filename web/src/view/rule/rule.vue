@@ -66,9 +66,7 @@
     >
       <el-table-column type="selection" width="55"></el-table-column>
       <el-table-column label="日期" width="180">
-        <template #default="scope">{{
-          scope.row.CreatedAt | formatDate
-        }}</template>
+        <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
       </el-table-column>
 
       <el-table-column
@@ -177,10 +175,12 @@
           <el-switch v-model="formData.status"></el-switch>
         </el-form-item>
       </el-form>
-      <div class="dialog-footer" slot="footer">
+      <template #footer>
+        <div class="dialog-footer">
         <el-button @click="closeDialog">取 消</el-button>
         <el-button @click="enterDialog" type="primary">确 定</el-button>
-      </div>
+        </div>
+      </template>
     </el-dialog>
   </div>
 </template>
@@ -193,9 +193,9 @@ import {
   updateRule,
   findRule,
   getRuleList,
-  switchRule, batchCreateRules,
+  switchRule,
 } from "@/api/rule";
-import { formatTimeToStr } from "@/utils/date";
+import { formatDate } from "@/utils/date";
 import infoList from "@/mixins/infoList";
 
 export default {
@@ -255,31 +255,15 @@ export default {
       ],
     };
   },
-  filters: {
-    formatDate: function (time) {
-      if (time != null && time !== "") {
-        const date = new Date(time);
-        return formatTimeToStr(date, "yyyy-MM-dd hh:mm:ss");
-      } else {
-        return "";
-      }
-    },
-    formatBoolean: function (bool) {
-      if (bool != null) {
-        return bool ? "是" : "否";
-      } else {
-        return "";
-      }
-    },
-    formatStatus: function (status) {
-      const statusMap = {
-        0: "disabled",
-        1: "enabled",
-      };
-      return statusMap[status];
-    },
-  },
   methods: {
+    formatDate,
+        formatStatus: function (status) {
+          const statusMap = {
+            0: "disabled",
+            1: "enabled",
+          };
+          return statusMap[status];
+        },
     async switchStatus(id, status) {
       status = status ? 1 : 0;
       const data = {

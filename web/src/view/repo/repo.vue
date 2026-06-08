@@ -31,7 +31,7 @@
     >
     <el-table-column type="selection" width="55"></el-table-column>
     <el-table-column label="日期" width="180">
-         <template #default="scope">{{scope.row.CreatedAt|formatDate}}</template>
+         <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
     </el-table-column>
     
     <el-table-column label="项目ID" prop="projectId" width="120"></el-table-column> 
@@ -95,10 +95,12 @@
          <el-form-item label="状态:"><el-input v-model.number="formData.status" clearable placeholder="请输入"></el-input>
       </el-form-item>
        </el-form>
-      <div class="dialog-footer" slot="footer">
+      <template #footer>
+        <div class="dialog-footer">
         <el-button @click="closeDialog">取 消</el-button>
         <el-button @click="enterDialog" type="primary">确 定</el-button>
-      </div>
+        </div>
+      </template>
     </el-dialog>
   </div>
 </template>
@@ -111,8 +113,8 @@ import {
     updateRepo,
     findRepo,
     getRepoList
-} from "@/api/repo";  //  此处请自行替换地址
-import { formatTimeToStr } from "@/utils/date";
+} from "@/api/repo";
+import { formatDate } from "@/utils/date";
 import infoList from "@/mixins/infoList";
 export default {
   name: "Repo",
@@ -135,25 +137,8 @@ export default {
       }
     };
   },
-  filters: {
-    formatDate: function(time) {
-      if (time != null && time != "") {
-        var date = new Date(time);
-        return formatTimeToStr(date, "yyyy-MM-dd hh:mm:ss");
-      } else {
-        return "";
-      }
-    },
-    formatBoolean: function(bool) {
-      if (bool != null) {
-        return bool ? "是" :"否";
-      } else {
-        return "";
-      }
-    }
-  },
   methods: {
-      //条件搜索前端看此方法
+    formatDate,
       onSubmit() {
         this.page = 1
         this.pageSize = 10           

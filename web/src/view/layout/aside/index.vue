@@ -25,7 +25,7 @@
 import { mapGetters } from "vuex";
 import AsideComponent from "@/view/layout/aside/asideComponent/index.vue";
 export default {
-  name: "Aside",
+  name: "LayoutAside",
   data() {
     return {
       active: "",

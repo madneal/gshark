@@ -7,9 +7,8 @@
           <img alt class="logoimg" src="@/assets/nav_logo.png" />
           <h2 class="tit-text" v-if="isSider">GShark</h2>
         </div>
-        <Aside class="aside" />
+        <LayoutAside class="aside" />
       </el-aside>
-      <!-- 分块滑动功能 -->
       <el-main class="main-cont main-right">
         <transition :duration="{ enter: 800, leave: 100 }" mode="out-in" name="el-fade-in-linear">
           <div
@@ -53,9 +52,6 @@
                 </el-dropdown>
             </div>
           </el-header>
-            <!-- 当前面包屑用路由自动生成可根据需求修改 -->
-            <!--
-            :to="{ path: item.path }" 暂时注释不用-->
             <HistoryComponent />
           </div>
         </transition>
@@ -71,7 +67,7 @@
 </template>
 
 <script>
-import Aside from '@/view/layout/aside/index.vue'
+import LayoutAside from '@/view/layout/aside/index.vue'
 import HistoryComponent from '@/view/layout/aside/historyComponent/history.vue'
 import Screenfull from '@/view/layout/screenfull/index.vue'
 import Search from '@/view/layout/search/search.vue'
@@ -92,7 +88,7 @@ export default {
     }
   },
   components: {
-    Aside,
+    LayoutAside,
     HistoryComponent,
     Screenfull,
     Search,

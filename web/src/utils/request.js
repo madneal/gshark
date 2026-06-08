@@ -1,4 +1,4 @@
-import axios from 'axios'; // 引入axios
+import axios from 'axios';
 import { ElMessage } from 'element-plus';
 import { store } from '@/store/index'
 import router from '@/router/index'
@@ -29,7 +29,6 @@ const closeLoading = () => {
             bus.emit("closeLoading")
         }
     }
-    //http request 拦截器
 service.interceptors.request.use(
     config => {
         if (!config.donNotShowLoading) {
@@ -57,7 +56,6 @@ service.interceptors.request.use(
 );
 
 
-//http response 拦截器
 service.interceptors.response.use(
     response => {
         closeLoading()
@@ -78,7 +76,7 @@ service.interceptors.response.use(
         if (response.data.code == 0 || response.headers.success === "true" ) {
             return response.data
         } else {
-            if (response.headers['content-type'] !== 'text/csv') {
+            if (!response.config?.hideErrorMessage && response.headers['content-type'] !== 'text/csv') {
                 ElMessage({
                     showClose: true,
                     message: response.data.msg || decodeURI(response.headers.msg),
@@ -94,11 +92,14 @@ service.interceptors.response.use(
     },
     error => {
         closeLoading()
-        ElMessage({
-            showClose: true,
-            message: error,
-            type: 'error'
-        })
+        const hideErrorMessage = error.config?.hideErrorMessage || error.response?.config?.hideErrorMessage
+        if (!hideErrorMessage) {
+            ElMessage({
+                showClose: true,
+                message: error,
+                type: 'error'
+            })
+        }
         return error
     }
 )

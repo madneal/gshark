@@ -55,10 +55,12 @@
           <el-input show-password v-model="pwdModify.confirmPassword"></el-input>
         </el-form-item>
       </el-form>
-      <div class="dialog-footer" slot="footer">
+      <template #footer>
+        <div class="dialog-footer">
         <el-button @click="showPassword=false">取 消</el-button>
         <el-button @click="savePassword" type="primary">确 定</el-button>
-      </div>
+        </div>
+      </template>
     </el-dialog>
   </div>
 </template>
