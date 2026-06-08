@@ -8,8 +8,8 @@
   padding: 0;
   overflow: hidden;
   cursor: pointer;
-  background: #eef8fc;
-  border: 1px solid #a8d4e6;
+  background: rgba(255, 255, 255, .06);
+  border: 1px solid rgba(148, 163, 184, 0.18);
   border-radius: 4px;
 
   img {
@@ -19,59 +19,109 @@
   }
 
   .captcha-placeholder {
-    color: #245066;
+    color: #94a3b8;
     font-size: 13px;
   }
 }
 
 .logo_login {
-  width: 64px;
-  height: 64px;
+  width: 52px;
+  height: 52px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, .08);
+  padding: 6px;
 }
 
 #userLayout.user-layout-wrapper {
   height: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   .container {
+    position: relative;
     width: 100%;
     min-height: 100%;
-    padding: 48px 16px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: url("@/assets/background.jpg") center / cover no-repeat #0b1530;
+    padding: 40px 16px;
+    background: linear-gradient(135deg, #0b1120 0%, #0f172a 50%, #111827 100%);
 
     a {
       text-decoration: none;
     }
 
     .top {
-      margin-bottom: 28px;
       text-align: center;
+      margin-bottom: 32px;
 
       .desc {
-        margin-bottom: 14px;
+        margin-bottom: 12px;
       }
 
-      .title {
-        color: #f2f7f8;
-        font-size: 31px;
-        font-weight: 700;
-        letter-spacing: 0;
+      .header {
+        .title {
+          font-size: 28px;
+          color: #f1f5f9;
+          font-family: "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+          font-weight: 700;
+          letter-spacing: 0;
+        }
       }
     }
 
     .main {
-      width: 392px;
+      min-width: 260px;
+      width: 380px;
       max-width: calc(100vw - 32px);
-      padding: 34px 30px 30px;
-      background: rgba(13, 36, 52, .78);
-      border: 1px solid rgba(139, 184, 204, .28);
-      border-radius: 8px;
+      padding: 32px 28px;
+      background: rgba(24, 34, 53, 0.8);
+      border: 1px solid rgba(148, 163, 184, 0.12);
+      border-radius: 12px;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(12px);
 
       .el-form-item {
         margin-bottom: 20px;
+      }
+
+      .el-input__wrapper {
+        background: rgba(15, 23, 42, 0.7);
+        border-color: rgba(148, 163, 184, 0.18);
+        box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.18) inset;
+      }
+
+      .el-input__wrapper:hover {
+        box-shadow: 0 0 0 1px #3b82f6 inset;
+      }
+
+      .el-input__wrapper.is-focus {
+        box-shadow: 0 0 0 1px #3b82f6 inset, 0 0 0 3px rgba(59, 130, 246, 0.16);
+      }
+
+      .el-input__inner {
+        color: #e5e7eb;
+
+        &::placeholder {
+          color: #64748b;
+        }
+      }
+
+      .el-button--primary {
+        height: 40px;
+        font-size: 15px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        background: #2563eb;
+        border-color: #2563eb;
+
+        &:hover {
+          background: #3b82f6;
+          border-color: #3b82f6;
+        }
       }
     }
   }

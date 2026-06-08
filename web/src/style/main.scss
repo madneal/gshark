@@ -714,20 +714,6 @@ li {
     }
 }
 
-.admin-box {
-    padding: 15px 20px;
-    .el-button {
-        padding: 7px 10px;
-    }
-    .el-input__inner {
-        height: 30px;
-        line-height: 30px;
-    }
-
-    .el-input__icon {
-        line-height: 30px;
-    }
-}
 
 .admin-box {
     min-height: calc(100vh - 200px);
@@ -932,151 +918,13 @@ li {
 
 
 
-// .el-menu .el-menu--inline {
-//     background: #2c3b41;
-// }
-// .el-submenu .el-submenu {
-//     background-color: #000408 !important;
-// }
-// .aside .el-scrollbar .el-scrollbar__view .el-submenu__title:hover {
-//     background-color: $bg-aside !important;
-// }
+// dashboard
 
-// .el-menu--vertical {
-//     .el-menu {
-//         margin-left: -8px;
-//         background-color: rgb(48, 65, 86);
-
-//         .el-menu-item {
-//             background-color: rgb(48, 65, 86);
-//         }
-
-//         .el-menu-item:focus,
-//         .el-menu-item:hover {
-//             background-color: #263445;
-//             color: #fff;
-//         }
-//     }
-// }
-
-// 导航*****
-// add 5.13
-.el-container {
-    // .admin-box {
-    //     padding: 15px;
-    //     margin: 115px 15px 20px;
-    //     border-radius: 2px;
-
-    //     .button-box {
-    //         border: none;
-    //         padding: 0 0 10px 0px;
-    //     }
-
-    //     .el-table--border {
-    //         border-radius: 4px;
-    //         margin-bottom: 15px;
-    //     }
-
-    //     .el-table {
-    //         thead {
-    //             color: $color-table-thead;
-    //         }
-
-    //         th {
-    //             padding: 5px 0;
-
-    //             .cell {
-    //                 min-height: 34px;
-    //                 line-height: 34px;
-    //             }
-    //         }
-
-    //         td {
-    //             padding: 8px 0;
-    //         }
-
-    //         td,
-    //         th.is-leaf {
-    //             border-bottom: 1px solid #e8e8e8;
-    //         }
-    //     }
-
-    //     .search-term {
-    //         border-left: none;
-    //         border-right: none;
-    //         padding: 0 5px;
-
-    //         .el-form-item {
-    //             margin-bottom: 10px;
-    //         }
-    //     }
-
-    //     .el-pagination {
-    //         padding: 20px 0 0 0;
-    //     }
-
-    //     .upload-demo,
-    //     .upload {
-    //         padding: 0;
-    //     }
-
-    //     .system {
-    //         padding: 0;
-    //     }
-
-    //     .el-form.el-form--inline {
-    //         .el-form-item:last-child {
-    //             margin-bottom: 0;
-    //         }
-    //     }
-
-    //     .edit_container,
-    //     .edit {
-    //         padding: 0;
-    //     }
-    // }
-
-    // .admin-box:after,
-    // .admin-box:before {
-    //     content: "";
-    //     display: block;
-    //     clear: both;
-    // }
-
-    .tips {
-        margin-top: 10px;
-        font-size: 14px;
-        font-weight: 400;
-        color: #606266;
-    }
-}
-
-.el-container.layout-cont {
-
-    // .header-cont,
-    // .breadcrumb {
-    //     height: 40px !important;
-    //     line-height: 40px !important;
-    // }
-    .main-cont.el-main {
-        background-color: $bg-main;
-
-        .menu-total {
-            font-size: 22px;
-            color: #838383;
-            margin-top: 16px;
-        }
-
-        // background-color: #f0f2f5;
-    }
-}
 
 .el-container.layout-cont {
     .main-cont {
         .router-history {
-            // box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
             background: #fff;
-            padding: 0 6px;
             border-top: 1px solid $border-color;
             padding: 0;
 
@@ -1084,7 +932,6 @@ li {
                 margin: 0px 0 0 0;
 
                 .el-tabs__item {
-                    height: $height-nav-scroll;
                     height: $height-nav-scroll;
                     border: none;
                     border-left: 1px solid $border-color;
@@ -1122,15 +969,6 @@ li {
         position: relative;
     }
 
-    // .el-button.el-button--text.el-button--small::after {
-    //     content: '';
-    //     position: absolute;
-    //     width: 1px;
-    //     height: 50%;
-    //     top: 5px;
-    //     margin-left: 15px;
-    //     background-color: #e8e8e8;
-    // }
     .cell {
         button:last-child::after {
             content: '' !important;

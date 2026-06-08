@@ -129,7 +129,6 @@
       :current-page="page"
       :page-size="pageSize"
       :page-sizes="[10, 30, 50, 100]"
-      :style="{ float: 'right', padding: '20px' }"
       :total="total"
       @current-change="handleCurrentChange"
       @size-change="handleSizeChange"
