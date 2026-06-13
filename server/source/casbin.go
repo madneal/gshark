@@ -11,7 +11,25 @@ var Casbin = new(casbin)
 
 type casbin struct{}
 
-var carbines = []gormadapter.CasbinRule{
+// CasbinRule overrides gormadapter.CasbinRule with larger column sizes.
+// The upstream struct uses varchar(40) for V0/V1/V2, which is too small
+// for API paths like /sysOperationRecord/deleteSysOperationRecordByIds (50 chars).
+type CasbinRule struct {
+	ID    uint   `gorm:"primaryKey;autoIncrement"`
+	PType string `gorm:"size:100;uniqueIndex:unique_index"`
+	V0    string `gorm:"size:100;uniqueIndex:unique_index"`
+	V1    string `gorm:"size:100;uniqueIndex:unique_index"`
+	V2    string `gorm:"size:100;uniqueIndex:unique_index"`
+	V3    string `gorm:"size:100"`
+	V4    string `gorm:"size:100"`
+	V5    string `gorm:"size:100"`
+}
+
+func (CasbinRule) TableName() string {
+	return "casbin_rule"
+}
+
+var carbines = []CasbinRule{
 	{PType: "p", V0: "888", V1: "/base/login", V2: "POST"},
 	{PType: "p", V0: "888", V1: "/user/register", V2: "POST"},
 	{PType: "p", V0: "888", V1: "/api/createApi", V2: "POST"},
@@ -106,13 +124,13 @@ var carbines = []gormadapter.CasbinRule{
 }
 
 func (c *casbin) Init() error {
-	global.GVA_DB.AutoMigrate(gormadapter.CasbinRule{})
+	global.GVA_DB.AutoMigrate(CasbinRule{})
 	return global.GVA_DB.Transaction(func(tx *gorm.DB) error {
 		if tx.Find(&[]gormadapter.CasbinRule{}).RowsAffected > 1 {
 			color.Danger.Println("\n[Mysql] --> casbin_rule 表的初始数据已存在!")
 			return nil
 		}
-		if err := tx.Create(&carbines).Error; err != nil { // 遇到错误时回滚事务
+		if err := tx.Create(&carbines).Error; err != nil {
 			return err
 		}
 		color.Info.Println("\n[Mysql] --> casbin_rule 表初始数据成功!")
