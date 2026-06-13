@@ -127,9 +127,9 @@ func InitDB(conf request.InitDB) error {
 	err = initDB(
 		source.Admin,
 		source.Api,
-		source.AuthorityMenu,
 		source.Authority,
 		source.AuthoritiesMenus,
+		source.AuthorityMenu,
 		source.Casbin,
 		source.DataAuthorities,
 		source.Dictionary,
