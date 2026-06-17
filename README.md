@@ -271,33 +271,82 @@ You are supposed to rename `config-temp.yaml` to `config.yaml` and config the da
 
 ## FAQ
 
-1. Default username and password to login
+1. Does GShark scan local code or public platforms?
 
-gshark/gshark
+GShark is designed to scan public environments, not local source trees. GitHub scanning is based on the GitHub Search API, and GitLab scanning depends on GitLab search. Whether private repositories can be scanned depends on the platform API and token permissions.
 
-2. Database initial failed
+2. What is the recommended deployment method?
 
-Make sure the MySQL version is 8.0 or later. Remove the database before initializing a second time.
-
-3. `go get ./... connection error`
-
-It's suggested to enable GOPROXY(refer this [article](https://madneal.com/post/gproxy/) for golang upgrade):
-
-```
-go env -w GOPROXY=https://goproxy.cn,direct
-go env -w GO111MODULE=on
-```
-4. When deploying the web to `nginx`, the page was empty
-
-Try to clear LocalStorage and confirm the Nginx `/api/` reverse proxy points to the backend service.
-
-5. Server info page shows CPU usage as zero on macOS ARM
-
-Run or build the backend with cgo enabled:
+New users should prefer the quick scripts:
 
 ```shell
-CGO_ENABLED=1 go run main.go serve
+./scripts/quick-docker.sh
+./scripts/quick-docker.sh --with-scan
+./scripts/quick-release.sh
 ```
+
+Manual deployment is useful when you need custom Nginx, MySQL, or backend configuration.
+
+3. What are the deployment requirements?
+
+MySQL 8.0+ is required. Manual builds require Go 1.25+, Node.js 20+, npm, and Nginx. For Docker deployment, prefer the compose file and quick scripts provided by this repository to avoid configuration drift from older tutorials.
+
+4. What is the default account after initialization?
+
+The default account is `gshark / gshark`. Change the password immediately after deploying to a production environment.
+
+5. Why did the scanner not start or produce results after Docker deployment?
+
+The scanner depends on database initialization. Before MySQL is initialized, the scanner container may exit. Restart the scanner after database initialization. When troubleshooting, check the scanner/server container logs first instead of only checking the web page.
+
+6. What is the core GShark workflow?
+
+The basic workflow is: configure the database -> initialize the system -> log in -> add tokens -> add rules -> start the scan service -> fetch search results -> filter or run secondary filtering -> manually confirm or ignore findings -> export results.
+
+7. Why are there no scan results after configuring tokens and rules?
+
+Common causes include: the scan service is not running, the scanner cannot connect to the database, the token is invalid, no rule matched, the GitHub/GitLab API is unreachable, DNS is misconfigured, or the platform rate limit was triggered. Check backend and scanner logs first.
+
+8. Are scans manually triggered or automatically repeated?
+
+In the current version, the scan service runs in a loop. As long as the scan service is running and valid tokens and rules exist, scans will run periodically. Old task-management issues do not apply to the current FAQ.
+
+9. How should GitHub rules be written?
+
+GitHub rules can directly use GitHub search syntax, for example:
+
+```text
+password in:file
+access_token org:example
+secret repo:owner/repo
+api_key extension:yaml
+```
+
+Rules are not limited to plain keywords. You can use qualifiers such as `repo:`, `org:`, `user:`, and `in:file`.
+
+10. Can one rule contain multiple keywords?
+
+One rule should normally contain one search expression. Use batch import for multiple rules instead of placing unrelated keywords into a single rule.
+
+11. How can I reduce noisy results from `.json`, `.csv`, log files, and similar files?
+
+Use filters. Filters are focused on GitHub search and support types such as `extension`, `keyword`, and `sec_keyword`. Extension filtering happens before results are stored. Secondary filtering uses secondary keywords to refine results; it is not the same feature as extension filtering.
+
+12. How should GitHub rate limits be handled?
+
+GitHub search limits cannot be reliably bypassed, and using multiple accounts to avoid them is not recommended because it may risk account bans. A better approach is to reduce noisy rules, narrow the search scope, accept scan delays, and check whether failed tasks are retried.
+
+13. Can GShark connect to self-hosted GitLab?
+
+Yes, by configuring the GitLab Base URL. However, the self-hosted GitLab instance must support code search/indexing. If global search is disabled on the server, GShark cannot bypass that platform limitation.
+
+14. Can search results be exported?
+
+Yes. Current versions include search result export, which is useful for offline analysis, archiving, and follow-up handling.
+
+15. What information should I provide when reporting a problem?
+
+Provide the version, deployment method, operating system, MySQL version, whether Docker is used, server logs, scanner logs, browser console errors, relevant screenshots, and redacted token/rule configuration. This is more useful than a page screenshot alone.
 
 ## Resources 
 

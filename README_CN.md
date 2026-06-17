@@ -268,34 +268,82 @@ npm run serve
 
 ## 常见问题
 
-1. 默认登录用户名和密码
+1. GShark 扫描的是本地代码还是公开平台代码？
 
-gshark/gshark
+当前项目定位是扫描公开环境，不是本地代码扫描器。GitHub 扫描基于 GitHub Search API；GitLab 扫描依赖 GitLab 搜索能力。私有仓库是否能扫到，取决于对应平台 API 和 token 权限。
 
-2. 数据库初始化失败
+2. 推荐怎么部署？
 
-确保 MySQL 版本为 8.0 或更高。并在第二次初始化前删除数据库。
-
-3. `go get ./... connection error`
-
-建议启用 GOPROXY（参考这篇[文章](https://madneal.com/post/gproxy/)进行 golang 升级）：
-
-```
-go env -w GOPROXY=https://goproxy.cn,direct
-go env -w GO111MODULE=on
-```
-
-4. 将 Web 部署到 `nginx` 时，页面为空
-
-尝试清除 LocalStorage，并确认 Nginx 的 `/api/` 反向代理指向后端服务。
-
-5. macOS ARM 上服务器状态页面的 CPU 使用率显示为 0
-
-运行或构建后端时启用 cgo：
+新用户优先使用 quick 脚本：
 
 ```shell
-CGO_ENABLED=1 go run main.go serve
+./scripts/quick-docker.sh
+./scripts/quick-docker.sh --with-scan
+./scripts/quick-release.sh
 ```
+
+手动部署适合需要自定义 Nginx、MySQL、后端配置的场景。
+
+3. 部署环境有什么要求？
+
+MySQL 需要 8.0+。手动构建时需要 Go 1.25+、Node.js 20+、npm 和 Nginx。Docker 部署建议直接使用项目提供的 compose 和 quick 脚本，避免老教程里的配置差异。
+
+4. 初始化后默认账号是什么？
+
+默认账号密码是 `gshark / gshark`。生产环境部署完成后应立即修改密码。
+
+5. Docker 部署后 scanner 为什么没启动或没结果？
+
+scanner 依赖数据库初始化。MySQL 初始化前 scanner 容器可能会退出，初始化完成后需要重启 scanner。排查时优先看 scanner/server 容器日志，而不是只看页面。
+
+6. GShark 的核心运行链路是什么？
+
+基本链路是：配置数据库 -> 初始化系统 -> 登录后台 -> 添加 token -> 添加规则 -> 启动 scan 服务 -> 拉取搜索结果 -> 过滤/二次过滤 -> 人工确认或忽略 -> 导出结果。
+
+7. 配置 token 和规则后为什么没有扫描结果？
+
+常见原因包括：scan 服务没启动、scanner 连不上数据库、token 无效、规则没有命中、GitHub/GitLab API 网络不通、DNS 配置错误、触发平台 rate limit。应先看后端和 scanner 日志。
+
+8. 扫描任务是手动触发还是自动循环？
+
+新版中扫描服务会循环执行。只要 scan 服务在运行，并且存在有效 token 和规则，就会周期性扫描。旧版任务管理相关问题不适用于新版 FAQ。
+
+9. GitHub 规则应该怎么写？
+
+GitHub 规则可以直接使用 GitHub 搜索语法，例如：
+
+```text
+password in:file
+access_token org:example
+secret repo:owner/repo
+api_key extension:yaml
+```
+
+规则不是只能写普通关键词，可以带 `repo:`、`org:`、`user:`、`in:file` 等限定符。
+
+10. 一条规则可以写多个关键词吗？
+
+单条规则建议只写一个搜索表达式。多个规则应使用批量导入能力，不要把多个无关关键词塞到一条规则里。
+
+11. 如何减少 `.json`、`.csv`、日志文件等噪声结果？
+
+使用过滤器。过滤器面向 GitHub 搜索，支持 `extension`、`keyword`、`sec_keyword` 等类型。后缀过滤是在结果入库前过滤；二次过滤是基于二级关键词进一步筛结果，两者不是同一个能力。
+
+12. GitHub rate limit 怎么处理？
+
+GitHub 搜索限制无法可靠绕过，也不建议通过多账号规避，存在封号风险。更合理的方式是减少规则噪声、缩小搜索范围、接受扫描延迟，并查看失败任务是否重试。
+
+13. 自建 GitLab 能接入吗？
+
+可以配置 GitLab Base URL。但自建 GitLab 必须具备代码搜索/索引能力。如果服务端关闭了全局搜索，GShark 无法绕过这个平台限制。
+
+14. 搜索结果可以导出吗？
+
+可以。新版已有搜索结果导出能力，适合离线分析、归档和后续处置。
+
+15. 遇到问题应该先提供哪些信息？
+
+建议提供版本号、部署方式、操作系统、MySQL 版本、是否 Docker、server 日志、scanner 日志、浏览器控制台错误、相关配置截图或脱敏后的 token/rule 配置。这样比单独贴页面截图更容易定位。
 
 ## 资源
 
