@@ -85,7 +85,7 @@ cd gshark
 
 * Nginx
 * MySQL **8.0+**
-* Go **1.25.11+** for building the backend
+* Go **1.25+** for building the backend
 * Node.js **20+** and npm for building the frontend
 
 It is recommended to deploy the frontend with Nginx. Build the Vite project, place the generated `web/dist` files in `/var/www/html`, and configure Nginx to reverse proxy `/api/` to the backend service. For detailed deployment tutorials, you can watch videos on [bilibili](https://www.bilibili.com/video/BV1Py4y1s7ap/) or [youtube](https://youtu.be/bFrKm5t4M54). For deployment on Windows, refer to [this link](https://www.bilibili.com/video/BV1CA411L7ux/).
@@ -289,7 +289,7 @@ Manual deployment is useful when you need custom Nginx, MySQL, or backend config
 
 3. What are the deployment requirements?
 
-MySQL 8.0+ is required. Manual builds require Go 1.25.11+, Node.js 20+, npm, and Nginx. For Docker deployment, prefer the compose file and quick scripts provided by this repository to avoid configuration drift from older tutorials.
+MySQL 8.0+ is required. Manual builds require Go 1.25+, Node.js 20+, npm, and Nginx. For Docker deployment, prefer the compose file and quick scripts provided by this repository to avoid configuration drift from older tutorials.
 
 4. What is the default account after initialization?
 

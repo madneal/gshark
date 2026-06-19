@@ -1,6 +1,6 @@
 module github.com/madneal/gshark
 
-go 1.25.11
+go 1.25.0
 
 require (
 	github.com/casbin/casbin v1.9.1
