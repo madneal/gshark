@@ -1,4 +1,4 @@
-FROM node:16
+FROM node:20.19-alpine
 
 WORKDIR /gshark_web/
 COPY . .

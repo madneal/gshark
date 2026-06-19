@@ -84,7 +84,7 @@ cd gshark
 
 * Nginx
 * MySQL **8.0+**
-* Go **1.25+**，用于构建后端
+* Go **1.25.11+**，用于构建后端
 * Node.js **20+** 和 npm，用于构建前端
 
 建议使用 Nginx 部署前端。构建 Vite 项目后，将生成的 `web/dist` 文件放置在 `/var/www/html` 中，并配置 Nginx 将 `/api/` 反向代理到后端服务。详细的部署教程可以观看 [bilibili](https://www.bilibili.com/video/BV1Py4y1s7ap/) 或 [youtube](https://youtu.be/bFrKm5t4M54) 上的视频。Windows 部署请参考[此链接](https://www.bilibili.com/video/BV1CA411L7ux/)。
@@ -286,7 +286,7 @@ npm run serve
 
 3. 部署环境有什么要求？
 
-MySQL 需要 8.0+。手动构建时需要 Go 1.25+、Node.js 20+、npm 和 Nginx。Docker 部署建议直接使用项目提供的 compose 和 quick 脚本，避免老教程里的配置差异。
+MySQL 需要 8.0+。手动构建时需要 Go 1.25.11+、Node.js 20+、npm 和 Nginx。Docker 部署建议直接使用项目提供的 compose 和 quick 脚本，避免老教程里的配置差异。
 
 4. 初始化后默认账号是什么？
 

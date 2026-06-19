@@ -90,8 +90,10 @@ export default defineConfig(({ mode }) => {
             globals[conf.name] = conf.scope
             return globals
           }, {}),
-          manualChunks: {
-            'chunk-element-plus': ['element-plus']
+          manualChunks(id) {
+            if (id.includes('node_modules/element-plus')) {
+              return 'chunk-element-plus'
+            }
           }
         }
       }
