@@ -9,10 +9,9 @@
       v-model="activeValue"
     >
       <el-tab-pane
-        :key="item.name + JSON.stringify(item.query)+JSON.stringify(item.params)"
+        :key="getTabKey(item)"
         :label="item.meta.title"
-        :name="item.name + JSON.stringify(item.query)+JSON.stringify(item.params)"
-        :tab="item"
+        :name="getTabKey(item)"
         v-for="item in historys"
       ></el-tab-pane>
     </el-tabs>
@@ -69,7 +68,7 @@ export default {
     this.historys =
       JSON.parse(sessionStorage.getItem("historys")) || initHistorys;
       if(!window.sessionStorage.getItem("activeValue")){
-        this.activeValue = this.$route.name + JSON.stringify(this.$route.query)+JSON.stringify(this.$route.params)
+        this.activeValue = this.getTabKey(this.$route)
       }else{
         this.activeValue = window.sessionStorage.getItem("activeValue");
       }
@@ -85,7 +84,8 @@ export default {
       if (this.historys.length == 1 && this.$route.name == this.defaultRouter) {
         return false;
       }
-      if (e.srcElement.id) {
+      const tabEl = e.target.closest && e.target.closest("[id^='tab-']");
+      if (tabEl && tabEl.id) {
         this.contextMenuVisible = true;
         let width;
         if (this.isCollapse) {
@@ -98,7 +98,7 @@ export default {
         }
         this.left = e.clientX - width;
         this.top = e.clientY + 10;
-        this.rightActive = e.srcElement.id.split("-")[1];
+        this.rightActive = tabEl.id.slice(4);
       }
     },
     closeAll() {
@@ -116,30 +116,23 @@ export default {
       this.contextMenuVisible = false;
       sessionStorage.setItem("historys", JSON.stringify(this.historys));
     },
+    getTabKey(route) {
+      return (
+        route.name +
+        JSON.stringify(route.query || {}) +
+        JSON.stringify(route.params || {})
+      );
+    },
     closeLeft() {
       let right;
       const rightIndex = this.historys.findIndex(item => {
-        if (
-          item.name +
-            JSON.stringify(item.query) +
-            JSON.stringify(item.params) ==
-          this.rightActive
-        ) {
+        if (this.getTabKey(item) == this.rightActive) {
           right = item;
         }
-        return (
-          item.name +
-            JSON.stringify(item.query) +
-            JSON.stringify(item.params) ==
-          this.rightActive
-        );
+        return this.getTabKey(item) == this.rightActive;
       });
       const activeIndex = this.historys.findIndex(
-        item =>
-          item.name +
-            JSON.stringify(item.query) +
-            JSON.stringify(item.params) ==
-          this.activeValue
+        item => this.getTabKey(item) == this.activeValue
       );
       this.historys.splice(0, rightIndex);
       if (rightIndex > activeIndex) {
@@ -150,27 +143,13 @@ export default {
     closeRight() {
       let right;
       const leftIndex = this.historys.findIndex(item => {
-        if (
-          item.name +
-            JSON.stringify(item.query) +
-            JSON.stringify(item.params) ==
-          this.rightActive
-        ) {
+        if (this.getTabKey(item) == this.rightActive) {
           right = item;
         }
-        return (
-          item.name +
-            JSON.stringify(item.query) +
-            JSON.stringify(item.params) ==
-          this.rightActive
-        );
+        return this.getTabKey(item) == this.rightActive;
       });
       const activeIndex = this.historys.findIndex(
-        item =>
-          item.name +
-            JSON.stringify(item.query) +
-            JSON.stringify(item.params) ==
-          this.activeValue
+        item => this.getTabKey(item) == this.activeValue
       );
       this.historys.splice(leftIndex + 1, this.historys.length);
       if (leftIndex < activeIndex) {
@@ -181,20 +160,10 @@ export default {
     closeOther() {
       let right;
       this.historys = this.historys.filter(item => {
-        if (
-          item.name +
-            JSON.stringify(item.query) +
-            JSON.stringify(item.params) ==
-          this.rightActive
-        ) {
+        if (this.getTabKey(item) == this.rightActive) {
           right = item;
         }
-        return (
-          item.name +
-            JSON.stringify(item.query) +
-            JSON.stringify(item.params) ==
-          this.rightActive
-        );
+        return this.getTabKey(item) == this.rightActive;
       });
       this.$router.push(right);
       sessionStorage.setItem("historys", JSON.stringify(this.historys));
@@ -224,15 +193,18 @@ export default {
         obj.params = route.params;
         this.historys.push(obj);
       }
+      this.activeValue = this.getTabKey(route);
       window.sessionStorage.setItem(
         "activeValue",
-        this.$route.name +
-          JSON.stringify(this.$route.query) +
-          JSON.stringify(this.$route.params)
+        this.activeValue
       );
     },
     changeTab(component) {
-      const tab = component.$attrs.tab;
+      const tabKey = component.paneName || component.props.name || this.activeValue;
+      const tab = this.historys.find(item => this.getTabKey(item) == tabKey);
+      if (!tab) {
+        return;
+      }
       this.$router.push({
         name: tab.name,
         query: tab.query,
@@ -241,17 +213,10 @@ export default {
     },
     removeTab(tab) {
       const index = this.historys.findIndex(
-        item =>
-          item.name +
-            JSON.stringify(item.query) +
-            JSON.stringify(item.params) ==
-          tab
+        item => this.getTabKey(item) == tab
       );
       if (
-        this.$route.name +
-          JSON.stringify(this.$route.query) +
-          JSON.stringify(this.$route.params) ==
-        tab
+        this.getTabKey(this.$route) == tab
       ) {
         if (this.historys.length == 1) {
           this.$router.push({ name: this.defaultRouter });
@@ -290,7 +255,7 @@ export default {
       this.historys = this.historys.filter(item => !item.meta.closeTab);
       this.setTab(to);
       sessionStorage.setItem("historys", JSON.stringify(this.historys));
-      this.activeValue = window.sessionStorage.getItem("activeValue");
+      this.activeValue = this.getTabKey(to);
       if (now && to && now.name == to.name) {
         this.$bus.$emit("reload");
       }
