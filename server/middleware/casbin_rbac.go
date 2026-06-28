@@ -8,7 +8,6 @@ import (
 	"github.com/madneal/gshark/service"
 )
 
-
 func CasbinHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		claims, _ := c.Get("claims")
@@ -19,7 +18,12 @@ func CasbinHandler() gin.HandlerFunc {
 		act := c.Request.Method
 		// 获取用户的角色
 		sub := waitUse.AuthorityId
-		e := service.Casbin()
+		e, err := service.Casbin()
+		if err != nil {
+			response.FailWithDetailed(gin.H{}, "权限初始化失败", c)
+			c.Abort()
+			return
+		}
 		// 判断策略中是否存在
 		success, _ := e.Enforce(sub, obj, act)
 		if global.GVA_CONFIG.System.Env == "develop" || success {
