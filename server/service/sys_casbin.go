@@ -25,7 +25,10 @@ func UpdateCasbin(authorityId string, casbinInfos []request.CasbinInfo) error {
 		}
 		rules = append(rules, []string{cm.AuthorityId, cm.Path, cm.Method})
 	}
-	e := Casbin()
+	e, err := Casbin()
+	if err != nil {
+		return err
+	}
 	success, _ := e.AddPolicies(rules)
 	if success == false {
 		return errors.New("存在相同api,添加失败,请联系管理员")
@@ -42,7 +45,10 @@ func UpdateCasbinApi(oldPath string, newPath string, oldMethod string, newMethod
 }
 
 func GetPolicyPathByAuthorityId(authorityId string) (pathMaps []request.CasbinInfo) {
-	e := Casbin()
+	e, err := Casbin()
+	if err != nil {
+		return nil
+	}
 	list := e.GetFilteredPolicy(0, authorityId)
 	for _, v := range list {
 		pathMaps = append(pathMaps, request.CasbinInfo{
@@ -54,19 +60,44 @@ func GetPolicyPathByAuthorityId(authorityId string) (pathMaps []request.CasbinIn
 }
 
 func ClearCasbin(v int, p ...string) bool {
-	e := Casbin()
+	e, err := Casbin()
+	if err != nil {
+		return false
+	}
 	success, _ := e.RemoveFilteredPolicy(v, p...)
 	return success
 
 }
 
-func Casbin() *casbin.Enforcer {
-	admin := global.GVA_CONFIG.Mysql
-	a, _ := gormadapter.NewAdapter(global.GVA_CONFIG.System.DbType, admin.Username+":"+admin.Password+"@("+admin.Path+")/"+admin.Dbname, true)
-	e, _ := casbin.NewEnforcer(global.GVA_CONFIG.Casbin.ModelPath, a)
+func Casbin() (*casbin.Enforcer, error) {
+	if err := repairLegacyCasbinPTypeColumn(); err != nil {
+		return nil, err
+	}
+	a, err := gormadapter.NewAdapterByDB(global.GVA_DB)
+	if err != nil {
+		return nil, err
+	}
+	e, err := casbin.NewEnforcer(global.GVA_CONFIG.Casbin.ModelPath, a)
+	if err != nil {
+		return nil, err
+	}
 	e.AddFunction("ParamsMatch", ParamsMatchFunc)
-	_ = e.LoadPolicy()
-	return e
+	if err := e.LoadPolicy(); err != nil {
+		return nil, err
+	}
+	return e, nil
+}
+
+func repairLegacyCasbinPTypeColumn() error {
+	migrator := global.GVA_DB.Migrator()
+	if !migrator.HasTable("casbin_rule") {
+		return nil
+	}
+	if !migrator.HasColumn("casbin_rule", "p_type") || !migrator.HasColumn("casbin_rule", "ptype") {
+		return nil
+	}
+	// Repair rows written by adapter versions that used ptype instead of p_type.
+	return global.GVA_DB.Exec("UPDATE casbin_rule SET p_type = ptype WHERE (p_type IS NULL OR p_type = '') AND ptype IS NOT NULL AND ptype <> ''").Error
 }
 
 func ParamsMatch(fullNameKey1 string, key2 string) bool {
