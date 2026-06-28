@@ -70,9 +70,6 @@ func ClearCasbin(v int, p ...string) bool {
 }
 
 func Casbin() (*casbin.Enforcer, error) {
-	if err := repairLegacyCasbinPTypeColumn(); err != nil {
-		return nil, err
-	}
 	a, err := gormadapter.NewAdapterByDB(global.GVA_DB)
 	if err != nil {
 		return nil, err
@@ -86,18 +83,6 @@ func Casbin() (*casbin.Enforcer, error) {
 		return nil, err
 	}
 	return e, nil
-}
-
-func repairLegacyCasbinPTypeColumn() error {
-	migrator := global.GVA_DB.Migrator()
-	if !migrator.HasTable("casbin_rule") {
-		return nil
-	}
-	if !migrator.HasColumn("casbin_rule", "p_type") || !migrator.HasColumn("casbin_rule", "ptype") {
-		return nil
-	}
-	// Repair rows written by adapter versions that used ptype instead of p_type.
-	return global.GVA_DB.Exec("UPDATE casbin_rule SET p_type = ptype WHERE (p_type IS NULL OR p_type = '') AND ptype IS NOT NULL AND ptype <> ''").Error
 }
 
 func ParamsMatch(fullNameKey1 string, key2 string) bool {
