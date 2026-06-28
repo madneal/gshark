@@ -50,8 +50,9 @@ var apis = []model.SysApi{
 	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/system/getSystemConfig", "获取配置文件内容", "system", "POST"},
 	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/system/setSystemConfig", "设置配置文件内容", "system", "POST"},
 	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/system/getServerInfo", "获取服务器信息", "system", "POST"},
+	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/system/reloadSystem", "重载系统配置", "system", "POST"},
 	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/system/emailTest", "发送测试邮件", "system", "POST"},
-	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/system/botTest", "发送bot测试消息", "system", "POST"},
+	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/system/botTest", "发送bot测试消息", "system", "GET"},
 	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/sysDictionaryDetail/createSysDictionaryDetail", "新增字典内容", "sysDictionaryDetail", "POST"},
 	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/sysDictionaryDetail/deleteSysDictionaryDetail", "删除字典内容", "sysDictionaryDetail", "DELETE"},
 	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/sysDictionaryDetail/updateSysDictionaryDetail", "更新字典内容", "sysDictionaryDetail", "PUT"},
@@ -91,6 +92,7 @@ var apis = []model.SysApi{
 	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/searchResult/updateSearchResultStatusByIds", "批量更新搜索结果列表", "searchResult", "POST"},
 	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/searchResult/startSecFilterTask", "开始二次过滤任务", "searchResult", "POST"},
 	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/searchResult/getTaskStatus", "获取任务状态", "searchResult", "GET"},
+	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/searchResult/startAITask", "开始 AI 任务", "searchResult", "POST"},
 	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/subdomain/createSubdomain", "新增子域名", "subdomain", "POST"},
 	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/subdomain/deleteSubdomain", "删除子域名", "subdomain", "DELETE"},
 	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/subdomain/deleteSubdomainByIds", "批量删除子域名", "subdomain", "DELETE"},
@@ -103,18 +105,37 @@ var apis = []model.SysApi{
 	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/filter/updateFilter", "更新过滤规则", "filter", "PUT"},
 	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/filter/findFilter", "根据ID获取过滤规则", "filter", "GET"},
 	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/filter/getFilterList", "获取过滤规则列表", "filter", "GET"},
+	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/repo/createRepo", "新增仓库", "repo", "POST"},
+	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/repo/deleteRepo", "删除仓库", "repo", "DELETE"},
+	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/repo/deleteRepoByIds", "批量删除仓库", "repo", "DELETE"},
+	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/repo/updateRepo", "更新仓库", "repo", "PUT"},
+	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/repo/findRepo", "根据ID获取仓库", "repo", "GET"},
+	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/repo/getRepoList", "获取仓库列表", "repo", "GET"},
 }
 
 func (a *api) Init() error {
 	return global.GVA_DB.Transaction(func(tx *gorm.DB) error {
-		if tx.Where("id IN ?", []int{1, 67}).Find(&[]model.SysApi{}).RowsAffected == 2 {
+		inserted := 0
+		for _, api := range apis {
+			var count int64
+			if err := tx.Model(&model.SysApi{}).
+				Where("path = ? AND method = ?", api.Path, api.Method).
+				Count(&count).Error; err != nil {
+				return err
+			}
+			if count > 0 {
+				continue
+			}
+			if err := tx.Create(&api).Error; err != nil {
+				return err
+			}
+			inserted++
+		}
+		if inserted == 0 {
 			color.Danger.Println("\n[Mysql] --> sys_apis 表的初始数据已存在!")
-			return nil
+		} else {
+			color.Info.Println("\n[Mysql] --> sys_apis 表初始数据成功!")
 		}
-		if err := tx.Create(&apis).Error; err != nil { // 遇到错误时回滚事务
-			return err
-		}
-		color.Info.Println("\n[Mysql] --> sys_apis 表初始数据成功!")
 		return nil
 	})
 }
