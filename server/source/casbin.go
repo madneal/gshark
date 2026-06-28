@@ -46,6 +46,7 @@ var carbines = []gormadapter.CasbinRule{
 	{PType: "p", V0: "888", V1: "/system/getSystemConfig", V2: "POST"},
 	{PType: "p", V0: "888", V1: "/system/setSystemConfig", V2: "POST"},
 	{PType: "p", V0: "888", V1: "/system/getServerInfo", V2: "POST"},
+	{PType: "p", V0: "888", V1: "/system/reloadSystem", V2: "POST"},
 	{PType: "p", V0: "888", V1: "/system/emailTest", V2: "POST"},
 	{PType: "p", V0: "888", V1: "/system/botTest", V2: "GET"},
 	{PType: "p", V0: "888", V1: "/sysDictionaryDetail/createSysDictionaryDetail", V2: "POST"},
@@ -60,7 +61,6 @@ var carbines = []gormadapter.CasbinRule{
 	{PType: "p", V0: "888", V1: "/sysDictionary/getSysDictionaryList", V2: "GET"},
 	{PType: "p", V0: "888", V1: "/sysOperationRecord/createSysOperationRecord", V2: "POST"},
 	{PType: "p", V0: "888", V1: "/sysOperationRecord/deleteSysOperationRecord", V2: "DELETE"},
-	{PType: "p", V0: "888", V1: "/sysOperationRecord/updateSysOperationRecord", V2: "PUT"},
 	{PType: "p", V0: "888", V1: "/sysOperationRecord/findSysOperationRecord", V2: "GET"},
 	{PType: "p", V0: "888", V1: "/sysOperationRecord/getSysOperationRecordList", V2: "GET"},
 	{PType: "p", V0: "888", V1: "/sysOperationRecord/deleteSysOperationRecordByIds", V2: "DELETE"},
@@ -87,7 +87,9 @@ var carbines = []gormadapter.CasbinRule{
 	{PType: "p", V0: "888", V1: "/searchResult/getSearchResultList", V2: "GET"},
 	{PType: "p", V0: "888", V1: "/searchResult/exportSearchResult", V2: "GET"},
 	{PType: "p", V0: "888", V1: "/searchResult/updateSearchResultStatusByIds", V2: "POST"},
+	{PType: "p", V0: "888", V1: "/searchResult/startSecFilterTask", V2: "POST"},
 	{PType: "p", V0: "888", V1: "/searchResult/getTaskStatus", V2: "GET"},
+	{PType: "p", V0: "888", V1: "/searchResult/startAITask", V2: "POST"},
 	{PType: "p", V0: "888", V1: "/subdomain/createSubdomain", V2: "POST"},
 	{PType: "p", V0: "888", V1: "/subdomain/deleteSubdomain", V2: "DELETE"},
 	{PType: "p", V0: "888", V1: "/subdomain/deleteSubdomainByIds", V2: "DELETE"},
@@ -100,23 +102,38 @@ var carbines = []gormadapter.CasbinRule{
 	{PType: "p", V0: "888", V1: "/filter/updateFilter", V2: "PUT"},
 	{PType: "p", V0: "888", V1: "/filter/findFilter", V2: "GET"},
 	{PType: "p", V0: "888", V1: "/filter/getFilterList", V2: "GET"},
-	{PType: "p", V0: "888", V1: "/task/getTaskList", V2: "GET"},
-	{PType: "p", V0: "888", V1: "/task/createTask", V2: "POST"},
-	{PType: "p", V0: "888", V1: "/task/switchTaskStatus", V2: "POST"},
+	{PType: "p", V0: "888", V1: "/repo/createRepo", V2: "POST"},
+	{PType: "p", V0: "888", V1: "/repo/deleteRepo", V2: "DELETE"},
+	{PType: "p", V0: "888", V1: "/repo/deleteRepoByIds", V2: "DELETE"},
+	{PType: "p", V0: "888", V1: "/repo/updateRepo", V2: "PUT"},
+	{PType: "p", V0: "888", V1: "/repo/findRepo", V2: "GET"},
+	{PType: "p", V0: "888", V1: "/repo/getRepoList", V2: "GET"},
 }
 
 func (c *casbin) Init() error {
 	global.GVA_DB.AutoMigrate(gormadapter.CasbinRule{})
-	global.GVA_DB.Exec("ALTER TABLE casbin_rules MODIFY COLUMN v1 VARCHAR(100)")
 	return global.GVA_DB.Transaction(func(tx *gorm.DB) error {
-		if tx.Find(&[]gormadapter.CasbinRule{}).RowsAffected > 1 {
+		inserted := 0
+		for _, rule := range carbines {
+			var count int64
+			if err := tx.Model(&gormadapter.CasbinRule{}).
+				Where("p_type = ? AND v0 = ? AND v1 = ? AND v2 = ?", rule.PType, rule.V0, rule.V1, rule.V2).
+				Count(&count).Error; err != nil {
+				return err
+			}
+			if count > 0 {
+				continue
+			}
+			if err := tx.Create(&rule).Error; err != nil {
+				return err
+			}
+			inserted++
+		}
+		if inserted == 0 {
 			color.Danger.Println("\n[Mysql] --> casbin_rule 表的初始数据已存在!")
-			return nil
+		} else {
+			color.Info.Println("\n[Mysql] --> casbin_rule 表初始数据成功!")
 		}
-		if err := tx.Create(&carbines).Error; err != nil { // 遇到错误时回滚事务
-			return err
-		}
-		color.Info.Println("\n[Mysql] --> casbin_rule 表初始数据成功!")
 		return nil
 	})
 }
