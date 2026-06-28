@@ -111,7 +111,9 @@ var carbines = []gormadapter.CasbinRule{
 }
 
 func (c *casbin) Init() error {
-	global.GVA_DB.AutoMigrate(gormadapter.CasbinRule{})
+	if err := global.GVA_DB.AutoMigrate(gormadapter.CasbinRule{}); err != nil {
+		return err
+	}
 	return global.GVA_DB.Transaction(func(tx *gorm.DB) error {
 		inserted := 0
 		for _, rule := range carbines {
