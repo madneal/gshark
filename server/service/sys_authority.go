@@ -36,7 +36,11 @@ func CopyAuthority(copyInfo response.SysAuthorityCopyResponse) (err error, autho
 	copyInfo.Authority.SysBaseMenus = baseMenu
 	err = global.GVA_DB.Create(&copyInfo.Authority).Error
 
-	paths := GetPolicyPathByAuthorityId(copyInfo.OldAuthorityId)
+	paths, err := GetPolicyPathByAuthorityId(copyInfo.OldAuthorityId)
+	if err != nil {
+		_ = DeleteAuthority(&copyInfo.Authority)
+		return err, copyInfo.Authority
+	}
 	err = UpdateCasbin(copyInfo.Authority.AuthorityId, paths)
 	if err != nil {
 		_ = DeleteAuthority(&copyInfo.Authority)

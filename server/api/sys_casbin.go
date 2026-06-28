@@ -32,6 +32,11 @@ func GetPolicyPathByAuthorityId(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	paths := service.GetPolicyPathByAuthorityId(casbin.AuthorityId)
+	paths, err := service.GetPolicyPathByAuthorityId(casbin.AuthorityId)
+	if err != nil {
+		global.GVA_LOG.Error("获取失败!", zap.Any("err", err))
+		response.FailWithMessage("获取失败", c)
+		return
+	}
 	response.OkWithDetailed(response.PolicyPathResponse{Paths: paths}, "获取成功", c)
 }
