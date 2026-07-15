@@ -1,45 +1,40 @@
 <template>
-  <div class="init-page">
-    <div class="init-shell">
-      <div class="init-brand">
-        <img class="logo" src="@/assets/nav_logo.png" alt="GShark" />
-        <h1>欢迎使用 GShark</h1>
-        <p>首次使用需要初始化数据库并写入基础数据</p>
-      </div>
-      <div class="init-card">
-        <el-form ref="form" :model="form" label-width="100px" label-position="top">
-          <el-form-item label="数据库类型">
-            <el-select disabled v-model="form.sqlType" placeholder="请选择" style="width: 100%">
-              <el-option key="mysql" label="MySQL（目前仅支持）" value="mysql" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="Host">
-            <el-input v-model="form.host" placeholder="例如 127.0.0.1" />
-          </el-form-item>
-          <el-form-item label="Port">
-            <el-input v-model="form.port" placeholder="例如 3306" />
-          </el-form-item>
-          <el-form-item label="用户名">
-            <el-input v-model="form.userName" placeholder="数据库用户名" />
-          </el-form-item>
-          <el-form-item label="密码">
-            <el-input
-              v-model="form.password"
-              type="password"
-              show-password
-              placeholder="无密码可留空"
-            />
-          </el-form-item>
-          <el-form-item label="数据库名">
-            <el-input v-model="form.dbName" placeholder="例如 gshark" />
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" class="init-submit" @click="onSubmit">
-              立即初始化
-            </el-button>
-          </el-form-item>
-        </el-form>
-      </div>
+  <div class="init">
+    <p class="in-one">欢迎使用 GShark</p>
+    <p class="in-two">您需要初始化数据库并填充初始数据</p>
+    <div class="form-card">
+      <el-form ref="form" :model="form" label-width="100px">
+        <el-form-item label="数据库类型">
+          <el-select disabled v-model="form.sqlType" placeholder="请选择">
+            <el-option key="mysql" label="mysql（目前只支持 mysql）" value="mysql" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="host">
+          <el-input v-model="form.host" placeholder="请输入数据库地址" />
+        </el-form-item>
+        <el-form-item label="port">
+          <el-input v-model="form.port" placeholder="请输入数据库端口" />
+        </el-form-item>
+        <el-form-item label="userName">
+          <el-input v-model="form.userName" placeholder="请输入数据库用户名" />
+        </el-form-item>
+        <el-form-item label="password">
+          <el-input
+            v-model="form.password"
+            type="password"
+            show-password
+            placeholder="请输入数据库密码（没有则为空）"
+          />
+        </el-form-item>
+        <el-form-item label="dbName">
+          <el-input v-model="form.dbName" placeholder="请输入数据库名称" />
+        </el-form-item>
+        <el-form-item>
+          <div style="text-align: right">
+            <el-button type="primary" @click="onSubmit">立即初始化</el-button>
+          </div>
+        </el-form-item>
+      </el-form>
     </div>
   </div>
 </template>
@@ -70,10 +65,7 @@ export default {
       try {
         const res = await initDB(this.form);
         if (res.code == 0) {
-          this.$message({
-            type: "success",
-            message: res.msg,
-          });
+          this.$message({ type: "success", message: res.msg });
           this.$router.push({ name: "login" });
         }
       } finally {
@@ -84,59 +76,30 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-.init-page {
+<style lang="scss">
+.init {
   min-height: 100vh;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 40px 16px;
-  background: linear-gradient(135deg, #0b1120 0%, #0f172a 50%, #111827 100%);
+  background: var(--gs-dark-bg, #0f172a);
+  color: var(--gs-dark-text, #e5e7eb);
 }
-
-.init-shell {
-  width: 100%;
-  max-width: 480px;
+.in-one {
+  font-size: 26px;
+  margin-bottom: 8px;
 }
-
-.init-brand {
-  text-align: center;
-  margin-bottom: 28px;
-
-  .logo {
-    width: 52px;
-    height: 52px;
-    border-radius: 10px;
-    background: rgba(255, 255, 255, 0.08);
-    padding: 6px;
-  }
-
-  h1 {
-    margin: 16px 0 8px;
-    font-size: 26px;
-    font-weight: 700;
-    color: #f1f5f9;
-  }
-
-  p {
-    margin: 0;
-    color: #94a3b8;
-    font-size: 14px;
-  }
+.in-two {
+  font-size: 16px;
+  color: var(--gs-dark-muted, #94a3b8);
 }
-
-.init-card {
-  padding: 28px 24px;
-  background: rgba(24, 34, 53, 0.8);
-  border: 1px solid rgba(148, 163, 184, 0.12);
-  border-radius: 12px;
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(12px);
-}
-
-.init-submit {
-  width: 100%;
-  height: 40px;
-  font-weight: 600;
+.form-card {
+  margin-top: 32px;
+  width: min(60vw, 560px);
+  padding: 20px;
+  border-radius: 8px;
+  background: var(--gs-dark-panel, #182235);
+  border: 1px solid var(--gs-dark-border-soft, rgba(148, 163, 184, 0.18));
 }
 </style>

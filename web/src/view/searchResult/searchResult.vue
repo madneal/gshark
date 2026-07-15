@@ -1,30 +1,23 @@
 <template>
-  <div class="search-result-page">
-    <div class="search-term page-toolbar">
-      <el-form :inline="true" :model="searchInfo" class="page-toolbar__filters">
+  <div>
+    <div class="search-term">
+      <el-form :inline="true" :model="searchInfo" class="demo-form-inline">
         <el-form-item label="搜索条件">
           <el-input
-            placeholder="仓库名称 | 匹配内容"
+            placeholder="仓库名称|匹配内容"
             clearable
             v-model="searchInfo.query"
-            style="width: 200px"
           />
         </el-form-item>
         <el-form-item label="关键词">
           <el-input
-            placeholder="关键词"
+            placeholder="搜索条件"
             clearable
             v-model="searchInfo.keyword"
-            style="width: 140px"
           />
         </el-form-item>
         <el-form-item label="状态">
-          <el-select
-            v-model="searchInfo.status"
-            clearable
-            placeholder="全部"
-            style="width: 120px"
-          >
+          <el-select v-model="searchInfo.status" clearable placeholder="全部">
             <el-option
               v-for="item in statusOptions"
               :key="item.value"
@@ -33,7 +26,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="仅二次关键词">
+        <el-form-item label="仅展示二次关键词结果">
           <el-switch
             v-model="searchInfo.onlySecKeyword"
             @change="secKeywordChange"
@@ -43,31 +36,29 @@
           <el-button type="primary" @click="onSubmit">查询</el-button>
           <el-button @click="exportResult">导出</el-button>
         </el-form-item>
+        <el-form-item>
+          <el-button
+            type="success"
+            :disabled="!hasSelection"
+            @click="confirmBulk(false)"
+          >
+            批量确认
+          </el-button>
+          <el-button
+            type="danger"
+            :disabled="!hasSelection"
+            @click="confirmBulk(true)"
+          >
+            批量忽略
+          </el-button>
+        </el-form-item>
+        <el-form-item>
+          <el-button @click="startAITask">启动AI分析</el-button>
+          <el-button :disabled="taskBtnDisable" @click="confirmFilterTask">
+            {{ taskButtonTxt }}
+          </el-button>
+        </el-form-item>
       </el-form>
-
-      <div class="page-toolbar__actions">
-        <el-button
-          type="success"
-          :disabled="!hasSelection"
-          @click="confirmBulk(false)"
-        >
-          批量确认
-        </el-button>
-        <el-button
-          type="danger"
-          :disabled="!hasSelection"
-          @click="confirmBulk(true)"
-        >
-          批量忽略
-        </el-button>
-        <el-button @click="startAITask">启动 AI 分析</el-button>
-        <el-button
-          :disabled="taskBtnDisable"
-          @click="confirmFilterTask"
-        >
-          {{ taskButtonTxt }}
-        </el-button>
-      </div>
     </div>
 
     <el-table
@@ -80,62 +71,36 @@
       tooltip-effect="dark"
       empty-text="暂无匹配结果"
     >
-      <el-table-column type="selection" width="48" />
-      <el-table-column label="ID" prop="ID" width="64" />
-      <el-table-column label="文件" min-width="180">
+      <el-table-column type="selection" width="55" />
+      <el-table-column label="ID" prop="ID" width="50" />
+      <el-table-column label="文件" width="180">
         <template #default="scope">
-          <a
-            class="table-link"
-            :href="scope.row.url"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <a :href="scope.row.url" target="_blank" rel="noopener noreferrer">
             {{ scope.row.repo + "/" + scope.row.path }}
           </a>
         </template>
       </el-table-column>
-      <el-table-column label="匹配内容" min-width="320">
+      <el-table-column label="匹配内容" prop="matches" min-width="320">
         <template #default="scope">
-          <pre
-            v-if="scope.row.text_matches"
-            class="match-snippet"
-            v-html="fragmentsFilter(scope.row.text_matches)"
-          />
-          <pre v-else-if="scope.row.matches" class="match-snippet">{{
-            scope.row.matches
+          <pre v-if="scope.row.text_matches">{{
+            fragmentsFilter(scope.row.text_matches)
           }}</pre>
+          <pre v-else-if="scope.row.matches">{{ scope.row.matches }}</pre>
         </template>
       </el-table-column>
-      <el-table-column label="关键词" prop="keyword" width="110">
-        <template #default="scope">
-          <span v-if="scope.row.keyword" class="keyword-chip">{{
-            scope.row.keyword
-          }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="二级关键词" prop="sec_keyword" width="120">
-        <template #default="scope">
-          <span v-if="scope.row.sec_keyword" class="keyword-chip">{{
-            scope.row.sec_keyword
-          }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="日期" width="110">
+      <el-table-column label="关键词" prop="keyword" width="100" show-overflow-tooltip />
+      <el-table-column label="二级关键词" prop="sec_keyword" width="110" show-overflow-tooltip />
+      <el-table-column label="日期" width="100">
         <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
       </el-table-column>
       <el-table-column label="状态" width="100">
         <template #default="scope">
-          <el-tag
-            class="status-tag"
-            size="small"
-            :type="statusTagType(scope.row.status)"
-            effect="dark"
-          >
+          <el-tag size="small" :type="statusTagType(scope.row.status)" effect="dark">
             {{ statusFilter(scope.row.status) }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="170" fixed="right">
+      <el-table-column label="操作" width="170">
         <template #default="scope">
           <el-button
             size="small"
@@ -216,21 +181,8 @@ export default {
   },
   methods: {
     formatDate,
-    escapeHtml(value) {
-      return String(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#39;");
-    },
     statusFilter(val) {
-      const statusOptions = {
-        0: "未处理",
-        1: "已确认",
-        2: "已忽略",
-      };
-      return statusOptions[val] ?? "未知";
+      return { 0: "未处理", 1: "已确认", 2: "已忽略" }[val] ?? "未知";
     },
     statusTagType(val) {
       if (val === 1) return "success";
@@ -238,17 +190,13 @@ export default {
       return "warning";
     },
     fragmentsFilter(val) {
-      if (!val) {
-        return "";
-      }
-      if (typeof val === "string") {
-        return this.escapeHtml(val);
-      }
-      const parts = [];
+      if (!val) return "";
+      if (typeof val === "string") return val;
+      let result = "";
       for (let i = 0; i < val.length; i++) {
         const fragment = val[i].fragment || "";
         if (!val[i].matches || !val[i].matches.length) {
-          parts.push(this.escapeHtml(fragment));
+          result += fragment;
         } else {
           const ranges = [];
           val[i].matches.forEach((ele) => {
@@ -258,27 +206,23 @@ export default {
           });
           ranges.sort((a, b) => a[0] - b[0]);
           let cursor = 0;
-          let html = "";
+          let processed = "";
           ranges.forEach(([start, end]) => {
             const safeStart = Math.max(0, start);
             const safeEnd = Math.min(fragment.length, end);
-            if (safeEnd <= safeStart || safeStart < cursor) {
-              return;
-            }
-            html += this.escapeHtml(fragment.slice(cursor, safeStart));
-            html += `<mark>${this.escapeHtml(
-              fragment.slice(safeStart, safeEnd)
-            )}</mark>`;
+            if (safeEnd <= safeStart || safeStart < cursor) return;
+            processed += fragment.slice(cursor, safeStart);
+            processed += "【" + fragment.slice(safeStart, safeEnd) + "】";
             cursor = safeEnd;
           });
-          html += this.escapeHtml(fragment.slice(cursor));
-          parts.push(html);
+          processed += fragment.slice(cursor);
+          result += processed;
         }
         if (i !== val.length - 1) {
-          parts.push("\n<span class=\"match-sep\">────</span>\n");
+          result += "\n=====================================\n";
         }
       }
-      return parts.join("");
+      return result;
     },
     onSubmit() {
       this.page = 1;
@@ -362,11 +306,10 @@ export default {
       if (res.code === 0) {
         res.data.searchResult.status = status;
         this.formData = res.data.searchResult;
-        const data = {
+        const updateRes = await updateSearchResult({
           repo: this.formData.repo,
           status: status,
-        };
-        const updateRes = await updateSearchResult(data);
+        });
         if (updateRes.code === 0) {
           this.$message({
             type: "success",
@@ -391,8 +334,8 @@ export default {
 };
 </script>
 
-<style scoped>
-.search-result-page .page-toolbar {
-  margin-bottom: 14px;
+<style>
+.el-table pre {
+  white-space: pre-line;
 }
 </style>

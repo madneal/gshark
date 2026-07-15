@@ -1,7 +1,7 @@
 <template>
-  <div class="person-page">
+  <div>
     <el-row :gutter="16">
-      <el-col :span="6" :xs="24">
+      <el-col :span="6">
         <div class="user-card">
           <div
             class="user-headpic-update"
@@ -27,7 +27,7 @@
           </p>
         </div>
       </el-col>
-      <el-col :span="18" :xs="24">
+      <el-col :span="18">
         <div class="user-panel">
           <el-tabs v-model="activeName">
             <el-tab-pane label="账号绑定" name="second">
@@ -121,9 +121,7 @@ export default {
       },
     };
   },
-  components: {
-    ChooseImg,
-  },
+  components: { ChooseImg },
   computed: {
     ...mapGetters("user", ["userInfo", "token"]),
   },
@@ -146,11 +144,7 @@ export default {
       });
     },
     clearPassword() {
-      this.pwdModify = {
-        password: "",
-        newPassword: "",
-        confirmPassword: "",
-      };
+      this.pwdModify = { password: "", newPassword: "", confirmPassword: "" };
       this.$refs.modifyPwdForm?.clearValidate();
     },
     openChooseImg() {
@@ -160,10 +154,7 @@ export default {
       const res = await setUserInfo({ headerImg: url, ID: this.userInfo.ID });
       if (res.code == 0) {
         this.ResetUserInfo({ headerImg: url });
-        this.$message({
-          type: "success",
-          message: "设置成功",
-        });
+        this.$message({ type: "success", message: "设置成功" });
       }
     },
   },
@@ -171,97 +162,66 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.person-page {
-  color: var(--gs-dark-text, #e5e7eb);
-}
-
-.user-card {
-  min-height: 280px;
-  padding: 28px 20px;
-  text-align: center;
-  background: rgba(15, 23, 42, 0.55);
-  border: 1px solid rgba(148, 163, 184, 0.12);
-  border-radius: 10px;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
-
-  .nickname {
-    margin: 18px 0 8px;
-    font-size: 22px;
-    font-weight: 600;
-    color: #f1f5f9;
-  }
-
-  .username {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    margin: 0;
-    color: #94a3b8;
-    font-size: 14px;
-  }
-}
-
+.user-card,
 .user-panel {
-  min-height: 280px;
-  padding: 8px 18px 18px;
-  background: rgba(15, 23, 42, 0.55);
-  border: 1px solid rgba(148, 163, 184, 0.12);
-  border-radius: 10px;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  border-radius: 8px;
+  background: var(--gs-dark-panel, #182235);
+  border: 1px solid var(--gs-dark-border-soft, rgba(148, 163, 184, 0.18));
 }
-
+.user-card {
+  text-align: center;
+  min-height: 260px;
+}
+.nickname {
+  margin: 16px 0 8px;
+  font-size: 22px;
+}
+.username {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--gs-dark-muted, #94a3b8);
+}
 .account-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  padding: 14px 4px 6px;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.12);
-
-  .title {
-    margin: 0 0 6px;
-    font-size: 16px;
-    color: #e5e7eb;
-  }
-
-  .desc {
-    margin: 0;
-    font-size: 13px;
-    color: #94a3b8;
-  }
+  gap: 12px;
+  padding: 8px 0;
 }
-
+.account-row .title {
+  margin: 0 0 4px;
+  font-size: 16px;
+}
+.account-row .desc {
+  margin: 0;
+  color: var(--gs-dark-muted, #94a3b8);
+  font-size: 13px;
+}
 .user-headpic-update {
   width: 120px;
   height: 120px;
-  line-height: 120px;
   margin: 0 auto;
-  display: flex;
-  justify-content: center;
   border-radius: 16px;
-  background-color: #1e293b;
+  background: #1e293b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
-
-  &:hover {
-    color: #fff;
-    background-blend-mode: multiply;
-
-    .update {
-      color: #fff;
-      background: rgba(15, 23, 42, 0.55);
-    }
-  }
-
-  .update {
-    height: 120px;
-    width: 120px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    text-align: center;
-    color: transparent;
-    cursor: pointer;
-  }
+}
+.user-headpic-update .update {
+  width: 100%;
+  height: 100%;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: #fff;
+  background: rgba(15, 23, 42, 0.55);
+  cursor: pointer;
+}
+.user-headpic-update:hover .update {
+  display: inline-flex;
 }
 </style>

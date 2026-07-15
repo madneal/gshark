@@ -1,19 +1,19 @@
 <template>
   <div>
-    <div class="search-term page-toolbar">
-      <div class="page-toolbar__filters">
-        <el-button type="primary" @click="onSubmit">刷新</el-button>
-      </div>
-      <div class="page-toolbar__actions">
-        <el-button type="primary" @click="openDialog">新增 Token</el-button>
-        <el-button
-          type="danger"
-          :disabled="multipleSelection.length === 0"
-          @click="confirmDelete"
-        >
-          批量删除
-        </el-button>
-      </div>
+    <div class="search-term">
+      <el-form :inline="true" class="demo-form-inline">
+        <el-form-item>
+          <el-button type="primary" @click="onSubmit">查询</el-button>
+          <el-button type="primary" @click="openDialog">新增token</el-button>
+          <el-button
+            type="danger"
+            :disabled="multipleSelection.length === 0"
+            @click="confirmDelete"
+          >
+            批量删除
+          </el-button>
+        </el-form-item>
+      </el-form>
     </div>
 
     <el-table
@@ -24,19 +24,14 @@
       stripe
       style="width: 100%"
       tooltip-effect="dark"
-      empty-text="暂无 Token"
     >
-      <el-table-column type="selection" width="48" />
-      <el-table-column label="日期" width="170">
+      <el-table-column type="selection" width="55" />
+      <el-table-column label="日期" width="180">
         <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
       </el-table-column>
-      <el-table-column label="类型" prop="type" width="120">
-        <template #default="scope">
-          <span class="keyword-chip">{{ scope.row.type }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="Token" prop="content" min-width="200" show-overflow-tooltip />
-      <el-table-column label="操作" width="170" fixed="right">
+      <el-table-column label="类型" prop="type" width="120" />
+      <el-table-column label="token" prop="content" width="120" />
+      <el-table-column label="操作">
         <template #default="scope">
           <el-button size="small" type="primary" @click="updateToken(scope.row)">
             变更
@@ -58,7 +53,7 @@
       layout="total, sizes, prev, pager, next, jumper"
     />
 
-    <el-dialog :before-close="closeDialog" v-model="dialogFormVisible" title="添加 Token">
+    <el-dialog :before-close="closeDialog" v-model="dialogFormVisible" title="添加token">
       <el-form :model="formData" label-position="right" label-width="80px">
         <el-form-item label="类型:">
           <el-radio-group v-model="formData.type">
@@ -67,7 +62,7 @@
             <el-radio label="postman">postman</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="Token:">
+        <el-form-item label="token:">
           <el-input v-model="formData.content" clearable placeholder="请输入" />
         </el-form-item>
       </el-form>
@@ -106,11 +101,6 @@ export default {
         type: "github",
         content: "",
       },
-      typeOptions: [
-        { label: "github", value: "github" },
-        { label: "gitlab", value: "gitlab" },
-        { label: "postman", value: "postman" },
-      ],
     };
   },
   methods: {
@@ -129,24 +119,18 @@ export default {
         cancelButtonText: "取消",
         type: "warning",
       })
-        .then(() => {
-          this.deleteToken(row);
-        })
+        .then(() => this.deleteToken(row))
         .catch(() => {});
     },
     confirmDelete() {
-      if (this.multipleSelection.length === 0) {
+      if (!this.multipleSelection.length) {
         this.$message({ type: "warning", message: "请选择要删除的数据" });
         return;
       }
       this.$confirm(
         `确定删除选中的 ${this.multipleSelection.length} 个 Token 吗？`,
         "批量删除",
-        {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning",
-        }
+        { confirmButtonText: "确定", cancelButtonText: "取消", type: "warning" }
       )
         .then(() => this.onDelete())
         .catch(() => {});
@@ -156,9 +140,7 @@ export default {
       const res = await deleteTokenByIds({ ids });
       if (res.code == 0) {
         this.$message({ type: "success", message: "删除成功" });
-        if (this.tableData.length == ids.length) {
-          this.page--;
-        }
+        if (this.tableData.length == ids.length) this.page--;
         this.getTableData();
       }
     },
@@ -172,27 +154,19 @@ export default {
     },
     closeDialog() {
       this.dialogFormVisible = false;
-      this.formData = {
-        type: "github",
-        content: "",
-      };
+      this.formData = { type: "github", content: "" };
     },
     async deleteToken(row) {
       const res = await deleteToken({ ID: row.ID });
       if (res.code == 0) {
         this.$message({ type: "success", message: "删除成功" });
-        if (this.tableData.length == 1) {
-          this.page--;
-        }
+        if (this.tableData.length == 1) this.page--;
         this.getTableData();
       }
     },
     async enterDialog() {
       let res;
       switch (this.type) {
-        case "create":
-          res = await createToken(this.formData);
-          break;
         case "update":
           res = await updateToken(this.formData);
           break;

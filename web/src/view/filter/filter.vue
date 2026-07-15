@@ -1,17 +1,18 @@
 <template>
   <div>
-    <div class="search-term page-toolbar">
-      <div class="page-toolbar__filters"></div>
-      <div class="page-toolbar__actions">
-        <el-button type="primary" @click="openDialog">新增过滤规则</el-button>
-        <el-button
-          type="danger"
-          :disabled="multipleSelection.length === 0"
-          @click="confirmDelete"
-        >
-          批量删除
-        </el-button>
-      </div>
+    <div class="search-term">
+      <el-form :inline="true" class="demo-form-inline">
+        <el-form-item>
+          <el-button type="primary" @click="openDialog">新增过滤规则</el-button>
+          <el-button
+            type="danger"
+            :disabled="multipleSelection.length === 0"
+            @click="confirmDelete"
+          >
+            批量删除
+          </el-button>
+        </el-form-item>
+      </el-form>
     </div>
 
     <el-table
@@ -22,16 +23,15 @@
       stripe
       style="width: 100%"
       tooltip-effect="dark"
-      empty-text="暂无过滤规则"
     >
-      <el-table-column type="selection" width="48" />
-      <el-table-column label="日期" width="170">
+      <el-table-column type="selection" width="55" />
+      <el-table-column label="日期" width="180">
         <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
       </el-table-column>
-      <el-table-column label="过滤类型" prop="filter_type" min-width="120" />
-      <el-table-column label="过滤种类" prop="filter_class" min-width="120" />
-      <el-table-column label="内容" prop="content" min-width="180" show-overflow-tooltip />
-      <el-table-column label="操作" width="170" fixed="right">
+      <el-table-column label="过滤类型" prop="filter_type" width="120" />
+      <el-table-column label="过滤种类" prop="filter_class" width="120" />
+      <el-table-column label="内容" prop="content" width="120" />
+      <el-table-column label="操作">
         <template #default="scope">
           <el-button size="small" type="primary" @click="updateFilter(scope.row)">
             变更
@@ -56,7 +56,7 @@
     <el-dialog
       :before-close="closeDialog"
       v-model="dialogFormVisible"
-      title="新增过滤规则（目前仅适用于 Github）"
+      title="新增过滤规则（目前仅适用于Github）"
     >
       <el-form :model="formData" label-position="right" label-width="120px">
         <el-form-item label="过滤类型：">
@@ -76,7 +76,7 @@
           <el-input
             v-model="formData.content"
             clearable
-            placeholder="仅适用于 Github，排除关键词，以,分隔"
+            placeholder="仅适用于Github，排除关键词，以,分隔"
           />
         </el-form-item>
       </el-form>
@@ -129,24 +129,18 @@ export default {
         cancelButtonText: "取消",
         type: "warning",
       })
-        .then(() => {
-          this.deleteFilter(row);
-        })
+        .then(() => this.deleteFilter(row))
         .catch(() => {});
     },
     confirmDelete() {
-      if (this.multipleSelection.length === 0) {
+      if (!this.multipleSelection.length) {
         this.$message({ type: "warning", message: "请选择要删除的数据" });
         return;
       }
       this.$confirm(
         `确定删除选中的 ${this.multipleSelection.length} 条过滤规则吗？`,
         "批量删除",
-        {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning",
-        }
+        { confirmButtonText: "确定", cancelButtonText: "取消", type: "warning" }
       )
         .then(() => this.onDelete())
         .catch(() => {});
@@ -156,9 +150,7 @@ export default {
       const res = await deleteFilterByIds({ ids });
       if (res.code == 0) {
         this.$message({ type: "success", message: "删除成功" });
-        if (this.tableData.length == ids.length) {
-          this.page--;
-        }
+        if (this.tableData.length == ids.length) this.page--;
         this.getTableData();
       }
     },
@@ -182,18 +174,13 @@ export default {
       const res = await deleteFilter({ ID: row.ID });
       if (res.code === 0) {
         this.$message({ type: "success", message: "删除成功" });
-        if (this.tableData.length == 1) {
-          this.page--;
-        }
+        if (this.tableData.length == 1) this.page--;
         await this.getTableData();
       }
     },
     async enterDialog() {
       let res;
       switch (this.type) {
-        case "create":
-          res = await createFilter(this.formData);
-          break;
         case "update":
           res = await updateFilter(this.formData);
           break;
