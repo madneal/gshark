@@ -32,8 +32,8 @@
             >
               <template #suffix>
                 <el-icon class="password-toggle" @click="changeLock">
-                  <Unlock v-if="lock === 'lock'" />
-                  <Lock v-else />
+                  <Hide v-if="lock === 'lock'" />
+                  <View v-else />
                 </el-icon>
               </template>
             </el-input>

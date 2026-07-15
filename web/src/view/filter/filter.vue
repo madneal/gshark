@@ -1,32 +1,19 @@
 <template>
   <div>
-    <div class="search-term">
-      <el-form :inline="true" :model="searchInfo" class="demo-form-inline">
-        <el-form-item>
-          <el-button @click="openDialog" type="primary">新增过滤规则</el-button>
-        </el-form-item>
-        <el-form-item>
-          <el-popover placement="top" v-model="deleteVisible" width="160">
-            <p>确定要删除吗？</p>
-            <div style="text-align: right; margin: 0">
-              <el-button @click="deleteVisible = false" size="mini" type="text"
-                >取消</el-button
-              >
-              <el-button @click="onDelete" size="mini" type="primary"
-                >确定</el-button
-              >
-            </div>
-            <el-button
-              icon="el-icon-delete"
-              size="mini"
-              slot="reference"
-              type="danger"
-              >批量删除</el-button
-            >
-          </el-popover>
-        </el-form-item>
-      </el-form>
+    <div class="search-term page-toolbar">
+      <div class="page-toolbar__filters"></div>
+      <div class="page-toolbar__actions">
+        <el-button type="primary" @click="openDialog">新增过滤规则</el-button>
+        <el-button
+          type="danger"
+          :disabled="multipleSelection.length === 0"
+          @click="confirmDelete"
+        >
+          批量删除
+        </el-button>
+      </div>
     </div>
+
     <el-table
       :data="tableData"
       @selection-change="handleSelectionChange"
@@ -35,47 +22,23 @@
       stripe
       style="width: 100%"
       tooltip-effect="dark"
+      empty-text="暂无过滤规则"
     >
-      <el-table-column type="selection" width="55"></el-table-column>
-      <el-table-column label="日期" width="180">
+      <el-table-column type="selection" width="48" />
+      <el-table-column label="日期" width="170">
         <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
       </el-table-column>
-
-      <el-table-column
-        label="过滤类型"
-        prop="filter_type"
-        width="120"
-      ></el-table-column>
-
-      <el-table-column
-        label="过滤种类"
-        prop="filter_class"
-        width="120"
-      ></el-table-column>
-
-      <el-table-column
-        label="内容"
-        prop="content"
-        width="120"
-      ></el-table-column>
-
-      <el-table-column label="按钮组">
+      <el-table-column label="过滤类型" prop="filter_type" min-width="120" />
+      <el-table-column label="过滤种类" prop="filter_class" min-width="120" />
+      <el-table-column label="内容" prop="content" min-width="180" show-overflow-tooltip />
+      <el-table-column label="操作" width="170" fixed="right">
         <template #default="scope">
-          <el-button
-            class="table-button"
-            @click="updateFilter(scope.row)"
-            size="small"
-            type="primary"
-            icon="el-icon-edit"
-            >变更</el-button
-          >
-          <el-button
-            type="danger"
-            icon="el-icon-delete"
-            size="mini"
-            @click="deleteRow(scope.row)"
-            >删除</el-button
-          >
+          <el-button size="small" type="primary" @click="updateFilter(scope.row)">
+            变更
+          </el-button>
+          <el-button size="small" type="danger" @click="deleteRow(scope.row)">
+            删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -88,39 +51,39 @@
       @current-change="handleCurrentChange"
       @size-change="handleSizeChange"
       layout="total, sizes, prev, pager, next, jumper"
-    ></el-pagination>
+    />
 
     <el-dialog
       :before-close="closeDialog"
       v-model="dialogFormVisible"
-      title="新增过滤规则（目前仅适用于Github）"
+      title="新增过滤规则（目前仅适用于 Github）"
     >
-      <el-form :model="formData" label-position="right" label-width="200px">
+      <el-form :model="formData" label-position="right" label-width="120px">
         <el-form-item label="过滤类型：">
-            <el-radio-group v-model="formData.filter_type">
-              <el-radio label="whitelist">白名单</el-radio>
-              <el-radio label="blacklist">黑名单</el-radio>
-            </el-radio-group>
+          <el-radio-group v-model="formData.filter_type">
+            <el-radio label="whitelist">白名单</el-radio>
+            <el-radio label="blacklist">黑名单</el-radio>
+          </el-radio-group>
         </el-form-item>
         <el-form-item label="过滤种类：">
-            <el-radio-group v-model="formData.filter_class">
-              <el-radio label="extension">文件后缀</el-radio>
-              <el-radio label="keyword">关键词</el-radio>
-              <el-radio label="sec_keyword">二次关键词</el-radio>
-            </el-radio-group>
+          <el-radio-group v-model="formData.filter_class">
+            <el-radio label="extension">文件后缀</el-radio>
+            <el-radio label="keyword">关键词</el-radio>
+            <el-radio label="sec_keyword">二次关键词</el-radio>
+          </el-radio-group>
         </el-form-item>
         <el-form-item label="内容：">
           <el-input
             v-model="formData.content"
             clearable
-            placeholder="仅适用于Github，排除关键词，以,分隔"
-          ></el-input>
+            placeholder="仅适用于 Github，排除关键词，以,分隔"
+          />
         </el-form-item>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
-        <el-button @click="closeDialog">取 消</el-button>
-        <el-button @click="enterDialog" type="primary">确 定</el-button>
+          <el-button @click="closeDialog">取 消</el-button>
+          <el-button @click="enterDialog" type="primary">确 定</el-button>
         </div>
       </template>
     </el-dialog>
@@ -138,6 +101,7 @@ import {
 } from "@/api/filter";
 import { formatDate } from "@/utils/date";
 import infoList from "@/mixins/infoList";
+
 export default {
   name: "FilterView",
   mixins: [infoList],
@@ -146,12 +110,11 @@ export default {
       listApi: getFilterList,
       dialogFormVisible: false,
       type: "",
-      deleteVisible: false,
       multipleSelection: [],
       formData: {
         filter_type: "blacklist",
         filter_class: "extension",
-        content: ""
+        content: "",
       },
     };
   },
@@ -165,33 +128,37 @@ export default {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
-      }).then(() => {
-        this.deleteFilter(row);
-      }).catch(() => {});
+      })
+        .then(() => {
+          this.deleteFilter(row);
+        })
+        .catch(() => {});
     },
-    async onDelete() {
-      const ids = [];
-      if (this.multipleSelection.length == 0) {
-        this.$message({
-          type: "warning",
-          message: "请选择要删除的数据",
-        });
+    confirmDelete() {
+      if (this.multipleSelection.length === 0) {
+        this.$message({ type: "warning", message: "请选择要删除的数据" });
         return;
       }
-      this.multipleSelection &&
-        this.multipleSelection.map((item) => {
-          ids.push(item.ID);
-        });
+      this.$confirm(
+        `确定删除选中的 ${this.multipleSelection.length} 条过滤规则吗？`,
+        "批量删除",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        }
+      )
+        .then(() => this.onDelete())
+        .catch(() => {});
+    },
+    async onDelete() {
+      const ids = this.multipleSelection.map((item) => item.ID);
       const res = await deleteFilterByIds({ ids });
       if (res.code == 0) {
-        this.$message({
-          type: "success",
-          message: "删除成功",
-        });
+        this.$message({ type: "success", message: "删除成功" });
         if (this.tableData.length == ids.length) {
           this.page--;
         }
-        this.deleteVisible = false;
         this.getTableData();
       }
     },
@@ -206,17 +173,15 @@ export default {
     closeDialog() {
       this.dialogFormVisible = false;
       this.formData = {
-        extension: "",
-        isFork: false,
+        filter_type: "blacklist",
+        filter_class: "extension",
+        content: "",
       };
     },
     async deleteFilter(row) {
       const res = await deleteFilter({ ID: row.ID });
       if (res.code === 0) {
-        this.$message({
-          type: "success",
-          message: "删除成功",
-        });
+        this.$message({ type: "success", message: "删除成功" });
         if (this.tableData.length == 1) {
           this.page--;
         }
@@ -237,10 +202,7 @@ export default {
           break;
       }
       if (res.code === 0) {
-        this.$message({
-          type: "success",
-          message: "创建/更改成功",
-        });
+        this.$message({ type: "success", message: "创建/更改成功" });
         this.closeDialog();
         await this.getTableData();
       }
@@ -255,6 +217,3 @@ export default {
   },
 };
 </script>
-
-<style>
-</style>

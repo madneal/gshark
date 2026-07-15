@@ -1,35 +1,21 @@
 <template>
   <div>
-    <div class="search-term">
-      <el-form :inline="true" :model="searchInfo" class="demo-form-inline">
-        <el-form-item>
-          <el-button @click="onSubmit" type="primary">查询</el-button>
-        </el-form-item>
-        <el-form-item>
-          <el-button @click="openDialog" type="primary">新增token</el-button>
-        </el-form-item>
-        <el-form-item>
-          <el-popover placement="top" v-model="deleteVisible" width="160">
-            <p>确定要删除吗？</p>
-            <div style="text-align: right; margin: 0">
-              <el-button @click="deleteVisible = false" size="mini" type="text"
-                >取消</el-button
-              >
-              <el-button @click="onDelete" size="mini" type="primary"
-                >确定</el-button
-              >
-            </div>
-            <el-button
-              icon="el-icon-delete"
-              size="mini"
-              slot="reference"
-              type="danger"
-              >批量删除</el-button
-            >
-          </el-popover>
-        </el-form-item>
-      </el-form>
+    <div class="search-term page-toolbar">
+      <div class="page-toolbar__filters">
+        <el-button type="primary" @click="onSubmit">刷新</el-button>
+      </div>
+      <div class="page-toolbar__actions">
+        <el-button type="primary" @click="openDialog">新增 Token</el-button>
+        <el-button
+          type="danger"
+          :disabled="multipleSelection.length === 0"
+          @click="confirmDelete"
+        >
+          批量删除
+        </el-button>
+      </div>
     </div>
+
     <el-table
       :data="tableData"
       @selection-change="handleSelectionChange"
@@ -38,37 +24,26 @@
       stripe
       style="width: 100%"
       tooltip-effect="dark"
+      empty-text="暂无 Token"
     >
-      <el-table-column type="selection" width="55"></el-table-column>
-      <el-table-column label="日期" width="180">
+      <el-table-column type="selection" width="48" />
+      <el-table-column label="日期" width="170">
         <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
       </el-table-column>
-
-      <el-table-column label="类型" prop="type" width="120"></el-table-column>
-
-      <el-table-column
-        label="token"
-        prop="content"
-        width="120"
-      ></el-table-column>
-
-      <el-table-column label="按钮组">
+      <el-table-column label="类型" prop="type" width="120">
         <template #default="scope">
-          <el-button
-            class="table-button"
-            @click="updateToken(scope.row)"
-            size="small"
-            type="primary"
-            icon="el-icon-edit"
-            >变更</el-button
-          >
-          <el-button
-            type="danger"
-            icon="el-icon-delete"
-            size="mini"
-            @click="deleteRow(scope.row)"
-            >删除</el-button
-          >
+          <span class="keyword-chip">{{ scope.row.type }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Token" prop="content" min-width="200" show-overflow-tooltip />
+      <el-table-column label="操作" width="170" fixed="right">
+        <template #default="scope">
+          <el-button size="small" type="primary" @click="updateToken(scope.row)">
+            变更
+          </el-button>
+          <el-button size="small" type="danger" @click="deleteRow(scope.row)">
+            删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -81,34 +56,25 @@
       @current-change="handleCurrentChange"
       @size-change="handleSizeChange"
       layout="total, sizes, prev, pager, next, jumper"
-    ></el-pagination>
+    />
 
-    <el-dialog
-      :before-close="closeDialog"
-      v-model="dialogFormVisible"
-      title="添加token"
-    >
+    <el-dialog :before-close="closeDialog" v-model="dialogFormVisible" title="添加 Token">
       <el-form :model="formData" label-position="right" label-width="80px">
-        <el-form-item label="规则类型:">
+        <el-form-item label="类型:">
           <el-radio-group v-model="formData.type">
-            <el-radio label="github"></el-radio>
-            <el-radio label="gitlab"></el-radio>
-            <el-radio label="postman"></el-radio>
+            <el-radio label="github">github</el-radio>
+            <el-radio label="gitlab">gitlab</el-radio>
+            <el-radio label="postman">postman</el-radio>
           </el-radio-group>
         </el-form-item>
-
-        <el-form-item label="token:">
-          <el-input
-            v-model="formData.content"
-            clearable
-            placeholder="请输入"
-          ></el-input>
+        <el-form-item label="Token:">
+          <el-input v-model="formData.content" clearable placeholder="请输入" />
         </el-form-item>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
-        <el-button @click="closeDialog">取 消</el-button>
-        <el-button @click="enterDialog" type="primary">确 定</el-button>
+          <el-button @click="closeDialog">取 消</el-button>
+          <el-button @click="enterDialog" type="primary">确 定</el-button>
         </div>
       </template>
     </el-dialog>
@@ -126,6 +92,7 @@ import {
 } from "@/api/token";
 import { formatDate } from "@/utils/date";
 import infoList from "@/mixins/infoList";
+
 export default {
   name: "Token",
   mixins: [infoList],
@@ -134,25 +101,15 @@ export default {
       listApi: getTokenList,
       dialogFormVisible: false,
       type: "",
-      deleteVisible: false,
       multipleSelection: [],
       formData: {
-        type: "",
+        type: "github",
         content: "",
       },
       typeOptions: [
-        {
-          label: "github",
-          value: "github",
-        },
-        {
-          label: "gitlab",
-          value: "gitlab",
-        },
-        {
-          label: "postman",
-          value: "postman"
-        }
+        { label: "github", value: "github" },
+        { label: "gitlab", value: "gitlab" },
+        { label: "postman", value: "postman" },
       ],
     };
   },
@@ -171,33 +128,37 @@ export default {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
-      }).then(() => {
-        this.deleteToken(row);
-      }).catch(() => {});
+      })
+        .then(() => {
+          this.deleteToken(row);
+        })
+        .catch(() => {});
     },
-    async onDelete() {
-      const ids = [];
-      if (this.multipleSelection.length == 0) {
-        this.$message({
-          type: "warning",
-          message: "请选择要删除的数据",
-        });
+    confirmDelete() {
+      if (this.multipleSelection.length === 0) {
+        this.$message({ type: "warning", message: "请选择要删除的数据" });
         return;
       }
-      this.multipleSelection &&
-        this.multipleSelection.map((item) => {
-          ids.push(item.ID);
-        });
+      this.$confirm(
+        `确定删除选中的 ${this.multipleSelection.length} 个 Token 吗？`,
+        "批量删除",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        }
+      )
+        .then(() => this.onDelete())
+        .catch(() => {});
+    },
+    async onDelete() {
+      const ids = this.multipleSelection.map((item) => item.ID);
       const res = await deleteTokenByIds({ ids });
       if (res.code == 0) {
-        this.$message({
-          type: "success",
-          message: "删除成功",
-        });
+        this.$message({ type: "success", message: "删除成功" });
         if (this.tableData.length == ids.length) {
           this.page--;
         }
-        this.deleteVisible = false;
         this.getTableData();
       }
     },
@@ -212,21 +173,14 @@ export default {
     closeDialog() {
       this.dialogFormVisible = false;
       this.formData = {
-        type: "",
+        type: "github",
         content: "",
-        desc: "",
-        limit: 0,
-        remaining: 0,
-        resetTime: new Date(),
       };
     },
     async deleteToken(row) {
       const res = await deleteToken({ ID: row.ID });
       if (res.code == 0) {
-        this.$message({
-          type: "success",
-          message: "删除成功",
-        });
+        this.$message({ type: "success", message: "删除成功" });
         if (this.tableData.length == 1) {
           this.page--;
         }
@@ -247,10 +201,7 @@ export default {
           break;
       }
       if (res.code === 0) {
-        this.$message({
-          type: "success",
-          message: "创建/更改成功",
-        });
+        this.$message({ type: "success", message: "创建/更改成功" });
         this.closeDialog();
         await this.getTableData();
       }
@@ -265,6 +216,3 @@ export default {
   },
 };
 </script>
-
-<style>
-</style>

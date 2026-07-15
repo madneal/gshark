@@ -470,20 +470,14 @@ a {
     text-decoration: none;
 }
 
-a:link {
-    color: #fff;
-}
-
+a:link,
 a:visited {
-    color: #fff;
+    color: var(--gs-dark-primary, #3b82f6);
 }
 
-a:hover {
-    color: #fff;
-}
-
+a:hover,
 a:active {
-    color: #fff;
+    color: #60a5fa;
 }
 
 input::-ms-clear {
@@ -564,9 +558,9 @@ li {
             border-right: none;
         }
         
-        .tilte {
-            min-height: $height-aside-tilte;
-            line-height: $height-aside-tilte;
+        .title {
+            min-height: $height-aside-title;
+            line-height: $height-aside-title;
             background: $bg-aside;
             text-align: center;
 
@@ -1428,7 +1422,7 @@ body {
         border-right: 1px solid var(--gs-dark-border-soft);
         box-shadow: 12px 0 32px rgba(0, 0, 0, .28);
 
-        .tilte {
+        .title {
             background: #0b1120;
             border-bottom: 1px solid var(--gs-dark-border-soft);
 
@@ -2483,4 +2477,79 @@ body {
             margin-left: 0 !important;
         }
     }
+}
+
+// Shared list-page toolbar / triage helpers
+.page-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px 16px;
+    margin-bottom: 12px;
+}
+
+.page-toolbar__filters,
+.page-toolbar__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 10px;
+}
+
+.page-toolbar .el-form-item {
+    margin-bottom: 0;
+    margin-right: 0;
+}
+
+.status-tag {
+    font-weight: 600;
+}
+
+.match-snippet {
+    margin: 0;
+    padding: 8px 10px;
+    max-height: 160px;
+    overflow: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 12px;
+    line-height: 1.45;
+    color: var(--gs-dark-text);
+    background: rgba(15, 23, 42, .72);
+    border: 1px solid var(--gs-dark-border-soft);
+    border-radius: 6px;
+}
+
+.match-snippet mark {
+    color: #0f172a;
+    background: #fbbf24;
+    border-radius: 2px;
+    padding: 0 2px;
+}
+
+.table-link {
+    color: var(--gs-dark-primary);
+    word-break: break-all;
+}
+
+.table-link:hover {
+    color: #60a5fa;
+    text-decoration: underline;
+}
+
+.keyword-chip {
+    display: inline-block;
+    max-width: 100%;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 12px;
+    line-height: 1.4;
+    color: #bfdbfe;
+    background: rgba(59, 130, 246, .16);
+    border: 1px solid rgba(59, 130, 246, .28);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }

@@ -3,7 +3,11 @@ import App from './App.vue'
 
 import ElementPlus, { ElLoading, ElMessage, ElMessageBox } from 'element-plus'
 import 'element-plus/dist/index.css'
+import 'element-plus/theme-chalk/dark/css-vars.css'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+
+// Desktop dark console theme (matches existing GShark slate palette)
+document.documentElement.classList.add('dark')
 
 // 引入封装的router
 import router from '@/router/index'

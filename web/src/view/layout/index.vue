@@ -3,8 +3,8 @@
     <el-container :class="[isSider?'openside':'hideside',isMobile ? 'mobile': '']">
       <el-row :class="[isShadowBg?'shadowBg':'']" @click="changeShadow()"></el-row>
       <el-aside class="main-cont main-left">
-        <div class="tilte">
-          <img alt class="logoimg" src="@/assets/nav_logo.png" />
+        <div class="title">
+          <img alt="GShark" class="logoimg" src="@/assets/nav_logo.png" />
           <h2 class="tit-text" v-if="isSider">GShark</h2>
         </div>
         <LayoutAside class="aside" />
