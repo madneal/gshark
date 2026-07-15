@@ -1,12 +1,13 @@
 <template>
   <div>
     <div class="search-term">
-      <el-form :inline="true" :model="searchInfo" class="demo-form-inline">
+      <el-form :inline="true" :model="searchInfo" class="demo-form-inline filter-row">
         <el-form-item label="搜索条件">
           <el-input
             placeholder="仓库名称|匹配内容"
             clearable
             v-model="searchInfo.query"
+            style="width: 200px"
           />
         </el-form-item>
         <el-form-item label="关键词">
@@ -14,10 +15,16 @@
             placeholder="搜索条件"
             clearable
             v-model="searchInfo.keyword"
+            style="width: 140px"
           />
         </el-form-item>
         <el-form-item label="状态">
-          <el-select v-model="searchInfo.status" clearable placeholder="全部">
+          <el-select
+            v-model="searchInfo.status"
+            clearable
+            placeholder="全部"
+            style="width: 120px"
+          >
             <el-option
               v-for="item in statusOptions"
               :key="item.value"
@@ -36,29 +43,28 @@
           <el-button type="primary" @click="onSubmit">查询</el-button>
           <el-button @click="exportResult">导出</el-button>
         </el-form-item>
-        <el-form-item>
-          <el-button
-            type="success"
-            :disabled="!hasSelection"
-            @click="confirmBulk(false)"
-          >
-            批量确认
-          </el-button>
-          <el-button
-            type="danger"
-            :disabled="!hasSelection"
-            @click="confirmBulk(true)"
-          >
-            批量忽略
-          </el-button>
-        </el-form-item>
-        <el-form-item>
-          <el-button @click="startAITask">启动AI分析</el-button>
-          <el-button :disabled="taskBtnDisable" @click="confirmFilterTask">
-            {{ taskButtonTxt }}
-          </el-button>
-        </el-form-item>
       </el-form>
+
+      <div class="action-row">
+        <el-button
+          type="success"
+          :disabled="!hasSelection"
+          @click="confirmBulk(false)"
+        >
+          批量确认
+        </el-button>
+        <el-button
+          type="danger"
+          :disabled="!hasSelection"
+          @click="confirmBulk(true)"
+        >
+          批量忽略
+        </el-button>
+        <el-button @click="startAITask">启动AI分析</el-button>
+        <el-button :disabled="taskBtnDisable" @click="confirmFilterTask">
+          {{ taskButtonTxt }}
+        </el-button>
+      </div>
     </div>
 
     <el-table
@@ -333,6 +339,35 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
+  margin-bottom: 0;
+}
+
+.filter-row :deep(.el-form-item) {
+  margin-right: 0;
+  margin-bottom: 8px;
+}
+
+.action-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding-top: 4px;
+  border-top: 1px solid rgba(148, 163, 184, 0.12);
+  margin-top: 4px;
+}
+
+.action-row .el-button + .el-button {
+  margin-left: 0;
+}
+</style>
 
 <style>
 .el-table pre {
