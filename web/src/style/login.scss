@@ -8,8 +8,9 @@
   padding: 0;
   overflow: hidden;
   cursor: pointer;
-  background: rgba(255, 255, 255, .06);
-  border: 1px solid rgba(148, 163, 184, 0.18);
+  // Light plate so captcha digits stay readable on dark login UI
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
   border-radius: 4px;
 
   img {
@@ -19,7 +20,7 @@
   }
 
   .captcha-placeholder {
-    color: #94a3b8;
+    color: #64748b;
     font-size: 13px;
   }
 }
@@ -28,7 +29,7 @@
   width: 52px;
   height: 52px;
   border-radius: 10px;
-  background: rgba(255, 255, 255, .08);
+  background: rgba(255, 255, 255, .12);
   padding: 6px;
 }
 
@@ -48,7 +49,26 @@
     align-items: center;
     justify-content: center;
     padding: 40px 16px;
-    background: linear-gradient(135deg, #0b1120 0%, #0f172a 50%, #111827 100%);
+    // Restore original illustration background (not flat black)
+    background-color: #0f172a;
+    background-image: url('../assets/background.jpg');
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+
+    // Soft darken so the form card stays readable without pure black
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.35);
+      pointer-events: none;
+    }
+
+    > * {
+      position: relative;
+      z-index: 1;
+    }
 
     a {
       text-decoration: none;
@@ -69,6 +89,7 @@
           font-family: "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
           font-weight: 700;
           letter-spacing: 0;
+          text-shadow: 0 2px 12px rgba(0, 0, 0, 0.45);
         }
       }
     }
@@ -78,8 +99,8 @@
       width: 380px;
       max-width: calc(100vw - 32px);
       padding: 32px 28px;
-      background: rgba(24, 34, 53, 0.8);
-      border: 1px solid rgba(148, 163, 184, 0.12);
+      background: rgba(24, 34, 53, 0.88);
+      border: 1px solid rgba(148, 163, 184, 0.16);
       border-radius: 12px;
       box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4);
       backdrop-filter: blur(12px);
