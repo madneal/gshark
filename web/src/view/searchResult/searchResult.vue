@@ -39,9 +39,11 @@
             @change="secKeywordChange"
           />
         </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="onSubmit">查询</el-button>
-          <el-button @click="exportResult">导出</el-button>
+        <el-form-item class="filter-actions">
+          <div class="filter-actions__btns">
+            <el-button type="primary" @click="onSubmit">查询</el-button>
+            <el-button @click="exportResult">导出</el-button>
+          </div>
         </el-form-item>
       </el-form>
 
@@ -344,14 +346,40 @@ export default {
 .filter-row {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  gap: 4px 12px;
+  align-items: flex-end;
+  column-gap: 12px;
+  row-gap: 8px;
   margin-bottom: 0;
 }
 
 .filter-row :deep(.el-form-item) {
+  display: inline-flex;
+  align-items: center;
   margin-right: 0;
-  margin-bottom: 8px;
+  margin-bottom: 0;
+}
+
+.filter-row :deep(.el-form-item__label),
+.filter-row :deep(.el-form-item__content) {
+  line-height: 32px;
+  height: auto;
+}
+
+/* no-label actions sit on the same baseline as inputs */
+.filter-actions :deep(.el-form-item__content) {
+  display: flex;
+  align-items: center;
+  min-height: 32px;
+}
+
+.filter-actions__btns {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.filter-actions__btns :deep(.el-button + .el-button) {
+  margin-left: 0;
 }
 
 .action-row {
@@ -359,12 +387,12 @@ export default {
   flex-wrap: wrap;
   align-items: center;
   gap: 10px;
-  padding-top: 4px;
+  padding-top: 10px;
   border-top: 1px solid rgba(148, 163, 184, 0.12);
-  margin-top: 4px;
+  margin-top: 10px;
 }
 
-.action-row .el-button + .el-button {
+.action-row :deep(.el-button + .el-button) {
   margin-left: 0;
 }
 </style>
