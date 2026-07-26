@@ -15,7 +15,14 @@
               'background-size': 'cover',
             }"
           >
-            <span class="update" @click="openChooseImg">
+            <span
+              class="update"
+              role="button"
+              tabindex="0"
+              @click="openChooseImg"
+              @keydown.enter.prevent="openChooseImg"
+              @keydown.space.prevent="openChooseImg"
+            >
               <el-icon><Edit /></el-icon>
               重新上传
             </span>
@@ -220,8 +227,13 @@ export default {
   color: #fff;
   background: rgba(15, 23, 42, 0.55);
   cursor: pointer;
+  outline: none;
 }
-.user-headpic-update:hover .update {
+.user-headpic-update:hover .update,
+.user-headpic-update:focus-within .update {
   display: inline-flex;
+}
+.user-headpic-update .update:focus-visible {
+  box-shadow: inset 0 0 0 2px #409eff;
 }
 </style>

@@ -24,6 +24,7 @@
             clearable
             placeholder="全部"
             style="width: 120px"
+            @clear="searchInfo.status = -1"
           >
             <el-option
               v-for="item in statusOptions"
@@ -166,6 +167,10 @@ export default {
       type: "",
       taskButtonTxt: "启动二次过滤",
       taskBtnDisable: false,
+      // -1 = 全部 (backend skips status filter when Status < 0)
+      searchInfo: {
+        status: -1,
+      },
       statusOptions: [
         { label: "未处理", value: 0 },
         { label: "已确认", value: 1 },
@@ -189,6 +194,28 @@ export default {
   },
   methods: {
     formatDate,
+    // Backend treats Status < 0 as "no status filter". Null/empty from clearable
+    // would otherwise omit the param and bind to Go's zero value (0 = 未处理).
+    normalizeSearchInfo() {
+      const info = { ...this.searchInfo };
+      if (info.status === null || info.status === undefined || info.status === "") {
+        info.status = -1;
+      }
+      return info;
+    },
+    async getTableData(page = this.page, pageSize = this.pageSize) {
+      const table = await this.listApi({
+        page,
+        pageSize,
+        ...this.normalizeSearchInfo(),
+      });
+      if (table.code === 0) {
+        this.tableData = table.data.list;
+        this.total = table.data.total;
+        this.page = table.data.page;
+        this.pageSize = table.data.pageSize;
+      }
+    },
     statusFilter(val) {
       return { 0: "未处理", 1: "已确认", 2: "已忽略" }[val] ?? "未知";
     },
@@ -238,7 +265,11 @@ export default {
       this.getTableData();
     },
     async exportResult() {
-      await exportSearchResult(this.formData);
+      try {
+        await exportSearchResult(this.normalizeSearchInfo());
+      } catch (e) {
+        this.$message({ type: "error", message: "导出失败" });
+      }
     },
     secKeywordChange() {
       this.getTableData();
@@ -268,13 +299,22 @@ export default {
         .catch(() => {});
     },
     async startFilterTask() {
-      await startFilterTask();
-      const resp = await getTaskStatus();
-      if (resp.msg === "running") {
-        this.taskButtonTxt = "任务运行中";
-        this.taskBtnDisable = true;
+      try {
+        await startFilterTask();
+        const resp = await getTaskStatus();
+        if (resp.msg === "running") {
+          this.taskButtonTxt = "任务运行中";
+          this.taskBtnDisable = true;
+          this.$message({ type: "success", message: "二次过滤任务已启动" });
+        } else {
+          this.$message({
+            type: "warning",
+            message: "二次过滤任务未处于运行状态",
+          });
+        }
+      } catch (e) {
+        this.$message({ type: "error", message: "启动二次过滤失败" });
       }
-      this.$message({ type: "success", message: "二次过滤任务已启动" });
     },
     confirmBulk(isIgnore) {
       if (!this.hasSelection) {
