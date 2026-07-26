@@ -1,32 +1,33 @@
 <template>
   <div class="init">
-    <p class="in-one a-fadeinT">欢迎使用GShark</p>
-    <p class="in-two a-fadeinT">您需要初始化您的数据库并且填充初始数据</p>
-    <div class="form-card in-three a-fadeinB">
+    <p class="in-one">欢迎使用 GShark</p>
+    <p class="in-two">您需要初始化数据库并填充初始数据</p>
+    <div class="form-card">
       <el-form ref="form" :model="form" label-width="100px">
         <el-form-item label="数据库类型">
           <el-select disabled v-model="form.sqlType" placeholder="请选择">
-            <el-option key="mysql" label="mysql(目前只支持mysql)" value="mysql">
-            </el-option>
+            <el-option key="mysql" label="mysql（目前只支持 mysql）" value="mysql" />
           </el-select>
         </el-form-item>
         <el-form-item label="host">
-          <el-input v-model="form.host" placeholder="请输入数据库链接"></el-input>
+          <el-input v-model="form.host" placeholder="请输入数据库地址" />
         </el-form-item>
         <el-form-item label="port">
-          <el-input v-model="form.port" placeholder="请输入数据库端口"></el-input>
+          <el-input v-model="form.port" placeholder="请输入数据库端口" />
         </el-form-item>
         <el-form-item label="userName">
-          <el-input v-model="form.userName" placeholder="请输入数据库用户名"></el-input>
+          <el-input v-model="form.userName" placeholder="请输入数据库用户名" />
         </el-form-item>
         <el-form-item label="password">
           <el-input
             v-model="form.password"
+            type="password"
+            show-password
             placeholder="请输入数据库密码（没有则为空）"
-          ></el-input>
+          />
         </el-form-item>
         <el-form-item label="dbName">
-          <el-input v-model="form.dbName" placeholder="请输入数据库名称"></el-input>
+          <el-input v-model="form.dbName" placeholder="请输入数据库名称" />
         </el-form-item>
         <el-form-item>
           <div style="text-align: right">
@@ -46,10 +47,10 @@ export default {
     return {
       form: {
         sqlType: "mysql",
-        host: "177.7.0.13",
+        host: "127.0.0.1",
         port: "3306",
         userName: "root",
-        password: "madneal",
+        password: "",
         dbName: "gshark",
       },
     };
@@ -59,48 +60,46 @@ export default {
       const loading = this.$loading({
         lock: true,
         text: "正在初始化数据库，请稍候",
-        spinner: "el-icon-loading",
         background: "rgba(0, 0, 0, 0.7)",
       });
       try {
         const res = await initDB(this.form);
         if (res.code == 0) {
-          this.$message({
-            type: "success",
-            message: res.msg,
-          });
-          this.$router.push({name:"login"})
+          this.$message({ type: "success", message: res.msg });
+          this.$router.push({ name: "login" });
         }
-          loading.close();
-      } catch (err) {
-          loading.close();
+      } finally {
+        loading.close();
       }
     },
   },
 };
 </script>
+
 <style lang="scss">
 .init {
-  height: 100vh;
-  flex-direction: column;
+  min-height: 100vh;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  background: #fff;
+  justify-content: center;
+  background: var(--gs-dark-bg, #0f172a);
+  color: var(--gs-dark-text, #e5e7eb);
 }
 .in-one {
   font-size: 26px;
-  line-height: 98px;
+  margin-bottom: 8px;
 }
 .in-two {
-  font-size: 22px;
+  font-size: 16px;
+  color: var(--gs-dark-muted, #94a3b8);
 }
 .form-card {
-  margin-top: 60px;
-  box-shadow: 0px 0px 5px 0px rgba(5, 12, 66, 0.15);
-  width: 60vw;
-  height: auto;
-  background: #fff;
+  margin-top: 32px;
+  width: min(60vw, 560px);
   padding: 20px;
-  border-radius: 6px;
+  border-radius: 8px;
+  background: var(--gs-dark-panel, #182235);
+  border: 1px solid var(--gs-dark-border-soft, rgba(148, 163, 184, 0.18));
 }
 </style>

@@ -3,58 +3,51 @@
     <div class="search-term">
       <el-form :inline="true" :model="searchInfo" class="demo-form-inline">
         <el-form-item label="规则类型">
-          <el-input placeholder="搜索条件" v-model="searchInfo.type"></el-input>
+          <el-input placeholder="搜索条件" clearable v-model="searchInfo.type" />
         </el-form-item>
         <el-form-item label="规则内容">
-          <el-input
-            placeholder="搜索条件"
-            v-model="searchInfo.content"
-          ></el-input>
+          <el-input placeholder="搜索条件" clearable v-model="searchInfo.content" />
         </el-form-item>
         <el-form-item label="规则名称">
-          <el-input placeholder="搜索条件" v-model="searchInfo.name"></el-input>
-        </el-form-item>
-
-        <el-form-item>
-          <el-button @click="onSubmit" type="primary">查询</el-button>
+          <el-input placeholder="搜索条件" clearable v-model="searchInfo.name" />
         </el-form-item>
         <el-form-item>
-          <el-button @click="openDialog" type="primary">新增规则</el-button>
+          <el-button type="primary" @click="onSubmit">查询</el-button>
+          <el-button type="primary" @click="openDialog">新增规则</el-button>
+          <el-button
+            type="danger"
+            :disabled="multipleSelection.length === 0"
+            @click="confirmDelete"
+          >
+            批量删除
+          </el-button>
         </el-form-item>
         <el-form-item>
-          <el-popover placement="top" v-model="deleteVisible" width="160">
-            <p>确定要删除吗？</p>
-            <div style="text-align: right; margin: 0">
-              <el-button @click="deleteVisible = false" size="mini" type="text"
-                >取消</el-button
-              >
-              <el-button @click="onDelete" size="mini" type="primary"
-                >确定</el-button
-              >
-            </div>
-            <el-button
-              icon="el-icon-delete"
-              size="mini"
-              slot="reference"
-              type="danger"
-              >批量删除</el-button
-            >
-          </el-popover>
-        </el-form-item>
-        <el-form-item>
-          <el-upload action="/api/rule/uploadRules" ref="ruleData" :with-credentials="true"
-          :headers="{ 'x-token': $store.getters['user/token'] }" :show-file-list="false"
-          :on-success="uploadSuccess">
+          <el-upload
+            action="/api/rule/uploadRules"
+            ref="ruleData"
+            :with-credentials="true"
+            :headers="{ 'x-token': $store.getters['user/token'] }"
+            :show-file-list="false"
+            :on-success="uploadSuccess"
+          >
             <template #trigger>
-              <el-button type="primary">规则导入</el-button>
+              <el-button>规则导入</el-button>
             </template>
           </el-upload>
         </el-form-item>
         <el-form-item>
-          <el-link href="https://github.com/madneal/gshark/blob/master/template.csv" type="primary">规则导入模板</el-link>
+          <el-link
+            href="https://github.com/madneal/gshark/blob/master/template.csv"
+            type="primary"
+            target="_blank"
+          >
+            规则导入模板
+          </el-link>
         </el-form-item>
       </el-form>
     </div>
+
     <el-table
       :data="tableData"
       @selection-change="handleSelectionChange"
@@ -64,37 +57,16 @@
       style="width: 100%"
       tooltip-effect="dark"
     >
-      <el-table-column type="selection" width="55"></el-table-column>
+      <el-table-column type="selection" width="55" />
       <el-table-column label="日期" width="180">
         <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
       </el-table-column>
-
-      <el-table-column
-        label="规则类型"
-        prop="ruleType"
-        width="120"
-      ></el-table-column>
-
-      <el-table-column
-        label="规则内容"
-        prop="content"
-        width="120"
-      ></el-table-column>
-
-      <el-table-column
-        label="规则名称"
-        prop="name"
-        width="120"
-      ></el-table-column>
-
-      <el-table-column
-        label="规则描述"
-        prop="desc"
-        width="120"
-      ></el-table-column>
-
+      <el-table-column label="规则类型" prop="ruleType" width="120" />
+      <el-table-column label="规则内容" prop="content" width="120" />
+      <el-table-column label="规则名称" prop="name" width="120" />
+      <el-table-column label="规则描述" prop="desc" width="120" />
       <el-table-column label="状态" width="120">
-        <template v-slot="scope">
+        <template #default="scope">
           <el-switch
             v-model="scope.row.status"
             :active-value="true"
@@ -103,24 +75,14 @@
           />
         </template>
       </el-table-column>
-
-      <el-table-column label="按钮组">
+      <el-table-column label="操作">
         <template #default="scope">
-          <el-button
-            class="table-button"
-            @click="updateRule(scope.row)"
-            size="small"
-            type="primary"
-            icon="el-icon-edit"
-            >变更</el-button
-          >
-          <el-button
-            type="danger"
-            icon="el-icon-delete"
-            size="mini"
-            @click="deleteRow(scope.row)"
-            >删除</el-button
-          >
+          <el-button size="small" type="primary" @click="updateRule(scope.row)">
+            变更
+          </el-button>
+          <el-button size="small" type="danger" @click="deleteRow(scope.row)">
+            删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -133,52 +95,34 @@
       @current-change="handleCurrentChange"
       @size-change="handleSizeChange"
       layout="total, sizes, prev, pager, next, jumper"
-    ></el-pagination>
+    />
 
-    <el-dialog
-      :before-close="closeDialog"
-      v-model="dialogFormVisible"
-      title="新增规则"
-    >
+    <el-dialog :before-close="closeDialog" v-model="dialogFormVisible" title="新增规则">
       <el-form :model="formData" label-position="right" label-width="100px">
         <el-form-item label="规则类型:" required>
           <el-checkbox-group v-model="formData.ruleType">
-            <el-checkbox v-for="ruleType in types" :label="ruleType" :key="ruleType">{{ ruleType }}</el-checkbox>
+            <el-checkbox v-for="ruleType in types" :label="ruleType" :key="ruleType">
+              {{ ruleType }}
+            </el-checkbox>
           </el-checkbox-group>
         </el-form-item>
-
         <el-form-item label="规则内容:" required>
-          <el-input
-            v-model="formData.content"
-            clearable
-            placeholder="请输入关键词内容"
-          ></el-input>
+          <el-input v-model="formData.content" clearable placeholder="请输入关键词内容" />
         </el-form-item>
-
         <el-form-item label="规则名称:">
-          <el-input
-            v-model="formData.name"
-            clearable
-            placeholder="请输入"
-          ></el-input>
+          <el-input v-model="formData.name" clearable placeholder="请输入" />
         </el-form-item>
-
         <el-form-item label="规则描述:">
-          <el-input
-            v-model="formData.desc"
-            clearable
-            placeholder="请输入"
-          ></el-input>
+          <el-input v-model="formData.desc" clearable placeholder="请输入" />
         </el-form-item>
-
         <el-form-item label="状态:">
-          <el-switch v-model="formData.status"></el-switch>
+          <el-switch v-model="formData.status" />
         </el-form-item>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
-        <el-button @click="closeDialog">取 消</el-button>
-        <el-button @click="enterDialog" type="primary">确 定</el-button>
+          <el-button @click="closeDialog">取 消</el-button>
+          <el-button @click="enterDialog" type="primary">确 定</el-button>
         </div>
       </template>
     </el-dialog>
@@ -205,9 +149,7 @@ export default {
     return {
       listApi: getRuleList,
       dialogFormVisible: false,
-      dialogBatchRules: false,
       type: "",
-      deleteVisible: false,
       multipleSelection: [],
       formData: {
         ruleType: [],
@@ -216,64 +158,15 @@ export default {
         desc: "",
         status: true,
       },
-      batchRulesForm: {
-        type: [],
-        contents: ''
-      },
-      statusOptions: [
-        {
-          label: "disabled",
-          value: 0,
-        },
-        {
-          label: "enabled",
-          value: 1,
-        },
-      ],
-      types: ['github', 'gitlab', 'searchcode', 'domain', 'postman'],
-      typeOptions: [
-        {
-          label: "github",
-          value: "github",
-        },
-        {
-          label: "gitlab",
-          value: "gitlab",
-        },
-        {
-          label: "searchcode",
-          value: "searchcode",
-        },
-        {
-          label: 'domain',
-          value: 'domain'
-        },
-        {
-          label: "postman",
-          value: "postman"
-        }
-      ],
+      types: ["github", "gitlab", "searchcode", "domain", "postman"],
     };
   },
   methods: {
     formatDate,
-        formatStatus: function (status) {
-          const statusMap = {
-            0: "disabled",
-            1: "enabled",
-          };
-          return statusMap[status];
-        },
     async switchStatus(id, status) {
       status = status ? 1 : 0;
-      const data = {
-        id,
-        status,
-      };
-      const res = await switchRule(data);
-      if (res) {
-        await this.getTableData();
-      }
+      const res = await switchRule({ id, status });
+      if (res) await this.getTableData();
     },
     onSubmit() {
       this.page = 1;
@@ -288,40 +181,33 @@ export default {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
-      }).then(() => {
-        this.deleteRule(row);
-      }).catch(() => {});
+      })
+        .then(() => this.deleteRule(row))
+        .catch(() => {});
+    },
+    confirmDelete() {
+      if (!this.multipleSelection.length) {
+        this.$message({ type: "warning", message: "请选择要删除的数据" });
+        return;
+      }
+      this.$confirm(
+        `确定删除选中的 ${this.multipleSelection.length} 条规则吗？`,
+        "批量删除",
+        { confirmButtonText: "确定", cancelButtonText: "取消", type: "warning" }
+      )
+        .then(() => this.onDelete())
+        .catch(() => {});
     },
     uploadSuccess() {
-      this.$message({
-        type: "success",
-        message: "规则导入成功"
-      });
+      this.$message({ type: "success", message: "规则导入成功" });
       this.getTableData();
     },
     async onDelete() {
-      const ids = [];
-      if (this.multipleSelection.length == 0) {
-        this.$message({
-          type: "warning",
-          message: "请选择要删除的数据",
-        });
-        return;
-      }
-      this.multipleSelection &&
-        this.multipleSelection.map((item) => {
-          ids.push(item.ID);
-        });
+      const ids = this.multipleSelection.map((item) => item.ID);
       const res = await deleteRuleByIds({ ids });
       if (res.code === 0) {
-        this.$message({
-          type: "success",
-          message: "删除成功",
-        });
-        if (this.tableData.length == ids.length) {
-          this.page--;
-        }
-        this.deleteVisible = false;
+        this.$message({ type: "success", message: "删除成功" });
+        if (this.tableData.length == ids.length) this.page--;
         await this.getTableData();
       }
     },
@@ -330,7 +216,7 @@ export default {
       this.type = "update";
       if (res.code === 0) {
         this.formData = res.data.rule;
-        this.formData.ruleType = this.formData.ruleType.split(',');
+        this.formData.ruleType = this.formData.ruleType.split(",");
         this.dialogFormVisible = true;
       }
     },
@@ -347,23 +233,15 @@ export default {
     async deleteRule(row) {
       const res = await deleteRule({ ID: row.ID });
       if (res.code == 0) {
-        this.$message({
-          type: "success",
-          message: "删除成功",
-        });
-        if (this.tableData.length == 1) {
-          this.page--;
-        }
+        this.$message({ type: "success", message: "删除成功" });
+        if (this.tableData.length == 1) this.page--;
         await this.getTableData();
       }
     },
     async enterDialog() {
+      this.formData.ruleType = this.formData.ruleType.join(",");
       let res;
-      this.formData.ruleType = this.formData.ruleType.join(',');
       switch (this.type) {
-        case "create":
-          res = await createRule(this.formData);
-          break;
         case "update":
           res = await updateRule(this.formData);
           break;
@@ -372,10 +250,7 @@ export default {
           break;
       }
       if (res.code == 0) {
-        this.$message({
-          type: "success",
-          message: "创建/更改成功",
-        });
+        this.$message({ type: "success", message: "创建/更改成功" });
         this.closeDialog();
         await this.getTableData();
       }
@@ -384,13 +259,10 @@ export default {
       this.type = "create";
       this.dialogFormVisible = true;
       this.formData.ruleType = [];
-    }
+    },
   },
   async created() {
     await this.getTableData();
   },
 };
 </script>
-
-<style>
-</style>

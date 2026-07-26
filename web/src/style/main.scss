@@ -470,20 +470,14 @@ a {
     text-decoration: none;
 }
 
-a:link {
-    color: #fff;
-}
-
+a:link,
 a:visited {
-    color: #fff;
+    color: var(--gs-dark-primary, #3b82f6);
 }
 
-a:hover {
-    color: #fff;
-}
-
+a:hover,
 a:active {
-    color: #fff;
+    color: #60a5fa;
 }
 
 input::-ms-clear {
@@ -564,9 +558,9 @@ li {
             border-right: none;
         }
         
-        .tilte {
-            min-height: $height-aside-tilte;
-            line-height: $height-aside-tilte;
+        .title {
+            min-height: $height-aside-title;
+            line-height: $height-aside-title;
             background: $bg-aside;
             text-align: center;
 
@@ -1428,7 +1422,7 @@ body {
         border-right: 1px solid var(--gs-dark-border-soft);
         box-shadow: 12px 0 32px rgba(0, 0, 0, .28);
 
-        .tilte {
+        .title {
             background: #0b1120;
             border-bottom: 1px solid var(--gs-dark-border-soft);
 
