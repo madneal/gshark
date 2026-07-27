@@ -29,6 +29,20 @@
         <el-form-item label="dbName">
           <el-input v-model="form.dbName" placeholder="请输入数据库名称" />
         </el-form-item>
+        <el-form-item label="管理员用户名">
+          <el-input
+            v-model="form.adminUserName"
+            placeholder="登录用户名（默认 gshark）"
+          />
+        </el-form-item>
+        <el-form-item label="管理员密码">
+          <el-input
+            v-model="form.adminPassword"
+            type="password"
+            show-password
+            placeholder="登录密码（默认 gshark）"
+          />
+        </el-form-item>
         <el-form-item>
           <div style="text-align: right">
             <el-button type="primary" @click="onSubmit">立即初始化</el-button>
@@ -52,11 +66,21 @@ export default {
         userName: "root",
         password: "",
         dbName: "gshark",
+        adminUserName: "gshark",
+        adminPassword: "gshark",
       },
     };
   },
   methods: {
     async onSubmit() {
+      if (!this.form.adminUserName || !this.form.adminPassword) {
+        this.$message({ type: "warning", message: "请填写管理员用户名和密码" });
+        return;
+      }
+      if (this.form.adminPassword.length < 6) {
+        this.$message({ type: "warning", message: "管理员密码至少 6 位" });
+        return;
+      }
       const loading = this.$loading({
         lock: true,
         text: "正在初始化数据库，请稍候",
@@ -65,7 +89,10 @@ export default {
       try {
         const res = await initDB(this.form);
         if (res.code == 0) {
-          this.$message({ type: "success", message: res.msg });
+          this.$message({
+            type: "success",
+            message: `初始化成功，请使用 ${this.form.adminUserName} 登录`,
+          });
           this.$router.push({ name: "login" });
         }
       } finally {

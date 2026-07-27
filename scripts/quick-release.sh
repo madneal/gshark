@@ -6,16 +6,22 @@ WORK_DIR="${GSHARK_WORK_DIR:-/tmp/gshark-quick-release}"
 FRONTEND_PORT="${GSHARK_FRONTEND_PORT:-8080}"
 BACKEND_PORT="${GSHARK_BACKEND_PORT:-8888}"
 ZIP_FILE=""
+ADMIN_USER="gshark"
+ADMIN_PASSWORD="gshark"
+SKIP_INIT=false
 
 usage() {
     cat <<'EOF'
-Usage: scripts/quick-release.sh [--file PATH]
+Usage: scripts/quick-release.sh [options]
 
 Download a GShark release package, deploy dist/ to Nginx, and start the backend.
 
 Options:
-  --file PATH  Use a local release zip instead of downloading the latest release.
-  -h, --help   Show this help message.
+  --file PATH              Use a local release zip instead of downloading the latest release.
+  --admin-user NAME        Admin login username (default: gshark).
+  --admin-password PASS    Admin login password (default: gshark).
+  --skip-init              Do not run gshark init before serve.
+  -h, --help               Show this help message.
 
 Environment:
   GSHARK_FRONTEND_PORT  Frontend port. Default: 8080
@@ -34,6 +40,19 @@ while [[ $# -gt 0 ]]; do
             }
             ZIP_FILE="$2"
             shift
+            ;;
+        --admin-user)
+            [[ $# -ge 2 ]] || { echo "--admin-user requires a value" >&2; exit 1; }
+            ADMIN_USER="$2"
+            shift
+            ;;
+        --admin-password)
+            [[ $# -ge 2 ]] || { echo "--admin-password requires a value" >&2; exit 1; }
+            ADMIN_PASSWORD="$2"
+            shift
+            ;;
+        --skip-init)
+            SKIP_INIT=true
             ;;
         -h|--help)
             usage
@@ -194,6 +213,41 @@ if command -v lsof >/dev/null 2>&1; then
 fi
 
 chmod +x "$APP_DIR/gshark"
+
+if [[ "$SKIP_INIT" != true ]]; then
+    # Read MySQL settings from config.yaml if present (path: host:port)
+    mysql_path="127.0.0.1:3306"
+    mysql_user="root"
+    mysql_password=""
+    mysql_db="gshark"
+    cfg="$APP_DIR/config.yaml"
+    if [[ -f "$cfg" ]]; then
+        mysql_path="$(awk '/^mysql:/{f=1} f&&/path:/{print $2; exit}' "$cfg" | tr -d '"' || true)"
+        mysql_user="$(awk '/^mysql:/{f=1} f&&/username:/{print $2; exit}' "$cfg" | tr -d '"' || true)"
+        mysql_password="$(awk '/^mysql:/{f=1} f&&/password:/{print $2; exit}' "$cfg" | tr -d '"' || true)"
+        mysql_db="$(awk '/^mysql:/{f=1} f&&/db-name:/{print $2; exit}' "$cfg" | tr -d '"' || true)"
+        [[ -n "$mysql_path" ]] || mysql_path="127.0.0.1:3306"
+        [[ -n "$mysql_user" ]] || mysql_user="root"
+        [[ -n "$mysql_db" ]] || mysql_db="gshark"
+    fi
+    mysql_host="${mysql_path%%:*}"
+    mysql_port="${mysql_path##*:}"
+    [[ "$mysql_host" == "$mysql_port" ]] && mysql_port="3306"
+
+    echo "[INFO] Initializing database (admin-user=${ADMIN_USER})..."
+    (
+        cd "$APP_DIR"
+        ./gshark init \
+            --host "$mysql_host" \
+            --port "$mysql_port" \
+            --user "$mysql_user" \
+            --password "$mysql_password" \
+            --db "$mysql_db" \
+            --admin-user "$ADMIN_USER" \
+            --admin-password "$ADMIN_PASSWORD" || true
+    )
+fi
+
 (
     cd "$APP_DIR"
     ./gshark serve > gshark.log 2>&1 &
@@ -204,6 +258,6 @@ PID="$(cat "$APP_DIR/gshark.pid")"
 
 echo
 echo "GShark is starting at: http://localhost:$FRONTEND_PORT"
-echo "Default login: gshark / gshark"
+echo "Admin login: ${ADMIN_USER} / (the password you set with --admin-password)"
 echo "Backend PID: $PID"
 echo "Backend log: $APP_DIR/gshark.log"

@@ -63,6 +63,15 @@ func InitDB(conf request.InitDB) error {
 	if conf.Port == "" {
 		conf.Port = "3306"
 	}
+	// Admin login (distinct from MySQL UserName/Password)
+	if conf.AdminUserName == "" {
+		conf.AdminUserName = "gshark"
+	}
+	if conf.AdminPassword == "" {
+		conf.AdminPassword = "gshark"
+	}
+	source.SetAdminCredentials(conf.AdminUserName, conf.AdminPassword)
+
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/", conf.UserName, conf.Password, conf.Host, conf.Port)
 	createSql := fmt.Sprintf("CREATE DATABASE IF NOT EXISTS %s DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_general_ci;", conf.DBName)
 	if err := executeSql(dsn, "mysql", createSql); err != nil {

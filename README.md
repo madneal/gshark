@@ -25,10 +25,19 @@ For the usage of GShark, please refer to the [wiki](https://github.com/madneal/g
 
 # Quick start
 
-Default login after initialization:
+Default login after initialization (if not customized):
 
 ```text
 gshark / gshark
+```
+
+Set a custom admin account via script/CLI flags (no browser init page required):
+
+```bash
+./scripts/quick-docker.sh --admin-user myadmin --admin-password 'S3cret!'
+# or
+./gshark init --host 127.0.0.1 --user root --password madneal --db gshark \
+  --admin-user myadmin --admin-password 'S3cret!'
 ```
 
 ## Quick one-click deployment
@@ -38,6 +47,9 @@ Use one of the two quick deployment entries:
 ```bash
 # Option 1: Docker quick. Build and start mysql/server/web in the background.
 ./scripts/quick-docker.sh
+
+# Custom admin account
+./scripts/quick-docker.sh --admin-user myadmin --admin-password 'S3cret!'
 
 # Start the scan container too.
 ./scripts/quick-docker.sh --with-scan

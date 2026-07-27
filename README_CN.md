@@ -25,10 +25,19 @@ GShark 是一个敏感信息检测和管理平台。后端基于 Go 和 Gin 构�
 
 # 快速开始
 
-初始化后的默认登录账号：
+初始化后的默认登录账号（未自定义时）：
 
 ```text
 gshark / gshark
+```
+
+可通过脚本参数自定义管理员账号（无需打开初始化页面）：
+
+```bash
+./scripts/quick-docker.sh --admin-user myadmin --admin-password 'S3cret!'
+# 或
+./gshark init --host 127.0.0.1 --user root --password madneal --db gshark \
+  --admin-user myadmin --admin-password 'S3cret!'
 ```
 
 ## Quick 一键部署
@@ -38,6 +47,9 @@ gshark / gshark
 ```bash
 # 方式一：Docker quick，构建并后台启动 mysql/server/web
 ./scripts/quick-docker.sh
+
+# 自定义管理员账号
+./scripts/quick-docker.sh --admin-user myadmin --admin-password 'S3cret!'
 
 # 如果需要同时启动扫描容器
 ./scripts/quick-docker.sh --with-scan
