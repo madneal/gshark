@@ -1,9 +1,9 @@
 <template>
+  <!-- Align with routerHolder / superAdmin for Vue Router 4 nested outlets -->
   <div>
-    <keep-alive>
-      <router-view v-if="$route.meta.keepAlive"></router-view>
-    </keep-alive>
-    <router-view v-if="!$route.meta.keepAlive"></router-view>
+    <router-view v-slot="{ Component }">
+      <component :is="Component" />
+    </router-view>
   </div>
 </template>
 

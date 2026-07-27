@@ -2269,6 +2269,16 @@ body {
             margin: 0 0 10px;
         }
 
+        // Adjacent buttons in one form-item (e.g. 查询/新增/批量删除) lost
+        // Element Plus margin because we zero .search-term .el-button+.el-button;
+        // use gap so toolbar buttons keep even spacing.
+        .el-form-item__content {
+            display: inline-flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
         .el-form-item__label {
             height: 32px;
             line-height: 32px;

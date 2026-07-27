@@ -14,6 +14,22 @@ const formatRouter = (routes) => {
     })
 }
 
+// Parents with children but no redirect land on an empty nested outlet
+// (or worse, unmatched paths). Default to the first visible child.
+const applyParentRedirects = (routes) => {
+    routes && routes.forEach(item => {
+        if (item.children && item.children.length > 0) {
+            applyParentRedirects(item.children)
+            if (!item.redirect) {
+                const first = item.children.find(ch => !ch.hidden && ch.name)
+                if (first) {
+                    item.redirect = { name: first.name }
+                }
+            }
+        }
+    })
+}
+
 export const router = {
     namespaced: true,
     state: {
@@ -56,6 +72,7 @@ export const router = {
                 component: 'view/error/index.vue'
             })
             formatRouter(asyncRouter)
+            applyParentRedirects(asyncRouter)
             baseRouter[0].children = asyncRouter
             baseRouter.push({
                 path: '/:pathMatch(.*)*',
