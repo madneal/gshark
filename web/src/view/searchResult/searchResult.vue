@@ -24,7 +24,6 @@
             clearable
             placeholder="全部"
             style="width: 120px"
-            @clear="searchInfo.status = -1"
           >
             <el-option
               v-for="item in statusOptions"
@@ -167,9 +166,11 @@ export default {
       type: "",
       taskButtonTxt: "启动二次过滤",
       taskBtnDisable: false,
-      // -1 = 全部 (backend skips status filter when Status < 0)
+      // null shows placeholder "全部"; normalizeSearchInfo maps it to -1 for the API
+      // (backend skips status filter when Status < 0). Do not bind -1 to the select —
+      // it is not in statusOptions and would render as the literal "-1".
       searchInfo: {
-        status: -1,
+        status: null,
       },
       statusOptions: [
         { label: "未处理", value: 0 },
