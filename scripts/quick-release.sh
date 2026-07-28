@@ -235,6 +235,7 @@ if [[ "$SKIP_INIT" != true ]]; then
     [[ "$mysql_host" == "$mysql_port" ]] && mysql_port="3306"
 
     echo "[INFO] Initializing database (admin-user=${ADMIN_USER})..."
+    set +e
     (
         cd "$APP_DIR"
         ./gshark init \
@@ -244,8 +245,30 @@ if [[ "$SKIP_INIT" != true ]]; then
             --password "$mysql_password" \
             --db "$mysql_db" \
             --admin-user "$ADMIN_USER" \
-            --admin-password "$ADMIN_PASSWORD" || true
+            --admin-password "$ADMIN_PASSWORD"
     )
+    init_rc=$?
+    set -e
+    case "$init_rc" in
+        0)
+            INIT_RESULT="applied"
+            echo "[INFO] Init applied successfully."
+            ;;
+        2)
+            INIT_RESULT="skipped"
+            echo "[INFO] Database already initialized; admin credentials were not changed."
+            ;;
+        *)
+            INIT_RESULT="failed"
+            echo "[ERROR] gshark init failed (exit ${init_rc})." >&2
+            if ! "$APP_DIR/gshark" init --help >/dev/null 2>&1; then
+                echo "        This release binary may not include 'gshark init'." >&2
+            fi
+            echo "        Fix MySQL/config or run init manually before relying on login." >&2
+            ;;
+    esac
+else
+    INIT_RESULT="skipped_flag"
 fi
 
 (
@@ -258,6 +281,23 @@ PID="$(cat "$APP_DIR/gshark.pid")"
 
 echo
 echo "GShark is starting at: http://localhost:$FRONTEND_PORT"
-echo "Admin login: ${ADMIN_USER} / (the password you set with --admin-password)"
+case "${INIT_RESULT:-unknown}" in
+    applied)
+        echo "Admin login: ${ADMIN_USER} / (password from --admin-password)"
+        ;;
+    skipped)
+        echo "Admin login: unchanged (DB was already initialized; flags ignored)"
+        ;;
+    skipped_flag)
+        echo "Admin login: not initialized by this script (--skip-init)"
+        ;;
+    failed)
+        echo "Admin login: unknown (init failed — credentials may not match flags)"
+        exit 1
+        ;;
+    *)
+        echo "Admin login: unknown"
+        ;;
+esac
 echo "Backend PID: $PID"
 echo "Backend log: $APP_DIR/gshark.log"

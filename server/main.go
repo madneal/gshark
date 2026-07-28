@@ -11,6 +11,7 @@ import (
 	"github.com/madneal/gshark/model/request"
 	"github.com/madneal/gshark/search"
 	"github.com/madneal/gshark/service"
+	"github.com/madneal/gshark/source"
 	"github.com/spf13/cobra"
 )
 
@@ -58,17 +59,23 @@ func main() {
 		initAdminUser     string
 		initAdminPassword string
 	)
+	// Exit codes for scripts: 0 = applied, 2 = already initialized (skip), 1 = error.
 	initCmd := &cobra.Command{
 		Use:   "init",
 		Short: "Initialize database and seed admin user",
-		Long:  "Create database, run migrations, seed data. Admin credentials via --admin-user / --admin-password (default gshark/gshark).",
+		Long: `Create database, run migrations, seed data. Admin credentials via --admin-user / --admin-password (default gshark/gshark).
+
+Exit codes:
+  0  initialization applied successfully
+  1  failure
+  2  already initialized (skipped; credentials not changed)`,
 		Run: func(cmd *cobra.Command, args []string) {
 			if global.GVA_DB != nil {
 				// Already connected — treat as already initialized unless empty.
 				var n int64
 				if err := global.GVA_DB.Table("sys_users").Count(&n).Error; err == nil && n > 0 {
-					color.Warn.Println("database already initialized (sys_users not empty); skip")
-					return
+					color.Warn.Println("INIT_SKIP: database already initialized (sys_users not empty); credentials not changed")
+					os.Exit(2)
 				}
 			}
 			conf := request.InitDB{
@@ -84,11 +91,17 @@ func main() {
 				color.Error.Printf("init failed: %v\n", err)
 				os.Exit(1)
 			}
+			// InitDB can succeed while the admin seed is skipped (DB already had
+			// users, e.g. config.yaml was stale so the early check above missed it).
+			if !source.AdminSeedApplied {
+				color.Warn.Println("INIT_SKIP: database already initialized (admin seed skipped); credentials not changed")
+				os.Exit(2)
+			}
 			adminUser := initAdminUser
 			if adminUser == "" {
 				adminUser = "gshark"
 			}
-			color.Success.Println("database initialized successfully")
+			color.Success.Println("INIT_OK: database initialized successfully")
 			fmt.Printf("admin login: %s / (your --admin-password)\n", adminUser)
 		},
 	}

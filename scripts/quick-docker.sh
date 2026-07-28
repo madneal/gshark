@@ -29,6 +29,11 @@ Options:
   --skip-init              Do not run gshark init after start.
   -h, --help               Show this help message.
 
+gshark init exit codes (used by this script):
+  0  applied successfully (server is restarted so serve reconnects)
+  2  already initialized (credentials not changed)
+  1  failure
+
 Example:
   ./scripts/quick-docker.sh --admin-user myadmin --admin-password 'S3cret!'
 EOF
@@ -92,37 +97,85 @@ if [[ "$WITH_SCAN" == true ]]; then
     "${COMPOSE[@]}" up -d --build scan
 fi
 
-if [[ "$SKIP_INIT" != true ]]; then
-    echo "[INFO] Waiting for MySQL and server..."
+INIT_RESULT="skipped" # skipped | applied | failed | skipped_flag
+
+if [[ "$SKIP_INIT" == true ]]; then
+    INIT_RESULT="skipped_flag"
+else
+    echo "[INFO] Waiting for MySQL healthy and server binary..."
+    ready=false
     for i in $(seq 1 60); do
         h=$(docker inspect --format='{{if .State.Health}}{{.State.Health.Status}}{{else}}none{{end}}' gshark-mysql 2>/dev/null || echo missing)
-        if [[ "$h" == "healthy" ]] || [[ "$h" == "none" ]]; then
-            if docker exec gshark-server ./gshark --help >/dev/null 2>&1 || \
-               docker exec gshark-server ls ./gshark >/dev/null 2>&1; then
+        if [[ "$h" == "healthy" ]]; then
+            if docker exec gshark-server test -x ./gshark 2>/dev/null; then
+                ready=true
                 break
             fi
         fi
         sleep 2
     done
+    if [[ "$ready" != true ]]; then
+        echo "[ERROR] Timed out waiting for MySQL healthy / gshark-server binary." >&2
+        exit 1
+    fi
 
     echo "[INFO] Initializing database (admin-user=${ADMIN_USER})..."
-    # Run init inside the server container so it can reach MySQL on the compose network.
-    # If already initialized, gshark init exits 0 with a skip message.
-    if ! docker exec gshark-server ./gshark init \
+    # Separate process from long-lived serve: on success we must restart server
+    # so GVA_DB reconnects (otherwise NeedInit blocks login).
+    set +e
+    docker exec gshark-server ./gshark init \
         --host "$MYSQL_HOST" \
         --port "$MYSQL_PORT" \
         --user "$MYSQL_USER" \
         --password "$MYSQL_PASSWORD" \
         --db "$MYSQL_DB" \
         --admin-user "$ADMIN_USER" \
-        --admin-password "$ADMIN_PASSWORD"; then
-        echo "[WARN] gshark init failed; you can open http://localhost:8080 and initialize in the UI," >&2
-        echo "       or re-run: docker exec gshark-server ./gshark init --help" >&2
-    fi
+        --admin-password "$ADMIN_PASSWORD"
+    init_rc=$?
+    set -e
+
+    case "$init_rc" in
+        0)
+            INIT_RESULT="applied"
+            echo "[INFO] Init applied; restarting server so it reconnects to MySQL..."
+            "${COMPOSE[@]}" restart server
+            # wait for server to accept traffic again
+            for i in $(seq 1 30); do
+                if curl -sS -o /dev/null -w '' -X POST "http://localhost:8888/init/checkdb" 2>/dev/null; then
+                    break
+                fi
+                sleep 1
+            done
+            ;;
+        2)
+            INIT_RESULT="skipped"
+            echo "[INFO] Database already initialized; admin credentials were not changed."
+            ;;
+        *)
+            INIT_RESULT="failed"
+            echo "[ERROR] gshark init failed (exit ${init_rc})." >&2
+            echo "        Open http://localhost:8080 to initialize in the UI, or re-run:" >&2
+            echo "        docker exec gshark-server ./gshark init --help" >&2
+            ;;
+    esac
 fi
 
 echo
 "${COMPOSE[@]}" ps
 echo
 echo "GShark is starting at: http://localhost:8080"
-echo "Admin login: ${ADMIN_USER} / (the password you set with --admin-password)"
+case "$INIT_RESULT" in
+    applied)
+        echo "Admin login: ${ADMIN_USER} / (password from --admin-password)"
+        ;;
+    skipped)
+        echo "Admin login: unchanged (DB was already initialized; --admin-user/--admin-password ignored)"
+        ;;
+    skipped_flag)
+        echo "Admin login: not initialized by this script (--skip-init)"
+        ;;
+    failed)
+        echo "Admin login: unknown (init failed — do not assume credentials above were applied)"
+        exit 1
+        ;;
+esac

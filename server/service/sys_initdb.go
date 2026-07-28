@@ -2,6 +2,7 @@ package service
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 
 	"github.com/madneal/gshark/config"
@@ -69,6 +70,12 @@ func InitDB(conf request.InitDB) error {
 	}
 	if conf.AdminPassword == "" {
 		conf.AdminPassword = "gshark"
+	}
+	if len(conf.AdminUserName) == 0 {
+		return errors.New("admin username is required")
+	}
+	if len(conf.AdminPassword) < 6 {
+		return errors.New("admin password must be at least 6 characters")
 	}
 	source.SetAdminCredentials(conf.AdminUserName, conf.AdminPassword)
 

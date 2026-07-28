@@ -22,6 +22,10 @@ var (
 	AdminNickName = "超级管理员"
 )
 
+// AdminSeedApplied reports whether the last Init() actually created the admin
+// user (false when seeding was skipped because sys_users already had rows).
+var AdminSeedApplied bool
+
 // SetAdminCredentials sets the admin seed account for Init().
 // Empty values keep the previous/default value.
 func SetAdminCredentials(username, password string) {
@@ -43,14 +47,21 @@ func (a *admin) Init() error {
 		HeaderImg:   "https://s2.loli.net/2023/12/29/FRNA23eJcXjDM4Y.jpg",
 		AuthorityId: "888",
 	}
+	AdminSeedApplied = false
 	return global.GVA_DB.Transaction(func(tx *gorm.DB) error {
-		if tx.Where("id IN ?", []int{1, 2}).Find(&[]model.SysUser{}).RowsAffected == 2 {
+		// Only one admin is seeded; skip if any user already exists (idempotent).
+		var n int64
+		if err := tx.Model(&model.SysUser{}).Count(&n).Error; err != nil {
+			return err
+		}
+		if n > 0 {
 			color.Danger.Println("\n[Mysql] --> sys_users 表的初始数据已存在!")
 			return nil
 		}
 		if err := tx.Create(&user).Error; err != nil {
 			return err
 		}
+		AdminSeedApplied = true
 		color.Info.Printf("\n[Mysql] --> sys_users 初始管理员: %s\n", AdminUsername)
 		return nil
 	})

@@ -40,7 +40,7 @@
             v-model="form.adminPassword"
             type="password"
             show-password
-            placeholder="登录密码（默认 gshark）"
+            placeholder="请输入登录密码（至少 6 位）"
           />
         </el-form-item>
         <el-form-item>
@@ -67,7 +67,7 @@ export default {
         password: "",
         dbName: "gshark",
         adminUserName: "gshark",
-        adminPassword: "gshark",
+        adminPassword: "",
       },
     };
   },
