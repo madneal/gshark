@@ -14,6 +14,9 @@ func TestStartAITask(t *testing.T) {
 	global.GVA_VP = initialize.Viper("../config.yaml")
 	global.GVA_LOG = initialize.Zap()
 	global.GVA_DB = initialize.Gorm()
+	if global.GVA_DB == nil {
+		t.Skip("database not available")
+	}
 	err, list := service.ListSearchResultByStatus(0)
 	if err != nil {
 		fmt.Println(err)

@@ -1,11 +1,64 @@
 package service
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/model"
 	"github.com/madneal/gshark/model/request"
 	"go.uber.org/zap"
 )
+
+// SaveResultStats contains detailed statistics about saved search results
+type SaveResultStats struct {
+	Total      int      // Total results processed
+	Inserted   int      // Successfully inserted
+	Skipped    int      // Skipped (already exists)
+	Failed     int      // Failed to insert
+	Repos      []string // Unique repos affected
+	repoSet    map[string]struct{}
+}
+
+// NewSaveResultStats creates a new SaveResultStats instance
+func NewSaveResultStats() *SaveResultStats {
+	return &SaveResultStats{
+		Repos:   make([]string, 0),
+		repoSet: make(map[string]struct{}),
+	}
+}
+
+// AddRepo adds a repo to the stats if not already present
+func (s *SaveResultStats) AddRepo(repo string) {
+	if repo == "" {
+		return
+	}
+	if _, exists := s.repoSet[repo]; !exists {
+		s.repoSet[repo] = struct{}{}
+		s.Repos = append(s.Repos, repo)
+	}
+}
+
+// Summary returns a human-readable summary of the save operation
+func (s *SaveResultStats) Summary(keyword, source string) string {
+	if s.Inserted == 0 {
+		return fmt.Sprintf("[%s] keyword=%q: no new results (processed=%d, skipped=%d)",
+			source, keyword, s.Total, s.Skipped)
+	}
+
+	repoSummary := ""
+	if len(s.Repos) > 0 {
+		if len(s.Repos) <= 3 {
+			repoSummary = fmt.Sprintf(", repos=[%s]", strings.Join(s.Repos, ", "))
+		} else {
+			repoSummary = fmt.Sprintf(", repos=[%s, ...+%d more]",
+				strings.Join(s.Repos[:3], ", "), len(s.Repos)-3)
+		}
+	}
+
+	return fmt.Sprintf("[%s] keyword=%q: inserted=%d, skipped=%d, total=%d%s",
+		source, keyword, s.Inserted, s.Skipped, s.Total, repoSummary)
+}
 
 func CreateSearchResult(searchResult model.SearchResult) (err error) {
 	return Create(&searchResult)
@@ -81,24 +134,39 @@ func CheckExistOfSearchResult(searchResult *model.SearchResult) bool {
 }
 
 func SaveSearchResults(searchResults []model.SearchResult) int {
-	var insertCount int
+	stats := SaveSearchResultsWithStats(searchResults)
+	return stats.Inserted
+}
+
+func SaveSearchResultsWithStats(searchResults []model.SearchResult) *SaveResultStats {
+	stats := NewSaveResultStats()
+	stats.Total = len(searchResults)
+
 	for _, result := range searchResults {
 		exist := CheckExistOfSearchResult(&result)
 		if exist {
+			stats.Skipped++
 			continue
 		}
 		err := CreateSearchResult(result)
 		if err != nil {
 			global.GVA_LOG.Error("save search result error", zap.Any("save searchResult error",
 				err))
+			stats.Failed++
 		} else {
-			insertCount++
+			stats.Inserted++
+			stats.AddRepo(result.Repo)
 		}
 	}
-	return insertCount
+	return stats
 }
 
 func SaveSearchResultPointers(searchResults []*model.SearchResult, keyword string) int {
+	stats := SaveSearchResultPointersWithStats(searchResults, keyword)
+	return stats.Inserted
+}
+
+func SaveSearchResultPointersWithStats(searchResults []*model.SearchResult, keyword string) *SaveResultStats {
 	results := make([]model.SearchResult, 0, len(searchResults))
 	for _, result := range searchResults {
 		if result == nil {
@@ -109,7 +177,7 @@ func SaveSearchResultPointers(searchResults []*model.SearchResult, keyword strin
 		}
 		results = append(results, *result)
 	}
-	return SaveSearchResults(results)
+	return SaveSearchResultsWithStats(results)
 }
 
 func GetReposByStatus(status int) (error, []string) {

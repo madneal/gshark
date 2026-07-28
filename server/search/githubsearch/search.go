@@ -25,7 +25,6 @@ func Search(rules []model.Rule) {
 		return
 	}
 	var content string
-	var counts int
 	for _, rule := range rules {
 		query, err := BuildQuery(rule.Content)
 		if err != nil {
@@ -37,9 +36,18 @@ func Search(rules []model.Rule) {
 			global.GVA_LOG.Error("SearchCode error", zap.Error(err))
 			continue
 		}
-		counts = SaveResult(results, rule.Content, "")
-		if counts > 0 {
-			content += fmt.Sprintf("%s: %d条<br>", rule.Content, counts)
+		stats := SaveResultWithStats(results, rule.Content, "")
+		global.GVA_LOG.Info(stats.Summary(rule.Content, "GitHub"))
+		if stats.Inserted > 0 {
+			repoInfo := ""
+			if len(stats.Repos) > 0 {
+				if len(stats.Repos) <= 3 {
+					repoInfo = fmt.Sprintf(" (repos: %s)", strings.Join(stats.Repos, ", "))
+				} else {
+					repoInfo = fmt.Sprintf(" (repos: %s +%d more)", strings.Join(stats.Repos[:3], ", "), len(stats.Repos)-3)
+				}
+			}
+			content += fmt.Sprintf("%s: %d条%s<br>", rule.Content, stats.Inserted, repoInfo)
 		}
 	}
 	if content != "" {
@@ -60,9 +68,13 @@ func Search(rules []model.Rule) {
 }
 
 func SaveResult(results []*github.CodeSearchResult, keyword, secKeyword string) int {
+	stats := SaveResultWithStats(results, keyword, secKeyword)
+	return stats.Inserted
+}
+
+func SaveResultWithStats(results []*github.CodeSearchResult, keyword, secKeyword string) *service.SaveResultStats {
 	searchResults := ConvertToSearchResults(results, keyword, secKeyword)
-	insertCount := service.SaveSearchResults(searchResults)
-	return insertCount
+	return service.SaveSearchResultsWithStats(searchResults)
 }
 
 func ConvertToSearchResults(results []*github.CodeSearchResult, keyword, secKeyword string) []model.SearchResult {

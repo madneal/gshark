@@ -11,7 +11,13 @@ import (
 
 func TestGetClient(t *testing.T) {
 	InitialDataBase()
+	if global.GVA_DB == nil {
+		t.Skip("database not available")
+	}
 	client := GetClient()
+	if client == nil {
+		t.Skip("gitlab client not available (no token)")
+	}
 	assert.Equal(t, true, client != nil, "the client is not nil")
 }
 
@@ -23,43 +29,84 @@ func InitialDataBase() {
 
 func TestGetProjects(t *testing.T) {
 	InitialDataBase()
+	if global.GVA_DB == nil {
+		t.Skip("database not available")
+	}
 	client := GetClient()
+	if client == nil {
+		t.Skip("gitlab client not available (no token)")
+	}
 	GetProjects(client)
 }
 
 func TestListValidProjects(t *testing.T) {
 	InitialDataBase()
+	if global.GVA_DB == nil {
+		t.Skip("database not available")
+	}
+	client := GetClient()
+	if client == nil {
+		t.Skip("gitlab client not available (no token)")
+	}
 	projects := ListValidProjects()
 	assert.Equal(t, true, len(*projects) > 0, "there is should one more project")
 }
 
 func TestSearchInsideProjects(t *testing.T) {
 	InitialDataBase()
+	if global.GVA_DB == nil {
+		t.Skip("database not available")
+	}
 	client := GetClient()
+	if client == nil {
+		t.Skip("gitlab client not available (no token)")
+	}
 	SearchInsideProjects("spdb", client)
 }
 
 func TestSearchBlog(t *testing.T) {
 	InitialDataBase()
+	if global.GVA_DB == nil {
+		t.Skip("database not available")
+	}
 	//client := GetClient()
 	//SearchBlob(client, "mihoyo")
 }
 
 func TestGetProjectById(t *testing.T) {
 	InitialDataBase()
+	if global.GVA_DB == nil {
+		t.Skip("database not available")
+	}
 	client := GetClient()
+	if client == nil {
+		t.Skip("gitlab client not available (no token)")
+	}
 	GetProjectById(client, 32123952)
 }
 
 func TestSearchBlobs(t *testing.T) {
 	InitialDataBase()
+	if global.GVA_DB == nil {
+		t.Skip("database not available")
+	}
 	client := GetClient()
+	if client == nil {
+		t.Skip("gitlab client not available (no token)")
+	}
 	blobs := SearchBlobs(client, "mihoyo")
 	fmt.Println(blobs)
 }
 
 func TestRunSearchTask(t *testing.T) {
 	InitialDataBase()
+	if global.GVA_DB == nil {
+		t.Skip("database not available")
+	}
+	client := GetClient()
+	if client == nil {
+		t.Skip("gitlab client not available (no token)")
+	}
 	rules := []model.Rule{model.Rule{
 		Content: "mihoyo",
 	}}

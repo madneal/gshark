@@ -104,8 +104,8 @@ func SaveResult(results []*model.SearchResult, keyword *string) {
 	if len(results) == 0 {
 		return
 	}
-	insertCount := service.SaveSearchResultPointers(results, *keyword)
-	global.GVA_LOG.Info(fmt.Sprintf("Has inserted %d results", insertCount))
+	stats := service.SaveSearchResultPointersWithStats(results, *keyword)
+	global.GVA_LOG.Info(stats.Summary(*keyword, "GitLab"))
 }
 
 func SearchCode(keyword string, project model.Repo, client *gitlab.Client) []*model.SearchResult {

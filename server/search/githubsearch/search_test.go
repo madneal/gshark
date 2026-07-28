@@ -1,7 +1,6 @@
 package githubsearch
 
 import (
-	"fmt"
 	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/initialize"
 	"github.com/madneal/gshark/model"
@@ -13,8 +12,7 @@ func TestSearch(t *testing.T) {
 	global.GVA_LOG = initialize.Zap()
 	global.GVA_DB = initialize.Gorm()
 	if global.GVA_DB == nil {
-		fmt.Println("init db failed")
-		return
+		t.Skip("database not available")
 	}
 	rules := make([]model.Rule, 0)
 	rules = append(rules, model.Rule{

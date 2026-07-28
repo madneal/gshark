@@ -106,8 +106,8 @@ func SearchByType(keyword, searchType string) {
 	}
 	for _, res := range *resList {
 		results := res.CovertToSearchResult(keyword)
-		insertCount := service.SaveSearchResults(*results)
-		global.GVA_LOG.Info(fmt.Sprintf("Has inserted %d postman results", insertCount))
+		stats := service.SaveSearchResultsWithStats(*results)
+		global.GVA_LOG.Info(stats.Summary(keyword, "Postman"))
 	}
 }
 
