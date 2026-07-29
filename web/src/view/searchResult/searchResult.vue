@@ -33,12 +33,6 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="仅展示二次关键词结果">
-          <el-switch
-            v-model="searchInfo.onlySecKeyword"
-            @change="secKeywordChange"
-          />
-        </el-form-item>
         <el-form-item class="filter-actions">
           <div class="filter-actions__btns">
             <el-button type="primary" @click="onSubmit">查询</el-button>
@@ -63,9 +57,6 @@
           批量忽略
         </el-button>
         <el-button @click="startAITask">启动AI分析</el-button>
-        <el-button :disabled="taskBtnDisable" @click="confirmFilterTask">
-          {{ taskButtonTxt }}
-        </el-button>
       </div>
     </div>
 
@@ -97,7 +88,6 @@
         </template>
       </el-table-column>
       <el-table-column label="关键词" prop="keyword" width="100" show-overflow-tooltip />
-      <el-table-column label="二级关键词" prop="sec_keyword" width="110" show-overflow-tooltip />
       <el-table-column label="日期" width="100">
         <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
       </el-table-column>
@@ -148,8 +138,6 @@ import {
   getSearchResultList,
   updateSearchResult,
   updateSearchResultStatusByIds,
-  startFilterTask,
-  getTaskStatus,
   exportSearchResult,
   startAITask,
 } from "@/api/searchResult";
@@ -164,8 +152,6 @@ export default {
       listApi: getSearchResultList,
       dialogFormVisible: false,
       type: "",
-      taskButtonTxt: "启动二次过滤",
-      taskBtnDisable: false,
       // null shows placeholder "全部"; normalizeSearchInfo maps it to -1 for the API
       // (backend skips status filter when Status < 0). Do not bind -1 to the select —
       // it is not in statusOptions and would render as the literal "-1".
@@ -272,9 +258,6 @@ export default {
         this.$message({ type: "error", message: "导出失败" });
       }
     },
-    secKeywordChange() {
-      this.getTableData();
-    },
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },
@@ -284,37 +267,6 @@ export default {
         this.$message({ type: "success", message: "已启动 AI 分析任务" });
       } catch (e) {
         this.$message({ type: "error", message: "启动 AI 分析失败" });
-      }
-    },
-    confirmFilterTask() {
-      this.$confirm(
-        "过滤任务将自动忽略未匹配二次过滤关键词的结果，确定启动吗？",
-        "启动二次过滤",
-        {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning",
-        }
-      )
-        .then(() => this.startFilterTask())
-        .catch(() => {});
-    },
-    async startFilterTask() {
-      try {
-        await startFilterTask();
-        const resp = await getTaskStatus();
-        if (resp.msg === "running") {
-          this.taskButtonTxt = "任务运行中";
-          this.taskBtnDisable = true;
-          this.$message({ type: "success", message: "二次过滤任务已启动" });
-        } else {
-          this.$message({
-            type: "warning",
-            message: "二次过滤任务未处于运行状态",
-          });
-        }
-      } catch (e) {
-        this.$message({ type: "error", message: "启动二次过滤失败" });
       }
     },
     confirmBulk(isIgnore) {
@@ -371,14 +323,6 @@ export default {
   },
   async created() {
     await this.getTableData();
-    const resp = await getTaskStatus();
-    if (resp.msg === "running") {
-      this.taskButtonTxt = "任务运行中";
-      this.taskBtnDisable = true;
-    } else {
-      this.taskButtonTxt = "启动二次过滤";
-      this.taskBtnDisable = false;
-    }
   },
 };
 </script>

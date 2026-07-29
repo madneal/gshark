@@ -1,3 +1,20 @@
+## v2.1.9
+
+Remove the retired secondary keyword filter data after upgrading an existing database:
+
+```sql
+delete from casbin_rule
+where v1 in ('/searchResult/startSecFilterTask', '/searchResult/getTaskStatus');
+
+delete from sys_apis
+where path in ('/searchResult/startSecFilterTask', '/searchResult/getTaskStatus');
+
+delete from filters
+where filter_class = 'sec_keyword';
+
+alter table search_result drop column sec_keyword;
+```
+
 ## v1.4.5
 
 ```
@@ -56,6 +73,7 @@ insert into casbin_rule (p_type, v0, v1, v2) values ('p', 888, '/searchResult/st
 insert into sys_apis (created_at, updated_at, deleted_at, path, description, api_group, method) VALUES
     (current_timestamp, current_timestamp, null, '/searchResult/getTaskStatus', '查询任务状态', 'searchResult', 'GET');
 insert into casbin_rule (p_type, v0, v1, v2) values ('p', 888, '/searchResult/getTaskStatus', 'GET');
+
 ```
 
 ## v1.0.3
@@ -107,9 +125,6 @@ alter table token drop column description;
 insert into sys_apis (created_at, updated_at, deleted_at, path, description, api_group, method) VALUES 
 (current_timestamp, current_timestamp, null, '/email/botTest', '企业微信测试', 'email', 'GET');
 ```
-
-
-
 
 
 

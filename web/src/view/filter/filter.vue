@@ -69,7 +69,6 @@
           <el-radio-group v-model="formData.filter_class">
             <el-radio label="extension">文件后缀</el-radio>
             <el-radio label="keyword">关键词</el-radio>
-            <el-radio label="sec_keyword">二次关键词</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="内容：">

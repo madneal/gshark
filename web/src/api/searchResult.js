@@ -90,20 +90,6 @@ export const exportSearchResult = async (params) => {
      })
  }
 
- export const startFilterTask = () => {
-    return service({
-        url: "/searchResult/startSecFilterTask",
-        method: "post"
-    })
- }
-
- export const getTaskStatus = () => {
-    return service({
-        url: "/searchResult/getTaskStatus",
-        method: "get"
-    })
- }
-
  export const startAITask = () => {
      return service({
          url: "/searchResult/startAITask",

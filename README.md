@@ -268,7 +268,7 @@ For the Github or Gitlab rule, the rule will be matched by the syntax in the cor
 
 ### Filter Configuration
 
-Filter is only addressed to GitHub search now. There are three classes of filters, including `extension`, `keyword`, `sec_keyword`. For `extension` and `keyword`, they can used for blacklist or whitelist.
+Filters currently apply only to GitHub search. The supported classes are `extension` and `keyword`, and both can be configured as a blacklist or whitelist.
 
 For more information, you can refer to this [video](https://www.bilibili.com/video/BV1aG4y1c72N/?vd_source=ef4657ebf0549af8755f75118b6e81bb).
 
@@ -342,7 +342,7 @@ One rule should normally contain one search expression. Use batch import for mul
 
 11. How can I reduce noisy results from `.json`, `.csv`, log files, and similar files?
 
-Use filters. Filters are focused on GitHub search and support types such as `extension`, `keyword`, and `sec_keyword`. Extension filtering happens before results are stored. Secondary filtering uses secondary keywords to refine results; it is not the same feature as extension filtering.
+Use GitHub filters such as `extension` and `keyword` to narrow the initial search and reduce noisy results before they are stored.
 
 12. How should GitHub rate limits be handled?
 
