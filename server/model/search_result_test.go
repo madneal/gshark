@@ -12,6 +12,9 @@ import (
 
 func TestSearchResult_CheckUrlExists(t *testing.T) {
 	global.GVA_DB = InitialDb()
+	if global.GVA_DB == nil {
+		t.Skip("database not available")
+	}
 	global.GVA_LOG = zap.New(nil)
 	searchResult := &SearchResult{
 		Url: "adfasdfasdf",

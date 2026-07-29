@@ -33,6 +33,9 @@ func InitialDb() *gorm.DB {
 
 func TestGetValidRulesByType(t *testing.T) {
 	global.GVA_DB = InitialDb()
+	if global.GVA_DB == nil {
+		t.Skip("database not available")
+	}
 	_, rules := GetValidRulesByType("github")
 	fmt.Println(rules)
 }

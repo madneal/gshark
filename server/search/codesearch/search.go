@@ -37,8 +37,8 @@ func SaveResults(results []*model.SearchResult, keyword *string) {
 	if len(results) == 0 {
 		return
 	}
-	insertCount := service.SaveSearchResultPointers(results, *keyword)
-	global.GVA_LOG.Info(fmt.Sprintf("Has inserted %d results into code_result", insertCount))
+	stats := service.SaveSearchResultPointersWithStats(results, *keyword)
+	global.GVA_LOG.Info(stats.Summary(*keyword, "SearchCode"))
 }
 
 func SearchForSearchCode(rule model.Rule, request *gorequest.SuperAgent) []*model.SearchResult {

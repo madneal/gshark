@@ -8,7 +8,13 @@ import (
 )
 
 func TestRunTask(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping integration test in short mode")
+	}
 	InitialDataBase()
+	if global.GVA_DB == nil {
+		t.Skip("database not available")
+	}
 	RunTask()
 }
 

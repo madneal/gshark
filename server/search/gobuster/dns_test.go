@@ -6,5 +6,5 @@ import (
 )
 
 func TestRunDNS(t *testing.T) {
-	RunDNS1(context.Background(), "baidu.com")
+	RunDNS(context.Background(), "baidu.com")
 }
