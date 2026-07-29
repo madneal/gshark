@@ -20,3 +20,7 @@ func TestSearch(t *testing.T) {
 	})
 	Search(rules)
 }
+
+func TestSearchWithNoRules(t *testing.T) {
+	Search(nil)
+}

@@ -19,6 +19,9 @@ import (
 )
 
 func Search(rules []model.Rule) {
+	if len(rules) == 0 {
+		return
+	}
 	client, err := GetGithubClient()
 	if err != nil {
 		global.GVA_LOG.Error("GetGithubClient err", zap.Error(err))
