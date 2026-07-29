@@ -4,18 +4,27 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
+	"net/url"
+	"strings"
+	"time"
+
 	"github.com/gookit/color"
 	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/model"
 	"github.com/madneal/gshark/service"
 	"go.uber.org/zap"
-	"io"
-	"math"
-	"net/http"
-	"time"
 )
 
-var postmanUrl = "https://www.postman.com/_api/ws/proxy"
+const (
+	postmanURL             = "https://www.postman.com/_api/ws/proxy"
+	postmanPageSize        = 25
+	postmanRequestTimeout  = 30 * time.Second
+	maxPostmanResponseSize = 10 << 20
+)
+
+var postmanHTTPClient = &http.Client{Timeout: postmanRequestTimeout}
 
 type Document struct {
 	Summary            string        `json:"summary"`
@@ -35,6 +44,9 @@ type Document struct {
 	PublisherLogo      string        `json:"publisherLogo"`
 	IsDomainNonTrivial bool          `json:"isDomainNonTrivial"`
 	Name               string        `json:"name"`
+	Method             string        `json:"method"`
+	URL                string        `json:"url"`
+	WorkspaceSlug      string        `json:"workspaceSlug"`
 	IsPublic           bool          `json:"isPublic"`
 	Workspaces         []struct {
 		VisibilityStatus string `json:"visibilityStatus"`
@@ -100,41 +112,42 @@ func Search(rules *[]model.Rule) {
 
 func SearchByType(keyword, searchType string) {
 	resList, err := SearchAPI(keyword, searchType)
-	if err != nil {
-		global.GVA_LOG.Error("postman SearchAPI err", zap.Error(err))
-		return
-	}
 	for _, res := range *resList {
-		results := res.CovertToSearchResult(keyword)
+		results := res.ConvertToSearchResult(keyword)
 		stats := service.SaveSearchResultsWithStats(*results)
 		global.GVA_LOG.Info(stats.Summary(keyword, "Postman"))
 	}
+	if err != nil {
+		global.GVA_LOG.Error("postman SearchAPI err", zap.Error(err))
+	}
 }
 
-type Client struct {
-	client *http.Client
-	sid    string
-}
-
-func (res *PostmanRes) CovertToSearchResult(keyword string) *[]model.SearchResult {
+func (res *PostmanRes) ConvertToSearchResult(keyword string) *[]model.SearchResult {
 	results := make([]model.SearchResult, 0)
 	for _, data := range res.Data {
 		document := data.Document
-		var requestURL string
-		if document.DocumentType == "collection" {
-			requestURL = fmt.Sprintf("https://www.postman.com/workspace/collection/%s", document.Id)
-		}
+		name := document.Name
+		method := document.Method
+		requestValue := document.URL
 		requests := data.Requests
-		matches := document.PublisherName + " | " + document.Summary
 		if requests != nil {
-			matches = requests.Document.Name + " | " + requests.Document.Url
+			if name == "" {
+				name = requests.Document.Name
+			}
+			if method == "" {
+				method = requests.Document.Method
+			}
+			if requestValue == "" {
+				requestValue = requests.Document.Url
+			}
 		}
+		matches := joinNonEmpty(method, name, requestValue, document.Summary)
 		result := model.SearchResult{
 			Path:    document.PublisherName,
-			Url:     requestURL,
+			Url:     buildPostmanURL(document),
 			Matches: matches,
 			Keyword: keyword,
-			Repo:    document.PublisherName + "/" + document.Name,
+			Repo:    document.PublisherName + "/" + name,
 		}
 		results = append(results, result)
 	}
@@ -142,44 +155,128 @@ func (res *PostmanRes) CovertToSearchResult(keyword string) *[]model.SearchResul
 }
 
 func SearchAPI(rule, searchType string) (*[]PostmanRes, error) {
-	page := 0
+	return searchAPI(postmanHTTPClient, postmanURL, rule, searchType)
+}
+
+type postmanSearchRequest struct {
+	Service string                   `json:"service"`
+	Method  string                   `json:"method"`
+	Path    string                   `json:"path"`
+	Body    postmanSearchRequestBody `json:"body"`
+}
+
+type postmanSearchRequestBody struct {
+	QueryIndices  []string `json:"queryIndices"`
+	QueryText     string   `json:"queryText"`
+	Size          int      `json:"size"`
+	From          int      `json:"from"`
+	MergeEntities bool     `json:"mergeEntities"`
+}
+
+func searchAPI(client *http.Client, endpoint, rule, searchType string) (*[]PostmanRes, error) {
+	if searchType != "collection" && searchType != "request" {
+		return &[]PostmanRes{}, fmt.Errorf("unsupported Postman search type %q", searchType)
+	}
+
 	resList := make([]PostmanRes, 0)
-	var err error
-	for {
+	for page, offset := 0, 0; ; page, offset = page+1, offset+postmanPageSize {
 		color.Infof("search for the rule %s of page %d\n", rule, page)
-		body := fmt.Sprintf(`{"service":"search","method":"POST","path":"/search-all",
-		"body":{"queryIndices":["runtime.%s"],"queryText":"%s","size":25,"from": %d, "mergeEntities":true}}`,
-			searchType, rule, page)
-		req, err := http.NewRequest("POST", postmanUrl, bytes.NewBufferString(body))
-		req.Header.Set("Host", "www.postman.com")
+		payload := postmanSearchRequest{
+			Service: "search",
+			Method:  http.MethodPost,
+			Path:    "/search-all",
+			Body: postmanSearchRequestBody{
+				QueryIndices:  []string{"runtime." + searchType},
+				QueryText:     rule,
+				Size:          postmanPageSize,
+				From:          offset,
+				MergeEntities: true,
+			},
+		}
+		body, err := json.Marshal(payload)
+		if err != nil {
+			return &resList, fmt.Errorf("marshal Postman search page %d: %w", page, err)
+		}
+
+		req, err := http.NewRequest(http.MethodPost, endpoint, bytes.NewReader(body))
+		if err != nil {
+			return &resList, fmt.Errorf("create Postman search request: %w", err)
+		}
 		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0")
-		if err != nil {
-			return &resList, err
-		}
-		httpClient := http.Client{}
-		res, err := httpClient.Do(req)
 
-		resBody, err := io.ReadAll(res.Body)
+		res, err := client.Do(req)
 		if err != nil {
-			global.GVA_LOG.Error("postman ReadAll err", zap.Error(err))
-			return &resList, err
+			return &resList, fmt.Errorf("request Postman search page %d: %w", page, err)
+		}
+
+		resBody, err := readPostmanResponse(res)
+		if err != nil {
+			return &resList, fmt.Errorf("read Postman search page %d: %w", page, err)
 		}
 		var postRes PostmanRes
 		if err = json.Unmarshal(resBody, &postRes); err != nil {
-			return &resList, err
+			return &resList, fmt.Errorf("decode Postman search page %d: %w", page, err)
 		}
 		resList = append(resList, postRes)
-		page = page + 1
-		var total float64
+
+		total := postRes.Meta.Total.Request
 		if searchType == "collection" {
-			total = float64(postRes.Meta.Total.Collection)
-		} else if searchType == "request" {
-			total = float64(postRes.Meta.Total.Request)
+			total = postRes.Meta.Total.Collection
 		}
-		if float64(page) > math.Ceil(total/100) {
+		if len(postRes.Data) == 0 || offset+postmanPageSize >= total {
 			break
 		}
 	}
-	return &resList, err
+	return &resList, nil
+}
+
+func readPostmanResponse(res *http.Response) ([]byte, error) {
+	defer res.Body.Close()
+
+	body, err := io.ReadAll(io.LimitReader(res.Body, maxPostmanResponseSize+1))
+	if err != nil {
+		return nil, err
+	}
+	if len(body) > maxPostmanResponseSize {
+		return nil, fmt.Errorf("response exceeded %d bytes", maxPostmanResponseSize)
+	}
+	if res.StatusCode < http.StatusOK || res.StatusCode >= http.StatusMultipleChoices {
+		message := strings.TrimSpace(string(body))
+		if len(message) > 1024 {
+			message = message[:1024]
+		}
+		return nil, fmt.Errorf("unexpected HTTP status %d: %s", res.StatusCode, message)
+	}
+	return body, nil
+}
+
+func buildPostmanURL(document Document) string {
+	workspaceSlug := document.WorkspaceSlug
+	if workspaceSlug == "" && len(document.Workspaces) > 0 {
+		workspaceSlug = document.Workspaces[0].Slug
+	}
+	if document.PublisherHandle != "" && workspaceSlug != "" && document.Id != "" {
+		return fmt.Sprintf(
+			"https://www.postman.com/%s/workspace/%s/%s/%s",
+			url.PathEscape(document.PublisherHandle),
+			url.PathEscape(workspaceSlug),
+			url.PathEscape(document.DocumentType),
+			url.PathEscape(document.Id),
+		)
+	}
+	if document.DocumentType == "collection" && document.Id != "" {
+		return fmt.Sprintf("https://www.postman.com/workspace/collection/%s", url.PathEscape(document.Id))
+	}
+	return ""
+}
+
+func joinNonEmpty(values ...string) string {
+	parts := make([]string, 0, len(values))
+	for _, value := range values {
+		if value = strings.TrimSpace(value); value != "" {
+			parts = append(parts, value)
+		}
+	}
+	return strings.Join(parts, " | ")
 }
