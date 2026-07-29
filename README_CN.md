@@ -266,7 +266,7 @@ npm run serve
 
 ### 过滤器配置
 
-过滤器目前仅针对 GitHub 搜索。有三类过滤器，包括 `extension`、`keyword`、`sec_keyword`。对于 `extension` 和 `keyword`，它们可以用于黑名单或白名单。
+过滤器目前仅针对 GitHub 搜索，支持 `extension` 和 `keyword` 两类，两者都可以配置为黑名单或白名单。
 
 更多信息，您可以参考这个[视频](https://www.bilibili.com/video/BV1aG4y1c72N/?vd_source=ef4657ebf0549af8755f75118b6e81bb)。
 
@@ -310,7 +310,7 @@ scanner 依赖数据库初始化。MySQL 初始化前 scanner 容器可能会退
 
 6. GShark 的核心运行链路是什么？
 
-基本链路是：配置数据库 -> 初始化系统 -> 登录后台 -> 添加 token -> 添加规则 -> 启动 scan 服务 -> 拉取搜索结果 -> 过滤/二次过滤 -> 人工确认或忽略 -> 导出结果。
+基本链路是：配置数据库 -> 初始化系统 -> 登录后台 -> 添加 token -> 添加规则 -> 启动 scan 服务 -> 拉取并过滤搜索结果 -> 人工确认或忽略 -> 导出结果。
 
 7. 配置 token 和规则后为什么没有扫描结果？
 
@@ -339,7 +339,7 @@ api_key extension:yaml
 
 11. 如何减少 `.json`、`.csv`、日志文件等噪声结果？
 
-使用过滤器。过滤器面向 GitHub 搜索，支持 `extension`、`keyword`、`sec_keyword` 等类型。后缀过滤是在结果入库前过滤；二次过滤是基于二级关键词进一步筛结果，两者不是同一个能力。
+使用 GitHub 过滤器，通过 `extension` 和 `keyword` 缩小初始搜索范围，在结果入库前减少噪声。
 
 12. GitHub rate limit 怎么处理？
 

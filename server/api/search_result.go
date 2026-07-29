@@ -3,13 +3,11 @@ package api
 import (
 	"encoding/csv"
 	"encoding/json"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/model"
 	"github.com/madneal/gshark/model/request"
 	"github.com/madneal/gshark/model/response"
-	"github.com/madneal/gshark/search/githubsearch"
 	"github.com/madneal/gshark/service"
 	"go.uber.org/zap"
 	"net/http"
@@ -17,7 +15,6 @@ import (
 	"strings"
 )
 
-var taskStatus = "stop"
 var statusOptions = map[int]string{
 	0: "未处理", // Unprocessed
 	1: "已处理", // Processed
@@ -54,10 +51,6 @@ func UpdateSearchResultByIds(c *gin.Context) {
 		return
 	}
 	respondMutation(c, service.UpdateSearchResultByIds(batchUpdateReq), "批量更新状态失败！", "批量更新状态失败", "批量更新状态成功")
-}
-
-func GetTaskStatus(c *gin.Context) {
-	response.OkWithMessage(taskStatus, c)
 }
 
 func StartAITask(c *gin.Context) {
@@ -106,65 +99,6 @@ func StartAITask(c *gin.Context) {
 	}()
 }
 
-func StartSecFilterTask(c *gin.Context) {
-	response.Ok(c)
-	go func(taskStatus *string) {
-		*taskStatus = "running"
-		client, err := githubsearch.GetGithubClient()
-		if err != nil {
-			*taskStatus = "failed"
-			global.GVA_LOG.Error("GetGithubClient error", zap.Error(err))
-			response.FailWithMessage("初始化 github 客户端失败", c)
-			return
-		}
-		err, repos := service.GetReposByStatus(0)
-		if err != nil {
-			*taskStatus = "failed"
-			global.GVA_LOG.Error("GetReposByStatus error", zap.Error(err))
-			return
-		}
-		err, secKeywordFilters := model.GetFilterByClass("sec_keyword")
-		if err != nil {
-			*taskStatus = "failed"
-			global.GVA_LOG.Error("GetFilterByClass sec_keyword error", zap.Error(err))
-			return
-		}
-		var secKeywords []string
-		for _, secKeywordFilter := range secKeywordFilters {
-			secKeywords = append(secKeywords, strings.Split(secKeywordFilter.Content, ",")...)
-		}
-		for _, repo := range repos {
-			for _, keyword := range secKeywords {
-				query := fmt.Sprintf("repo:%s %s ", repo, keyword)
-				results, err := client.SearchCode(query)
-				// find results after second filter, then ignore the results by repo
-				if len(results) > 0 && *results[0].Total > 0 {
-					err = service.IgnoreResultsByRepo(repo)
-					if err != nil {
-						global.GVA_LOG.Error("IgnoreResultsByRepo error", zap.Error(err))
-						continue
-					}
-				}
-				originalKeyword, err := service.GetKeywordByRepo(repo)
-				if err != nil {
-					global.GVA_LOG.Error("GetKeywordByRepo error", zap.Error(err))
-					continue
-				}
-				if err != nil {
-					global.GVA_LOG.Error("Github search code error", zap.Error(err))
-					continue
-				}
-				if results != nil && len(results) > 0 && *results[0].Total > 0 {
-					githubsearch.SaveResult(results, originalKeyword, keyword)
-				}
-			}
-
-		}
-		*taskStatus = "done"
-	}(&taskStatus)
-
-}
-
 func UpdateSearchResult(c *gin.Context) {
 	var updateReq request.UpdateReq
 	if !bindJSON(c, &updateReq) {
@@ -204,7 +138,7 @@ func ExportSearchResult(c *gin.Context) {
 	c.Header("Content-Type", "text/csv")
 	c.Header("Content-Disposition", `attachment; filename="search_results.csv"`)
 	writer := csv.NewWriter(c.Writer)
-	headers := []string{"Repo", "RepoUrl", "Matches", "Keyword", "SecKeyword", "Path",
+	headers := []string{"Repo", "RepoUrl", "Matches", "Keyword", "Path",
 		"Url", "Status"}
 	if err := writer.Write(headers); err != nil {
 		response.FailWithMessage("导出失败", c)
@@ -223,7 +157,6 @@ func ExportSearchResult(c *gin.Context) {
 			result.RepoUrl,
 			result.Matches,
 			result.Keyword,
-			result.SecKeyword,
 			result.Path,
 			result.Url,
 			statusOptions[result.Status],

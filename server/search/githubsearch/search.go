@@ -39,7 +39,7 @@ func Search(rules []model.Rule) {
 			global.GVA_LOG.Error("SearchCode error", zap.Error(err))
 			continue
 		}
-		stats := SaveResultWithStats(results, rule.Content, "")
+		stats := SaveResultWithStats(results, rule.Content)
 		global.GVA_LOG.Info(stats.Summary(rule.Content, "GitHub"))
 		if stats.Inserted > 0 {
 			repoInfo := ""
@@ -70,29 +70,23 @@ func Search(rules []model.Rule) {
 	}
 }
 
-func SaveResult(results []*github.CodeSearchResult, keyword, secKeyword string) int {
-	stats := SaveResultWithStats(results, keyword, secKeyword)
-	return stats.Inserted
-}
-
-func SaveResultWithStats(results []*github.CodeSearchResult, keyword, secKeyword string) *service.SaveResultStats {
-	searchResults := ConvertToSearchResults(results, keyword, secKeyword)
+func SaveResultWithStats(results []*github.CodeSearchResult, keyword string) *service.SaveResultStats {
+	searchResults := ConvertToSearchResults(results, keyword)
 	return service.SaveSearchResultsWithStats(searchResults)
 }
 
-func ConvertToSearchResults(results []*github.CodeSearchResult, keyword, secKeyword string) []model.SearchResult {
+func ConvertToSearchResults(results []*github.CodeSearchResult, keyword string) []model.SearchResult {
 	searchResults := make([]model.SearchResult, 0)
 	for _, result := range results {
 		codeResults := result.CodeResults
 		for _, codeResult := range codeResults {
 			searchResult := model.SearchResult{
-				RepoUrl:    *codeResult.Repository.HTMLURL,
-				Repo:       *codeResult.Repository.FullName,
-				Keyword:    keyword,
-				SecKeyword: secKeyword,
-				Url:        *codeResult.HTMLURL,
-				Path:       *codeResult.Path,
-				Status:     0,
+				RepoUrl: *codeResult.Repository.HTMLURL,
+				Repo:    *codeResult.Repository.FullName,
+				Keyword: keyword,
+				Url:     *codeResult.HTMLURL,
+				Path:    *codeResult.Path,
+				Status:  0,
 			}
 			if len(codeResult.TextMatches) > 0 {
 				b, err := json.Marshal(codeResult.TextMatches)

@@ -12,12 +12,12 @@ import (
 
 // SaveResultStats contains detailed statistics about saved search results
 type SaveResultStats struct {
-	Total      int      // Total results processed
-	Inserted   int      // Successfully inserted
-	Skipped    int      // Skipped (already exists)
-	Failed     int      // Failed to insert
-	Repos      []string // Unique repos affected
-	repoSet    map[string]struct{}
+	Total    int      // Total results processed
+	Inserted int      // Successfully inserted
+	Skipped  int      // Skipped (already exists)
+	Failed   int      // Failed to insert
+	Repos    []string // Unique repos affected
+	repoSet  map[string]struct{}
 }
 
 // NewSaveResultStats creates a new SaveResultStats instance
@@ -78,13 +78,6 @@ func UpdateSearchResultByIds(req request.BatchUpdateReq) (err error) {
 	return err
 }
 
-func IgnoreResultsByRepo(repo string) (err error) {
-	err = global.GVA_DB.Table("search_result").
-		Where("status = ? and repo = ? and (sec_keyword is null or sec_keyword = '')", global.UnhandledStatus, repo).
-		UpdateColumn("status", global.IgnoredStatus).Error
-	return err
-}
-
 func UpdateSearchResult(updateReq request.UpdateReq) (err error) {
 	err = global.GVA_DB.Table("search_result").Where("repo = ?", updateReq.Repo).
 		UpdateColumn("status", updateReq.Status).Error
@@ -115,13 +108,10 @@ func GetSearchResultInfoList(info request.SearchResultSearch) (err error, list i
 			"%"+info.Query+"%", "%"+info.Query+"%")
 	}
 	if info.Keyword != "" {
-		db = db.Where("`keyword` = ? or `sec_keyword` = ?", info.Keyword, info.Keyword)
+		db = db.Where("`keyword` = ?", info.Keyword)
 	}
 	if info.Status >= 0 {
 		db = db.Where("`status` = ?", info.Status)
-	}
-	if info.OnlySecKeyword {
-		db = db.Where("`sec_keyword` != ''")
 	}
 	total, err = Paginate(db, info.Page, info.PageSize, &searchResults, "id desc")
 	return err, searchResults, total
@@ -178,24 +168,4 @@ func SaveSearchResultPointersWithStats(searchResults []*model.SearchResult, keyw
 		results = append(results, *result)
 	}
 	return SaveSearchResultsWithStats(results)
-}
-
-func GetReposByStatus(status int) (error, []string) {
-	var results []model.SearchResult
-	err := global.GVA_DB.Distinct().Select("repo").Where("status = ?",
-		status).Find(&results).Error
-	repos := make([]string, 0)
-	if err != nil {
-		return err, repos
-	}
-	for _, result := range results {
-		repos = append(repos, result.Repo)
-	}
-	return err, repos
-}
-
-func GetKeywordByRepo(repo string) (string, error) {
-	var result model.SearchResult
-	err := global.GVA_DB.Where("repo = ?", repo).First(&result).Error
-	return result.Keyword, err
 }
