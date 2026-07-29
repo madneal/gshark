@@ -4,12 +4,16 @@ import (
 	"fmt"
 	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/initialize"
+	"os"
 	"testing"
 )
 
 func TestRunTask(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test in short mode")
+	}
+	if os.Getenv("RUN_POSTMAN_INTEGRATION") != "1" {
+		t.Skip("set RUN_POSTMAN_INTEGRATION=1 to run the Postman integration test")
 	}
 	InitialDataBase()
 	if global.GVA_DB == nil {
