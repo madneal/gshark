@@ -39,6 +39,9 @@ func GetGithubClient() (*Client, error) {
 	if err != nil {
 		return nil, err
 	}
+	if len(tokens) == 0 {
+		return nil, errors.New("github client initialization failed: no token configured")
+	}
 	client := InitClient(tokens[0].Content)
 	if client == nil {
 		err = errors.New("github Client initial failed, please add token")
