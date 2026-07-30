@@ -262,7 +262,11 @@ func postmanResourceKey(resource PostmanResource) string {
 }
 
 func buildPostmanRepo(resource PostmanResource) string {
-	label := joinNonEmpty(resource.Organization.Name, resource.Collection.Name, resource.Name)
+	owner := resource.Organization.Name
+	if owner == "" {
+		owner = resource.Workspace.Name
+	}
+	label := joinNonEmpty(owner, resource.Collection.Name, resource.Name)
 	if resource.ID == "" {
 		return label
 	}
