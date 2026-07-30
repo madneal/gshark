@@ -1,3 +1,12 @@
+## v2.1.11
+
+Expand the repository field so full Postman request names and identifiers can be stored:
+
+```sql
+alter table search_result
+    modify repo varchar(1000) null;
+```
+
 ## v2.1.9
 
 Remove the retired secondary keyword filter data after upgrading an existing database:
@@ -125,7 +134,6 @@ alter table token drop column description;
 insert into sys_apis (created_at, updated_at, deleted_at, path, description, api_group, method) VALUES 
 (current_timestamp, current_timestamp, null, '/email/botTest', '企业微信测试', 'email', 'GET');
 ```
-
 
 
 

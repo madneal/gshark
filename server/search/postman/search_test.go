@@ -63,35 +63,44 @@ func TestSearchAPIHandlesTransportError(t *testing.T) {
 }
 
 func TestSearchAPIPaginatesWithOffsetsAndEscapesRule(t *testing.T) {
-	var offsets []int
+	var cursors []string
 	const rule = "key \"quoted\" \\\\ value"
 	client := &http.Client{Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
 		var request postmanSearchRequest
 		if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 			return nil, fmt.Errorf("decode request: %w", err)
 		}
-		if request.Body.QueryText != rule {
-			t.Errorf("query text = %q, want %q", request.Body.QueryText, rule)
+		if request.QueryText != rule {
+			t.Errorf("query text = %q, want %q", request.QueryText, rule)
 		}
-		offsets = append(offsets, request.Body.From)
+		if request.ElementType != "requests" {
+			t.Errorf("element type = %q, want requests", request.ElementType)
+		}
+		if r.URL.Query().Get("limit") != "25" {
+			t.Errorf("limit = %q, want 25", r.URL.Query().Get("limit"))
+		}
+		cursors = append(cursors, r.URL.Query().Get("cursor"))
 
 		count := postmanPageSize
-		if request.Body.From == postmanPageSize {
-			count = 5
+		nextCursor := "second-page"
+		start := 0
+		if r.URL.Query().Get("cursor") == "second-page" {
+			count = 2
+			nextCursor = ""
+			start = postmanPageSize - 1
 		}
 		data := make([]map[string]interface{}, count)
 		for i := range data {
 			data[i] = map[string]interface{}{
-				"document": map[string]interface{}{
-					"id":           fmt.Sprintf("request-%d", request.Body.From+i),
-					"documentType": "request",
-				},
+				"id":   fmt.Sprintf("request-%d", start+i),
+				"name": fmt.Sprintf("Request %d", start+i),
 			}
 		}
 		return jsonHTTPResponse(http.StatusOK, map[string]interface{}{
 			"data": data,
 			"meta": map[string]interface{}{
-				"total": map[string]interface{}{"request": 30},
+				"total":      count,
+				"nextCursor": nextCursor,
 			},
 		}), nil
 	})}
@@ -100,10 +109,10 @@ func TestSearchAPIPaginatesWithOffsetsAndEscapesRule(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !reflect.DeepEqual(offsets, []int{0, 25}) {
-		t.Fatalf("offsets = %v, want [0 25]", offsets)
+	if !reflect.DeepEqual(cursors, []string{"", "second-page"}) {
+		t.Fatalf("cursors = %v, want [\"\" \"second-page\"]", cursors)
 	}
-	if len(*res) != 2 || len((*res)[0].Data)+len((*res)[1].Data) != 30 {
+	if len(*res) != 2 || len((*res)[0].Data)+len((*res)[1].Data) != 26 {
 		t.Fatalf("unexpected response pages: %#v", res)
 	}
 }
@@ -118,13 +127,14 @@ func TestSearchAPIReturnsPartialPagesOnLaterFailure(t *testing.T) {
 		data := make([]map[string]interface{}, postmanPageSize)
 		for i := range data {
 			data[i] = map[string]interface{}{
-				"document": map[string]interface{}{"id": fmt.Sprintf("request-%d", i)},
+				"id": fmt.Sprintf("request-%d", i),
 			}
 		}
 		return jsonHTTPResponse(http.StatusOK, map[string]interface{}{
 			"data": data,
 			"meta": map[string]interface{}{
-				"total": map[string]interface{}{"request": 30},
+				"total":      postmanPageSize,
+				"nextCursor": "second-page",
 			},
 		}), nil
 	})}
@@ -142,15 +152,23 @@ func TestConvertToSearchResultUsesCurrentResponseShape(t *testing.T) {
 	var response PostmanRes
 	err := json.Unmarshal([]byte(`{
 		"data": [{
-			"document": {
-				"id": "request-id",
-				"documentType": "request",
-				"method": "POST",
-				"name": "Chat Completions",
-				"url": "{{baseUrl}}/chat/completions",
-				"publisherName": "Postman DevRel",
-				"publisherHandle": "devrel",
-				"workspaceSlug": "openai"
+			"id": "request-id",
+			"method": "POST",
+			"name": "Chat Completions",
+			"url": "https://api.openai.com/v1/chat/completions",
+			"description": "Create a chat completion",
+			"collection": {
+				"id": "collection-id",
+				"name": "OpenAI API"
+			},
+			"organization": {
+				"id": "organization-id",
+				"name": "Postman DevRel"
+			},
+			"links": {
+				"web": {
+					"href": "https://go.postman.co/request/request-id"
+				}
 			}
 		}]
 	}`), &response)
@@ -163,11 +181,58 @@ func TestConvertToSearchResultUsesCurrentResponseShape(t *testing.T) {
 		t.Fatalf("expected one result, got %d", len(*results))
 	}
 	result := (*results)[0]
-	if result.Url != "https://www.postman.com/devrel/workspace/openai/request/request-id" {
+	if result.Url != "https://go.postman.co/request/request-id" {
 		t.Fatalf("URL = %q", result.Url)
 	}
-	if result.Matches != "POST | Chat Completions | {{baseUrl}}/chat/completions" {
+	if result.RepoUrl != result.Url {
+		t.Fatalf("repository URL = %q, want %q", result.RepoUrl, result.Url)
+	}
+	if result.Path != "request-id" {
+		t.Fatalf("path = %q, want request-id", result.Path)
+	}
+	if result.Matches != "POST | Chat Completions | https://api.openai.com/v1/chat/completions | Create a chat completion" {
 		t.Fatalf("matches = %q", result.Matches)
+	}
+	if result.Repo != "Postman DevRel | OpenAI API | Chat Completions [request-id]" {
+		t.Fatalf("repo = %q", result.Repo)
+	}
+}
+
+func TestBuildPostmanRepoPreservesLongNameAndUniqueIDSuffix(t *testing.T) {
+	resource := PostmanResource{
+		ID:   "request-id",
+		Name: strings.Repeat("长", 250),
+	}
+	resource.Organization.Name = "Postman"
+	resource.Collection.Name = "Collection"
+
+	repo := buildPostmanRepo(resource)
+	want := "Postman | Collection | " + resource.Name + " [request-id]"
+	if repo != want {
+		t.Fatalf("repo = %q, want %q", repo, want)
+	}
+	if len([]rune(repo)) <= 200 {
+		t.Fatalf("test repo length = %d, want more than the old column limit", len([]rune(repo)))
+	}
+	if !strings.HasSuffix(repo, " [request-id]") {
+		t.Fatalf("repo does not preserve ID suffix: %q", repo)
+	}
+}
+
+func TestSearchAPIRejectsRepeatedCursor(t *testing.T) {
+	client := &http.Client{Transport: roundTripFunc(func(*http.Request) (*http.Response, error) {
+		return jsonHTTPResponse(http.StatusOK, map[string]interface{}{
+			"data": []map[string]interface{}{{"id": "request-id"}},
+			"meta": map[string]interface{}{"nextCursor": "same-cursor"},
+		}), nil
+	})}
+
+	res, err := searchAPI(client, "https://postman.test/search", "key", "request")
+	if err == nil || !strings.Contains(err.Error(), "repeated cursor") {
+		t.Fatalf("expected repeated cursor error, got %v", err)
+	}
+	if len(*res) != 1 {
+		t.Fatalf("expected one unique page, got %d", len(*res))
 	}
 }
 
