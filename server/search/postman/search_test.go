@@ -219,6 +219,21 @@ func TestBuildPostmanRepoPreservesLongNameAndUniqueIDSuffix(t *testing.T) {
 	}
 }
 
+func TestBuildPostmanRepoFallsBackToWorkspaceNameWhenOrganizationIsBlank(t *testing.T) {
+	resource := PostmanResource{
+		ID:   "request-id",
+		Name: "Launcher HTML Widget Content",
+	}
+	resource.Collection.Name = "Genshin Launcher"
+	resource.Workspace.Name = "MiHoYo"
+
+	repo := buildPostmanRepo(resource)
+	want := "MiHoYo | Genshin Launcher | Launcher HTML Widget Content [request-id]"
+	if repo != want {
+		t.Fatalf("repo = %q, want %q", repo, want)
+	}
+}
+
 func TestSearchAPIRejectsRepeatedCursor(t *testing.T) {
 	client := &http.Client{Transport: roundTripFunc(func(*http.Request) (*http.Response, error) {
 		return jsonHTTPResponse(http.StatusOK, map[string]interface{}{
