@@ -3,14 +3,26 @@ package codesearch
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/madneal/gshark/global"
-	"github.com/madneal/gshark/model"
-	"github.com/madneal/gshark/service"
-	"github.com/parnurzeal/gorequest"
-	"go.uber.org/zap"
+	"io"
+	"net/http"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/madneal/gshark/global"
+	"github.com/madneal/gshark/model"
+	"github.com/madneal/gshark/service"
+	"go.uber.org/zap"
+)
+
+const (
+	searchcodeRequestTimeout = 30 * time.Second
+	maxSearchcodePages       = 50 // defensive cap; normal results end via hasResult=false
+)
+
+var (
+	searchcodeHTTPClient = &http.Client{Timeout: searchcodeRequestTimeout}
+	searchcodeBaseURL    = "https://searchcode.com/api/codesearch_I/"
 )
 
 func RunTask(duration time.Duration) {
@@ -23,13 +35,12 @@ func RunTask(duration time.Duration) {
 		global.GVA_LOG.Info("Rules of search code is empty")
 		return
 	}
-	request := gorequest.New()
 	for _, rule := range rules {
 		global.GVA_LOG.Info(fmt.Sprintf("Search for %s in searchcode", rule.Content))
-		codeResults := SearchForSearchCode(rule, request)
+		codeResults := SearchForSearchCode(rule, searchcodeHTTPClient)
 		SaveResults(codeResults, &rule.Content)
 	}
-	global.GVA_LOG.Info(fmt.Sprintf("Compelete the scan of searchcode"))
+	global.GVA_LOG.Info("Complete the scan of searchcode")
 	time.Sleep(duration * time.Second)
 }
 
@@ -41,16 +52,14 @@ func SaveResults(results []*model.SearchResult, keyword *string) {
 	global.GVA_LOG.Info(stats.Summary(*keyword, "SearchCode"))
 }
 
-func SearchForSearchCode(rule model.Rule, request *gorequest.SuperAgent) []*model.SearchResult {
+func SearchForSearchCode(rule model.Rule, client *http.Client) []*model.SearchResult {
 	keyword := rule.Content
 	totalCodeResults := make([]*model.SearchResult, 0)
-	page := 0
-	for {
-		url := "https://searchcode.com/api/codesearch_I/?q=" + keyword + "&p=" + strconv.Itoa(page)
+	for page := 0; page < maxSearchcodePages; page++ {
+		url := searchcodeBaseURL + "?q=" + keyword + "&p=" + strconv.Itoa(page)
 		global.GVA_LOG.Info("search searchcode result for page " + strconv.Itoa(page))
-		codeResults, hasResult := GetResult(request, url)
+		codeResults, hasResult := GetResult(client, url)
 		totalCodeResults = append(totalCodeResults, codeResults...)
-		page++
 		if !hasResult {
 			break
 		}
@@ -58,24 +67,36 @@ func SearchForSearchCode(rule model.Rule, request *gorequest.SuperAgent) []*mode
 	return totalCodeResults
 }
 
-func GetResult(request *gorequest.SuperAgent, url string) ([]*model.SearchResult, bool) {
-	hasResult := true
+func GetResult(client *http.Client, url string) ([]*model.SearchResult, bool) {
 	codeResults := make([]*model.SearchResult, 0)
-	resp, body, err := request.Get(url).End()
-	if err != nil {
+
+	resp, err := client.Get(url)
+	if err != nil || resp == nil {
 		global.GVA_LOG.Error("search result of search code error", zap.Any("err", err))
+		return codeResults, false
 	}
-	if resp.StatusCode != 200 {
-		fmt.Printf("Request to %s error, status code: %d", url, resp.StatusCode)
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		global.GVA_LOG.Error(fmt.Sprintf("Request to %s error, status code: %d", url, resp.StatusCode))
+		return codeResults, false
 	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		global.GVA_LOG.Error("read searchcode response body err", zap.Error(err))
+		return codeResults, false
+	}
+
 	var result model.SearchCodeRes
-	jErr := json.Unmarshal([]byte(body), &result)
-	if jErr != nil {
+	if jErr := json.Unmarshal(body, &result); jErr != nil {
 		global.GVA_LOG.Error("json unmarshal searchCodeRes err", zap.Error(jErr))
+		return codeResults, false
 	}
+
 	results := result.Results
 	if len(results) == 0 {
-		hasResult = false
+		return codeResults, false
 	}
 	for _, val := range results {
 		if strings.Contains(val.Repo, "github") {
@@ -101,5 +122,5 @@ func GetResult(request *gorequest.SuperAgent, url string) ([]*model.SearchResult
 		}
 		codeResults = append(codeResults, &codeResult)
 	}
-	return codeResults, hasResult
+	return codeResults, true
 }
