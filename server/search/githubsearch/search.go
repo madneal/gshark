@@ -183,44 +183,102 @@ func BuildQuery(query string) (string, error) {
 	return builtQuery, err
 }
 
+// maxSearchAttempts bounds how many times a single page is retried after
+// hitting a rate limit, so a persistently exhausted token set eventually
+// gives up instead of looping forever.
+const maxSearchAttempts = 3
+
+// sleepFn is overridden in tests so rate-limit backoffs don't actually block.
+var sleepFn = time.Sleep
+
 func (c *Client) searchCodeByOpt(ctx context.Context, query string, opt github.SearchOptions) (*github.CodeSearchResult,
 	int) {
-	result, res, err := c.Client.Search.Code(ctx, query, &opt)
+	for attempt := 1; attempt <= maxSearchAttempts; attempt++ {
+		result, res, err := c.Client.Search.Code(ctx, query, &opt)
+		if err == nil {
+			return c.afterSearchSuccess(query, result, res)
+		}
 
-	// Handle error first
-	if err != nil {
 		var rateLimitError *github.RateLimitError
-		if errors.As(err, &rateLimitError) {
-			global.GVA_LOG.Warn("Trigger the github rate limit")
-			if res != nil {
-				resetTimeStamp := res.Rate.Reset
-				sleepDuration := resetTimeStamp.Sub(time.Now()) + 10*time.Second
-				global.GVA_LOG.Warn(fmt.Sprintf("Ready to sleep for %v", sleepDuration))
-				time.Sleep(sleepDuration)
+		var abuseRateLimitError *github.AbuseRateLimitError
+		switch {
+		case errors.As(err, &rateLimitError):
+			global.GVA_LOG.Warn("Trigger the github rate limit", zap.Int("attempt", attempt))
+			if !c.attemptRotate() {
+				sleepUntil(rateLimitError.Rate.Reset.Time)
 			}
-		} else {
+		case errors.As(err, &abuseRateLimitError):
+			global.GVA_LOG.Warn("Trigger the github secondary rate limit", zap.Int("attempt", attempt))
+			if !c.attemptRotate() {
+				sleepForAbuse(abuseRateLimitError.RetryAfter)
+			}
+		default:
 			global.GVA_LOG.Error("Search error", zap.Any("github search error", err))
-			time.Sleep(30 * time.Second)
+			sleepFn(30 * time.Second)
 			return nil, 0
 		}
 	}
 
-	// Check if response is nil before accessing its fields
+	global.GVA_LOG.Error("exhausted retry attempts for Github search", zap.String("query", query))
+	return nil, 0
+}
+
+func (c *Client) afterSearchSuccess(query string, result *github.CodeSearchResult, res *github.Response) (*github.CodeSearchResult, int) {
 	if res == nil {
 		global.GVA_LOG.Error("Received nil response from GitHub API")
 		return nil, 0
 	}
 
-	// Now safe to access res.Rate
 	if res.Rate.Remaining < 3 {
 		color.Info.Print("the remaining is less than 3, switch to another token\n")
-		newGithubClient, newToken := c.NextClient()
-		c.Client = newGithubClient
-		c.Token = newToken
+		c.attemptRotate()
 	}
 
 	global.GVA_LOG.Info("Search for "+query, zap.Any("remaining", res.Rate.Remaining), zap.Any("nextPage",
 		res.NextPage), zap.Any("lastPage", res.LastPage))
 
 	return result, res.NextPage
+}
+
+// attemptRotate switches to the next configured github token and reports
+// whether it actually changed to a different token. Tests inject c.rotate
+// to avoid hitting the database; production code falls back to rotateToken.
+func (c *Client) attemptRotate() bool {
+	if c.rotate != nil {
+		return c.rotate()
+	}
+	return c.rotateToken()
+}
+
+// rotateToken switches to the next configured github token and reports
+// whether it actually changed to a different token. When only one token is
+// configured, NextClient returns the same token, so callers know to fall
+// back to sleeping instead of busy-retrying with the same exhausted token.
+func (c *Client) rotateToken() bool {
+	previousToken := c.Token
+	newGithubClient, newToken := c.NextClient()
+	if newGithubClient == nil || newToken == "" || newToken == previousToken {
+		return false
+	}
+	c.Client = newGithubClient
+	c.Token = newToken
+	return true
+}
+
+func sleepUntil(reset time.Time) {
+	sleepDuration := time.Until(reset) + 10*time.Second
+	if sleepDuration < 0 {
+		sleepDuration = 10 * time.Second
+	}
+	global.GVA_LOG.Warn(fmt.Sprintf("Ready to sleep for %v", sleepDuration))
+	sleepFn(sleepDuration)
+}
+
+func sleepForAbuse(retryAfter *time.Duration) {
+	sleepDuration := 60 * time.Second
+	if retryAfter != nil {
+		sleepDuration = *retryAfter + 5*time.Second
+	}
+	global.GVA_LOG.Warn(fmt.Sprintf("Ready to sleep for %v due to secondary rate limit", sleepDuration))
+	sleepFn(sleepDuration)
 }
