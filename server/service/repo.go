@@ -43,6 +43,13 @@ func GetRepoByType(typeStr string) (err error, repos []model.Repo) {
 	return err, repos
 }
 
+// ResetRepoStatusByType marks every repo of the given type as unsearched again,
+// so a bounded per-cycle crawl (e.g. gitlabsearch's project crawl) can recycle
+// its pool once every known repo has been searched.
+func ResetRepoStatusByType(typeStr string) (err error) {
+	return global.GVA_DB.Model(&model.Repo{}).Where("type = ?", typeStr).Update("status", 0).Error
+}
+
 func CheckRepoExist(repo *model.Repo) (err error, result bool) {
 	r := global.GVA_DB.Where("project_id = ?", repo.ProjectId).First(repo)
 	err = r.Error
