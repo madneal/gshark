@@ -18,7 +18,7 @@ import (
 )
 
 const (
-	postmanURL             = "https://www.postman.com/_api/ws/proxy"
+	postmanURL             = "https://api.postman.com/search"
 	postmanPageSize        = 25
 	postmanRequestTimeout  = 30 * time.Second
 	maxPostmanResponseSize = 10 << 20
@@ -26,69 +26,45 @@ const (
 
 var postmanHTTPClient = &http.Client{Timeout: postmanRequestTimeout}
 
-type Document struct {
-	Summary            string        `json:"summary"`
-	RequestCount       int           `json:"requestCount"`
-	PublisherType      string        `json:"publisherType"`
-	Imports            int           `json:"imports,omitempty"`
-	WatcherCount       int           `json:"watcherCount"`
-	EntityType         string        `json:"entityType"`
-	ForkCount          int           `json:"forkCount"`
-	Tags               []interface{} `json:"tags"`
-	Quality            int           `json:"quality,omitempty"`
-	PublisherId        string        `json:"publisherId"`
-	ForkLabel          string        `json:"forkLabel"`
-	Apis               []interface{} `json:"apis,omitempty"`
-	PublisherHandle    string        `json:"publisherHandle"`
-	PublisherName      string        `json:"publisherName"`
-	PublisherLogo      string        `json:"publisherLogo"`
-	IsDomainNonTrivial bool          `json:"isDomainNonTrivial"`
-	Name               string        `json:"name"`
-	Method             string        `json:"method"`
-	URL                string        `json:"url"`
-	WorkspaceSlug      string        `json:"workspaceSlug"`
-	IsPublic           bool          `json:"isPublic"`
-	Workspaces         []struct {
-		VisibilityStatus string `json:"visibilityStatus"`
-		Name             string `json:"name"`
-		Id               string `json:"id"`
-		Slug             string `json:"slug"`
-	} `json:"workspaces"`
-	Id           string        `json:"id"`
-	Categories   []interface{} `json:"categories"`
-	Views        int           `json:"views"`
-	DocumentType string        `json:"documentType"`
+type PostmanResourceRef struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
 }
 
-type Requests struct {
-	Score    float64 `json:"score"`
-	Document struct {
-		Method string `json:"method"`
-		Name   string `json:"name"`
-		Id     string `json:"id"`
-		Url    string `json:"url"`
-	} `json:"document"`
+type PostmanOrganization struct {
+	ID         string `json:"id"`
+	Name       string `json:"name"`
+	IsVerified bool   `json:"isVerified"`
+}
+
+type PostmanLinks struct {
+	Web struct {
+		Href string `json:"href"`
+	} `json:"web"`
+	Self struct {
+		Href string `json:"href"`
+	} `json:"self"`
+}
+
+type PostmanResource struct {
+	ID           string              `json:"id"`
+	Name         string              `json:"name"`
+	Method       string              `json:"method"`
+	Description  string              `json:"description"`
+	URL          string              `json:"url"`
+	Collection   PostmanResourceRef  `json:"collection"`
+	Workspace    PostmanResourceRef  `json:"workspace"`
+	Organization PostmanOrganization `json:"organization"`
+	Team         PostmanResourceRef  `json:"team"`
+	Links        PostmanLinks        `json:"links"`
 }
 
 type PostmanRes struct {
-	Data []struct {
-		Score           float64   `json:"score"`
-		NormalizedScore float64   `json:"normalizedScore"`
-		Document        Document  `json:"document"`
-		Requests        *Requests `json:"requests"`
-	} `json:"data"`
+	Data []PostmanResource `json:"data"`
 	Meta struct {
-		QueryText string `json:"queryText"`
-		Total     struct {
-			Collection int `json:"collection"`
-			Workspace  int `json:"workspace"`
-			Api        int `json:"api"`
-			Team       int `json:"team"`
-			User       int `json:"user"`
-			Request    int `json:"request"`
-		} `json:"total"`
-		State              string `json:"state"`
-		CorrectedQueryText string `json:"correctedQueryText"`
+		QueryText  string `json:"q"`
+		Total      int    `json:"total"`
+		NextCursor string `json:"nextCursor"`
 	} `json:"meta"`
 }
 
@@ -124,30 +100,14 @@ func SearchByType(keyword, searchType string) {
 
 func (res *PostmanRes) ConvertToSearchResult(keyword string) *[]model.SearchResult {
 	results := make([]model.SearchResult, 0)
-	for _, data := range res.Data {
-		document := data.Document
-		name := document.Name
-		method := document.Method
-		requestValue := document.URL
-		requests := data.Requests
-		if requests != nil {
-			if name == "" {
-				name = requests.Document.Name
-			}
-			if method == "" {
-				method = requests.Document.Method
-			}
-			if requestValue == "" {
-				requestValue = requests.Document.Url
-			}
-		}
-		matches := joinNonEmpty(method, name, requestValue, document.Summary)
+	for _, resource := range res.Data {
 		result := model.SearchResult{
-			Path:    document.PublisherName,
-			Url:     buildPostmanURL(document),
-			Matches: matches,
+			Path:    resource.ID,
+			RepoUrl: resource.Links.Web.Href,
+			Url:     resource.Links.Web.Href,
+			Matches: joinNonEmpty(resource.Method, resource.Name, resource.URL, resource.Description),
 			Keyword: keyword,
-			Repo:    document.PublisherName + "/" + name,
+			Repo:    buildPostmanRepo(resource),
 		}
 		results = append(results, result)
 	}
@@ -159,18 +119,22 @@ func SearchAPI(rule, searchType string) (*[]PostmanRes, error) {
 }
 
 type postmanSearchRequest struct {
-	Service string                   `json:"service"`
-	Method  string                   `json:"method"`
-	Path    string                   `json:"path"`
-	Body    postmanSearchRequestBody `json:"body"`
+	ElementType string               `json:"elementType"`
+	QueryText   string               `json:"q"`
+	Ownership   string               `json:"ownership"`
+	Filters     postmanSearchFilters `json:"filters"`
 }
 
-type postmanSearchRequestBody struct {
-	QueryIndices  []string `json:"queryIndices"`
-	QueryText     string   `json:"queryText"`
-	Size          int      `json:"size"`
-	From          int      `json:"from"`
-	MergeEntities bool     `json:"mergeEntities"`
+type postmanSearchFilters struct {
+	And []postmanSearchFilter `json:"$and"`
+}
+
+type postmanSearchFilter struct {
+	Visibility postmanEqualsFilter `json:"visibility"`
+}
+
+type postmanEqualsFilter struct {
+	Equal string `json:"$eq"`
 }
 
 func searchAPI(client *http.Client, endpoint, rule, searchType string) (*[]PostmanRes, error) {
@@ -178,27 +142,32 @@ func searchAPI(client *http.Client, endpoint, rule, searchType string) (*[]Postm
 		return &[]PostmanRes{}, fmt.Errorf("unsupported Postman search type %q", searchType)
 	}
 
+	body, err := json.Marshal(postmanSearchRequest{
+		ElementType: searchType + "s",
+		QueryText:   rule,
+		Ownership:   "all",
+		Filters: postmanSearchFilters{
+			And: []postmanSearchFilter{{
+				Visibility: postmanEqualsFilter{Equal: "public"},
+			}},
+		},
+	})
+	if err != nil {
+		return &[]PostmanRes{}, fmt.Errorf("marshal Postman search request: %w", err)
+	}
+
 	resList := make([]PostmanRes, 0)
-	for page, offset := 0, 0; ; page, offset = page+1, offset+postmanPageSize {
+	seenCursors := make(map[string]struct{})
+	seenResources := make(map[string]struct{})
+	cursor := ""
+	for page := 0; ; page++ {
 		color.Infof("search for the rule %s of page %d\n", rule, page)
-		payload := postmanSearchRequest{
-			Service: "search",
-			Method:  http.MethodPost,
-			Path:    "/search-all",
-			Body: postmanSearchRequestBody{
-				QueryIndices:  []string{"runtime." + searchType},
-				QueryText:     rule,
-				Size:          postmanPageSize,
-				From:          offset,
-				MergeEntities: true,
-			},
-		}
-		body, err := json.Marshal(payload)
+		requestURL, err := buildPostmanSearchURL(endpoint, cursor)
 		if err != nil {
-			return &resList, fmt.Errorf("marshal Postman search page %d: %w", page, err)
+			return &resList, fmt.Errorf("build Postman search page %d URL: %w", page, err)
 		}
 
-		req, err := http.NewRequest(http.MethodPost, endpoint, bytes.NewReader(body))
+		req, err := http.NewRequest(http.MethodPost, requestURL, bytes.NewReader(body))
 		if err != nil {
 			return &resList, fmt.Errorf("create Postman search request: %w", err)
 		}
@@ -218,15 +187,32 @@ func searchAPI(client *http.Client, endpoint, rule, searchType string) (*[]Postm
 		if err = json.Unmarshal(resBody, &postRes); err != nil {
 			return &resList, fmt.Errorf("decode Postman search page %d: %w", page, err)
 		}
-		resList = append(resList, postRes)
 
-		total := postRes.Meta.Total.Request
-		if searchType == "collection" {
-			total = postRes.Meta.Total.Collection
+		uniqueResources := make([]PostmanResource, 0, len(postRes.Data))
+		for _, resource := range postRes.Data {
+			key := postmanResourceKey(resource)
+			if key != "" {
+				if _, exists := seenResources[key]; exists {
+					continue
+				}
+				seenResources[key] = struct{}{}
+			}
+			uniqueResources = append(uniqueResources, resource)
 		}
-		if len(postRes.Data) == 0 || offset+postmanPageSize >= total {
+		postRes.Data = uniqueResources
+		if len(postRes.Data) > 0 {
+			resList = append(resList, postRes)
+		}
+
+		nextCursor := postRes.Meta.NextCursor
+		if nextCursor == "" {
 			break
 		}
+		if _, exists := seenCursors[nextCursor]; exists {
+			return &resList, fmt.Errorf("Postman search repeated cursor on page %d", page)
+		}
+		seenCursors[nextCursor] = struct{}{}
+		cursor = nextCursor
 	}
 	return &resList, nil
 }
@@ -251,24 +237,36 @@ func readPostmanResponse(res *http.Response) ([]byte, error) {
 	return body, nil
 }
 
-func buildPostmanURL(document Document) string {
-	workspaceSlug := document.WorkspaceSlug
-	if workspaceSlug == "" && len(document.Workspaces) > 0 {
-		workspaceSlug = document.Workspaces[0].Slug
+func buildPostmanSearchURL(endpoint, cursor string) (string, error) {
+	searchURL, err := url.Parse(endpoint)
+	if err != nil {
+		return "", err
 	}
-	if document.PublisherHandle != "" && workspaceSlug != "" && document.Id != "" {
-		return fmt.Sprintf(
-			"https://www.postman.com/%s/workspace/%s/%s/%s",
-			url.PathEscape(document.PublisherHandle),
-			url.PathEscape(workspaceSlug),
-			url.PathEscape(document.DocumentType),
-			url.PathEscape(document.Id),
-		)
+	query := searchURL.Query()
+	query.Set("limit", fmt.Sprintf("%d", postmanPageSize))
+	if cursor != "" {
+		query.Set("cursor", cursor)
 	}
-	if document.DocumentType == "collection" && document.Id != "" {
-		return fmt.Sprintf("https://www.postman.com/workspace/collection/%s", url.PathEscape(document.Id))
+	searchURL.RawQuery = query.Encode()
+	return searchURL.String(), nil
+}
+
+func postmanResourceKey(resource PostmanResource) string {
+	if resource.ID != "" {
+		return resource.ID
+	}
+	if resource.Links.Web.Href != "" {
+		return resource.Links.Web.Href
 	}
 	return ""
+}
+
+func buildPostmanRepo(resource PostmanResource) string {
+	label := joinNonEmpty(resource.Organization.Name, resource.Collection.Name, resource.Name)
+	if resource.ID == "" {
+		return label
+	}
+	return label + " [" + resource.ID + "]"
 }
 
 func joinNonEmpty(values ...string) string {

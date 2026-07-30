@@ -10,7 +10,7 @@ import (
 
 type SearchResult struct {
 	global.GVA_MODEL
-	Repo            string         `json:"repo" form:"repo" gorm:"column:repo;comment:;type:varchar(200);size:200;"`
+	Repo            string         `json:"repo" form:"repo" gorm:"column:repo;comment:;type:varchar(1000);size:1000;"`
 	RepoUrl         string         `gorm:"column:repository;type:varchar(200);"`
 	Matches         string         `json:"matches" form:"matches" gorm:"column:matches;comment:;type:text;"`
 	Keyword         string         `json:"keyword" form:"keyword" gorm:"column:keyword;comment:;type:varchar(100);size:100;"`
