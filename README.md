@@ -20,8 +20,9 @@ For the usage of GShark, please refer to the [wiki](https://github.com/madneal/g
 * 🔍 Flexible Rule Management: Custom scanning rules and filtering with whitelist/blacklist support
 * 🔑 Fine-grained Access Control: Configurable menu and API permissions
 * 🔄 Subdomain Discovery: Integrated gobuster for subdomain enumeration
-* 🚀 Docker Deployment: Containerized deployment for easy setup
+* 🚀 Docker Deployment: Containerized deployment for easy setup, with published images on Docker Hub
 * 📊 Vue 3 Management Interface: Vite-powered web interface for task and result management
+* 🔁 Resilient Scanning: automatic retry after GitHub rate limiting, and automatic fallback to a per-project crawl when GitLab global search isn't available
 
 # Quick start
 
@@ -297,6 +298,8 @@ You are supposed to rename `config-temp.yaml` to `config.yaml` and config the da
 
 <img width="363" alt="image" src="https://user-images.githubusercontent.com/12164075/203898719-1ce66395-083d-4226-937f-b6eed859addc.png">
 
+When GitLab global search isn't available, GShark falls back to crawling recently-active public projects. `search.gitlab-discover-pages` and `search.gitlab-batch-size` in `config.yaml` bound how many project pages are discovered and how many projects are searched per scan cycle (defaults: 5 and 50).
+
 
 ## FAQ
 
@@ -363,11 +366,11 @@ Use GitHub filters such as `extension` and `keyword` to narrow the initial searc
 
 12. How should GitHub rate limits be handled?
 
-GitHub search limits cannot be reliably bypassed, and using multiple accounts to avoid them is not recommended because it may risk account bans. A better approach is to reduce noisy rules, narrow the search scope, accept scan delays, and check whether failed tasks are retried.
+GitHub search limits cannot be reliably bypassed, and using multiple accounts to avoid them is not recommended because it may risk account bans. The scanner now automatically retries a page after being rate limited instead of dropping it, but it's still a good idea to reduce noisy rules, narrow the search scope, and accept scan delays.
 
 13. Can GShark connect to self-hosted GitLab?
 
-Yes, by configuring the GitLab Base URL. However, the self-hosted GitLab instance must support code search/indexing. If global search is disabled on the server, GShark cannot bypass that platform limitation.
+Yes, by configuring the GitLab Base URL. GShark first tries GitLab's global code search (`scope=blobs`), which requires Advanced Search/Elasticsearch to be enabled — this is on by default for self-hosted instances that have it configured, and available on GitLab.com only for accounts with Advanced Search enabled. When the server reports that global search isn't supported, GShark automatically falls back to crawling and searching inside recently-active public projects instead, so accounts without Advanced Search still get results, just with narrower coverage than a true global search.
 
 14. Can search results be exported?
 
