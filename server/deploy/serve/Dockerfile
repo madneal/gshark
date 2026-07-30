@@ -1,4 +1,4 @@
-FROM golang:1.25 AS builder
+FROM golang:1.25 as builder
 
 ENV GSHARK_CONFIG=config.docker.yaml
 WORKDIR /go/src/github.com/madneal/gshark/server
@@ -15,7 +15,6 @@ FROM alpine:latest
 
 LABEL MAINTAINER="root@madneal.com"
 
-ENV GSHARK_CONFIG=config.docker.yaml
 WORKDIR /go/src/github.com/madneal/gshark/server
 
 COPY --from=0 /go/src/github.com/madneal/gshark/server/gshark ./
@@ -23,5 +22,4 @@ COPY --from=0 /go/src/github.com/madneal/gshark/server/resource ./resource/
 COPY --from=0 /go/src/github.com/madneal/gshark/server/config.docker.yaml ./
 
 EXPOSE 8888
-ENTRYPOINT ["./gshark"]
-CMD ["serve"]
+ENTRYPOINT ./gshark serve
