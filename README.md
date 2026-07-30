@@ -66,24 +66,7 @@ Use one of the two quick deployment entries:
 
 ## Docker Deployment
 
-Use the published images from Docker Hub:
-
-```bash
-export GSHARK_VERSION=v2.1.11
-docker compose pull server web
-docker compose up -d mysql server web
-
-# Optional: start the scanner after database initialization
-docker compose up -d scan
 ```
-
-`server` and `scan` share the `dongne/gshark` image, while the frontend uses
-`dongne/gshark-web`. Pin `GSHARK_VERSION` to a release tag for reproducible
-deployments.
-
-Build from source:
-
-```bash
 # Clone the repository
 git clone https://github.com/madneal/gshark
 
