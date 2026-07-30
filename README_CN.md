@@ -20,8 +20,9 @@ GShark 是一个敏感信息检测和管理平台。后端基于 Go 和 Gin 构�
 * 🔍 灵活的规则管理：自定义扫描规则和过滤，支持白名单/黑名单
 * 🔑 细粒度访问控制：可配置的菜单和 API 权限
 * 🔄 子域名发现：集成 gobuster 进行子域名枚举
-* 🚀 Docker 部署：容器化部署，易于设置
+* 🚀 Docker 部署：容器化部署，易于设置，并在 Docker Hub 上发布了镜像
 * 📊 Vue 3 管理界面：基于 Vite 的 Web 界面，用于任务和结果管理
+* 🔁 更健壮的扫描：GitHub 触发限流后会自动重试，GitLab 全局搜索不可用时会自动降级为逐项目爬取
 
 # 快速开始
 
@@ -278,6 +279,8 @@ npm run serve
 
 <img width="363" alt="image" src="https://user-images.githubusercontent.com/12164075/203898719-1ce66395-083d-4226-937f-b6eed859addc.png">
 
+当 GitLab 全局搜索不可用时，GShark 会降级为爬取近期活跃的公开项目。`config.yaml` 中的 `search.gitlab-discover-pages` 和 `search.gitlab-batch-size` 用于控制每个扫描周期发现的项目分页数和搜索的项目数量（默认分别为 5 和 50）。
+
 ## 常见问题
 
 1. GShark 扫描的是本地代码还是公开平台代码？
@@ -343,11 +346,11 @@ api_key extension:yaml
 
 12. GitHub rate limit 怎么处理？
 
-GitHub 搜索限制无法可靠绕过，也不建议通过多账号规避，存在封号风险。更合理的方式是减少规则噪声、缩小搜索范围、接受扫描延迟，并查看失败任务是否重试。
+GitHub 搜索限制无法可靠绕过，也不建议通过多账号规避，存在封号风险。scanner 现在会在触发限流后自动重试该页，而不是直接丢弃，但仍建议减少规则噪声、缩小搜索范围、接受扫描延迟。
 
 13. 自建 GitLab 能接入吗？
 
-可以配置 GitLab Base URL。但自建 GitLab 必须具备代码搜索/索引能力。如果服务端关闭了全局搜索，GShark 无法绕过这个平台限制。
+可以配置 GitLab Base URL。GShark 会优先尝试 GitLab 的全局代码搜索（`scope=blobs`），该功能依赖 Advanced Search/Elasticsearch —— 自建实例如果开启了该功能默认可用，GitLab.com 则只有开通 Advanced Search 的账号可用。当服务端返回不支持全局搜索时，GShark 会自动降级为爬取并搜索近期活跃的公开项目，因此没有 Advanced Search 的账号依然能拿到结果，只是覆盖范围比真正的全局搜索要窄。
 
 14. 搜索结果可以导出吗？
 
