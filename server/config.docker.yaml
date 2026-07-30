@@ -35,6 +35,8 @@ search:
   gobuster-filepath: ""
   subdomain-wordlist: ""
   searchnum: 10
+  gitlab-discover-pages: 5
+  gitlab-batch-size: 50
 system:
   env: public
   addr: 8888
