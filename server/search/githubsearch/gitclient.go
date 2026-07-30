@@ -15,6 +15,10 @@ import (
 type Client struct {
 	Client *github.Client
 	Token  string
+
+	// rotate overrides token rotation in tests; nil means use rotateToken,
+	// which calls NextClient (and therefore hits the database).
+	rotate func() bool
 }
 
 func InitClient(token string) *Client {
