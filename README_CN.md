@@ -69,16 +69,23 @@ gshark / gshark
 使用 Docker Hub 上的正式发布镜像：
 
 ```bash
-export GSHARK_VERSION=v2.1.11
-docker compose pull server web
-docker compose up -d mysql server web
+mkdir gshark && cd gshark
+export GSHARK_VERSION=v2.1.12
+
+curl -fLO "https://github.com/madneal/gshark/releases/download/${GSHARK_VERSION}/docker-compose.release.yaml"
+curl -fLO "https://github.com/madneal/gshark/releases/download/${GSHARK_VERSION}/config.docker.yaml"
+
+docker compose -f docker-compose.release.yaml pull
+docker compose -f docker-compose.release.yaml up -d mysql server web
 
 # 可选：数据库初始化完成后启动扫描器
-docker compose up -d scan
+docker compose -f docker-compose.release.yaml up -d scan
 ```
 
 `server` 和 `scan` 共用 `dongne/gshark` 镜像，前端使用
-`dongne/gshark-web`。将 `GSHARK_VERSION` 固定为 release tag 可以确保部署版本可复现。
+`dongne/gshark-web`。发布版 Compose 不包含源码构建，并要求
+`GSHARK_VERSION` 明确指定 release tag。MySQL 数据保存在 `mysql-data`
+named volume 中，替换应用容器不会删除数据库数据。
 
 从源码构建：
 

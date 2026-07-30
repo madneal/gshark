@@ -69,17 +69,24 @@ Use one of the two quick deployment entries:
 Use the published images from Docker Hub:
 
 ```bash
-export GSHARK_VERSION=v2.1.11
-docker compose pull server web
-docker compose up -d mysql server web
+mkdir gshark && cd gshark
+export GSHARK_VERSION=v2.1.12
+
+curl -fLO "https://github.com/madneal/gshark/releases/download/${GSHARK_VERSION}/docker-compose.release.yaml"
+curl -fLO "https://github.com/madneal/gshark/releases/download/${GSHARK_VERSION}/config.docker.yaml"
+
+docker compose -f docker-compose.release.yaml pull
+docker compose -f docker-compose.release.yaml up -d mysql server web
 
 # Optional: start the scanner after database initialization
-docker compose up -d scan
+docker compose -f docker-compose.release.yaml up -d scan
 ```
 
 `server` and `scan` share the `dongne/gshark` image, while the frontend uses
-`dongne/gshark-web`. Pin `GSHARK_VERSION` to a release tag for reproducible
-deployments.
+`dongne/gshark-web`. The release Compose file contains no source builds and
+requires `GSHARK_VERSION` to be an explicit release tag. MySQL data is stored in
+the `mysql-data` named volume and is preserved when application containers are
+replaced.
 
 Build from source:
 

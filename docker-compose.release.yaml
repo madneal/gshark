@@ -1,0 +1,80 @@
+name: gshark
+
+networks:
+  network:
+    ipam:
+      driver: default
+      config:
+        - subnet: "177.7.0.0/16"
+
+volumes:
+  mysql-data:
+
+services:
+  mysql:
+    image: mysql/mysql-server:8.0.21
+    container_name: gshark-mysql
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    restart: always
+    ports:
+      - "13306:3306"
+    environment:
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_DATABASE: gshark
+      MYSQL_ROOT_PASSWORD: madneal
+      MYSQL_USER: gshark
+      MYSQL_PASSWORD: gshark
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 2s
+      retries: 10
+    networks:
+      network:
+        ipv4_address: 177.7.0.13
+
+  web:
+    image: dongne/gshark-web:${GSHARK_VERSION:?Set GSHARK_VERSION to a release tag}
+    container_name: gshark-web
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - server
+    networks:
+      network:
+        ipv4_address: 177.7.0.11
+
+  server:
+    image: dongne/gshark:${GSHARK_VERSION:?Set GSHARK_VERSION to a release tag}
+    container_name: gshark-server
+    environment:
+      GSHARK_CONFIG: config.docker.yaml
+    volumes:
+      - ./config.docker.yaml:/go/src/github.com/madneal/gshark/server/config.docker.yaml:ro
+    restart: always
+    ports:
+      - "8888:8888"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      network:
+        ipv4_address: 177.7.0.12
+
+  scan:
+    image: dongne/gshark:${GSHARK_VERSION:?Set GSHARK_VERSION to a release tag}
+    container_name: gshark-scanner
+    command: ["scan"]
+    environment:
+      GSHARK_CONFIG: config.docker.yaml
+    volumes:
+      - ./config.docker.yaml:/go/src/github.com/madneal/gshark/server/config.docker.yaml:ro
+    restart: "no"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      network:
+        ipv4_address: 177.7.0.14
