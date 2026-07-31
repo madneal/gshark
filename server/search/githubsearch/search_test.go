@@ -41,6 +41,21 @@ func TestSearchWithNoRules(t *testing.T) {
 	Search(nil)
 }
 
+func TestRunTaskWithoutRulesDoesNotSleep(t *testing.T) {
+	originalRules := getGithubRules
+	getGithubRules = func(string) (error, []model.Rule) { return nil, nil }
+	t.Cleanup(func() { getGithubRules = originalRules })
+
+	slept := stubSleep(t)
+	outcome := RunTask()
+	if len(*slept) != 0 {
+		t.Fatalf("RunTask slept without GitHub rules: %v", *slept)
+	}
+	if outcome.Status != model.ScanStatusSkipped {
+		t.Fatalf("outcome status = %q, want skipped", outcome.Status)
+	}
+}
+
 func newTestClient(t *testing.T, handler http.HandlerFunc) (*Client, func() *github.Client) {
 	t.Helper()
 	server := httptest.NewServer(handler)

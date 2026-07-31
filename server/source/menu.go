@@ -33,11 +33,12 @@ var menus = []model.SysBaseMenu{
 	{GVA_MODEL: global.GVA_MODEL{ID: 2, CreatedAt: time.Now(), UpdatedAt: time.Now()}, MenuLevel: 0, ParentId: "24", Path: "token", Name: "token", Hidden: false, Component: "view/token/token.vue", Sort: 2, Meta: model.Meta{Title: "token管理", Icon: "key"}},
 	{GVA_MODEL: global.GVA_MODEL{ID: 9, CreatedAt: time.Now(), UpdatedAt: time.Now()}, MenuLevel: 0, ParentId: "26", Path: "subdomain", Name: "subdomain", Hidden: false, Component: "view/subdomain/subdomain.vue", Sort: 2, Meta: model.Meta{Title: "子域名资产报告", Icon: "connection"}},
 	{GVA_MODEL: global.GVA_MODEL{ID: 10, CreatedAt: time.Now(), UpdatedAt: time.Now()}, MenuLevel: 0, ParentId: "24", Path: "filter", Name: "filter", Hidden: false, Component: "view/filter/filter.vue", Sort: 3, Meta: model.Meta{Title: "过滤规则", Icon: "filter"}},
+	{GVA_MODEL: global.GVA_MODEL{ID: 31, CreatedAt: time.Now(), UpdatedAt: time.Now()}, MenuLevel: 0, ParentId: "24", Path: "scanLog", Name: "scanLog", Hidden: false, Component: "view/scanLog/scanLog.vue", Sort: 4, Meta: model.Meta{Title: "扫描日志", Icon: "data-line"}},
 }
 
 func (m *menu) Init() error {
 	return global.GVA_DB.Transaction(func(tx *gorm.DB) error {
-		if tx.Where("id IN ?", []int{1, 29}).Find(&[]model.SysBaseMenu{}).RowsAffected == 2 {
+		if tx.Where("id IN ?", []int{1, 31}).Find(&[]model.SysBaseMenu{}).RowsAffected == 2 {
 			color.Danger.Println("\n[Mysql] --> sys_base_menus 表的初始数据已存在!")
 			return nil
 		}

@@ -2,6 +2,7 @@ package codesearch
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -25,23 +26,32 @@ var (
 	searchcodeBaseURL    = "https://searchcode.com/api/codesearch_I/"
 )
 
-func RunTask(duration time.Duration) {
+func RunTask() model.ScanOutcome {
 	err, rules := service.GetValidRulesByType("searchcode")
 	if err != nil {
 		global.GVA_LOG.Error("GetValidRulesByType searchcode err", zap.Error(err))
-		return
+		return model.ScanFailed("Failed to load Searchcode rules: " + err.Error())
 	}
 	if len(rules) == 0 {
-		global.GVA_LOG.Info("Rules of search code is empty")
-		return
+		message := "No enabled Searchcode rules; provider skipped"
+		global.GVA_LOG.Info(message)
+		return model.ScanSkipped(message)
 	}
+	var scanErrors []error
 	for _, rule := range rules {
 		global.GVA_LOG.Info(fmt.Sprintf("Search for %s in searchcode", rule.Content))
-		codeResults := SearchForSearchCode(rule, searchcodeHTTPClient)
+		codeResults, err := SearchForSearchCode(rule, searchcodeHTTPClient)
+		if err != nil {
+			scanErrors = append(scanErrors, fmt.Errorf("search %q: %w", rule.Content, err))
+			continue
+		}
 		SaveResults(codeResults, &rule.Content)
 	}
+	if err := errors.Join(scanErrors...); err != nil {
+		return model.ScanFailed("Searchcode scan completed with errors: " + err.Error())
+	}
 	global.GVA_LOG.Info("Complete the scan of searchcode")
-	time.Sleep(duration * time.Second)
+	return model.ScanSuccess(fmt.Sprintf("Completed %d Searchcode rules", len(rules)))
 }
 
 func SaveResults(results []*model.SearchResult, keyword *string) {
@@ -52,51 +62,58 @@ func SaveResults(results []*model.SearchResult, keyword *string) {
 	global.GVA_LOG.Info(stats.Summary(*keyword, "SearchCode"))
 }
 
-func SearchForSearchCode(rule model.Rule, client *http.Client) []*model.SearchResult {
+func SearchForSearchCode(rule model.Rule, client *http.Client) ([]*model.SearchResult, error) {
 	keyword := rule.Content
 	totalCodeResults := make([]*model.SearchResult, 0)
 	for page := 0; page < maxSearchcodePages; page++ {
 		url := searchcodeBaseURL + "?q=" + keyword + "&p=" + strconv.Itoa(page)
 		global.GVA_LOG.Info("search searchcode result for page " + strconv.Itoa(page))
-		codeResults, hasResult := GetResult(client, url)
+		codeResults, hasResult, err := GetResult(client, url)
+		if err != nil {
+			return totalCodeResults, err
+		}
 		totalCodeResults = append(totalCodeResults, codeResults...)
 		if !hasResult {
 			break
 		}
 	}
-	return totalCodeResults
+	return totalCodeResults, nil
 }
 
-func GetResult(client *http.Client, url string) ([]*model.SearchResult, bool) {
+func GetResult(client *http.Client, url string) ([]*model.SearchResult, bool, error) {
 	codeResults := make([]*model.SearchResult, 0)
 
 	resp, err := client.Get(url)
 	if err != nil || resp == nil {
 		global.GVA_LOG.Error("search result of search code error", zap.Any("err", err))
-		return codeResults, false
+		if err == nil {
+			err = errors.New("Searchcode returned a nil response")
+		}
+		return codeResults, false, err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		global.GVA_LOG.Error(fmt.Sprintf("Request to %s error, status code: %d", url, resp.StatusCode))
-		return codeResults, false
+		err = fmt.Errorf("request to %s returned status %d", url, resp.StatusCode)
+		global.GVA_LOG.Error(err.Error())
+		return codeResults, false, err
 	}
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		global.GVA_LOG.Error("read searchcode response body err", zap.Error(err))
-		return codeResults, false
+		return codeResults, false, err
 	}
 
 	var result model.SearchCodeRes
 	if jErr := json.Unmarshal(body, &result); jErr != nil {
 		global.GVA_LOG.Error("json unmarshal searchCodeRes err", zap.Error(jErr))
-		return codeResults, false
+		return codeResults, false, jErr
 	}
 
 	results := result.Results
 	if len(results) == 0 {
-		return codeResults, false
+		return codeResults, false, nil
 	}
 	for _, val := range results {
 		if strings.Contains(val.Repo, "github") {
@@ -122,5 +139,5 @@ func GetResult(client *http.Client, url string) ([]*model.SearchResult, bool) {
 		}
 		codeResults = append(codeResults, &codeResult)
 	}
-	return codeResults, true
+	return codeResults, true, nil
 }

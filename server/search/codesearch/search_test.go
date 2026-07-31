@@ -44,7 +44,10 @@ func TestGetResultHandlesTransportError(t *testing.T) {
 		}),
 	}
 
-	results, hasResult := GetResult(client, "https://searchcode.test/api/codesearch_I/?q=key&p=0")
+	results, hasResult, err := GetResult(client, "https://searchcode.test/api/codesearch_I/?q=key&p=0")
+	if err == nil {
+		t.Fatal("expected a transport error")
+	}
 	if hasResult {
 		t.Fatalf("expected hasResult=false on transport error")
 	}
@@ -60,7 +63,10 @@ func TestGetResultReturnsNoResultsOnNon2xx(t *testing.T) {
 		}),
 	}
 
-	results, hasResult := GetResult(client, "https://searchcode.test/api/codesearch_I/?q=key&p=0")
+	results, hasResult, err := GetResult(client, "https://searchcode.test/api/codesearch_I/?q=key&p=0")
+	if err == nil {
+		t.Fatal("expected a non-2xx error")
+	}
 	if hasResult {
 		t.Fatalf("expected hasResult=false on non-2xx response")
 	}
@@ -80,7 +86,10 @@ func TestGetResultStopsOnInvalidJSON(t *testing.T) {
 		}),
 	}
 
-	results, hasResult := GetResult(client, "https://searchcode.test/api/codesearch_I/?q=key&p=0")
+	results, hasResult, err := GetResult(client, "https://searchcode.test/api/codesearch_I/?q=key&p=0")
+	if err == nil {
+		t.Fatal("expected an invalid JSON error")
+	}
 	if hasResult {
 		t.Fatalf("expected hasResult=false on invalid JSON")
 	}
@@ -101,7 +110,7 @@ func TestGetResultRespectsTimeout(t *testing.T) {
 	done := make(chan struct{})
 	var hasResult bool
 	go func() {
-		_, hasResult = GetResult(client, server.URL)
+		_, hasResult, _ = GetResult(client, server.URL)
 		close(done)
 	}()
 
@@ -128,7 +137,10 @@ func TestSearchForSearchCodePaginatesUpToMax(t *testing.T) {
 	}
 
 	rule := model.Rule{Content: "key"}
-	results := SearchForSearchCode(rule, client)
+	results, err := SearchForSearchCode(rule, client)
+	if err != nil {
+		t.Fatal(err)
+	}
 	if len(results) != maxSearchcodePages {
 		t.Fatalf("expected pagination to stop at %d pages, got %d results", maxSearchcodePages, len(results))
 	}

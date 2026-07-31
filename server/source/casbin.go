@@ -106,6 +106,8 @@ var carbines = []gormadapter.CasbinRule{
 	{PType: "p", V0: "888", V1: "/repo/updateRepo", V2: "PUT"},
 	{PType: "p", V0: "888", V1: "/repo/findRepo", V2: "GET"},
 	{PType: "p", V0: "888", V1: "/repo/getRepoList", V2: "GET"},
+	{PType: "p", V0: "888", V1: "/scanLog/getScanLogList", V2: "GET"},
+	{PType: "p", V0: "888", V1: "/scanLog/getScanLogOverview", V2: "GET"},
 }
 
 func (c *casbin) Init() error {

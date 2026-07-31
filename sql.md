@@ -1,3 +1,75 @@
+## v2.1.14
+
+Add structured scanner lifecycle logs, scan progress monitoring, and the admin menu/API permissions used by the scan log page:
+
+```sql
+create table if not exists scan_log
+(
+    id               bigint unsigned auto_increment primary key,
+    created_at       datetime      null,
+    updated_at       datetime      null,
+    deleted_at       datetime      null,
+    cycle_id         varchar(36)   null,
+    provider         varchar(32)   null,
+    status           varchar(16)   null,
+    message          varchar(1000) null,
+    progress_current bigint        default 0 null,
+    progress_total   bigint        default 1 null,
+    started_at       datetime      null,
+    finished_at      datetime      null,
+    heartbeat_at     datetime      null,
+    duration_ms      bigint        default 0 null,
+    index idx_scan_log_deleted_at (deleted_at),
+    index idx_scan_log_cycle (cycle_id),
+    index idx_scan_log_provider (provider),
+    index idx_scan_log_status (status),
+    index idx_scan_log_heartbeat (heartbeat_at)
+);
+
+insert into sys_base_menus
+    (created_at, updated_at, deleted_at, menu_level, parent_id, path, name, hidden, component,
+     sort, keep_alive, default_menu, title, icon, close_tab)
+select current_timestamp, current_timestamp, null, 0, '24', 'scanLog', 'scanLog', 0,
+       'view/scanLog/scanLog.vue', 4, 0, 0, '扫描日志', 'data-line', 0
+where not exists (select 1 from sys_base_menus where name = 'scanLog');
+
+update sys_base_menus
+set icon = 'data-line'
+where name = 'scanLog' and coalesce(icon, '') <> 'data-line';
+
+insert into sys_authority_menus (sys_authority_authority_id, sys_base_menu_id)
+select '888', id from sys_base_menus where name = 'scanLog'
+and not exists (
+    select 1 from sys_authority_menus sam
+    where sam.sys_authority_authority_id = '888'
+      and sam.sys_base_menu_id = sys_base_menus.id
+);
+
+insert into sys_apis (created_at, updated_at, deleted_at, path, description, api_group, method)
+select current_timestamp, current_timestamp, null, '/scanLog/getScanLogList',
+       '获取扫描日志列表', 'scanLog', 'GET'
+where not exists (select 1 from sys_apis where path = '/scanLog/getScanLogList' and method = 'GET');
+
+insert into sys_apis (created_at, updated_at, deleted_at, path, description, api_group, method)
+select current_timestamp, current_timestamp, null, '/scanLog/getScanLogOverview',
+       '获取扫描状态概览', 'scanLog', 'GET'
+where not exists (select 1 from sys_apis where path = '/scanLog/getScanLogOverview' and method = 'GET');
+
+insert into casbin_rule (p_type, v0, v1, v2)
+select 'p', '888', '/scanLog/getScanLogList', 'GET'
+where not exists (
+    select 1 from casbin_rule
+    where p_type = 'p' and v0 = '888' and v1 = '/scanLog/getScanLogList' and v2 = 'GET'
+);
+
+insert into casbin_rule (p_type, v0, v1, v2)
+select 'p', '888', '/scanLog/getScanLogOverview', 'GET'
+where not exists (
+    select 1 from casbin_rule
+    where p_type = 'p' and v0 = '888' and v1 = '/scanLog/getScanLogOverview' and v2 = 'GET'
+);
+```
+
 ## v2.1.11
 
 Expand the repository field so full Postman request names and identifiers can be stored:
@@ -134,7 +206,4 @@ alter table token drop column description;
 insert into sys_apis (created_at, updated_at, deleted_at, path, description, api_group, method) VALUES 
 (current_timestamp, current_timestamp, null, '/email/botTest', '企业微信测试', 'email', 'GET');
 ```
-
-
-
 

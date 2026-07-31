@@ -3,6 +3,7 @@ package postman
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -25,6 +26,11 @@ const (
 )
 
 var postmanHTTPClient = &http.Client{Timeout: postmanRequestTimeout}
+
+var (
+	getPostmanRules = service.GetValidRulesByType
+	searchPostman   = Search
+)
 
 type PostmanResourceRef struct {
 	ID   string `json:"id"`
@@ -68,25 +74,36 @@ type PostmanRes struct {
 	} `json:"meta"`
 }
 
-func RunTask() {
-	err, rules := service.GetValidRulesByType("postman")
+func RunTask() model.ScanOutcome {
+	err, rules := getPostmanRules("postman")
 	if err != nil {
 		global.GVA_LOG.Error("GetValidRulesByType postman err", zap.Error(err))
-		return
+		return model.ScanFailed("Failed to load Postman rules: " + err.Error())
+	}
+	if len(rules) == 0 {
+		message := "No enabled Postman rules; provider skipped"
+		global.GVA_LOG.Info(message)
+		return model.ScanSkipped(message)
 	}
 	color.Infoln("begin the postman search task")
-	Search(&rules)
-	color.Infof("finish the postman search task, ready to sleep\n")
-	time.Sleep(900 * time.Second)
-}
-
-func Search(rules *[]model.Rule) {
-	for _, rule := range *rules {
-		SearchByType(rule.Content, "request")
+	if err := searchPostman(&rules); err != nil {
+		return model.ScanFailed("Postman scan completed with errors: " + err.Error())
 	}
+	color.Infof("finish the postman search task\n")
+	return model.ScanSuccess(fmt.Sprintf("Completed %d Postman rules", len(rules)))
 }
 
-func SearchByType(keyword, searchType string) {
+func Search(rules *[]model.Rule) error {
+	var searchErrors []error
+	for _, rule := range *rules {
+		if err := SearchByType(rule.Content, "request"); err != nil {
+			searchErrors = append(searchErrors, err)
+		}
+	}
+	return errors.Join(searchErrors...)
+}
+
+func SearchByType(keyword, searchType string) error {
 	resList, err := SearchAPI(keyword, searchType)
 	for _, res := range *resList {
 		results := res.ConvertToSearchResult(keyword)
@@ -96,6 +113,7 @@ func SearchByType(keyword, searchType string) {
 	if err != nil {
 		global.GVA_LOG.Error("postman SearchAPI err", zap.Error(err))
 	}
+	return err
 }
 
 func (res *PostmanRes) ConvertToSearchResult(keyword string) *[]model.SearchResult {

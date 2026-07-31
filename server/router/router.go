@@ -43,6 +43,7 @@ func Routers() *gin.Engine {
 		InitSubdomainRouter(PrivateGroup)
 		InitFilterRouter(PrivateGroup)
 		InitRepoRouter(PrivateGroup)
+		InitScanLogRouter(PrivateGroup)
 	}
 	global.GVA_LOG.Info("router register success")
 	return Router

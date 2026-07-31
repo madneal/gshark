@@ -16,6 +16,35 @@ import (
 	"go.uber.org/zap"
 )
 
+func TestRunTaskWithoutClientDoesNotSleep(t *testing.T) {
+	originalClient := getGitlabClient
+	getGitlabClient = func() *gitlab.Client { return nil }
+	t.Cleanup(func() {
+		getGitlabClient = originalClient
+	})
+
+	outcome := RunTask()
+	if outcome.Status != model.ScanStatusSkipped {
+		t.Fatalf("outcome status = %q, want skipped", outcome.Status)
+	}
+}
+
+func TestRunTaskWithoutRulesDoesNotSleep(t *testing.T) {
+	originalClient := getGitlabClient
+	originalRules := getGitlabRules
+	getGitlabClient = func() *gitlab.Client { return &gitlab.Client{} }
+	getGitlabRules = func(string) (error, []model.Rule) { return nil, nil }
+	t.Cleanup(func() {
+		getGitlabClient = originalClient
+		getGitlabRules = originalRules
+	})
+
+	outcome := RunTask()
+	if outcome.Status != model.ScanStatusSkipped {
+		t.Fatalf("outcome status = %q, want skipped", outcome.Status)
+	}
+}
+
 func TestMain(m *testing.M) {
 	global.GVA_LOG = zap.NewNop()
 	os.Exit(m.Run())
