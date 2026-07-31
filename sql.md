@@ -1,3 +1,16 @@
+# Upgrade SQL
+
+> **Character set notice:** the statements below contain Chinese text. When applying them
+> with the `mysql` command-line client (especially inside the MySQL Docker container, whose
+> client defaults to latin1), always pass `--default-character-set=utf8mb4`, e.g.
+>
+> ```bash
+> docker exec -i gshark-mysql mysql --default-character-set=utf8mb4 -uroot -p gshark < upgrade.sql
+> ```
+>
+> Without it the UTF-8 text is double-encoded and menu titles/API descriptions show up as
+> mojibake (e.g. `æ‰«æ...`) in the admin UI.
+
 ## v2.1.14
 
 Add structured scanner lifecycle logs, scan progress monitoring, and the admin menu/API permissions used by the scan log page:
