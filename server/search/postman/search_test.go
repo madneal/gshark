@@ -14,7 +14,31 @@ import (
 
 	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/initialize"
+	"github.com/madneal/gshark/model"
+	"go.uber.org/zap"
 )
+
+func TestRunTaskWithoutRulesDoesNotSleepOrSearch(t *testing.T) {
+	originalLog := global.GVA_LOG
+	originalRules := getPostmanRules
+	originalSearch := searchPostman
+	global.GVA_LOG = zap.NewNop()
+	getPostmanRules = func(string) (error, []model.Rule) { return nil, nil }
+	searchPostman = func(*[]model.Rule) error {
+		t.Fatal("RunTask searched without Postman rules")
+		return nil
+	}
+	t.Cleanup(func() {
+		global.GVA_LOG = originalLog
+		getPostmanRules = originalRules
+		searchPostman = originalSearch
+	})
+
+	outcome := RunTask()
+	if outcome.Status != model.ScanStatusSkipped {
+		t.Fatalf("outcome status = %q, want skipped", outcome.Status)
+	}
+}
 
 func TestRunTask(t *testing.T) {
 	if testing.Short() {

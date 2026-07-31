@@ -109,6 +109,8 @@ var apis = []model.SysApi{
 	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/repo/updateRepo", "更新仓库", "repo", "PUT"},
 	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/repo/findRepo", "根据ID获取仓库", "repo", "GET"},
 	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/repo/getRepoList", "获取仓库列表", "repo", "GET"},
+	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/scanLog/getScanLogList", "获取扫描日志列表", "scanLog", "GET"},
+	{global.GVA_MODEL{CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/scanLog/getScanLogOverview", "获取扫描状态概览", "scanLog", "GET"},
 }
 
 func (a *api) Init() error {

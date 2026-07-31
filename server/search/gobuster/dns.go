@@ -113,17 +113,22 @@ func run(ctx context.Context, word, domain string) error {
 	return err
 }
 
-func RunTask(duration time.Duration) {
+func RunTask() model.ScanOutcome {
 	err, rules := service.GetValidRulesByType("domain")
 	if err != nil {
 		global.GVA_LOG.Error("get subdomain rules error", zap.Any("error", err))
+		return model.ScanFailed("Failed to load domain rules: " + err.Error())
+	}
+	if len(rules) == 0 {
+		message := "No enabled domain rules; provider skipped"
+		global.GVA_LOG.Info(message)
+		return model.ScanSkipped(message)
 	}
 	for _, rule := range rules {
 		start := time.Now()
 		domain := rule.Content
 		RunDNS(context.Background(), domain)
-		fmt.Printf("Complete the scan of domain %s, cost %v, start to sleep %v seconds",
-			domain, time.Since(start), duration*time.Second)
-		time.Sleep(duration * time.Second)
+		fmt.Printf("Complete the scan of domain %s, cost %v\n", domain, time.Since(start))
 	}
+	return model.ScanSuccess(fmt.Sprintf("Completed %d domain rules", len(rules)))
 }

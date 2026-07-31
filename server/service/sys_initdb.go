@@ -136,6 +136,7 @@ func InitDB(conf request.InitDB) error {
 		model.Filter{},
 		model.Repo{},
 		model.Task{},
+		model.ScanLog{},
 	)
 	if err != nil {
 		return err

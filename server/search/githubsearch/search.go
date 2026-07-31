@@ -18,25 +18,28 @@ import (
 	"time"
 )
 
-func Search(rules []model.Rule) {
+func Search(rules []model.Rule) error {
 	if len(rules) == 0 {
-		return
+		return nil
 	}
 	client, err := GetGithubClient()
 	if err != nil {
 		global.GVA_LOG.Error("GetGithubClient err", zap.Error(err))
-		return
+		return err
 	}
 	var content string
+	var scanErrors []error
 	for _, rule := range rules {
 		query, err := BuildQuery(rule.Content)
 		if err != nil {
 			global.GVA_LOG.Error("BuildQuery error", zap.Error(err))
+			scanErrors = append(scanErrors, fmt.Errorf("build query for %q: %w", rule.Content, err))
 			continue
 		}
 		results, err := client.SearchCode(query)
 		if err != nil {
 			global.GVA_LOG.Error("SearchCode error", zap.Error(err))
+			scanErrors = append(scanErrors, fmt.Errorf("search %q: %w", rule.Content, err))
 			continue
 		}
 		stats := SaveResultWithStats(results, rule.Content)
@@ -68,6 +71,7 @@ func Search(rules []model.Rule) {
 			}
 		}
 	}
+	return errors.Join(scanErrors...)
 }
 
 func SaveResultWithStats(results []*github.CodeSearchResult, keyword string) *service.SaveResultStats {
@@ -101,16 +105,23 @@ func ConvertToSearchResults(results []*github.CodeSearchResult, keyword string) 
 	return searchResults
 }
 
-func RunTask(duration time.Duration) {
-	err, rules := service.GetValidRulesByType("github")
+func RunTask() model.ScanOutcome {
+	err, rules := getGithubRules("github")
 	if err != nil {
 		global.GVA_LOG.Error("GetValidRulesByType github err", zap.Error(err))
-		return
+		return model.ScanFailed("Failed to load GitHub rules: " + err.Error())
 	}
 	color.Debug.Print(fmt.Sprintf("Github fetch %d rules, begin the scan task\n", len(rules)))
-	Search(rules)
-	color.Debug.Print(fmt.Sprintf("Comple the scan of Github, start to sleep %d seconds", duration))
-	time.Sleep(duration * time.Second)
+	if len(rules) == 0 {
+		message := "No enabled GitHub rules; provider skipped"
+		global.GVA_LOG.Info(message)
+		return model.ScanSkipped(message)
+	}
+	if err := Search(rules); err != nil {
+		return model.ScanFailed("GitHub scan completed with errors: " + err.Error())
+	}
+	color.Debug.Print("Complete the scan of Github\n")
+	return model.ScanSuccess(fmt.Sprintf("Completed %d GitHub rules", len(rules)))
 }
 
 func (c *Client) GetCommiter(ctx context.Context, owner, repo string) string {
@@ -131,9 +142,11 @@ func (c *Client) SearchCode(query string) ([]*github.CodeSearchResult, error) {
 	global.GVA_LOG.Info("Github scan with the query:", zap.Any("github", query))
 	for {
 		result, nextPage := c.searchCodeByOpt(ctx, query, *opt)
-		if result != nil {
-			allSearchResult = append(allSearchResult, result)
+		if result == nil {
+			err = fmt.Errorf("GitHub returned no response for query %q", query)
+			break
 		}
+		allSearchResult = append(allSearchResult, result)
 		if nextPage <= 0 {
 			break
 		}
@@ -190,6 +203,8 @@ const maxSearchAttempts = 3
 
 // sleepFn is overridden in tests so rate-limit backoffs don't actually block.
 var sleepFn = time.Sleep
+
+var getGithubRules = service.GetValidRulesByType
 
 func (c *Client) searchCodeByOpt(ctx context.Context, query string, opt github.SearchOptions) (*github.CodeSearchResult,
 	int) {

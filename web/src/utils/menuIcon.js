@@ -11,6 +11,7 @@ const iconMap = {
   user: 'User',
   'user-solid': 'UserFilled',
   'data-analysis': 'DataAnalysis',
+  'data-line': 'DataLine',
   's-operation': 'Operation',
   operation: 'Operation',
   monitor: 'Monitor',

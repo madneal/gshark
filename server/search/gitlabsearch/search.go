@@ -27,31 +27,38 @@ const (
 	maxConcurrentProjectSearches = 5
 )
 
-func RunTask(duration time.Duration) {
-	client := GetClient()
+var (
+	getGitlabClient = GetClient
+	getGitlabRules  = service.GetValidRulesByType
+)
+
+func RunTask() model.ScanOutcome {
+	client := getGitlabClient()
 	if client == nil {
-		color.Warnln("There is no client for Gitlab, please check if you specify Gitlab token")
-		time.Sleep(duration * time.Second)
-		return
+		message := "There is no client for GitLab; configure a GitLab token to enable this provider"
+		color.Warnln(message)
+		return model.ScanSkipped(message)
 	}
 
-	err, rules := service.GetValidRulesByType("gitlab")
+	err, rules := getGitlabRules("gitlab")
 	if err != nil {
 		global.GVA_LOG.Error("GetValidRulesByType gitlab err", zap.Error(err))
-		return
+		return model.ScanFailed("Failed to load GitLab rules: " + err.Error())
 	}
 	if len(rules) == 0 {
-		time.Sleep(duration * time.Second)
-		return
+		message := "No enabled GitLab rules; provider skipped"
+		global.GVA_LOG.Info(message)
+		return model.ScanSkipped(message)
 	}
 
 	if !RunGlobalSearchTask(client, rules) {
 		global.GVA_LOG.Info("GitLab global blob search unavailable (no Advanced Search), falling back to per-project crawl")
 		GetProjects(client, discoverPages())
 		RunSearchTaskByProject(NextProjectBatch(batchSize()), rules, client)
+		return model.ScanSuccess(fmt.Sprintf("Completed %d GitLab rules with per-project fallback", len(rules)))
 	}
-	global.GVA_LOG.Info(fmt.Sprintf("Complete the scan of GitLab, start to sleep %d seconds", duration))
-	time.Sleep(duration * time.Second)
+	global.GVA_LOG.Info("Complete the scan of GitLab")
+	return model.ScanSuccess(fmt.Sprintf("Completed %d GitLab rules", len(rules)))
 }
 
 func discoverPages() int {
