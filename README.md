@@ -20,7 +20,7 @@ For the usage of GShark, please refer to the [wiki](https://github.com/madneal/g
 * 🔍 Flexible Rule Management: Custom scanning rules and filtering with whitelist/blacklist support
 * 🔑 Fine-grained Access Control: Configurable menu and API permissions
 * 🔄 Subdomain Discovery: Integrated gobuster for subdomain enumeration
-* 🚀 Docker Deployment: Containerized deployment for easy setup, with published images on Docker Hub
+* 🚀 Docker Deployment: Containerized deployment for easy setup
 * 📊 Vue 3 Management Interface: Vite-powered web interface for task and result management
 * 🔁 Resilient Scanning: automatic retry after GitHub rate limiting, and automatic fallback to a per-project crawl when GitLab global search isn't available
 
