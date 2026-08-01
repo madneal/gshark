@@ -27,16 +27,14 @@ func Routers() *gin.Engine {
 	PrivateGroup := Router.Group("")
 	PrivateGroup.Use(middleware.JWTAuth()).Use(middleware.CasbinHandler())
 	{
-		InitApiRouter(PrivateGroup)                 // 注册功能api路由
-		InitJwtRouter(PrivateGroup)                 // jwt相关路由
-		InitUserRouter(PrivateGroup)                // 注册用户路由
-		InitMenuRouter(PrivateGroup)                // 注册menu路由
-		InitSystemRouter(PrivateGroup)              // system相关路由
-		InitCasbinRouter(PrivateGroup)              // 权限相关路由
-		InitAuthorityRouter(PrivateGroup)           // 注册角色路由
-		InitSysDictionaryRouter(PrivateGroup)       // 字典管理
-		InitSysOperationRecordRouter(PrivateGroup)  // 操作记录
-		InitSysDictionaryDetailRouter(PrivateGroup) // 字典详情管理
+		InitApiRouter(PrivateGroup)                // 注册功能api路由
+		InitJwtRouter(PrivateGroup)                // jwt相关路由
+		InitUserRouter(PrivateGroup)               // 注册用户路由
+		InitMenuRouter(PrivateGroup)               // 注册menu路由
+		InitSystemRouter(PrivateGroup)             // system相关路由
+		InitCasbinRouter(PrivateGroup)             // 权限相关路由
+		InitAuthorityRouter(PrivateGroup)          // 注册角色路由
+		InitSysOperationRecordRouter(PrivateGroup) // 操作记录
 		InitRuleRouter(PrivateGroup)
 		InitTokenRouter(PrivateGroup)
 		InitSearchResultRouter(PrivateGroup)

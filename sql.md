@@ -1,3 +1,26 @@
+## v2.1.15
+
+Remove the unused dictionary management menus, API catalog entries, and permissions from an existing database. Dictionary data tables are intentionally preserved:
+
+```sql
+delete sam
+from sys_authority_menus sam
+join sys_base_menus menu on menu.id = sam.sys_base_menu_id
+where menu.name in ('dictionary', 'dictionaryDetail');
+
+delete from casbin_rule
+where v1 like '/sysDictionary/%'
+   or v1 like '/sysDictionaryDetail/%';
+
+delete from sys_apis
+where api_group in ('sysDictionary', 'sysDictionaryDetail')
+   or path like '/sysDictionary/%'
+   or path like '/sysDictionaryDetail/%';
+
+delete from sys_base_menus
+where name in ('dictionary', 'dictionaryDetail');
+```
+
 ## v2.1.14
 
 Add structured scanner lifecycle logs, scan progress monitoring, and the admin menu/API permissions used by the scan log page:
@@ -68,6 +91,7 @@ where not exists (
     select 1 from casbin_rule
     where p_type = 'p' and v0 = '888' and v1 = '/scanLog/getScanLogOverview' and v2 = 'GET'
 );
+
 ```
 
 ## v2.1.11
@@ -206,4 +230,3 @@ alter table token drop column description;
 insert into sys_apis (created_at, updated_at, deleted_at, path, description, api_group, method) VALUES 
 (current_timestamp, current_timestamp, null, '/email/botTest', '企业微信测试', 'email', 'GET');
 ```
-
