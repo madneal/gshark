@@ -28,8 +28,6 @@ func MysqlTables(db *gorm.DB) {
 		model.SysBaseMenu{},
 		model.SysBaseMenuParameter{},
 		model.JwtBlacklist{},
-		model.SysDictionary{},
-		model.SysDictionaryDetail{},
 		model.SysOperationRecord{},
 		model.Rule{},
 		model.Token{},

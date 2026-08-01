@@ -126,8 +126,6 @@ func InitDB(conf request.InitDB) error {
 		model.SysBaseMenu{},
 		model.SysBaseMenuParameter{},
 		model.JwtBlacklist{},
-		model.SysDictionary{},
-		model.SysDictionaryDetail{},
 		model.SysOperationRecord{},
 		model.Rule{},
 		model.Token{},
@@ -149,8 +147,6 @@ func InitDB(conf request.InitDB) error {
 		source.AuthorityMenu,
 		source.Casbin,
 		source.DataAuthorities,
-		source.Dictionary,
-		source.DictionaryDetail,
 		source.BaseMenu)
 	if err != nil {
 		_ = writeConfig(global.GVA_VP, BaseMysql)

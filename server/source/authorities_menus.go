@@ -33,8 +33,6 @@ var authorityMenus = []AuthorityMenus{
 	{"888", 15},
 	{"888", 16},
 	{"888", 17},
-	{"888", 18},
-	{"888", 19},
 	{"888", 20},
 	{"888", 21},
 	{"888", 22},
@@ -70,7 +68,7 @@ var authorityMenus = []AuthorityMenus{
 
 func (a *authoritiesMenus) Init() error {
 	return global.GVA_DB.Table("sys_authority_menus").Transaction(func(tx *gorm.DB) error {
-		if tx.Where("sys_authority_authority_id IN ('888', '8881', '9528')").Find(&[]AuthorityMenus{}).RowsAffected == 49 {
+		if tx.Where("sys_authority_authority_id IN ('888', '8881', '9528')").Find(&[]AuthorityMenus{}).RowsAffected == 47 {
 			color.Danger.Println("\n[Mysql] --> sys_authority_menus 表的初始数据已存在!")
 			return nil
 		}

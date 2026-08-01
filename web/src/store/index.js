@@ -3,7 +3,6 @@ import VuexPersistence from 'vuex-persist'
 
 import { user } from "@/store/module/user"
 import { router } from "@/store/module/router"
-import { dictionary } from "@/store/module/dictionary"
 
 const vuexLocal = new VuexPersistence({
     storage: window.localStorage,
@@ -12,8 +11,7 @@ const vuexLocal = new VuexPersistence({
 export const store = createStore({
     modules: {
         user,
-        router,
-        dictionary
+        router
     },
     plugins: [vuexLocal.plugin]
 })
