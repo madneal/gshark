@@ -1,7 +1,7 @@
 package initialize
 
 import (
-	"os"
+	"errors"
 
 	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/model"
@@ -20,7 +20,11 @@ func Gorm() *gorm.DB {
 	}
 }
 
-func MysqlTables(db *gorm.DB) {
+func MysqlTables(db *gorm.DB) error {
+	if db == nil {
+		return errors.New("database connection is required")
+	}
+
 	err := db.AutoMigrate(
 		model.SysUser{},
 		model.SysAuthority{},
@@ -40,9 +44,10 @@ func MysqlTables(db *gorm.DB) {
 	)
 	if err != nil {
 		global.GVA_LOG.Error("register table failed", zap.Any("err", err))
-		os.Exit(0)
+		return err
 	}
 	global.GVA_LOG.Info("register table success")
+	return nil
 }
 
 func GormMysql() *gorm.DB {

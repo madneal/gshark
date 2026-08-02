@@ -46,7 +46,7 @@ gshark / gshark
 推荐优先使用下面两个 quick 部署入口：
 
 ```bash
-# 方式一：Docker quick，构建并后台启动 mysql/server/web
+# 方式一：Docker quick，构建所有应用镜像并后台启动 mysql/server/web
 ./scripts/quick-docker.sh
 
 # 自定义管理员账号

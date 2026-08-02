@@ -46,7 +46,7 @@ Set a custom admin account via script/CLI flags (no browser init page required):
 Use one of the two quick deployment entries:
 
 ```bash
-# Option 1: Docker quick. Build and start mysql/server/web in the background.
+# Option 1: Docker quick. Build all application images and start mysql/server/web in the background.
 ./scripts/quick-docker.sh
 
 # Custom admin account

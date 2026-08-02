@@ -21,6 +21,8 @@ type Client struct {
 	rotate func() bool
 }
 
+var listGithubTokens = service.ListTokenByType
+
 func InitClient(token string) *Client {
 	githubClient := InitGithubClient(token)
 	return &Client{
@@ -39,7 +41,7 @@ func InitGithubClient(token string) *github.Client {
 }
 
 func GetGithubClient() (*Client, error) {
-	err, tokens := service.ListTokenByType("github")
+	err, tokens := listGithubTokens("github")
 	if err != nil {
 		return nil, err
 	}
@@ -55,9 +57,12 @@ func GetGithubClient() (*Client, error) {
 
 func (c *Client) NextClient() (*github.Client, string) {
 	currentToken := c.Token
-	err, tokens := service.ListTokenByType("github")
+	err, tokens := listGithubTokens("github")
 	if err != nil {
 		global.GVA_LOG.Error("github Client initial failed, please add token", zap.Error(err))
+		return nil, ""
+	}
+	if len(tokens) == 0 {
 		return nil, ""
 	}
 	var currentIndex int
