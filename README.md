@@ -78,7 +78,7 @@ cd gshark
 ```
 
 > [!IMPORTANT]
-> Before the MySQL database initial, the scanner container will exit. Need to restart the scanner after the MySQL database initial.
+> The quick Docker script starts MySQL first, initializes the database, and only then starts the scanner when `--with-scan` is used. If you start the scanner manually with Docker Compose, wait until database initialization completes first.
 
 ## Local Deployment 
 

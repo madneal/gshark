@@ -92,13 +92,11 @@ fi
 echo "[INFO] Building server/web/scan images..."
 "${COMPOSE[@]}" build server web scan
 
-echo "[INFO] Starting mysql/server/web..."
-"${COMPOSE[@]}" up -d mysql server web
+echo "[INFO] Starting mysql..."
+"${COMPOSE[@]}" up -d mysql
 
-if [[ "$WITH_SCAN" == true ]]; then
-    echo "[INFO] Starting scan..."
-    "${COMPOSE[@]}" up -d scan
-fi
+echo "[INFO] Starting server/web..."
+"${COMPOSE[@]}" up -d server web
 
 INIT_RESULT="skipped" # skipped | applied | failed | skipped_flag
 
@@ -161,6 +159,11 @@ else
             echo "        docker exec gshark-server ./gshark init --help" >&2
             ;;
     esac
+fi
+
+if [[ "$WITH_SCAN" == true && "$INIT_RESULT" != "failed" ]]; then
+    echo "[INFO] Starting scan after database initialization..."
+    "${COMPOSE[@]}" up -d scan
 fi
 
 echo

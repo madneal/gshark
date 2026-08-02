@@ -78,7 +78,7 @@ cd gshark
 ```
 
 > [!IMPORTANT]
-> 在 MySQL 数据库初始化之前，扫描器容器会退出。需要在 MySQL 数据库初始化后重启扫描器。
+> Docker quick 脚本会先启动 MySQL、初始化数据库，只有使用 `--with-scan` 时才会在初始化完成后启动扫描器。如果手动使用 Docker Compose 启动扫描器，请先等待数据库初始化完成。
 
 ## 本地部署
 
