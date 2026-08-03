@@ -30,12 +30,15 @@ func InitClient(token string) *Client {
 }
 
 func InitGithubClient(token string) *github.Client {
-	httpTransport := &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-	}
-	httpClient := &http.Client{Transport: httpTransport}
+	httpClient := &http.Client{Transport: newGithubHTTPTransport()}
 	gitClient := github.NewClient(httpClient).WithAuthToken(token)
 	return gitClient
+}
+
+func newGithubHTTPTransport() *http.Transport {
+	transport := http.DefaultTransport.(*http.Transport).Clone()
+	transport.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	return transport
 }
 
 func GetGithubClient() (*Client, error) {
