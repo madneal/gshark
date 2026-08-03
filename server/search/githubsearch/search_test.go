@@ -41,6 +41,16 @@ func TestSearchWithNoRules(t *testing.T) {
 	Search(nil)
 }
 
+func TestGithubHTTPTransportPreservesDefaultProxy(t *testing.T) {
+	defaultTransport, ok := http.DefaultTransport.(*http.Transport)
+	if !ok || defaultTransport.Proxy == nil {
+		t.Fatal("expected the default HTTP transport to provide an environment proxy")
+	}
+	if newGithubHTTPTransport().Proxy == nil {
+		t.Fatal("expected GitHub transport to preserve the default environment proxy")
+	}
+}
+
 func TestRunTaskWithoutRulesDoesNotSleep(t *testing.T) {
 	originalRules := getGithubRules
 	getGithubRules = func(string) (error, []model.Rule) { return nil, nil }
