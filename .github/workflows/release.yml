@@ -86,6 +86,7 @@ jobs:
       - name: Go Build for linux
         env:
           GO111MODULE: on
+          CGO_ENABLED: 0
         working-directory: ./server
         run: |
           GOOS=linux GOARCH=amd64 go build -o gshark && cp gshark ../release/gshark_linux_amd64
