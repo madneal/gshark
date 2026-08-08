@@ -8,11 +8,11 @@ import (
 	"github.com/google/uuid"
 	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/model"
-	"github.com/madneal/gshark/search/codesearch"
 	"github.com/madneal/gshark/search/githubsearch"
 	"github.com/madneal/gshark/search/gitlabsearch"
 	"github.com/madneal/gshark/search/gobuster"
 	"github.com/madneal/gshark/search/postman"
+	"github.com/madneal/gshark/search/sourcegraphsearch"
 	"github.com/madneal/gshark/service"
 	"go.uber.org/zap"
 )
@@ -87,7 +87,7 @@ Finished:
 func scanTasks() []providerTask {
 	return []providerTask{
 		{name: "gitlab", run: gitlabsearch.RunTask},
-		{name: "searchcode", run: codesearch.RunTask},
+		{name: "sourcegraph", run: sourcegraphsearch.RunTask},
 		{name: "github", run: githubsearch.RunTask},
 		{name: "gobuster", run: gobuster.RunTask},
 		{name: "postman", run: postman.RunTask},

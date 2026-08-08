@@ -158,7 +158,7 @@ export default {
         desc: "",
         status: true,
       },
-      types: ["github", "gitlab", "searchcode", "domain", "postman"],
+      types: ["github", "gitlab", "sourcegraph", "domain", "postman"],
     };
   },
   methods: {

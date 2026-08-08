@@ -16,7 +16,7 @@ GShark 是一个敏感信息检测和管理平台。后端基于 Go 和 Gin 构�
 
 # 主要特性
 
-* 🌐 多平台支持：GitHub、GitLab、Searchcode、Postman 等
+* 🌐 多平台支持：GitHub、GitLab、Sourcegraph、Postman 等
 * 🔍 灵活的规则管理：自定义扫描规则和过滤，支持白名单/黑名单
 * 🔑 细粒度访问控制：可配置的菜单和 API 权限
 * 🔄 子域名发现：集成 gobuster 进行子域名枚举
@@ -281,11 +281,17 @@ npm run serve
 
 当 GitLab 全局搜索不可用时，GShark 会降级为爬取近期活跃的公开项目。`config.yaml` 中的 `search.gitlab-discover-pages` 和 `search.gitlab-batch-size` 用于控制每个扫描周期发现的项目分页数和搜索的项目数量（默认分别为 5 和 50）。
 
+### Sourcegraph 全局代码搜索
+
+Sourcegraph provider 使用 Stream API 对 Sourcegraph 索引中的全部仓库执行规则搜索，不需要逐个配置仓库。默认使用 `https://sourcegraph.com` 公共实例；如果使用自建实例，可在 `config.yaml` 中设置 `search.sourcegraph-url`，并通过 `search.sourcegraph-token` 或 `SOURCEGRAPH_TOKEN` 提供访问令牌。公共实例默认排除的 fork 和 archived 仓库会被 GShark 显式包含，以尽量扩大覆盖范围。Sourcegraph 的结果仍受其索引范围、搜索超时和结果限制影响，扫描日志会记录上游返回的限制信息。
+
+数据库中已有的 `searchcode` 类型规则也会由该 provider 继续执行，不需要迁移规则数据。
+
 ## 常见问题
 
 1. GShark 扫描的是本地代码还是公开平台代码？
 
-当前项目定位是扫描公开环境，不是本地代码扫描器。GitHub 扫描基于 GitHub Search API；GitLab 扫描依赖 GitLab 搜索能力。私有仓库是否能扫到，取决于对应平台 API 和 token 权限。
+当前项目定位是扫描公开环境，不是本地代码扫描器。GitHub 扫描基于 GitHub Search API；GitLab 扫描依赖 GitLab 搜索能力；Sourcegraph 扫描其索引中的公开代码。私有仓库是否能扫到，取决于对应平台 API、Sourcegraph 实例和 token 权限。
 
 2. 推荐怎么部署？
 
