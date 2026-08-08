@@ -37,6 +37,14 @@ func main() {
 		Use:   "serve",
 		Short: "Start the GShark server",
 		Long:  "Start the GShark web server, supports for the management platform",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			// An empty DB is valid during first-run initialization. Existing
+			// databases still need startup migrations for newly added tables.
+			if global.GVA_DB == nil {
+				return nil
+			}
+			return initialize.MysqlTables(global.GVA_DB)
+		},
 		Run: func(cmd *cobra.Command, args []string) {
 			core.RunServer()
 		},
@@ -44,7 +52,13 @@ func main() {
 	scanCmd := &cobra.Command{
 		Use:   "scan",
 		Short: "Start the scan task",
-		Long:  "Support the scan task for multi platforms, including: GitHub, GitLab, Postman, searchcode",
+		Long:  "Support the scan task for multi platforms, including: GitHub, GitLab, Sourcegraph, Postman",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if global.GVA_DB == nil {
+				return fmt.Errorf("database is not initialized")
+			}
+			return initialize.MysqlTables(global.GVA_DB)
+		},
 		Run: func(cmd *cobra.Command, args []string) {
 			search.ScanTask()
 		},

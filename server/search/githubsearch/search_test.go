@@ -41,6 +41,32 @@ func TestSearchWithNoRules(t *testing.T) {
 	Search(nil)
 }
 
+func TestGetGithubClientWithoutTokenReturnsError(t *testing.T) {
+	original := listGithubTokens
+	listGithubTokens = func(string) (error, []model.Token) { return nil, nil }
+	t.Cleanup(func() { listGithubTokens = original })
+
+	client, err := GetGithubClient()
+	if client != nil {
+		t.Fatal("expected no GitHub client without a token")
+	}
+	if err == nil {
+		t.Fatal("expected an error without a GitHub token")
+	}
+}
+
+func TestNextClientWithoutTokenDoesNotPanic(t *testing.T) {
+	original := listGithubTokens
+	listGithubTokens = func(string) (error, []model.Token) { return nil, nil }
+	t.Cleanup(func() { listGithubTokens = original })
+
+	client := &Client{Token: "removed-token"}
+	nextClient, nextToken := client.NextClient()
+	if nextClient != nil || nextToken != "" {
+		t.Fatalf("expected no replacement client, got client=%v token=%q", nextClient, nextToken)
+	}
+}
+
 func TestGithubHTTPTransportPreservesDefaultProxy(t *testing.T) {
 	defaultTransport, ok := http.DefaultTransport.(*http.Transport)
 	if !ok || defaultTransport.Proxy == nil {

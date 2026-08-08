@@ -19,8 +19,8 @@ usage() {
     cat <<'EOF'
 Usage: scripts/quick-docker.sh [options]
 
-Build and start GShark with Docker Compose, then initialize the database
-if needed (admin account via flags — no browser required).
+Build GShark's server, web, and scanner images, start the server stack,
+then initialize the database if needed (admin account via flags — no browser required).
 
 Options:
   --with-scan              Also start the scanner container.
@@ -89,13 +89,14 @@ else
     exit 1
 fi
 
-echo "[INFO] Building and starting mysql/server/web..."
-"${COMPOSE[@]}" up -d --build mysql server web
+echo "[INFO] Building server/web/scan images..."
+"${COMPOSE[@]}" build server web scan
 
-if [[ "$WITH_SCAN" == true ]]; then
-    echo "[INFO] Starting scan..."
-    "${COMPOSE[@]}" up -d --build scan
-fi
+echo "[INFO] Starting mysql..."
+"${COMPOSE[@]}" up -d mysql
+
+echo "[INFO] Starting server/web..."
+"${COMPOSE[@]}" up -d server web
 
 INIT_RESULT="skipped" # skipped | applied | failed | skipped_flag
 
@@ -158,6 +159,11 @@ else
             echo "        docker exec gshark-server ./gshark init --help" >&2
             ;;
     esac
+fi
+
+if [[ "$WITH_SCAN" == true && "$INIT_RESULT" != "failed" ]]; then
+    echo "[INFO] Starting scan after database initialization..."
+    "${COMPOSE[@]}" up -d scan
 fi
 
 echo

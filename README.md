@@ -16,7 +16,7 @@ For the usage of GShark, please refer to the [wiki](https://github.com/madneal/g
 
 # Key Features
 
-* 🌐 Multi-Platform Support: GitHub, GitLab, Searchcode, Postman, and more
+* 🌐 Multi-Platform Support: GitHub, GitLab, Sourcegraph, Postman, and more
 * 🔍 Flexible Rule Management: Custom scanning rules and filtering with whitelist/blacklist support
 * 🔑 Fine-grained Access Control: Configurable menu and API permissions
 * 🔄 Subdomain Discovery: Integrated gobuster for subdomain enumeration
@@ -46,7 +46,7 @@ Set a custom admin account via script/CLI flags (no browser init page required):
 Use one of the two quick deployment entries:
 
 ```bash
-# Option 1: Docker quick. Build and start mysql/server/web in the background.
+# Option 1: Docker quick. Build all application images and start mysql/server/web in the background.
 ./scripts/quick-docker.sh
 
 # Custom admin account
@@ -78,7 +78,7 @@ cd gshark
 ```
 
 > [!IMPORTANT]
-> Before the MySQL database initial, the scanner container will exit. Need to restart the scanner after the MySQL database initial.
+> The quick Docker script starts MySQL first, initializes the database, and only then starts the scanner when `--with-scan` is used. If you start the scanner manually with Docker Compose, wait until database initialization completes first.
 
 ## Local Deployment 
 
@@ -283,12 +283,18 @@ You are supposed to rename `config-temp.yaml` to `config.yaml` and config the da
 
 When GitLab global search isn't available, GShark falls back to crawling recently-active public projects. `search.gitlab-discover-pages` and `search.gitlab-batch-size` in `config.yaml` bound how many project pages are discovered and how many projects are searched per scan cycle (defaults: 5 and 50).
 
+### Sourcegraph global code search
+
+The Sourcegraph provider uses the Stream API to search all repositories indexed by Sourcegraph for each rule; repositories do not need to be configured one by one. The default endpoint is the public `https://sourcegraph.com` instance. For a self-hosted instance, set `search.sourcegraph-url` in `config.yaml` and provide an access token through `search.sourcegraph-token` or `SOURCEGRAPH_TOKEN`. GShark explicitly includes forked and archived repositories to maximize coverage. Results remain subject to Sourcegraph's index coverage, search timeout, and result limits; any upstream limits are recorded in the scan log.
+
+Existing rules whose type is `searchcode` are also picked up by this provider, so existing rule data does not need a database migration.
+
 
 ## FAQ
 
 1. Does GShark scan local code or public platforms?
 
-GShark is designed to scan public environments, not local source trees. GitHub scanning is based on the GitHub Search API, and GitLab scanning depends on GitLab search. Whether private repositories can be scanned depends on the platform API and token permissions.
+GShark is designed to scan public environments, not local source trees. GitHub scanning is based on the GitHub Search API, GitLab scanning depends on GitLab search, and Sourcegraph scanning covers repositories indexed by Sourcegraph. Whether private repositories can be scanned depends on the platform API, the Sourcegraph instance, and token permissions.
 
 2. What is the recommended deployment method?
 

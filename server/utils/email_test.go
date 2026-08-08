@@ -1,26 +1,35 @@
 package utils_test
 
 import (
-	"fmt"
+	"os"
+	"testing"
+
 	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/initialize"
 	"github.com/madneal/gshark/utils"
-
-	"testing"
 )
 
-func TestEmailTest(t *testing.T) {
-	global.GVA_VP = initialize.Viper("/Users/neal/project/gshark/server/config.yaml") // 初始化Viper
-	err := utils.EmailSend("test", "test")
-	if err != nil {
-		fmt.Print(err)
+const externalNotificationTestEnv = "GSHARK_NOTIFY_TESTS"
+
+func requireExternalNotificationTest(t *testing.T) {
+	t.Helper()
+	if os.Getenv(externalNotificationTestEnv) != "1" {
+		t.Skipf("set %s=1 to run external notification tests", externalNotificationTestEnv)
 	}
 }
 
-func TestBot(t *testing.T) {
+func TestEmailSendExternal(t *testing.T) {
+	requireExternalNotificationTest(t)
+	global.GVA_VP = initialize.Viper("/Users/neal/project/gshark/server/config.yaml") // 初始化Viper
+	if err := utils.EmailSend("test", "test"); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestBotSendExternal(t *testing.T) {
+	requireExternalNotificationTest(t)
 	global.GVA_VP = initialize.Viper("/Users/neal/project/gshark/server/config.yaml")
-	err := utils.BotSend("Github敏感信息报告\n" + "test")
-	if err != nil {
-		fmt.Println(err)
+	if err := utils.BotSend("Github敏感信息报告\n" + "test"); err != nil {
+		t.Fatal(err)
 	}
 }
