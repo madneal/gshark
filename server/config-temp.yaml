@@ -37,6 +37,8 @@ search:
   searchnum: 10
   gitlab-discover-pages: 5
   gitlab-batch-size: 50
+  sourcegraph-url: https://sourcegraph.com
+  sourcegraph-token:
 system:
   env: public
   addr: 8888

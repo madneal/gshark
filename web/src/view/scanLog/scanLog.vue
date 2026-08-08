@@ -143,7 +143,7 @@ export default {
       Refresh: markRaw(Refresh),
       RefreshLeft: markRaw(RefreshLeft),
       Search: markRaw(Search),
-      providerOrder: ["gitlab", "searchcode", "github", "gobuster", "postman"],
+      providerOrder: ["gitlab", "sourcegraph", "github", "gobuster", "postman"],
       statusOptions: [
         { value: "pending", label: "排队中" },
         { value: "running", label: "运行中" },
@@ -179,6 +179,7 @@ export default {
     providerLabel(provider) {
       const labels = {
         gitlab: "GitLab",
+        sourcegraph: "Sourcegraph",
         searchcode: "Searchcode",
         github: "GitHub",
         gobuster: "Domain",

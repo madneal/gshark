@@ -52,7 +52,7 @@ func main() {
 	scanCmd := &cobra.Command{
 		Use:   "scan",
 		Short: "Start the scan task",
-		Long:  "Support the scan task for multi platforms, including: GitHub, GitLab, Postman, searchcode",
+		Long:  "Support the scan task for multi platforms, including: GitHub, GitLab, Sourcegraph, Postman",
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			if global.GVA_DB == nil {
 				return fmt.Errorf("database is not initialized")
