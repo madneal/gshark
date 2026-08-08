@@ -191,18 +191,6 @@ mv dist/* /usr/local/www/html/
 
 对于扫描服务，需要配置相应的规则。例如，GitHub 或 Gitlab 规则。
 
-### Searchcode 仓库配置
-
-Searchcode 新接口要求按仓库搜索。使用 Searchcode 规则前，请在 `server/config.yaml`（或 Docker 挂载的配置文件）中配置公开仓库 URL：
-
-```yaml
-search:
-  searchcode-repositories:
-    - https://github.com/example/public-repository
-```
-
-也可以在仓库管理页面添加 `type=searchcode` 的仓库记录。每条 Searchcode 规则都会通过新的 `code_search` 接口扫描所有已配置仓库；旧版全局 Searchcode 索引接口已不再使用。
-
 ### 增量部署
 
 对于增量部署，应该执行 [sql.md](https://github.com/madneal/gshark/blob/master/sql.md) 进行相应的数据库操作。

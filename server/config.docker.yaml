@@ -37,7 +37,6 @@ search:
   searchnum: 10
   gitlab-discover-pages: 5
   gitlab-batch-size: 50
-  searchcode-repositories: []
 system:
   env: public
   addr: 8888

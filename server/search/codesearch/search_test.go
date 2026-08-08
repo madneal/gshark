@@ -8,8 +8,6 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
-	"reflect"
-	"strings"
 	"testing"
 	"time"
 
@@ -39,42 +37,6 @@ func jsonHTTPResponse(status int, value interface{}) *http.Response {
 	}
 }
 
-func testRequest() codeSearchRequest {
-	return codeSearchRequest{Repository: "https://github.com/example/repo", Query: "ghp_", MaxResults: 100}
-}
-
-func TestGetResultPostsNewSearchcodeRequest(t *testing.T) {
-	client := &http.Client{
-		Transport: roundTripFunc(func(req *http.Request) (*http.Response, error) {
-			if req.Method != http.MethodPost {
-				t.Fatalf("method = %s, want POST", req.Method)
-			}
-			if req.URL.Query().Get("client") != searchcodeClientName {
-				t.Fatalf("client query = %q, want %q", req.URL.Query().Get("client"), searchcodeClientName)
-			}
-			if req.Header.Get("Content-Type") != "application/json" {
-				t.Fatalf("content type = %q, want application/json", req.Header.Get("Content-Type"))
-			}
-			var got codeSearchRequest
-			if err := json.NewDecoder(req.Body).Decode(&got); err != nil {
-				t.Fatal(err)
-			}
-			if !reflect.DeepEqual(got, testRequest()) {
-				t.Fatalf("request body = %+v, want %+v", got, testRequest())
-			}
-			return jsonHTTPResponse(http.StatusOK, codeSearchResponse{Repository: got.Repository, Results: []codeSearchResult{}}), nil
-		}),
-	}
-
-	result, err := GetResult(client, testRequest())
-	if err != nil {
-		t.Fatal(err)
-	}
-	if result == nil || result.Repository != testRequest().Repository {
-		t.Fatalf("unexpected response: %+v", result)
-	}
-}
-
 func TestGetResultHandlesTransportError(t *testing.T) {
 	client := &http.Client{
 		Transport: roundTripFunc(func(*http.Request) (*http.Response, error) {
@@ -82,30 +44,59 @@ func TestGetResultHandlesTransportError(t *testing.T) {
 		}),
 	}
 
-	result, err := GetResult(client, testRequest())
+	results, hasResult, err := GetResult(client, "https://searchcode.test/api/codesearch_I/?q=key&p=0")
 	if err == nil {
 		t.Fatal("expected a transport error")
 	}
-	if result != nil {
-		t.Fatalf("expected no response, got %+v", result)
+	if hasResult {
+		t.Fatalf("expected hasResult=false on transport error")
+	}
+	if len(results) != 0 {
+		t.Fatalf("expected no results, got %d", len(results))
 	}
 }
 
-func TestGetResultReturnsAPIError(t *testing.T) {
+func TestGetResultReturnsUnavailableOnNotFound(t *testing.T) {
 	client := &http.Client{
 		Transport: roundTripFunc(func(*http.Request) (*http.Response, error) {
-			return jsonHTTPResponse(http.StatusNotFound, map[string]interface{}{
-				"error": map[string]string{"code": "repository_not_found", "message": "repository not found"},
-			}), nil
+			return jsonHTTPResponse(http.StatusNotFound, map[string]string{"error": "not found"}), nil
 		}),
 	}
 
-	_, err := GetResult(client, testRequest())
+	results, hasResult, err := GetResult(client, "https://searchcode.test/api/codesearch_I/?q=key&p=0")
 	if err == nil {
-		t.Fatal("expected an API error")
+		t.Fatal("expected Searchcode unavailable error")
 	}
-	if !strings.Contains(err.Error(), "repository_not_found") {
-		t.Fatalf("error = %v, want API error code", err)
+	if !errors.Is(err, ErrSearchcodeUnavailable) {
+		t.Fatalf("expected Searchcode unavailable error, got %v", err)
+	}
+	if hasResult {
+		t.Fatalf("expected hasResult=false on non-2xx response")
+	}
+	if len(results) != 0 {
+		t.Fatalf("expected no results, got %d", len(results))
+	}
+}
+
+func TestGetResultReturnsErrorOnOtherNon2xx(t *testing.T) {
+	client := &http.Client{
+		Transport: roundTripFunc(func(*http.Request) (*http.Response, error) {
+			return jsonHTTPResponse(http.StatusBadGateway, map[string]string{"error": "upstream failure"}), nil
+		}),
+	}
+
+	results, hasResult, err := GetResult(client, "https://searchcode.test/api/codesearch_I/?q=key&p=0")
+	if err == nil {
+		t.Fatal("expected a non-2xx error")
+	}
+	if errors.Is(err, ErrSearchcodeUnavailable) {
+		t.Fatalf("unexpected Searchcode unavailable error for status 502: %v", err)
+	}
+	if hasResult {
+		t.Fatalf("expected hasResult=false on non-2xx response")
+	}
+	if len(results) != 0 {
+		t.Fatalf("expected no results, got %d", len(results))
 	}
 }
 
@@ -120,9 +111,15 @@ func TestGetResultStopsOnInvalidJSON(t *testing.T) {
 		}),
 	}
 
-	_, err := GetResult(client, testRequest())
+	results, hasResult, err := GetResult(client, "https://searchcode.test/api/codesearch_I/?q=key&p=0")
 	if err == nil {
 		t.Fatal("expected an invalid JSON error")
+	}
+	if hasResult {
+		t.Fatalf("expected hasResult=false on invalid JSON")
+	}
+	if len(results) != 0 {
+		t.Fatalf("expected no results, got %d", len(results))
 	}
 }
 
@@ -133,69 +130,43 @@ func TestGetResultRespectsTimeout(t *testing.T) {
 	}))
 	defer server.Close()
 
-	previousBaseURL := searchcodeBaseURL
-	searchcodeBaseURL = server.URL
-	defer func() { searchcodeBaseURL = previousBaseURL }()
-
 	client := &http.Client{Timeout: 20 * time.Millisecond}
+
 	done := make(chan struct{})
-	var err error
+	var hasResult bool
 	go func() {
-		_, err = GetResult(client, testRequest())
+		_, hasResult, _ = GetResult(client, server.URL)
 		close(done)
 	}()
 
 	select {
 	case <-done:
-		if err == nil {
-			t.Fatal("expected timeout error")
+		if hasResult {
+			t.Fatalf("expected hasResult=false when the client times out")
 		}
 	case <-time.After(2 * time.Second):
 		t.Fatal("GetResult did not return within the expected bound after client timeout")
 	}
 }
 
-func TestSearchForSearchCodePaginatesAndConvertsResults(t *testing.T) {
-	var offsets []int
+func TestSearchForSearchCodePaginatesUpToMax(t *testing.T) {
 	client := &http.Client{
-		Transport: roundTripFunc(func(req *http.Request) (*http.Response, error) {
-			var request codeSearchRequest
-			if err := json.NewDecoder(req.Body).Decode(&request); err != nil {
-				t.Fatal(err)
+		Transport: roundTripFunc(func(*http.Request) (*http.Response, error) {
+			res := model.SearchCodeRes{
+				Results: []model.SearchCodeResult{
+					{Repo: "example/repo", Filename: "file.go", Url: "https://example.test/file.go"},
+				},
 			}
-			offsets = append(offsets, request.Offset)
-			response := codeSearchResponse{
-				Repository: request.Repository,
-				CommitSHA:  "abc123",
-				HasMore:    request.Offset < 2,
-				Results: []codeSearchResult{{
-					File: "config.yaml",
-					Matches: []codeSearchMatch{{
-						Line:          8,
-						Content:       "token: ghp_example",
-						ContextBefore: []string{"auth:"},
-						ContextAfter:  []string{"enabled: true"},
-					}},
-				}},
-			}
-			return jsonHTTPResponse(http.StatusOK, response), nil
+			return jsonHTTPResponse(http.StatusOK, res), nil
 		}),
 	}
 
-	results, err := SearchForSearchCode(model.Rule{Content: "ghp_"}, testRequest().Repository, client)
+	rule := model.Rule{Content: "key"}
+	results, err := SearchForSearchCode(rule, client)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !reflect.DeepEqual(offsets, []int{0, 1, 2}) {
-		t.Fatalf("offsets = %v, want [0 1 2]", offsets)
-	}
-	if len(results) != 3 {
-		t.Fatalf("results = %d, want 3", len(results))
-	}
-	if results[0].Url != "https://github.com/example/repo/blob/abc123/config.yaml" {
-		t.Fatalf("result URL = %q", results[0].Url)
-	}
-	if results[0].Repo != "example/repo" || results[0].Keyword != "ghp_" {
-		t.Fatalf("result metadata = %+v", results[0])
+	if len(results) != maxSearchcodePages {
+		t.Fatalf("expected pagination to stop at %d pages, got %d results", maxSearchcodePages, len(results))
 	}
 }
