@@ -56,7 +56,7 @@ func TestGetResultHandlesTransportError(t *testing.T) {
 	}
 }
 
-func TestGetResultReturnsNoResultsOnNon2xx(t *testing.T) {
+func TestGetResultReturnsUnavailableOnNotFound(t *testing.T) {
 	client := &http.Client{
 		Transport: roundTripFunc(func(*http.Request) (*http.Response, error) {
 			return jsonHTTPResponse(http.StatusNotFound, map[string]string{"error": "not found"}), nil
@@ -65,7 +65,32 @@ func TestGetResultReturnsNoResultsOnNon2xx(t *testing.T) {
 
 	results, hasResult, err := GetResult(client, "https://searchcode.test/api/codesearch_I/?q=key&p=0")
 	if err == nil {
+		t.Fatal("expected Searchcode unavailable error")
+	}
+	if !errors.Is(err, ErrSearchcodeUnavailable) {
+		t.Fatalf("expected Searchcode unavailable error, got %v", err)
+	}
+	if hasResult {
+		t.Fatalf("expected hasResult=false on non-2xx response")
+	}
+	if len(results) != 0 {
+		t.Fatalf("expected no results, got %d", len(results))
+	}
+}
+
+func TestGetResultReturnsErrorOnOtherNon2xx(t *testing.T) {
+	client := &http.Client{
+		Transport: roundTripFunc(func(*http.Request) (*http.Response, error) {
+			return jsonHTTPResponse(http.StatusBadGateway, map[string]string{"error": "upstream failure"}), nil
+		}),
+	}
+
+	results, hasResult, err := GetResult(client, "https://searchcode.test/api/codesearch_I/?q=key&p=0")
+	if err == nil {
 		t.Fatal("expected a non-2xx error")
+	}
+	if errors.Is(err, ErrSearchcodeUnavailable) {
+		t.Fatalf("unexpected Searchcode unavailable error for status 502: %v", err)
 	}
 	if hasResult {
 		t.Fatalf("expected hasResult=false on non-2xx response")

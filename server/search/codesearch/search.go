@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"sync/atomic"
 	"time"
 
 	"github.com/madneal/gshark/global"
@@ -22,11 +23,23 @@ const (
 )
 
 var (
-	searchcodeHTTPClient = &http.Client{Timeout: searchcodeRequestTimeout}
-	searchcodeBaseURL    = "https://searchcode.com/api/codesearch_I/"
+	searchcodeHTTPClient  = &http.Client{Timeout: searchcodeRequestTimeout}
+	searchcodeBaseURL     = "https://searchcode.com/api/codesearch_I/"
+	searchcodeUnavailable atomic.Bool
 )
 
+// ErrSearchcodeUnavailable indicates that the legacy global Searchcode API is
+// no longer available. The current Searchcode service uses a repository-scoped
+// API and is not a drop-in replacement for this provider's global queries.
+var ErrSearchcodeUnavailable = errors.New("Searchcode legacy API unavailable")
+
 func RunTask() model.ScanOutcome {
+	if searchcodeUnavailable.Load() {
+		message := "Searchcode provider skipped: legacy global-search API is unavailable"
+		global.GVA_LOG.Warn(message)
+		return model.ScanSkipped(message)
+	}
+
 	err, rules := service.GetValidRulesByType("searchcode")
 	if err != nil {
 		global.GVA_LOG.Error("GetValidRulesByType searchcode err", zap.Error(err))
@@ -42,6 +55,12 @@ func RunTask() model.ScanOutcome {
 		global.GVA_LOG.Info(fmt.Sprintf("Search for %s in searchcode", rule.Content))
 		codeResults, err := SearchForSearchCode(rule, searchcodeHTTPClient)
 		if err != nil {
+			if errors.Is(err, ErrSearchcodeUnavailable) {
+				searchcodeUnavailable.Store(true)
+				message := "Searchcode provider skipped: legacy global-search API returned 404; migrate the provider or disable Searchcode rules"
+				global.GVA_LOG.Warn(message, zap.Error(err))
+				return model.ScanSkipped(message)
+			}
 			scanErrors = append(scanErrors, fmt.Errorf("search %q: %w", rule.Content, err))
 			continue
 		}
@@ -94,6 +113,9 @@ func GetResult(client *http.Client, url string) ([]*model.SearchResult, bool, er
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusNotFound {
+			return codeResults, false, fmt.Errorf("%w: request to %s returned status 404", ErrSearchcodeUnavailable, url)
+		}
 		err = fmt.Errorf("request to %s returned status %d", url, resp.StatusCode)
 		global.GVA_LOG.Error(err.Error())
 		return codeResults, false, err
