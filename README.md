@@ -192,6 +192,18 @@ If you haven't initialized the database before, you will be redirected to the da
 
 For the scan service, it's necessary to config the corresponding rules. For example, GitHub or Gitlab rules.
 
+### Searchcode repositories
+
+Searchcode's current API is repository-scoped. To use Searchcode rules, configure public repository URLs in `server/config.yaml` (or the mounted Docker config):
+
+```yaml
+search:
+  searchcode-repositories:
+    - https://github.com/example/public-repository
+```
+
+You can also add repository records with `type=searchcode` in the repository management page. Each Searchcode rule is sent to the new `code_search` API for every configured repository; there is no longer a global Searchcode index query.
+
 ### Incremental Deployment
 
 For the incremental deployment, [sql.md](https://github.com/madneal/gshark/blob/master/sql.md) should be executed for the corresponding database operations.
