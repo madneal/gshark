@@ -39,6 +39,11 @@
     "sass": "^1.49.9",
     "vite": "^8.0.16"
   },
+  "overrides": {
+    "brace-expansion": "1.1.18",
+    "js-yaml": "4.3.1",
+    "nanoid": "3.3.17"
+  },
   "eslintConfig": {
     "root": true,
     "env": {
