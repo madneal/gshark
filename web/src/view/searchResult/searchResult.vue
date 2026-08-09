@@ -81,10 +81,16 @@
       </el-table-column>
       <el-table-column label="匹配内容" prop="matches" min-width="320">
         <template #default="scope">
-          <pre v-if="scope.row.text_matches">{{
-            fragmentsFilter(scope.row.text_matches)
-          }}</pre>
-          <pre v-else-if="scope.row.matches">{{ scope.row.matches }}</pre>
+          <pre
+            v-if="scope.row.text_matches"
+            class="search-result-matches"
+            v-html="renderTextMatches(scope.row.text_matches, scope.row.keyword)"
+          ></pre>
+          <pre
+            v-else-if="scope.row.matches"
+            class="search-result-matches"
+            v-html="renderMatches(scope.row.matches, scope.row.keyword)"
+          ></pre>
         </template>
       </el-table-column>
       <el-table-column label="关键词" prop="keyword" width="100" show-overflow-tooltip />
@@ -211,40 +217,68 @@ export default {
       if (val === 2) return "info";
       return "warning";
     },
-    fragmentsFilter(val) {
-      if (!val) return "";
-      if (typeof val === "string") return val;
-      let result = "";
-      for (let i = 0; i < val.length; i++) {
-        const fragment = val[i].fragment || "";
-        if (!val[i].matches || !val[i].matches.length) {
-          result += fragment;
-        } else {
-          const ranges = [];
-          val[i].matches.forEach((ele) => {
-            if (Array.isArray(ele.indices) && ele.indices.length >= 2) {
-              ranges.push([ele.indices[0], ele.indices[1]]);
-            }
-          });
-          ranges.sort((a, b) => a[0] - b[0]);
+    escapeHtml(value) {
+      const entities = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;",
+      };
+      return String(value ?? "").replace(/[&<>"']/g, (character) => entities[character]);
+    },
+    escapeRegExp(value) {
+      return String(value ?? "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    },
+    highlightKeyword(value, keyword) {
+      const text = String(value ?? "");
+      if (!keyword) return this.escapeHtml(text);
+      const pattern = new RegExp(this.escapeRegExp(keyword), "gi");
+      let cursor = 0;
+      let rendered = "";
+      text.replace(pattern, (match, offset) => {
+        rendered += this.escapeHtml(text.slice(cursor, offset));
+        rendered += `<mark class="search-result-highlight">${this.escapeHtml(match)}</mark>`;
+        cursor = offset + match.length;
+        return match;
+      });
+      return rendered + this.escapeHtml(text.slice(cursor));
+    },
+    renderTextMatches(value, keyword) {
+      if (!value) return "";
+      if (typeof value === "string") return this.highlightKeyword(value, keyword);
+      if (!Array.isArray(value)) return this.highlightKeyword(value, keyword);
+
+      return value
+        .map((item) => {
+          const fragment = String(item?.fragment ?? "");
+          const ranges = (item?.matches || [])
+            .filter((match) => Array.isArray(match?.indices) && match.indices.length >= 2)
+            .map((match) => [Number(match.indices[0]), Number(match.indices[1])])
+            .filter(([start, end]) => Number.isFinite(start) && Number.isFinite(end))
+            .sort((a, b) => a[0] - b[0]);
+
+          if (!ranges.length) return this.escapeHtml(fragment);
+
           let cursor = 0;
-          let processed = "";
+          let rendered = "";
           ranges.forEach(([start, end]) => {
             const safeStart = Math.max(0, start);
             const safeEnd = Math.min(fragment.length, end);
             if (safeEnd <= safeStart || safeStart < cursor) return;
-            processed += fragment.slice(cursor, safeStart);
-            processed += "【" + fragment.slice(safeStart, safeEnd) + "】";
+            rendered += this.escapeHtml(fragment.slice(cursor, safeStart));
+            rendered += `<mark class="search-result-highlight">${this.escapeHtml(
+              fragment.slice(safeStart, safeEnd)
+            )}</mark>`;
             cursor = safeEnd;
           });
-          processed += fragment.slice(cursor);
-          result += processed;
-        }
-        if (i !== val.length - 1) {
-          result += "\n=====================================\n";
-        }
-      }
-      return result;
+          rendered += this.escapeHtml(fragment.slice(cursor));
+          return rendered;
+        })
+        .join("\n=====================================\n");
+    },
+    renderMatches(value, keyword) {
+      return this.highlightKeyword(value, keyword);
     },
     onSubmit() {
       this.page = 1;
@@ -385,5 +419,20 @@ export default {
 <style>
 .el-table pre {
   white-space: pre-line;
+}
+
+.search-result-matches {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.search-result-highlight {
+  display: inline;
+  padding: 0 0.18em;
+  border-radius: 0.2em;
+  color: #1f2937;
+  background: #f6c945;
+  box-shadow: 0 0 0 1px rgba(255, 220, 90, 0.35);
+  font-weight: 700;
 }
 </style>
