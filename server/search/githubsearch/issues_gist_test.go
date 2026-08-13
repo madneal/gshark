@@ -3,6 +3,7 @@ package githubsearch
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"strings"
 	"testing"
@@ -39,6 +40,17 @@ func TestBuildIssueQueryKeepsExplicitInQualifier(t *testing.T) {
 		t.Fatal(err)
 	}
 	if got != "acme in:body is:pr" {
+		t.Fatalf("BuildIssueQuery() = %q", got)
+	}
+}
+
+func TestBuildIssueQueryIgnoresInInsideOtherTokens(t *testing.T) {
+	stubFilters(t, nil)
+	got, err := BuildIssueQuery("login:admin")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got != "login:admin in:title,body,comments" {
 		t.Fatalf("BuildIssueQuery() = %q", got)
 	}
 }
@@ -159,7 +171,17 @@ func TestGistMatchesKeywordIgnoresQualifiers(t *testing.T) {
 	}
 }
 
+func TestGistMatchesKeywordKeepsColonNeedles(t *testing.T) {
+	if !gistMatchesKeyword("secrets.env", "", "aws_access_key_id: AKIA", "aws_access_key_id:") {
+		t.Fatal("expected a colon-bearing secret token to remain a needle")
+	}
+	if gistMatchesKeyword("secrets.env", "", "unrelated", "aws_access_key_id:") {
+		t.Fatal("expected colon-bearing needle to require a match")
+	}
+}
+
 func TestConvertGistToSearchResultsKeepsMatchingFiles(t *testing.T) {
+	stubFilters(t, nil)
 	gist := &github.Gist{
 		ID:      github.String("8ccbb1c6198b862db3ccbfac45efe27f"),
 		HTMLURL: github.String("https://gist.github.com/acme/8ccbb1c6198b862db3ccbfac45efe27f"),
@@ -181,11 +203,30 @@ func TestConvertGistToSearchResultsKeepsMatchingFiles(t *testing.T) {
 	}
 }
 
+func TestConvertGistToSearchResultsAppliesExtensionFilters(t *testing.T) {
+	stubFilters(t, map[string][]model.Filter{
+		"extension": {{FilterType: "blacklist", Content: "md"}},
+	})
+	gist := &github.Gist{
+		ID:      github.String("8ccbb1c6198b862db3ccbfac45efe27f"),
+		HTMLURL: github.String("https://gist.github.com/acme/8ccbb1c6198b862db3ccbfac45efe27f"),
+		Owner:   &github.User{Login: github.String("acme")},
+		Files: map[github.GistFilename]github.GistFile{
+			"secrets.env": {Filename: github.String("secrets.env"), Content: github.String("acme token")},
+			"notes.md":    {Filename: github.String("notes.md"), Content: github.String("acme token")},
+		},
+	}
+	results := convertGistToSearchResults(gist, gistHit{Owner: "acme", ID: gist.GetID()}, "acme")
+	if len(results) != 1 || results[0].Path != "secrets.env" {
+		t.Fatalf("results = %#v", results)
+	}
+}
+
 func TestSearchGistHitsUsesHTMLThenStopsOnRepeatPage(t *testing.T) {
 	original := fetchGistSearchPage
 	t.Cleanup(func() { fetchGistSearchPage = original })
 	pages := 0
-	fetchGistSearchPage = func(_, _ string, page int) (string, error) {
+	fetchGistSearchPage = func(_ string, page int) (string, error) {
 		pages++
 		return `<a href="/acme/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa">gist</a>`, nil
 	}
@@ -200,6 +241,55 @@ func TestSearchGistHitsUsesHTMLThenStopsOnRepeatPage(t *testing.T) {
 	}
 	if pages != 2 {
 		t.Fatalf("expected a second page to detect duplicates, got %d fetches", pages)
+	}
+}
+
+func TestSearchGistHitsEmptyHTMLDoesNotFallback(t *testing.T) {
+	original := fetchGistSearchPage
+	t.Cleanup(func() { fetchGistSearchPage = original })
+	fetchGistSearchPage = func(string, int) (string, error) {
+		return `<html><title>Search</title></html>`, nil
+	}
+
+	hits, err := (&Client{}).SearchGistHits("password")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(hits) != 0 {
+		t.Fatalf("hits = %#v", hits)
+	}
+}
+
+func TestSearchGistHitsHTTPErrorDoesNotFallback(t *testing.T) {
+	original := fetchGistSearchPage
+	t.Cleanup(func() { fetchGistSearchPage = original })
+	fetchGistSearchPage = func(string, int) (string, error) {
+		return "", errors.New("gist search returned HTTP 401")
+	}
+
+	hits, err := (&Client{}).SearchGistHits("password")
+	if err == nil {
+		t.Fatal("expected HTML search error")
+	}
+	if hits != nil {
+		t.Fatalf("hits = %#v", hits)
+	}
+}
+
+func TestGetGistSkipsNotFoundWithoutSleep(t *testing.T) {
+	slept := stubSleep(t)
+	client, _ := newTestClient(t, func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("X-RateLimit-Remaining", "100")
+		w.WriteHeader(http.StatusNotFound)
+		_ = json.NewEncoder(w).Encode(map[string]string{"message": "Not Found"})
+	})
+
+	gist, err := client.getGist(context.Background(), "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+	if err == nil || gist != nil {
+		t.Fatalf("expected not-found, got gist=%#v err=%v", gist, err)
+	}
+	if len(*slept) != 0 {
+		t.Fatalf("getGist slept on 404: %v", *slept)
 	}
 }
 

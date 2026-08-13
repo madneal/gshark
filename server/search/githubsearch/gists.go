@@ -23,7 +23,7 @@ const (
 	maxGistSearchPages     = 5
 	maxGistSearchPageBytes = 2 << 20
 	gistSearchTimeout      = 30 * time.Second
-	maxPublicGistFallback  = 50
+	gistSearchUserAgent    = "GShark (+https://github.com/madneal/gshark)"
 )
 
 var gistPathRe = regexp.MustCompile(`href="/(?P<owner>[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?)/(?P<id>[0-9a-f]{20,32})(?:["/#?])`)
@@ -74,20 +74,16 @@ func (c *Client) SearchGistHits(query string) ([]gistHit, error) {
 	seen := make(map[string]struct{})
 	hits := make([]gistHit, 0)
 	for page := 1; page <= maxGistSearchPages; page++ {
-		body, err := fetchGistSearchPage(c.Token, query, page)
+		body, err := fetchGistSearchPage(query, page)
 		if err != nil {
 			if page == 1 {
-				global.GVA_LOG.Warn("gist HTML search failed, falling back to public gist stream", zap.Error(err))
-				return c.listRecentPublicGists()
+				return nil, err
 			}
+			global.GVA_LOG.Warn("gist HTML search stopped after a later page error", zap.Int("page", page), zap.Error(err))
 			break
 		}
 		pageHits := parseGistSearchHTML(body)
 		if len(pageHits) == 0 {
-			if page == 1 {
-				global.GVA_LOG.Warn("gist HTML search returned no parseable hits, falling back to public gist stream")
-				return c.listRecentPublicGists()
-			}
 			break
 		}
 		added := 0
@@ -104,45 +100,6 @@ func (c *Client) SearchGistHits(query string) ([]gistHit, error) {
 		}
 	}
 	return hits, nil
-}
-
-func (c *Client) listRecentPublicGists() ([]gistHit, error) {
-	ctx := context.Background()
-	opt := &github.GistListOptions{ListOptions: github.ListOptions{PerPage: 100}}
-	hits := make([]gistHit, 0, maxPublicGistFallback)
-	for {
-		gists, res, err := c.getPublicGists(ctx, opt)
-		if err != nil {
-			return hits, err
-		}
-		for _, gist := range gists {
-			if gist == nil || gist.GetID() == "" {
-				continue
-			}
-			hits = append(hits, gistHit{Owner: gistOwnerLogin(gist), ID: gist.GetID()})
-			if len(hits) >= maxPublicGistFallback {
-				return hits, nil
-			}
-		}
-		if res == nil || res.NextPage <= 0 {
-			return hits, nil
-		}
-		opt.Page = res.NextPage
-	}
-}
-
-func (c *Client) getPublicGists(ctx context.Context, opt *github.GistListOptions) ([]*github.Gist, *github.Response, error) {
-	for attempt := 1; attempt <= maxSearchAttempts; attempt++ {
-		gists, res, err := c.Client.Gists.ListAll(ctx, opt)
-		if err == nil {
-			c.noteSearchResponse("gists/public", res)
-			return gists, res, nil
-		}
-		if !c.recoverSearchError("gists/public", err, attempt) {
-			return nil, res, err
-		}
-	}
-	return nil, nil, errors.New("exhausted retry attempts for public gist list")
 }
 
 func (c *Client) LoadGistResults(hits []gistHit, keyword string) ([]model.SearchResult, error) {
@@ -167,11 +124,23 @@ func (c *Client) getGist(ctx context.Context, id string) (*github.Gist, error) {
 			c.noteSearchResponse("gists/"+id, res)
 			return gist, nil
 		}
+		if isNonRetryableAPIError(err) {
+			return nil, err
+		}
 		if !c.recoverSearchError("gists/"+id, err, attempt) {
 			return nil, err
 		}
 	}
 	return nil, fmt.Errorf("exhausted retry attempts for gist %s", id)
+}
+
+func isNonRetryableAPIError(err error) bool {
+	var errResp *github.ErrorResponse
+	if !errors.As(err, &errResp) || errResp.Response == nil {
+		return false
+	}
+	code := errResp.Response.StatusCode
+	return code != http.StatusTooManyRequests && code >= 400 && code < 500
 }
 
 func convertGistToSearchResults(gist *github.Gist, hit gistHit, keyword string) []model.SearchResult {
@@ -195,6 +164,9 @@ func convertGistToSearchResults(gist *github.Gist, hit gistHit, keyword string) 
 		name := file.GetFilename()
 		if name == "" {
 			name = string(filename)
+		}
+		if !gistAllowsExtension(name) {
+			continue
 		}
 		fragment := gistFileFragment(file.GetContent(), keyword)
 		if keyword != "" && !gistMatchesKeyword(name, gist.GetDescription(), file.GetContent(), keyword) {
@@ -222,7 +194,7 @@ func convertGistToSearchResults(gist *github.Gist, hit gistHit, keyword string) 
 		}
 		results = append(results, item)
 	}
-	if len(results) == 0 && gist.GetDescription() != "" && gistMatchesKeyword("", gist.GetDescription(), "", keyword) {
+	if len(results) == 0 && gistAllowsExtension("") && gist.GetDescription() != "" && gistMatchesKeyword("", gist.GetDescription(), "", keyword) {
 		results = append(results, model.SearchResult{
 			Repo:    repo,
 			RepoUrl: htmlURL,
@@ -236,20 +208,10 @@ func convertGistToSearchResults(gist *github.Gist, hit gistHit, keyword string) 
 	return results
 }
 
+var gistQueryQualifiers = []string{"extension:", "language:", "filename:", "user:", "in:"}
+
 func gistMatchesKeyword(filename, description, content, keyword string) bool {
-	needle := strings.ToLower(strings.TrimSpace(keyword))
-	if needle == "" {
-		return true
-	}
-	// Drop filter-style tokens so "company -extension:md" still matches "company".
-	fields := strings.Fields(needle)
-	needles := make([]string, 0, len(fields))
-	for _, field := range fields {
-		if strings.HasPrefix(field, "-") || strings.HasPrefix(field, "+") || strings.Contains(field, ":") {
-			continue
-		}
-		needles = append(needles, field)
-	}
+	needles := gistNeedles(keyword)
 	if len(needles) == 0 {
 		return true
 	}
@@ -260,6 +222,75 @@ func gistMatchesKeyword(filename, description, content, keyword string) bool {
 		}
 	}
 	return true
+}
+
+func gistNeedles(keyword string) []string {
+	needles := make([]string, 0)
+	for _, field := range strings.Fields(strings.ToLower(strings.TrimSpace(keyword))) {
+		denied := strings.HasPrefix(field, "-")
+		field = strings.TrimPrefix(strings.TrimPrefix(field, "+"), "-")
+		if field == "" || isGistQueryQualifier(field) {
+			continue
+		}
+		if denied {
+			continue
+		}
+		needles = append(needles, field)
+	}
+	return needles
+}
+
+func isGistQueryQualifier(field string) bool {
+	for _, prefix := range gistQueryQualifiers {
+		if strings.HasPrefix(field, prefix) {
+			return true
+		}
+	}
+	return false
+}
+
+func gistAllowsExtension(filename string) bool {
+	err, filters := getFiltersByClass("extension")
+	if err != nil || len(filters) == 0 {
+		return true
+	}
+	ext := fileExtension(filename)
+	hasAllow := false
+	allowed := false
+	for _, filter := range filters {
+		for _, raw := range strings.Split(filter.Content, ",") {
+			want := strings.TrimPrefix(strings.TrimSpace(strings.ToLower(raw)), ".")
+			if want == "" {
+				continue
+			}
+			if filter.FilterType == "blacklist" {
+				if ext == want {
+					return false
+				}
+				continue
+			}
+			hasAllow = true
+			if ext == want {
+				allowed = true
+			}
+		}
+	}
+	if hasAllow {
+		return allowed
+	}
+	return true
+}
+
+func fileExtension(filename string) string {
+	base := filename
+	if i := strings.LastIndex(filename, "/"); i >= 0 {
+		base = filename[i+1:]
+	}
+	dot := strings.LastIndex(base, ".")
+	if dot < 0 || dot == len(base)-1 {
+		return ""
+	}
+	return strings.ToLower(base[dot+1:])
 }
 
 func gistFileFragment(content, keyword string) string {
@@ -324,7 +355,7 @@ func parseGistSearchHTML(body string) []gistHit {
 	return hits
 }
 
-func defaultFetchGistSearchPage(token, query string, page int) (string, error) {
+func defaultFetchGistSearchPage(query string, page int) (string, error) {
 	endpoint := fmt.Sprintf("https://gist.github.com/search?q=%s&p=%d", url.QueryEscape(strings.TrimSpace(query)), page)
 	var lastErr error
 	for attempt := 1; attempt <= maxSearchAttempts; attempt++ {
@@ -332,11 +363,8 @@ func defaultFetchGistSearchPage(token, query string, page int) (string, error) {
 		if err != nil {
 			return "", err
 		}
-		req.Header.Set("User-Agent", "gshark")
+		req.Header.Set("User-Agent", gistSearchUserAgent)
 		req.Header.Set("Accept", "text/html")
-		if token != "" {
-			req.Header.Set("Authorization", "Bearer "+token)
-		}
 		resp, err := gistSearchClient.Do(req)
 		if err != nil {
 			lastErr = err
@@ -352,7 +380,7 @@ func defaultFetchGistSearchPage(token, query string, page int) (string, error) {
 				return string(body), nil
 			} else {
 				lastErr = fmt.Errorf("gist search returned HTTP %d", resp.StatusCode)
-				if resp.StatusCode < 500 {
+				if resp.StatusCode != http.StatusTooManyRequests && resp.StatusCode < 500 {
 					return "", lastErr
 				}
 			}

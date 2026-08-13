@@ -277,10 +277,20 @@ func BuildQuery(query string) (string, error) {
 }
 
 func BuildIssueQuery(query string) (string, error) {
-	if !strings.Contains(query, "in:") {
+	if !hasSearchQualifier(query, "in:") {
 		query += " in:title,body,comments"
 	}
 	return appendKeywordFilters(query, " NOT ", " ")
+}
+
+func hasSearchQualifier(query, prefix string) bool {
+	prefix = strings.ToLower(prefix)
+	for _, field := range strings.Fields(query) {
+		if strings.HasPrefix(strings.ToLower(field), prefix) {
+			return true
+		}
+	}
+	return false
 }
 
 func BuildGistQuery(query string) (string, error) {
