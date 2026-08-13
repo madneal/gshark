@@ -24,6 +24,14 @@ GShark 是一个敏感信息检测和管理平台。后端基于 Go 和 Gin 构�
 * 📊 Vue 3 管理界面：基于 Vite 的 Web 界面，用于任务和结果管理
 * 🔁 更健壮的扫描：GitHub 触发限流后会自动重试，GitLab 全局搜索不可用时会自动降级为逐项目爬取
 
+# 架构
+
+GShark 将 Vue 3 管理台与两个共享同一 MySQL 的 Go 进程分开：`gshark serve` 负责管理，`gshark scan` 负责扫描周期。
+
+<p align="center">
+  <img alt="GShark 架构图" src="docs/architecture.png" />
+</p>
+
 # 快速开始
 
 初始化后的默认登录账号（未自定义时）：

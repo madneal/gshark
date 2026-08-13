@@ -24,6 +24,14 @@ For the usage of GShark, please refer to the [wiki](https://github.com/madneal/g
 * 📊 Vue 3 Management Interface: Vite-powered web interface for task and result management
 * 🔁 Resilient Scanning: automatic retry after GitHub rate limiting, and automatic fallback to a per-project crawl when GitLab global search isn't available
 
+# Architecture
+
+GShark splits the Vue 3 console from two Go processes that share one MySQL database: `gshark serve` for management, `gshark scan` for the provider cycle.
+
+<p align="center">
+  <img alt="GShark architecture" src="docs/architecture.png" />
+</p>
+
 # Quick start
 
 Default login after initialization (if not customized):
