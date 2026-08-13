@@ -263,13 +263,21 @@ npm run serve
 
 ### 规则配置
 
-对于 Github 或 Gitlab 规则，规则将按照相应平台的语法进行匹配。您可以直接配置在 GitHub 中搜索的内容。您可以下载规则导入模板 CSV 文件，然后批量导入规则。
+对于 Github 或 Gitlab 规则，规则将按照相应平台的语法进行匹配。您可以直接配置在 GitHub 中搜索的内容。同一套 GitHub token 会覆盖三个面：
+
+* `github`：仓库代码搜索（`in:file`）
+* `github_issue`：Issue 和 PR（默认 `in:title,body,comments`，也可自行加 `is:issue` / `is:pr`）
+* `gist`：公开 Gist 搜索，命中后再通过官方 Gist API 拉取文件内容
+
+同一条规则可以勾选多种类型，例如 `github,github_issue,gist`。
+
+您可以下载规则导入模板 CSV 文件，然后批量导入规则。
 
 <img width="572" alt="image" src="https://user-images.githubusercontent.com/12164075/212504597-3e1ad5bd-bacf-433e-83e8-08de7eee6509.png">
 
 ### 过滤器配置
 
-过滤器目前仅针对 GitHub 搜索，支持 `extension` 和 `keyword` 两类，两者都可以配置为黑名单或白名单。
+过滤器目前针对 GitHub 相关扫描。`keyword` 适用于 `github`、`github_issue` 和 `gist`；`extension` 适用于 `github` 代码搜索和 `gist`。两类都可以配置为黑名单或白名单。
 
 更多信息，您可以参考这个[视频](https://www.bilibili.com/video/BV1aG4y1c72N/?vd_source=ef4657ebf0549af8755f75118b6e81bb)。
 
