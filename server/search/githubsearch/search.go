@@ -27,6 +27,13 @@ func Search(rules []model.Rule) error {
 		global.GVA_LOG.Error("GetGithubClient err", zap.Error(err))
 		return err
 	}
+	return searchCode(client, rules)
+}
+
+func searchCode(client *Client, rules []model.Rule) error {
+	if len(rules) == 0 {
+		return nil
+	}
 	var content string
 	var scanErrors []error
 	for _, rule := range rules {
@@ -44,34 +51,41 @@ func Search(rules []model.Rule) error {
 		}
 		stats := SaveResultWithStats(results, rule.Content)
 		global.GVA_LOG.Info(stats.Summary(rule.Content, "GitHub"))
-		if stats.Inserted > 0 {
-			repoInfo := ""
-			if len(stats.Repos) > 0 {
-				if len(stats.Repos) <= 3 {
-					repoInfo = fmt.Sprintf(" (repos: %s)", strings.Join(stats.Repos, ", "))
-				} else {
-					repoInfo = fmt.Sprintf(" (repos: %s +%d more)", strings.Join(stats.Repos[:3], ", "), len(stats.Repos)-3)
-				}
-			}
-			content += fmt.Sprintf("%s: %d条%s<br>", rule.Content, stats.Inserted, repoInfo)
-		}
+		content += formatInsertedSummary(rule.Content, stats)
 	}
-	if content != "" {
-		if global.GVA_CONFIG.Email.Enable {
-			err = utils.EmailSend("Github敏感信息报告", content)
-			if err != nil {
-				global.GVA_LOG.Error("send email error", zap.Any("err", err))
-			}
-		}
-		if global.GVA_CONFIG.Wechat.Enable {
-			content = "Github敏感信息报告\n" + content
-			err = utils.BotSend(content)
-			if err != nil {
-				global.GVA_LOG.Error("send wechat error", zap.Any("err", err))
-			}
-		}
-	}
+	notifyNewResults("Github敏感信息报告", content)
 	return errors.Join(scanErrors...)
+}
+
+func formatInsertedSummary(keyword string, stats *service.SaveResultStats) string {
+	if stats == nil || stats.Inserted == 0 {
+		return ""
+	}
+	repoInfo := ""
+	if len(stats.Repos) > 0 {
+		if len(stats.Repos) <= 3 {
+			repoInfo = fmt.Sprintf(" (repos: %s)", strings.Join(stats.Repos, ", "))
+		} else {
+			repoInfo = fmt.Sprintf(" (repos: %s +%d more)", strings.Join(stats.Repos[:3], ", "), len(stats.Repos)-3)
+		}
+	}
+	return fmt.Sprintf("%s: %d条%s<br>", keyword, stats.Inserted, repoInfo)
+}
+
+func notifyNewResults(title, content string) {
+	if content == "" {
+		return
+	}
+	if global.GVA_CONFIG.Email.Enable {
+		if err := utils.EmailSend(title, content); err != nil {
+			global.GVA_LOG.Error("send email error", zap.Any("err", err))
+		}
+	}
+	if global.GVA_CONFIG.Wechat.Enable {
+		if err := utils.BotSend(title + "\n" + content); err != nil {
+			global.GVA_LOG.Error("send wechat error", zap.Any("err", err))
+		}
+	}
 }
 
 func SaveResultWithStats(results []*github.CodeSearchResult, keyword string) *service.SaveResultStats {
@@ -106,22 +120,52 @@ func ConvertToSearchResults(results []*github.CodeSearchResult, keyword string) 
 }
 
 func RunTask() model.ScanOutcome {
-	err, rules := getGithubRules("github")
+	err, codeRules := getGithubRules("github")
 	if err != nil {
 		global.GVA_LOG.Error("GetValidRulesByType github err", zap.Error(err))
 		return model.ScanFailed("Failed to load GitHub rules: " + err.Error())
 	}
-	color.Debug.Print(fmt.Sprintf("Github fetch %d rules, begin the scan task\n", len(rules)))
-	if len(rules) == 0 {
-		message := "No enabled GitHub rules; provider skipped"
+	err, issueRules := getGithubRules("github_issue")
+	if err != nil {
+		global.GVA_LOG.Error("GetValidRulesByType github_issue err", zap.Error(err))
+		return model.ScanFailed("Failed to load GitHub issue rules: " + err.Error())
+	}
+	err, gistRules := getGithubRules("gist")
+	if err != nil {
+		global.GVA_LOG.Error("GetValidRulesByType gist err", zap.Error(err))
+		return model.ScanFailed("Failed to load Gist rules: " + err.Error())
+	}
+
+	color.Debug.Print(fmt.Sprintf("Github fetch %d code / %d issue / %d gist rules\n",
+		len(codeRules), len(issueRules), len(gistRules)))
+	if len(codeRules) == 0 && len(issueRules) == 0 && len(gistRules) == 0 {
+		message := "No enabled GitHub, issue, or gist rules; provider skipped"
 		global.GVA_LOG.Info(message)
 		return model.ScanSkipped(message)
 	}
-	if err := Search(rules); err != nil {
+
+	client, err := GetGithubClient()
+	if err != nil {
+		global.GVA_LOG.Error("GetGithubClient err", zap.Error(err))
+		return model.ScanFailed("GitHub client initialization failed: " + err.Error())
+	}
+
+	var scanErrors []error
+	if err := searchCode(client, codeRules); err != nil {
+		scanErrors = append(scanErrors, err)
+	}
+	if err := searchIssues(client, issueRules); err != nil {
+		scanErrors = append(scanErrors, err)
+	}
+	if err := searchGists(client, gistRules); err != nil {
+		scanErrors = append(scanErrors, err)
+	}
+	if err := errors.Join(scanErrors...); err != nil {
 		return model.ScanFailed("GitHub scan completed with errors: " + err.Error())
 	}
 	color.Debug.Print("Complete the scan of Github\n")
-	return model.ScanSuccess(fmt.Sprintf("Completed %d GitHub rules", len(rules)))
+	return model.ScanSuccess(fmt.Sprintf("Completed %d code, %d issue, %d gist rules",
+		len(codeRules), len(issueRules), len(gistRules)))
 }
 
 func (c *Client) GetCommiter(ctx context.Context, owner, repo string) string {
@@ -157,43 +201,77 @@ func (c *Client) SearchCode(query string) ([]*github.CodeSearchResult, error) {
 
 func BuildQuery(query string) (string, error) {
 	query = query + " in:file"
-	err, extensionFilters := model.GetFilterByClass("extension")
+	ext, err := appendExtensionFilters("", " -extension:", " +extension:")
 	if err != nil {
-		return query, err
+		return query + ext, err
 	}
-	// if there is no record, does not return err
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return query, nil
+	kw, err := appendKeywordFilters("", " NOT ", " ")
+	return query + ext + kw, err
+}
+
+func BuildIssueQuery(query string) (string, error) {
+	if !strings.Contains(query, "in:") {
+		query += " in:title,body,comments"
 	}
-	str := ""
+	return appendKeywordFilters(query, " NOT ", " ")
+}
+
+func BuildGistQuery(query string) (string, error) {
+	ext, err := appendExtensionFilters("", " -extension:", " extension:")
+	if err != nil {
+		return query + ext, err
+	}
+	kw, err := appendKeywordFilters("", " -", " ")
+	return query + ext + kw, err
+}
+
+func appendExtensionFilters(str, denyPrefix, allowPrefix string) (string, error) {
+	err, extensionFilters := getFiltersByClass("extension")
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return str, nil
+		}
+		return str, err
+	}
 	for _, extensionFilter := range extensionFilters {
 		extensions := strings.Split(extensionFilter.Content, ",")
 		filterType := extensionFilter.FilterType
 		for _, extension := range extensions {
+			extension = strings.TrimSpace(extension)
+			if extension == "" {
+				continue
+			}
 			if filterType == "blacklist" {
-				str += " -extension:" + extension
+				str += denyPrefix + extension
 			} else {
-				str += " +extension:" + extension
+				str += allowPrefix + extension
 			}
 		}
 	}
+	return str, nil
+}
 
-	err, keywordFilters := model.GetFilterByClass("keyword")
-
+func appendKeywordFilters(str, denyPrefix, allowPrefix string) (string, error) {
+	err, keywordFilters := getFiltersByClass("keyword")
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return str, err
+	}
 	for _, keywordFilter := range keywordFilters {
 		keywords := strings.Split(keywordFilter.Content, ",")
 		filterType := keywordFilter.FilterType
 		for _, keyword := range keywords {
-			if filterType == "black" {
-				str += " NOT " + keyword
+			keyword = strings.TrimSpace(keyword)
+			if keyword == "" {
+				continue
+			}
+			if filterType == "black" || filterType == "blacklist" {
+				str += denyPrefix + keyword
 			} else {
-				str += " " + keyword
+				str += allowPrefix + keyword
 			}
 		}
 	}
-
-	builtQuery := query + str
-	return builtQuery, err
+	return str, nil
 }
 
 // maxSearchAttempts bounds how many times a single page is retried after
@@ -206,30 +284,16 @@ var sleepFn = time.Sleep
 
 var getGithubRules = service.GetValidRulesByType
 
+var getFiltersByClass = model.GetFilterByClass
+
 func (c *Client) searchCodeByOpt(ctx context.Context, query string, opt github.SearchOptions) (*github.CodeSearchResult,
 	int) {
 	for attempt := 1; attempt <= maxSearchAttempts; attempt++ {
 		result, res, err := c.Client.Search.Code(ctx, query, &opt)
 		if err == nil {
-			return c.afterSearchSuccess(query, result, res)
+			return result, c.noteSearchResponse(query, res)
 		}
-
-		var rateLimitError *github.RateLimitError
-		var abuseRateLimitError *github.AbuseRateLimitError
-		switch {
-		case errors.As(err, &rateLimitError):
-			global.GVA_LOG.Warn("Trigger the github rate limit", zap.Int("attempt", attempt))
-			if !c.attemptRotate() {
-				sleepUntil(rateLimitError.Rate.Reset.Time)
-			}
-		case errors.As(err, &abuseRateLimitError):
-			global.GVA_LOG.Warn("Trigger the github secondary rate limit", zap.Int("attempt", attempt))
-			if !c.attemptRotate() {
-				sleepForAbuse(abuseRateLimitError.RetryAfter)
-			}
-		default:
-			global.GVA_LOG.Error("Search error", zap.Any("github search error", err))
-			sleepFn(30 * time.Second)
+		if !c.recoverSearchError(query, err, attempt) {
 			return nil, 0
 		}
 	}
@@ -238,10 +302,33 @@ func (c *Client) searchCodeByOpt(ctx context.Context, query string, opt github.S
 	return nil, 0
 }
 
-func (c *Client) afterSearchSuccess(query string, result *github.CodeSearchResult, res *github.Response) (*github.CodeSearchResult, int) {
+func (c *Client) recoverSearchError(query string, err error, attempt int) bool {
+	var rateLimitError *github.RateLimitError
+	var abuseRateLimitError *github.AbuseRateLimitError
+	switch {
+	case errors.As(err, &rateLimitError):
+		global.GVA_LOG.Warn("Trigger the github rate limit", zap.Int("attempt", attempt), zap.String("query", query))
+		if !c.attemptRotate() {
+			sleepUntil(rateLimitError.Rate.Reset.Time)
+		}
+		return true
+	case errors.As(err, &abuseRateLimitError):
+		global.GVA_LOG.Warn("Trigger the github secondary rate limit", zap.Int("attempt", attempt), zap.String("query", query))
+		if !c.attemptRotate() {
+			sleepForAbuse(abuseRateLimitError.RetryAfter)
+		}
+		return true
+	default:
+		global.GVA_LOG.Error("Search error", zap.Any("github search error", err), zap.String("query", query))
+		sleepFn(30 * time.Second)
+		return false
+	}
+}
+
+func (c *Client) noteSearchResponse(query string, res *github.Response) int {
 	if res == nil {
 		global.GVA_LOG.Error("Received nil response from GitHub API")
-		return nil, 0
+		return 0
 	}
 
 	if res.Rate.Remaining < 3 {
@@ -252,7 +339,7 @@ func (c *Client) afterSearchSuccess(query string, result *github.CodeSearchResul
 	global.GVA_LOG.Info("Search for "+query, zap.Any("remaining", res.Rate.Remaining), zap.Any("nextPage",
 		res.NextPage), zap.Any("lastPage", res.LastPage))
 
-	return result, res.NextPage
+	return res.NextPage
 }
 
 // attemptRotate switches to the next configured github token and reports
