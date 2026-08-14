@@ -28,9 +28,30 @@ For the usage of GShark, please refer to the [wiki](https://github.com/madneal/g
 
 GShark splits the Vue 3 console from two Go processes that share one MySQL database: `gshark serve` for management, `gshark scan` for the provider cycle.
 
-<p align="center">
-  <img alt="GShark architecture" src="docs/architecture.png" />
-</p>
+```mermaid
+flowchart LR
+    console["Vue 3 console<br/>Vite · Vue Router · Vuex · Element Plus"]
+    serve["gshark serve<br/>Gin API · :8888"]
+    scan["gshark scan<br/>15-minute cycle<br/>30-minute provider watchdog"]
+    db[("MySQL 8<br/>rules · tokens · filters · repos<br/>results · scan logs · subdomains · RBAC")]
+    providers{{"Scan providers"}}
+    github["GitHub Search API"]
+    gitlab["GitLab global search<br/>or project crawl"]
+    sourcegraph["Sourcegraph Stream API"]
+    postman["Postman Search API"]
+    dns["gobuster DNS discovery"]
+
+    console -->|HTTP /api| serve
+    serve <--> db
+    scan <--> db
+    scan --> providers
+    providers --> github
+    providers --> gitlab
+    providers --> sourcegraph
+    providers --> postman
+    providers --> dns
+    providers --> db
+```
 
 # Quick start
 
