@@ -29,27 +29,25 @@ GShark 是一个敏感信息检测和管理平台。后端基于 Go 和 Gin 构�
 GShark 将 Vue 3 管理台与两个共享同一 MySQL 的 Go 进程分开：`gshark serve` 负责管理，`gshark scan` 负责扫描周期。
 
 ```mermaid
-flowchart TB
+flowchart LR
     console["Vue 3 管理台<br/>Vite · Vue Router · Vuex · Element Plus"]
 
     subgraph runtime["GShark 运行平面"]
-        direction LR
+        direction TB
         serve["gshark serve<br/>管理 API · :8888"]
         scan["gshark scan<br/>15 分钟周期<br/>Provider 30 分钟看门狗"]
     end
 
-    subgraph lower["持久化与公共数据面"]
-        direction LR
-        subgraph providers["gshark scan 使用的 Provider"]
-            direction LR
-            github["GitHub"]
-            gitlab["GitLab"]
-            sourcegraph["Sourcegraph"]
-            postman["Postman"]
-            dns["DNS / gobuster"]
-        end
-        db[("MySQL 8<br/>配置 · 结果 · 扫描日志")]
+    subgraph providers["gshark scan 使用的 Provider"]
+        direction TB
+        github["GitHub Search API"]
+        gitlab["GitLab 全局搜索 / 爬取"]
+        sourcegraph["Sourcegraph Stream API"]
+        postman["Postman Search API"]
+        dns["DNS / gobuster"]
     end
+
+    db[("MySQL 8<br/>配置 · 结果 · 扫描日志")]
 
     console -->|HTTP /api| serve
     serve -->|读写| db
@@ -67,7 +65,7 @@ flowchart TB
     class db data
     class github,gitlab,sourcegraph,postman,dns provider
     style runtime fill:#f8fafc,stroke:#94a3b8,stroke-width:1px
-    style lower fill:#fffdf8,stroke:#c8a96b,stroke-width:1px
+    style providers fill:#fffdf8,stroke:#c8a96b,stroke-width:1px
 ```
 
 # 快速开始
