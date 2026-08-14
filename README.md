@@ -28,45 +28,9 @@ For the usage of GShark, please refer to the [wiki](https://github.com/madneal/g
 
 GShark splits the Vue 3 console from two Go processes that share one MySQL database: `gshark serve` for management, `gshark scan` for the provider cycle.
 
-```mermaid
-flowchart LR
-    console["Vue 3 console<br/>Vite · Vue Router · Vuex · Element Plus"]
-
-    subgraph runtime["GShark runtime"]
-        direction TB
-        serve["gshark serve<br/>Management API · :8888"]
-        scan["gshark scan<br/>15-minute cycle<br/>30-minute provider watchdog"]
-    end
-
-    subgraph providers["Provider adapters used by gshark scan"]
-        direction TB
-        github["GitHub Search API"]
-        gitlab["GitLab global search / crawl"]
-        sourcegraph["Sourcegraph Stream API"]
-        postman["Postman Search API"]
-        dns["DNS / gobuster"]
-    end
-
-    db[("MySQL 8<br/>configuration · results · scan logs")]
-
-    console -->|HTTP /api| serve
-    serve -->|read and write| db
-    scan -->|rules, tokens, logs| db
-    scan -->|search| providers
-    providers -->|findings and status| db
-
-    classDef ui fill:#e8f1ff,stroke:#3b6ea8,color:#10233f,stroke-width:2px
-    classDef runtimeNode fill:#eef7f2,stroke:#3d8b68,color:#123526,stroke-width:2px
-    classDef data fill:#fff4df,stroke:#b8791d,color:#3b2508,stroke-width:2px
-    classDef provider fill:#f4efff,stroke:#7655a8,color:#26163f
-
-    class console ui
-    class serve,scan runtimeNode
-    class db data
-    class github,gitlab,sourcegraph,postman,dns provider
-    style runtime fill:#f8fafc,stroke:#94a3b8,stroke-width:1px
-    style providers fill:#fffdf8,stroke:#c8a96b,stroke-width:1px
-```
+<p align="center">
+  <img alt="GShark architecture" src="docs/architecture.svg" width="100%" />
+</p>
 
 # Quick start
 
