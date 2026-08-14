@@ -29,28 +29,45 @@ GShark 是一个敏感信息检测和管理平台。后端基于 Go 和 Gin 构�
 GShark 将 Vue 3 管理台与两个共享同一 MySQL 的 Go 进程分开：`gshark serve` 负责管理，`gshark scan` 负责扫描周期。
 
 ```mermaid
-flowchart LR
+flowchart TB
     console["Vue 3 管理台<br/>Vite · Vue Router · Vuex · Element Plus"]
-    serve["gshark serve<br/>Gin API · :8888"]
-    scan["gshark scan<br/>15 分钟周期<br/>Provider 30 分钟看门狗"]
-    db[("MySQL 8<br/>规则 · Token · 过滤器 · 仓库<br/>结果 · 扫描日志 · 子域名 · RBAC")]
-    providers{{"扫描 Provider"}}
-    github["GitHub Search API"]
-    gitlab["GitLab 全局搜索<br/>或逐项目爬取"]
-    sourcegraph["Sourcegraph Stream API"]
-    postman["Postman Search API"]
-    dns["gobuster DNS 发现"]
+
+    subgraph runtime["GShark 运行平面"]
+        direction LR
+        serve["gshark serve<br/>管理 API · :8888"]
+        scan["gshark scan<br/>15 分钟周期<br/>Provider 30 分钟看门狗"]
+    end
+
+    subgraph lower["持久化与公共数据面"]
+        direction LR
+        subgraph providers["gshark scan 使用的 Provider"]
+            direction LR
+            github["GitHub"]
+            gitlab["GitLab"]
+            sourcegraph["Sourcegraph"]
+            postman["Postman"]
+            dns["DNS / gobuster"]
+        end
+        db[("MySQL 8<br/>配置 · 结果 · 扫描日志")]
+    end
 
     console -->|HTTP /api| serve
-    serve <--> db
-    scan <--> db
-    scan --> providers
-    providers --> github
-    providers --> gitlab
-    providers --> sourcegraph
-    providers --> postman
-    providers --> dns
-    providers --> db
+    serve -->|读写| db
+    scan -->|规则、Token、日志| db
+    scan -->|搜索| providers
+    providers -->|发现结果和状态| db
+
+    classDef ui fill:#e8f1ff,stroke:#3b6ea8,color:#10233f,stroke-width:2px
+    classDef runtimeNode fill:#eef7f2,stroke:#3d8b68,color:#123526,stroke-width:2px
+    classDef data fill:#fff4df,stroke:#b8791d,color:#3b2508,stroke-width:2px
+    classDef provider fill:#f4efff,stroke:#7655a8,color:#26163f
+
+    class console ui
+    class serve,scan runtimeNode
+    class db data
+    class github,gitlab,sourcegraph,postman,dns provider
+    style runtime fill:#f8fafc,stroke:#94a3b8,stroke-width:1px
+    style lower fill:#fffdf8,stroke:#c8a96b,stroke-width:1px
 ```
 
 # 快速开始

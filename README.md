@@ -29,28 +29,45 @@ For the usage of GShark, please refer to the [wiki](https://github.com/madneal/g
 GShark splits the Vue 3 console from two Go processes that share one MySQL database: `gshark serve` for management, `gshark scan` for the provider cycle.
 
 ```mermaid
-flowchart LR
+flowchart TB
     console["Vue 3 console<br/>Vite · Vue Router · Vuex · Element Plus"]
-    serve["gshark serve<br/>Gin API · :8888"]
-    scan["gshark scan<br/>15-minute cycle<br/>30-minute provider watchdog"]
-    db[("MySQL 8<br/>rules · tokens · filters · repos<br/>results · scan logs · subdomains · RBAC")]
-    providers{{"Scan providers"}}
-    github["GitHub Search API"]
-    gitlab["GitLab global search<br/>or project crawl"]
-    sourcegraph["Sourcegraph Stream API"]
-    postman["Postman Search API"]
-    dns["gobuster DNS discovery"]
+
+    subgraph runtime["GShark runtime"]
+        direction LR
+        serve["gshark serve<br/>Management API · :8888"]
+        scan["gshark scan<br/>15-minute cycle<br/>30-minute provider watchdog"]
+    end
+
+    subgraph lower["Persistence and public surfaces"]
+        direction LR
+        subgraph providers["Provider adapters used by gshark scan"]
+            direction LR
+            github["GitHub"]
+            gitlab["GitLab"]
+            sourcegraph["Sourcegraph"]
+            postman["Postman"]
+            dns["DNS / gobuster"]
+        end
+        db[("MySQL 8<br/>configuration · results · scan logs")]
+    end
 
     console -->|HTTP /api| serve
-    serve <--> db
-    scan <--> db
-    scan --> providers
-    providers --> github
-    providers --> gitlab
-    providers --> sourcegraph
-    providers --> postman
-    providers --> dns
-    providers --> db
+    serve -->|read and write| db
+    scan -->|rules, tokens, logs| db
+    scan -->|search| providers
+    providers -->|findings and status| db
+
+    classDef ui fill:#e8f1ff,stroke:#3b6ea8,color:#10233f,stroke-width:2px
+    classDef runtimeNode fill:#eef7f2,stroke:#3d8b68,color:#123526,stroke-width:2px
+    classDef data fill:#fff4df,stroke:#b8791d,color:#3b2508,stroke-width:2px
+    classDef provider fill:#f4efff,stroke:#7655a8,color:#26163f
+
+    class console ui
+    class serve,scan runtimeNode
+    class db data
+    class github,gitlab,sourcegraph,postman,dns provider
+    style runtime fill:#f8fafc,stroke:#94a3b8,stroke-width:1px
+    style lower fill:#fffdf8,stroke:#c8a96b,stroke-width:1px
 ```
 
 # Quick start
