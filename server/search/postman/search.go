@@ -19,10 +19,11 @@ import (
 )
 
 const (
-	postmanURL             = "https://api.postman.com/search"
-	postmanPageSize        = 25
-	postmanRequestTimeout  = 30 * time.Second
-	maxPostmanResponseSize = 10 << 20
+	postmanURL              = "https://api.postman.com/search"
+	postmanPageSize         = 25
+	postmanRequestTimeout   = 30 * time.Second
+	maxPostmanResponseSize  = 10 << 20
+	maxSeenPostmanResources = 4096
 )
 
 var postmanHTTPClient = &http.Client{Timeout: postmanRequestTimeout}
@@ -188,7 +189,9 @@ func searchAPIStream(client *http.Client, endpoint, rule, searchType string, onP
 	}
 
 	seenCursors := make(map[string]struct{})
-	seenResources := make(map[string]struct{})
+	seenResources := make(map[string]struct{}, maxSeenPostmanResources)
+	seenResourceOrder := make([]string, 0, maxSeenPostmanResources)
+	seenResourceNext := 0
 	cursor := ""
 	for page := 0; ; page++ {
 		color.Infof("search for the rule %s of page %d\n", rule, page)
@@ -224,6 +227,14 @@ func searchAPIStream(client *http.Client, endpoint, rule, searchType string, onP
 			if key != "" {
 				if _, exists := seenResources[key]; exists {
 					continue
+				}
+				if len(seenResourceOrder) < maxSeenPostmanResources {
+					seenResourceOrder = append(seenResourceOrder, key)
+				} else {
+					oldKey := seenResourceOrder[seenResourceNext]
+					delete(seenResources, oldKey)
+					seenResourceOrder[seenResourceNext] = key
+					seenResourceNext = (seenResourceNext + 1) % maxSeenPostmanResources
 				}
 				seenResources[key] = struct{}{}
 			}

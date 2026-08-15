@@ -183,6 +183,37 @@ func TestSearchCodeByOptRetriesAfterRotatingOnPrimaryRateLimit(t *testing.T) {
 	}
 }
 
+func TestSearchCodeStreamInvokesCallbackBeforeNextPage(t *testing.T) {
+	requestCount := 0
+	callbackCount := 0
+	client, _ := newTestClient(t, func(w http.ResponseWriter, r *http.Request) {
+		requestCount++
+		if requestCount == 1 {
+			w.Header().Set("Link", "<https://api.github.com/search/code?page=2>; rel=\"next\"")
+			writeSearchSuccess(w, github.CodeSearchResult{CodeResults: []*github.CodeResult{{Path: github.String("first.go")}}})
+			return
+		}
+		writeSearchSuccess(w, github.CodeSearchResult{CodeResults: []*github.CodeResult{{Path: github.String("second.go")}}})
+	})
+
+	err := client.SearchCodeStream("test query", func(page []*github.CodeSearchResult) error {
+		callbackCount++
+		if requestCount != callbackCount {
+			t.Fatalf("callback ran after requesting a later page: requests=%d callbacks=%d", requestCount, callbackCount)
+		}
+		if len(page) != 1 || len(page[0].CodeResults) != 1 {
+			t.Fatalf("unexpected page: %#v", page)
+		}
+		return nil
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if requestCount != 2 || callbackCount != 2 {
+		t.Fatalf("requests=%d callbacks=%d, want 2 each", requestCount, callbackCount)
+	}
+}
+
 func TestSearchCodeByOptSleepsAndRetriesWhenRotationUnavailable(t *testing.T) {
 	slept := stubSleep(t)
 	requestCount := 0

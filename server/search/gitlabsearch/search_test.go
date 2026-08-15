@@ -244,3 +244,35 @@ func TestSearchCodePaginatesAcrossPages(t *testing.T) {
 		t.Fatalf("expected results from both pages, got %d", len(results))
 	}
 }
+
+func TestSearchCodeStreamInvokesCallbackPerPage(t *testing.T) {
+	requestCount := 0
+	callbackCount := 0
+	client := newTestGitlabClient(t, func(w http.ResponseWriter, r *http.Request) {
+		requestCount++
+		if requestCount == 1 {
+			w.Header().Set("X-Next-Page", "2")
+			writeGitlabJSON(w, http.StatusOK, []gitlab.Blob{{Filename: "a.go", Basename: "a.go"}})
+			return
+		}
+		writeGitlabJSON(w, http.StatusOK, []gitlab.Blob{{Filename: "b.go", Basename: "b.go"}})
+	})
+
+	project := model.Repo{ProjectId: 1, Url: "https://gitlab.test/group/project"}
+	err := SearchCodeStream("test-query", project, client, func(results []*model.SearchResult) error {
+		callbackCount++
+		if requestCount != callbackCount {
+			t.Fatalf("callback ran after requesting a later page: requests=%d callbacks=%d", requestCount, callbackCount)
+		}
+		if len(results) != 1 {
+			t.Fatalf("results per page = %d, want 1", len(results))
+		}
+		return nil
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if requestCount != 2 || callbackCount != 2 {
+		t.Fatalf("requests=%d callbacks=%d, want 2 each", requestCount, callbackCount)
+	}
+}

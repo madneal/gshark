@@ -80,7 +80,7 @@ cd gshark
 > [!IMPORTANT]
 > The quick Docker script starts MySQL first, initializes the database, and only then starts the scanner when `--with-scan` is used. If you start the scanner manually with Docker Compose, wait until database initialization completes first.
 
-The scanner container has conservative resource guardrails in `docker-compose.yaml`: a 512 MB memory limit, a 1 CPU limit, and Go's `GOMEMLIMIT=384MiB`. Scan results are persisted page by page so a large repository search does not remain fully resident in memory. Monitor the actual usage with `docker stats gshark-scanner` before lowering the limits further.
+The scanner container has conservative resource guardrails in `docker-compose.yaml`: a 512 MB memory limit, a 1 CPU limit, and Go's `GOMEMLIMIT=384MiB`. Scan results are persisted page by page so a large repository search does not remain fully resident in memory. If the scanner is OOM-killed, Compose restarts it automatically; monitor the actual usage with `docker stats gshark-scanner` before lowering the limits further.
 
 ## Local Deployment 
 

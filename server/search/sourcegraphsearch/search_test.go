@@ -84,3 +84,26 @@ func TestSearchForSourcegraphParsesMatches(t *testing.T) {
 		t.Fatalf("unexpected repository: %s", results[0].Repo)
 	}
 }
+
+func TestSearchForSourcegraphStreamInvokesCallbackPerMatchEvent(t *testing.T) {
+	callbackCount := 0
+	client := &http.Client{Transport: roundTripFunc(func(req *http.Request) (*http.Response, error) {
+		body := "event: matches\ndata: [{\"type\":\"content\",\"repository\":\"github.com/acme/one\",\"path\":\".env\",\"lineMatches\":[{\"line\":\"A=1\",\"lineNumber\":1}]}]\n\n" +
+			"event: matches\ndata: [{\"type\":\"content\",\"repository\":\"github.com/acme/two\",\"path\":\".env\",\"lineMatches\":[{\"line\":\"B=2\",\"lineNumber\":2}]}]\n\n"
+		return &http.Response{StatusCode: http.StatusOK, Body: io.NopCloser(strings.NewReader(body)), Header: make(http.Header)}, nil
+	})}
+
+	warnings, err := SearchForSourcegraphStream(model.Rule{Content: "ghp_"}, client, func(results []*model.SearchResult) error {
+		callbackCount++
+		if len(results) != 1 {
+			t.Fatalf("results per event = %d, want 1", len(results))
+		}
+		return nil
+	})
+	if err != nil {
+		t.Fatalf("SearchForSourcegraphStream returned error: %v", err)
+	}
+	if len(warnings) != 0 || callbackCount != 2 {
+		t.Fatalf("warnings=%v callbacks=%d, want no warnings and 2 callbacks", warnings, callbackCount)
+	}
+}

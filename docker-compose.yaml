@@ -82,7 +82,7 @@ services:
     pids_limit: 128
     volumes:
       - ./server/config.docker.yaml:/go/src/github.com/madneal/gshark/server/config.docker.yaml
-    restart: "no"
+    restart: "always"
     depends_on:
       mysql:
         condition: service_healthy
