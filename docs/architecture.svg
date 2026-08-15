@@ -1,77 +1,120 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="760" viewBox="0 0 1600 760" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="760" viewBox="0 0 1440 760" role="img" aria-labelledby="title desc">
   <title id="title">GShark architecture</title>
-  <desc id="desc">A left-to-right view of the Vue console, GShark runtime, scan providers, and shared MySQL persistence rail.</desc>
+  <desc id="desc">A left-to-right architecture view showing the Vue console, GShark runtime, scan providers, and shared MySQL persistence.</desc>
   <defs>
-    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
-      <path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b"/>
+    <marker id="arrow" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="9" markerHeight="9" orient="auto">
+      <path d="M1 1L11 6L1 11Z" fill="#64748b"/>
     </marker>
     <style>
-      .canvas { fill: #ffffff; }
-      .title { font: 700 30px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #172033; }
+      .title { font: 700 30px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #14213d; }
       .subtitle { font: 400 16px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #64748b; }
-      .section { font: 700 15px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: 1.5px; fill: #475569; }
-      .label { font: 700 21px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #172033; }
-      .detail { font: 400 15px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #64748b; }
-      .provider { font: 600 18px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #3b2a5f; }
+      .eyebrow { font: 700 13px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: 1.6px; fill: #475569; }
+      .step { font: 700 12px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #ffffff; }
+      .label { font: 700 20px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #14213d; }
+      .detail { font: 400 14px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #64748b; }
+      .provider { font: 600 16px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #34245b; }
+      .provider-detail { font: 400 12px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #776a96; }
       .edge { fill: none; stroke: #64748b; stroke-width: 2.5; marker-end: url(#arrow); }
-      .edge-dashed { fill: none; stroke: #94a3b8; stroke-width: 2; stroke-dasharray: 8 7; marker-end: url(#arrow); }
-      .edge-label { font: 400 14px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #64748b; }
+      .edge-dashed { fill: none; stroke: #94a3b8; stroke-width: 2; stroke-dasharray: 7 7; marker-end: url(#arrow); }
+      .edge-label { font: 600 12px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #475569; }
+      .legend { font: 400 13px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #64748b; }
     </style>
   </defs>
 
-  <rect class="canvas" width="1600" height="760" rx="18"/>
-  <text class="title" x="60" y="58">GShark architecture</text>
-  <text class="subtitle" x="60" y="88">The management console and scan plane share one persistent state store.</text>
+  <rect width="1440" height="760" rx="20" fill="#f8fafc"/>
+  <rect x="1" y="1" width="1438" height="758" rx="19" fill="none" stroke="#e2e8f0" stroke-width="2"/>
 
-  <!-- Main left-to-right flow -->
-  <rect x="50" y="125" width="270" height="360" rx="16" fill="#f4f8ff" stroke="#8eb1df" stroke-width="2"/>
-  <text class="section" x="78" y="165">01 · INTERFACE</text>
-  <rect x="80" y="200" width="210" height="160" rx="12" fill="#e8f1ff" stroke="#3b6ea8" stroke-width="2.5"/>
-  <text class="label" x="105" y="290">Vue 3 console</text>
-  <text class="detail" x="105" y="325">Vite · Router · Vuex</text>
-  <text class="detail" x="105" y="352">Element Plus</text>
-  <text class="detail" x="105" y="379">rules · results · review</text>
+  <text class="title" x="58" y="58">GShark architecture</text>
+  <text class="subtitle" x="58" y="88">One control plane coordinates scans across multiple code and asset providers.</text>
 
-  <rect x="360" y="125" width="360" height="360" rx="16" fill="#f3faf6" stroke="#8bc7a9" stroke-width="2"/>
-  <text class="section" x="388" y="165">02 · RUNTIME</text>
-  <rect x="390" y="200" width="300" height="160" rx="12" fill="#e8f6ee" stroke="#3d8b68" stroke-width="2.5"/>
-  <text class="label" x="420" y="250">gshark serve</text>
-  <text class="detail" x="420" y="280">Gin management API · :8888</text>
-  <rect x="390" y="385" width="300" height="80" rx="12" fill="#e8f6ee" stroke="#3d8b68" stroke-width="2.5"/>
-  <text class="label" x="420" y="420">gshark scan</text>
-  <text class="detail" x="420" y="447">15-minute cycle · watchdog</text>
+  <!-- Connector labels sit in their own pills, away from the arrow strokes. -->
+  <rect x="303" y="217" width="72" height="24" rx="12" fill="#eef2f7"/>
+  <text class="edge-label" x="339" y="233" text-anchor="middle">HTTP API</text>
+  <rect x="734" y="217" width="76" height="24" rx="12" fill="#eef2f7"/>
+  <text class="edge-label" x="772" y="233" text-anchor="middle">scan jobs</text>
 
-  <rect x="770" y="125" width="780" height="360" rx="16" fill="#fffaf0" stroke="#d8b77a" stroke-width="2"/>
-  <text class="section" x="798" y="165">03 · PROVIDER ADAPTERS</text>
-  <rect x="800" y="205" width="230" height="80" rx="10" fill="#f4efff" stroke="#9277c2" stroke-width="2"/>
-  <text class="provider" x="873" y="253">GitHub</text>
-  <rect x="1050" y="205" width="230" height="80" rx="10" fill="#f4efff" stroke="#9277c2" stroke-width="2"/>
-  <text class="provider" x="1120" y="253">GitLab</text>
-  <rect x="1300" y="205" width="220" height="80" rx="10" fill="#f4efff" stroke="#9277c2" stroke-width="2"/>
-  <text class="provider" x="1327" y="253">Sourcegraph</text>
-  <rect x="800" y="325" width="230" height="80" rx="10" fill="#f4efff" stroke="#9277c2" stroke-width="2"/>
-  <text class="provider" x="870" y="373">Postman</text>
-  <rect x="1050" y="325" width="470" height="80" rx="10" fill="#f4efff" stroke="#9277c2" stroke-width="2"/>
-  <text class="provider" x="1200" y="373">DNS / gobuster</text>
+  <!-- Main flow cards -->
+  <rect x="58" y="140" width="252" height="270" rx="18" fill="#eef5ff" stroke="#9ab8e2" stroke-width="2"/>
+  <rect x="78" y="160" width="28" height="28" rx="9" fill="#3b6ea8"/>
+  <text class="step" x="92" y="179" text-anchor="middle">01</text>
+  <text class="eyebrow" x="118" y="179">INTERFACE</text>
+  <rect x="82" y="220" width="204" height="142" rx="14" fill="#ffffff" stroke="#6d98ce" stroke-width="2"/>
+  <text class="label" x="106" y="267">Vue 3 console</text>
+  <text class="detail" x="106" y="297">Vite · Router · Vuex</text>
+  <text class="detail" x="106" y="322">rules · results · review</text>
+  <text class="detail" x="106" y="347">Element Plus</text>
 
-  <!-- Shared persistence rail -->
-  <rect x="360" y="560" width="1190" height="130" rx="16" fill="#fff7e8" stroke="#d9a84e" stroke-width="2"/>
-  <text class="section" x="390" y="600">04 · SHARED PERSISTENCE</text>
-  <text class="label" x="390" y="650">MySQL 8</text>
-  <text class="detail" x="545" y="650">configuration · rules · tokens · results · scan logs · assets</text>
+  <rect x="370" y="140" width="360" height="270" rx="18" fill="#edf9f2" stroke="#91caae" stroke-width="2"/>
+  <rect x="390" y="160" width="28" height="28" rx="9" fill="#3d8b68"/>
+  <text class="step" x="404" y="179" text-anchor="middle">02</text>
+  <text class="eyebrow" x="430" y="179">RUNTIME</text>
+  <rect x="394" y="220" width="312" height="82" rx="14" fill="#ffffff" stroke="#65a983" stroke-width="2"/>
+  <text class="label" x="418" y="252">gshark serve</text>
+  <text class="detail" x="418" y="279">Gin management API · :8888</text>
+  <rect x="394" y="316" width="312" height="62" rx="14" fill="#ffffff" stroke="#65a983" stroke-width="2"/>
+  <text class="label" x="418" y="344">gshark scan</text>
+  <text class="detail" x="418" y="366">15-minute cycle · watchdog</text>
 
-  <!-- Clean, non-crossing connectors -->
-  <path class="edge" d="M290 280 H390"/>
-  <text class="edge-label" x="300" y="265">HTTP /api</text>
-  <path class="edge" d="M690 425 H770"/>
-  <text class="edge-label" x="695" y="410">search</text>
-  <path class="edge-dashed" d="M690 280 H735 V560"/>
-  <text class="edge-label" x="744" y="265">management data</text>
-  <path class="edge-dashed" d="M600 465 V560"/>
-  <text class="edge-label" x="615" y="520">rules · logs</text>
-  <path class="edge" d="M1160 405 V560"/>
-  <text class="edge-label" x="1175" y="520">findings</text>
+  <rect x="790" y="140" width="592" height="270" rx="18" fill="#fff9ed" stroke="#ddbf82" stroke-width="2"/>
+  <rect x="810" y="160" width="28" height="28" rx="9" fill="#aa7a25"/>
+  <text class="step" x="824" y="179" text-anchor="middle">03</text>
+  <text class="eyebrow" x="850" y="179">PROVIDER ADAPTERS</text>
 
-  <line x1="60" y1="720" x2="1540" y2="720" stroke="#e2e8f0" stroke-width="2"/>
-  <text class="subtitle" x="60" y="748">Providers run inside the scan plane; every finding and scan status is persisted on the shared rail.</text>
+  <rect x="814" y="220" width="168" height="68" rx="12" fill="#f5f0ff" stroke="#a28acb" stroke-width="2"/>
+  <circle cx="838" cy="254" r="13" fill="#8b6aba"/>
+  <text class="step" x="838" y="258" text-anchor="middle">G</text>
+  <text class="provider" x="862" y="251">GitHub</text>
+  <text class="provider-detail" x="862" y="270">code search</text>
+  <rect x="996" y="220" width="168" height="68" rx="12" fill="#f5f0ff" stroke="#a28acb" stroke-width="2"/>
+  <circle cx="1020" cy="254" r="13" fill="#8b6aba"/>
+  <text class="step" x="1020" y="258" text-anchor="middle">L</text>
+  <text class="provider" x="1044" y="251">GitLab</text>
+  <text class="provider-detail" x="1044" y="270">code search</text>
+  <rect x="1178" y="220" width="178" height="68" rx="12" fill="#f5f0ff" stroke="#a28acb" stroke-width="2"/>
+  <circle cx="1202" cy="254" r="13" fill="#8b6aba"/>
+  <text class="step" x="1202" y="258" text-anchor="middle">S</text>
+  <text class="provider" x="1226" y="251">Sourcegraph</text>
+  <text class="provider-detail" x="1226" y="270">code search</text>
+  <rect x="814" y="308" width="168" height="68" rx="12" fill="#f5f0ff" stroke="#a28acb" stroke-width="2"/>
+  <circle cx="838" cy="342" r="13" fill="#8b6aba"/>
+  <text class="step" x="838" y="346" text-anchor="middle">P</text>
+  <text class="provider" x="862" y="339">Postman</text>
+  <text class="provider-detail" x="862" y="358">collection scan</text>
+  <rect x="996" y="308" width="360" height="68" rx="12" fill="#f5f0ff" stroke="#a28acb" stroke-width="2"/>
+  <circle cx="1020" cy="342" r="13" fill="#8b6aba"/>
+  <text class="step" x="1020" y="346" text-anchor="middle">D</text>
+  <text class="provider" x="1044" y="339">DNS / gobuster</text>
+  <text class="provider-detail" x="1044" y="358">asset discovery</text>
+
+  <!-- Main flow arrows are centered in the gaps between cards. -->
+  <path class="edge" d="M310 270H370"/>
+  <path class="edge" d="M730 270H790"/>
+
+  <!-- Shared persistence -->
+  <rect x="370" y="500" width="1012" height="142" rx="18" fill="#fff6e3" stroke="#d7a64b" stroke-width="2"/>
+  <rect x="390" y="520" width="28" height="28" rx="9" fill="#aa7a25"/>
+  <text class="step" x="404" y="539" text-anchor="middle">04</text>
+  <text class="eyebrow" x="430" y="539">SHARED PERSISTENCE</text>
+  <text class="label" x="398" y="594">MySQL 8</text>
+  <text class="detail" x="520" y="594">configuration · rules · tokens · results · scan logs · assets</text>
+  <rect x="398" y="608" width="944" height="10" rx="5" fill="#f2d9a2"/>
+  <circle cx="420" cy="613" r="4" fill="#aa7a25"/>
+  <circle cx="440" cy="613" r="4" fill="#aa7a25"/>
+  <circle cx="460" cy="613" r="4" fill="#aa7a25"/>
+
+  <!-- Persistence arrows drop through empty space, never across a card. -->
+  <path class="edge-dashed" d="M550 410V500"/>
+  <path class="edge" d="M1085 410V500"/>
+  <rect x="565" y="443" width="96" height="24" rx="12" fill="#f1f5f9"/>
+  <text class="edge-label" x="613" y="459" text-anchor="middle">state / logs</text>
+  <rect x="1098" y="443" width="76" height="24" rx="12" fill="#f1f5f9"/>
+  <text class="edge-label" x="1136" y="459" text-anchor="middle">findings</text>
+
+  <!-- Compact legend -->
+  <line x1="58" y1="690" x2="1382" y2="690" stroke="#e2e8f0" stroke-width="2"/>
+  <line class="edge" x1="72" y1="718" x2="112" y2="718"/>
+  <text class="legend" x="124" y="723">request / result flow</text>
+  <line class="edge-dashed" x1="286" y1="718" x2="326" y2="718"/>
+  <text class="legend" x="338" y="723">persisted state and logs</text>
+  <text class="legend" x="1382" y="723" text-anchor="end">Providers run inside the scan plane.</text>
 </svg>
