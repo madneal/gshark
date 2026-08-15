@@ -71,26 +71,15 @@ func searchCode(client *Client, rules []model.Rule) error {
 			content += fmt.Sprintf("%s: %d条%s<br>", rule.Content, ruleInserted, repoInfo)
 		}
 	}
-	if content != "" {
-		if global.GVA_CONFIG.Email.Enable {
-			err = utils.EmailSend("Github敏感信息报告", content)
-			if err != nil {
-				global.GVA_LOG.Error("send email error", zap.Any("err", err))
-			}
-		}
-		if global.GVA_CONFIG.Wechat.Enable {
-			content = "Github敏感信息报告\n" + content
-			err = utils.BotSend(content)
-			if err != nil {
-				global.GVA_LOG.Error("send wechat error", zap.Any("err", err))
-			}
-		}
-	}
 	notifyNewResults("Github敏感信息报告", content)
 	return errors.Join(scanErrors...)
 }
 
 func formatInsertedSummary(keyword string, stats *service.SaveResultStats) string {
+	return formatInsertedSummaryWithMore(keyword, stats, false)
+}
+
+func formatInsertedSummaryWithMore(keyword string, stats *service.SaveResultStats, hasMoreRepos bool) string {
 	if stats == nil || stats.Inserted == 0 {
 		return ""
 	}
@@ -100,6 +89,9 @@ func formatInsertedSummary(keyword string, stats *service.SaveResultStats) strin
 			repoInfo = fmt.Sprintf(" (repos: %s)", strings.Join(stats.Repos, ", "))
 		} else {
 			repoInfo = fmt.Sprintf(" (repos: %s +%d more)", strings.Join(stats.Repos[:3], ", "), len(stats.Repos)-3)
+		}
+		if hasMoreRepos && len(stats.Repos) <= 3 {
+			repoInfo += " +more"
 		}
 	}
 	return fmt.Sprintf("%s: %d条%s<br>", keyword, stats.Inserted, repoInfo)

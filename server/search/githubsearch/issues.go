@@ -27,15 +27,27 @@ func searchIssues(client *Client, rules []model.Rule) error {
 			scanErrors = append(scanErrors, fmt.Errorf("build issue query for %q: %w", rule.Content, err))
 			continue
 		}
-		results, err := client.SearchIssues(query)
+		var inserted int
+		var repos []string
+		var hasMoreRepos bool
+		err = client.SearchIssuesStream(query, func(page *github.IssuesSearchResult) error {
+			stats := service.SaveSearchResultsWithStats(ConvertIssuesToSearchResults([]*github.IssuesSearchResult{page}, rule.Content))
+			inserted += stats.Inserted
+			var more bool
+			repos, more = appendUniqueRepos(repos, stats.Repos)
+			hasMoreRepos = hasMoreRepos || more
+			return nil
+		})
 		if err != nil {
 			global.GVA_LOG.Error("SearchIssues error", zap.Error(err))
 			scanErrors = append(scanErrors, fmt.Errorf("issue search %q: %w", rule.Content, err))
 			continue
 		}
-		stats := service.SaveSearchResultsWithStats(ConvertIssuesToSearchResults(results, rule.Content))
-		global.GVA_LOG.Info(stats.Summary(rule.Content, "GitHub Issue"))
-		content += formatInsertedSummary(rule.Content, stats)
+		stats := service.NewSaveResultStats()
+		stats.Inserted = inserted
+		stats.Repos = repos
+		global.GVA_LOG.Info(fmt.Sprintf("[GitHub Issue] keyword=%q: inserted=%d", rule.Content, inserted))
+		content += formatInsertedSummaryWithMore(rule.Content, stats, hasMoreRepos)
 	}
 	notifyNewResults("GitHub Issue/PR 敏感信息报告", content)
 	return errors.Join(scanErrors...)
@@ -43,17 +55,33 @@ func searchIssues(client *Client, rules []model.Rule) error {
 
 func (c *Client) SearchIssues(query string) ([]*github.IssuesSearchResult, error) {
 	var all []*github.IssuesSearchResult
+	err := c.SearchIssuesStream(query, func(page *github.IssuesSearchResult) error {
+		all = append(all, page)
+		return nil
+	})
+	return all, err
+}
+
+// SearchIssuesStream fetches issue/PR pages one at a time. The callback runs
+// before the next page is requested so callers can persist each page without
+// retaining the complete search response in memory.
+func (c *Client) SearchIssuesStream(query string, onPage func(*github.IssuesSearchResult) error) error {
+	if onPage == nil {
+		return fmt.Errorf("GitHub issue search callback is nil")
+	}
 	ctx := context.Background()
 	opt := &github.SearchOptions{TextMatch: true, ListOptions: github.ListOptions{PerPage: 100}}
 	global.GVA_LOG.Info("GitHub issue scan with the query:", zap.String("query", query))
 	for {
 		result, nextPage := c.searchIssuesByOpt(ctx, query, *opt)
 		if result == nil {
-			return all, fmt.Errorf("GitHub returned no issue response for query %q", query)
+			return fmt.Errorf("GitHub returned no issue response for query %q", query)
 		}
-		all = append(all, result)
+		if err := onPage(result); err != nil {
+			return err
+		}
 		if nextPage <= 0 {
-			return all, nil
+			return nil
 		}
 		opt.Page = nextPage
 	}

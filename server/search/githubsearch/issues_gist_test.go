@@ -142,6 +142,39 @@ func TestSearchIssuesByOptRetriesAfterRotatingOnPrimaryRateLimit(t *testing.T) {
 	}
 }
 
+func TestSearchIssuesStreamInvokesCallbackBeforeNextPage(t *testing.T) {
+	requestCount := 0
+	callbackCount := 0
+	client, _ := newTestClient(t, func(w http.ResponseWriter, r *http.Request) {
+		requestCount++
+		w.Header().Set("X-RateLimit-Remaining", "100")
+		if requestCount == 1 {
+			w.Header().Set("Link", `<https://api.github.com/search/issues?page=2>; rel="next"`)
+		}
+		w.WriteHeader(http.StatusOK)
+		_ = json.NewEncoder(w).Encode(github.IssuesSearchResult{
+			Issues: []*github.Issue{{Number: github.Int(requestCount)}},
+		})
+	})
+
+	err := client.SearchIssuesStream("acme", func(page *github.IssuesSearchResult) error {
+		callbackCount++
+		if requestCount != callbackCount {
+			t.Fatalf("callback ran after requesting a later page: requests=%d callbacks=%d", requestCount, callbackCount)
+		}
+		if len(page.Issues) != 1 || page.Issues[0].GetNumber() != callbackCount {
+			t.Fatalf("unexpected page: %#v", page)
+		}
+		return nil
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if requestCount != 2 || callbackCount != 2 {
+		t.Fatalf("requests=%d callbacks=%d, want 2 each", requestCount, callbackCount)
+	}
+}
+
 func TestParseGistSearchHTMLExtractsUniqueGists(t *testing.T) {
 	html := `
 <a href="/saumalya75/8ccbb1c6198b862db3ccbfac45efe27f">1 file</a>
@@ -177,6 +210,15 @@ func TestGistMatchesKeywordKeepsColonNeedles(t *testing.T) {
 	}
 	if gistMatchesKeyword("secrets.env", "", "unrelated", "aws_access_key_id:") {
 		t.Fatal("expected colon-bearing needle to require a match")
+	}
+}
+
+func TestGistMatchesKeywordSupportsQuotedPhrases(t *testing.T) {
+	if !gistMatchesKeyword("secrets.env", "", "client_secret = token", `"client_secret = token"`) {
+		t.Fatal("expected quoted phrase to match as one needle")
+	}
+	if gistMatchesKeyword("secrets.env", "", "client_secret = old token", `"client_secret = token"`) {
+		t.Fatal("expected quoted phrase not to match separated text")
 	}
 }
 

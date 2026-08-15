@@ -44,6 +44,11 @@ func searchGists(client *Client, rules []model.Rule) error {
 	}
 	var content string
 	var scanErrors []error
+	filterErr, extensionFilters := getFiltersByClass("extension")
+	if filterErr != nil {
+		global.GVA_LOG.Warn("load gist extension filters failed; continuing without local extension filtering", zap.Error(filterErr))
+		extensionFilters = []model.Filter{}
+	}
 	for _, rule := range rules {
 		query, err := BuildGistQuery(rule.Content)
 		if err != nil {
@@ -57,14 +62,26 @@ func searchGists(client *Client, rules []model.Rule) error {
 			scanErrors = append(scanErrors, fmt.Errorf("gist search %q: %w", rule.Content, err))
 			continue
 		}
-		results, err := client.LoadGistResults(hits, rule.Content)
+		var inserted int
+		var repos []string
+		var hasMoreRepos bool
+		err = client.LoadGistResultsStream(hits, rule.Content, extensionFilters, func(results []model.SearchResult) error {
+			stats := service.SaveSearchResultsWithStats(results)
+			inserted += stats.Inserted
+			var more bool
+			repos, more = appendUniqueRepos(repos, stats.Repos)
+			hasMoreRepos = hasMoreRepos || more
+			return nil
+		})
 		if err != nil {
-			global.GVA_LOG.Error("LoadGistResults error", zap.Error(err))
+			global.GVA_LOG.Error("LoadGistResultsStream error", zap.Error(err))
 			scanErrors = append(scanErrors, fmt.Errorf("load gists for %q: %w", rule.Content, err))
 		}
-		stats := service.SaveSearchResultsWithStats(results)
-		global.GVA_LOG.Info(stats.Summary(rule.Content, "Gist"))
-		content += formatInsertedSummary(rule.Content, stats)
+		stats := service.NewSaveResultStats()
+		stats.Inserted = inserted
+		stats.Repos = repos
+		global.GVA_LOG.Info(fmt.Sprintf("[Gist] keyword=%q: inserted=%d", rule.Content, inserted))
+		content += formatInsertedSummaryWithMore(rule.Content, stats, hasMoreRepos)
 	}
 	notifyNewResults("Gist 敏感信息报告", content)
 	return errors.Join(scanErrors...)
@@ -104,6 +121,25 @@ func (c *Client) SearchGistHits(query string) ([]gistHit, error) {
 
 func (c *Client) LoadGistResults(hits []gistHit, keyword string) ([]model.SearchResult, error) {
 	results := make([]model.SearchResult, 0)
+	err := c.LoadGistResultsStream(hits, keyword, nil, func(batch []model.SearchResult) error {
+		results = append(results, batch...)
+		return nil
+	})
+	return results, err
+}
+
+// LoadGistResultsStream fetches and converts one Gist at a time. The callback
+// runs before the next Gist is loaded so callers can persist results without
+// retaining the complete search response in memory.
+func (c *Client) LoadGistResultsStream(hits []gistHit, keyword string, extensionFilters []model.Filter, onBatch func([]model.SearchResult) error) error {
+	if onBatch == nil {
+		return fmt.Errorf("Gist result callback is nil")
+	}
+	if extensionFilters == nil {
+		if _, extensionFilters = getFiltersByClass("extension"); extensionFilters == nil {
+			extensionFilters = []model.Filter{}
+		}
+	}
 	var loadErrors []error
 	ctx := context.Background()
 	for _, hit := range hits {
@@ -112,9 +148,15 @@ func (c *Client) LoadGistResults(hits []gistHit, keyword string) ([]model.Search
 			loadErrors = append(loadErrors, fmt.Errorf("gist %s: %w", hit.ID, err))
 			continue
 		}
-		results = append(results, convertGistToSearchResults(gist, hit, keyword)...)
+		results := convertGistToSearchResultsWithFilters(gist, hit, keyword, extensionFilters)
+		if len(results) == 0 {
+			continue
+		}
+		if err := onBatch(results); err != nil {
+			return err
+		}
 	}
-	return results, errors.Join(loadErrors...)
+	return errors.Join(loadErrors...)
 }
 
 func (c *Client) getGist(ctx context.Context, id string) (*github.Gist, error) {
@@ -144,6 +186,11 @@ func isNonRetryableAPIError(err error) bool {
 }
 
 func convertGistToSearchResults(gist *github.Gist, hit gistHit, keyword string) []model.SearchResult {
+	_, filters := getFiltersByClass("extension")
+	return convertGistToSearchResultsWithFilters(gist, hit, keyword, filters)
+}
+
+func convertGistToSearchResultsWithFilters(gist *github.Gist, hit gistHit, keyword string, extensionFilters []model.Filter) []model.SearchResult {
 	if gist == nil {
 		return nil
 	}
@@ -165,7 +212,7 @@ func convertGistToSearchResults(gist *github.Gist, hit gistHit, keyword string) 
 		if name == "" {
 			name = string(filename)
 		}
-		if !gistAllowsExtension(name) {
+		if !gistAllowsExtensionWithFilters(name, extensionFilters) {
 			continue
 		}
 		fragment := gistFileFragment(file.GetContent(), keyword)
@@ -194,7 +241,7 @@ func convertGistToSearchResults(gist *github.Gist, hit gistHit, keyword string) 
 		}
 		results = append(results, item)
 	}
-	if len(results) == 0 && gistAllowsExtension("") && gist.GetDescription() != "" && gistMatchesKeyword("", gist.GetDescription(), "", keyword) {
+	if len(results) == 0 && gistAllowsExtensionWithFilters("", extensionFilters) && gist.GetDescription() != "" && gistMatchesKeyword("", gist.GetDescription(), "", keyword) {
 		results = append(results, model.SearchResult{
 			Repo:    repo,
 			RepoUrl: htmlURL,
@@ -209,6 +256,7 @@ func convertGistToSearchResults(gist *github.Gist, hit gistHit, keyword string) 
 }
 
 var gistQueryQualifiers = []string{"extension:", "language:", "filename:", "user:", "in:"}
+var gistQueryTokenRe = regexp.MustCompile(`(?:[+-]?"[^"]+"|[^\s]+)`)
 
 func gistMatchesKeyword(filename, description, content, keyword string) bool {
 	needles := gistNeedles(keyword)
@@ -226,9 +274,10 @@ func gistMatchesKeyword(filename, description, content, keyword string) bool {
 
 func gistNeedles(keyword string) []string {
 	needles := make([]string, 0)
-	for _, field := range strings.Fields(strings.ToLower(strings.TrimSpace(keyword))) {
+	for _, field := range gistQueryTokenRe.FindAllString(strings.ToLower(strings.TrimSpace(keyword)), -1) {
 		denied := strings.HasPrefix(field, "-")
 		field = strings.TrimPrefix(strings.TrimPrefix(field, "+"), "-")
+		field = strings.Trim(field, `"`)
 		if field == "" || isGistQueryQualifier(field) {
 			continue
 		}
@@ -250,8 +299,12 @@ func isGistQueryQualifier(field string) bool {
 }
 
 func gistAllowsExtension(filename string) bool {
-	err, filters := getFiltersByClass("extension")
-	if err != nil || len(filters) == 0 {
+	_, filters := getFiltersByClass("extension")
+	return gistAllowsExtensionWithFilters(filename, filters)
+}
+
+func gistAllowsExtensionWithFilters(filename string, filters []model.Filter) bool {
+	if len(filters) == 0 {
 		return true
 	}
 	ext := fileExtension(filename)
