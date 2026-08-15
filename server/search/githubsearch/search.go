@@ -36,24 +36,32 @@ func Search(rules []model.Rule) error {
 			scanErrors = append(scanErrors, fmt.Errorf("build query for %q: %w", rule.Content, err))
 			continue
 		}
-		results, err := client.SearchCode(query)
+		var ruleInserted int
+		var ruleRepos []string
+		var ruleHasMoreRepos bool
+		err = client.SearchCodeStream(query, func(page []*github.CodeSearchResult) error {
+			stats := SaveResultWithStats(page, rule.Content)
+			ruleInserted += stats.Inserted
+			var more bool
+			ruleRepos, more = appendUniqueRepos(ruleRepos, stats.Repos)
+			ruleHasMoreRepos = ruleHasMoreRepos || more
+			return nil
+		})
 		if err != nil {
 			global.GVA_LOG.Error("SearchCode error", zap.Error(err))
 			scanErrors = append(scanErrors, fmt.Errorf("search %q: %w", rule.Content, err))
 			continue
 		}
-		stats := SaveResultWithStats(results, rule.Content)
-		global.GVA_LOG.Info(stats.Summary(rule.Content, "GitHub"))
-		if stats.Inserted > 0 {
+		global.GVA_LOG.Info(fmt.Sprintf("[GitHub] keyword=%q: inserted=%d", rule.Content, ruleInserted))
+		if ruleInserted > 0 {
 			repoInfo := ""
-			if len(stats.Repos) > 0 {
-				if len(stats.Repos) <= 3 {
-					repoInfo = fmt.Sprintf(" (repos: %s)", strings.Join(stats.Repos, ", "))
-				} else {
-					repoInfo = fmt.Sprintf(" (repos: %s +%d more)", strings.Join(stats.Repos[:3], ", "), len(stats.Repos)-3)
+			if len(ruleRepos) > 0 {
+				repoInfo = fmt.Sprintf(" (repos: %s)", strings.Join(ruleRepos, ", "))
+				if ruleHasMoreRepos {
+					repoInfo += " +more"
 				}
 			}
-			content += fmt.Sprintf("%s: %d条%s<br>", rule.Content, stats.Inserted, repoInfo)
+			content += fmt.Sprintf("%s: %d条%s<br>", rule.Content, ruleInserted, repoInfo)
 		}
 	}
 	if content != "" {
@@ -77,6 +85,29 @@ func Search(rules []model.Rule) error {
 func SaveResultWithStats(results []*github.CodeSearchResult, keyword string) *service.SaveResultStats {
 	searchResults := ConvertToSearchResults(results, keyword)
 	return service.SaveSearchResultsWithStats(searchResults)
+}
+
+func appendUniqueRepos(existing []string, repos []string) ([]string, bool) {
+	const previewLimit = 3
+	hasMore := false
+	for _, repo := range repos {
+		duplicate := false
+		for _, current := range existing {
+			if current == repo {
+				duplicate = true
+				break
+			}
+		}
+		if duplicate {
+			continue
+		}
+		if len(existing) < previewLimit {
+			existing = append(existing, repo)
+		} else {
+			hasMore = true
+		}
+	}
+	return existing, hasMore
 }
 
 func ConvertToSearchResults(results []*github.CodeSearchResult, keyword string) []model.SearchResult {
@@ -135,7 +166,17 @@ func (c *Client) GetCommiter(ctx context.Context, owner, repo string) string {
 
 func (c *Client) SearchCode(query string) ([]*github.CodeSearchResult, error) {
 	var allSearchResult []*github.CodeSearchResult
-	var err error
+	err := c.SearchCodeStream(query, func(page []*github.CodeSearchResult) error {
+		allSearchResult = append(allSearchResult, page...)
+		return nil
+	})
+	return allSearchResult, err
+}
+
+// SearchCodeStream fetches GitHub search pages one at a time. The callback is
+// invoked before the next page is requested so callers can persist each page
+// and keep the result set out of memory.
+func (c *Client) SearchCodeStream(query string, onPage func([]*github.CodeSearchResult) error) error {
 	ctx := context.Background()
 	listOpt := github.ListOptions{PerPage: 100}
 	opt := &github.SearchOptions{TextMatch: true, ListOptions: listOpt}
@@ -143,16 +184,17 @@ func (c *Client) SearchCode(query string) ([]*github.CodeSearchResult, error) {
 	for {
 		result, nextPage := c.searchCodeByOpt(ctx, query, *opt)
 		if result == nil {
-			err = fmt.Errorf("GitHub returned no response for query %q", query)
-			break
+			return fmt.Errorf("GitHub returned no response for query %q", query)
 		}
-		allSearchResult = append(allSearchResult, result)
+		if err := onPage([]*github.CodeSearchResult{result}); err != nil {
+			return err
+		}
 		if nextPage <= 0 {
 			break
 		}
 		opt.Page = nextPage
 	}
-	return allSearchResult, err
+	return nil
 }
 
 func BuildQuery(query string) (string, error) {

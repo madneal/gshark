@@ -8,9 +8,12 @@ import (
 	"github.com/madneal/gshark/global"
 	"go.uber.org/zap"
 	"net/http"
+	"time"
 
 	"github.com/madneal/gshark/service"
 )
+
+const githubRequestTimeout = 2 * time.Minute
 
 type Client struct {
 	Client *github.Client
@@ -32,7 +35,10 @@ func InitClient(token string) *Client {
 }
 
 func InitGithubClient(token string) *github.Client {
-	httpClient := &http.Client{Transport: newGithubHTTPTransport()}
+	httpClient := &http.Client{
+		Transport: newGithubHTTPTransport(),
+		Timeout:   githubRequestTimeout,
+	}
 	gitClient := github.NewClient(httpClient).WithAuthToken(token)
 	return gitClient
 }

@@ -72,10 +72,17 @@ services:
       dockerfile: deploy/scan/Dockerfile
     environment:
       - GSHARK_CONFIG=config.docker.yaml
+      - GOMEMLIMIT=384MiB
+      - GOGC=75
+      - GOMAXPROCS=1
     container_name: gshark-scanner
+    mem_limit: 512m
+    mem_reservation: 256m
+    cpus: "1.0"
+    pids_limit: 128
     volumes:
       - ./server/config.docker.yaml:/go/src/github.com/madneal/gshark/server/config.docker.yaml
-    restart: "no"
+    restart: "always"
     depends_on:
       mysql:
         condition: service_healthy

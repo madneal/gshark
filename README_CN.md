@@ -80,6 +80,8 @@ cd gshark
 > [!IMPORTANT]
 > Docker quick 脚本会先启动 MySQL、初始化数据库，只有使用 `--with-scan` 时才会在初始化完成后启动扫描器。如果手动使用 Docker Compose 启动扫描器，请先等待数据库初始化完成。
 
+扫描器在 `docker-compose.yaml` 中默认配置了资源保护：内存上限 512 MB、CPU 上限 1 核，并通过 `GOMEMLIMIT=384MiB` 让 Go 更积极地回收内存。搜索结果会按分页写入数据库，避免大规模搜索结果全部驻留内存。如果 scanner 因超过内存上限被 OOM kill，Compose 会自动重启；可以先使用 `docker stats gshark-scanner` 观察实际占用，再决定是否继续下调限制。
+
 ## 本地部署
 
 ```bash

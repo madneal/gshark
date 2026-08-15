@@ -141,6 +141,37 @@ func TestSearchAPIPaginatesWithOffsetsAndEscapesRule(t *testing.T) {
 	}
 }
 
+func TestSearchAPIStreamInvokesCallbackPerPage(t *testing.T) {
+	requestCount := 0
+	var pageSizes []int
+	client := &http.Client{Transport: roundTripFunc(func(*http.Request) (*http.Response, error) {
+		requestCount++
+		nextCursor := ""
+		data := []map[string]interface{}{{"id": fmt.Sprintf("request-%d", requestCount)}}
+		if requestCount == 1 {
+			nextCursor = "second-page"
+		}
+		return jsonHTTPResponse(http.StatusOK, map[string]interface{}{
+			"data": data,
+			"meta": map[string]interface{}{"nextCursor": nextCursor},
+		}), nil
+	})}
+
+	err := searchAPIStream(client, "https://postman.test/search", "key", "request", func(page PostmanRes) error {
+		pageSizes = append(pageSizes, len(page.Data))
+		if requestCount != len(pageSizes) {
+			t.Fatalf("callback ran after requesting a later page: requests=%d callbacks=%d", requestCount, len(pageSizes))
+		}
+		return nil
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reflect.DeepEqual(pageSizes, []int{1, 1}) {
+		t.Fatalf("page sizes = %v, want [1 1]", pageSizes)
+	}
+}
+
 func TestSearchAPIReturnsPartialPagesOnLaterFailure(t *testing.T) {
 	requestCount := 0
 	client := &http.Client{Transport: roundTripFunc(func(*http.Request) (*http.Response, error) {

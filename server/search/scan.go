@@ -18,7 +18,6 @@ import (
 )
 
 var (
-	providerWatchdog        = 30 * time.Minute
 	providerHeartbeat       = 10 * time.Second
 	scanInterval            = 15 * time.Minute
 	createScanCycle         = service.CreateScanCycle
@@ -51,9 +50,7 @@ func runProvider(logID uint, name string, fn func() model.ScanOutcome) model.Sca
 		done <- fn()
 	}()
 
-	watchdog := time.NewTimer(providerWatchdog)
 	heartbeat := time.NewTicker(providerHeartbeat)
-	defer watchdog.Stop()
 	defer heartbeat.Stop()
 
 	var outcome model.ScanOutcome
@@ -68,11 +65,6 @@ func runProvider(logID uint, name string, fn func() model.ScanOutcome) model.Sca
 			if err := heartbeatScanLog(logID, heartbeatAt); err != nil {
 				global.GVA_LOG.Error("update scan heartbeat failed", zap.String("provider", name), zap.Error(err))
 			}
-		case <-watchdog.C:
-			message := fmt.Sprintf("Scan did not finish within %s", providerWatchdog)
-			global.GVA_LOG.Error(fmt.Sprintf("%s %s, moving on to the next provider", name, message))
-			outcome = model.ScanOutcome{Status: model.ScanStatusTimeout, Message: message}
-			goto Finished
 		}
 	}
 

@@ -17,7 +17,7 @@ import (
 	"time"
 )
 
-const timeout = 30 * time.Second
+const dnsRequestTimeout = 30 * time.Second
 
 func preRun(ctx context.Context, domain string) error {
 	guid := uuid.New()
@@ -41,8 +41,10 @@ func getWordlist(wordlistFile string) (*bufio.Scanner, error) {
 }
 
 func dnsLookup(ctx context.Context, domain string) ([]string, error) {
+	lookupCtx, cancel := context.WithTimeout(ctx, dnsRequestTimeout)
+	defer cancel()
 	var resolver net.Resolver
-	return resolver.LookupHost(ctx, domain)
+	return resolver.LookupHost(lookupCtx, domain)
 }
 
 func RunDNS(ctx context.Context, domain string) {
