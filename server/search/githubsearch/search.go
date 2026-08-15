@@ -38,10 +38,13 @@ func Search(rules []model.Rule) error {
 		}
 		var ruleInserted int
 		var ruleRepos []string
+		var ruleHasMoreRepos bool
 		err = client.SearchCodeStream(query, func(page []*github.CodeSearchResult) error {
 			stats := SaveResultWithStats(page, rule.Content)
 			ruleInserted += stats.Inserted
-			ruleRepos = appendUniqueRepos(ruleRepos, stats.Repos)
+			var more bool
+			ruleRepos, more = appendUniqueRepos(ruleRepos, stats.Repos)
+			ruleHasMoreRepos = ruleHasMoreRepos || more
 			return nil
 		})
 		if err != nil {
@@ -53,10 +56,9 @@ func Search(rules []model.Rule) error {
 		if ruleInserted > 0 {
 			repoInfo := ""
 			if len(ruleRepos) > 0 {
-				if len(ruleRepos) <= 3 {
-					repoInfo = fmt.Sprintf(" (repos: %s)", strings.Join(ruleRepos, ", "))
-				} else {
-					repoInfo = fmt.Sprintf(" (repos: %s +%d more)", strings.Join(ruleRepos[:3], ", "), len(ruleRepos)-3)
+				repoInfo = fmt.Sprintf(" (repos: %s)", strings.Join(ruleRepos, ", "))
+				if ruleHasMoreRepos {
+					repoInfo += " +more"
 				}
 			}
 			content += fmt.Sprintf("%s: %d条%s<br>", rule.Content, ruleInserted, repoInfo)
@@ -85,19 +87,27 @@ func SaveResultWithStats(results []*github.CodeSearchResult, keyword string) *se
 	return service.SaveSearchResultsWithStats(searchResults)
 }
 
-func appendUniqueRepos(existing []string, repos []string) []string {
-	seen := make(map[string]struct{}, len(existing)+len(repos))
-	for _, repo := range existing {
-		seen[repo] = struct{}{}
-	}
+func appendUniqueRepos(existing []string, repos []string) ([]string, bool) {
+	const previewLimit = 3
+	hasMore := false
 	for _, repo := range repos {
-		if _, ok := seen[repo]; ok {
+		duplicate := false
+		for _, current := range existing {
+			if current == repo {
+				duplicate = true
+				break
+			}
+		}
+		if duplicate {
 			continue
 		}
-		seen[repo] = struct{}{}
-		existing = append(existing, repo)
+		if len(existing) < previewLimit {
+			existing = append(existing, repo)
+		} else {
+			hasMore = true
+		}
 	}
-	return existing
+	return existing, hasMore
 }
 
 func ConvertToSearchResults(results []*github.CodeSearchResult, keyword string) []model.SearchResult {
