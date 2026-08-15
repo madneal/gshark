@@ -25,6 +25,7 @@ const (
 	defaultGitlabDiscoverPages   = 5
 	defaultGitlabBatchSize       = 50
 	maxConcurrentProjectSearches = 5
+	gitlabRequestTimeout         = 2 * time.Minute
 )
 
 var (
@@ -92,15 +93,17 @@ func isGlobalSearchUnsupported(resp *gitlab.Response) bool {
 // Ultimate with it turned on) get full global coverage here.
 func RunGlobalSearchTask(client *gitlab.Client, rules []model.Rule) bool {
 	for i, rule := range rules {
-		blobs, resp, ok := SearchBlobs(client, rule.Content)
+		resp, ok := SearchBlobsStream(client, rule.Content, func(blobs []*gitlab.Blob) error {
+			results := ConvertBlobsToResults(client, blobs, rule.Content)
+			SaveResult(results, &rule.Content)
+			return nil
+		})
 		if !ok {
 			if i == 0 && isGlobalSearchUnsupported(resp) {
 				return false
 			}
 			continue
 		}
-		results := ConvertBlobsToResults(client, blobs, rule.Content)
-		SaveResult(results, &rule.Content)
 	}
 	return true
 }
@@ -147,8 +150,12 @@ func RunSearchTaskByProject(projects []model.Repo, rules []model.Rule, client *g
 
 func searchProjectForRules(project model.Repo, rules []model.Rule, client *gitlab.Client) {
 	for _, rule := range rules {
-		results := SearchCode(rule.Content, project, client)
-		SaveResult(results, &rule.Content)
+		if err := SearchCodeStream(rule.Content, project, client, func(results []*model.SearchResult) error {
+			SaveResult(results, &rule.Content)
+			return nil
+		}); err != nil {
+			global.GVA_LOG.Error("search project stream error", zap.Error(err), zap.String("project", project.Path))
+		}
 	}
 	project.Status = 1
 	if err := service.UpdateRepo(project); err != nil {
@@ -168,18 +175,29 @@ func SaveResult(results []*model.SearchResult, keyword *string) {
 // every page of results.
 func SearchCode(keyword string, project model.Repo, client *gitlab.Client) []*model.SearchResult {
 	codeResults := make([]*model.SearchResult, 0)
+	_ = SearchCodeStream(keyword, project, client, func(results []*model.SearchResult) error {
+		codeResults = append(codeResults, results...)
+		return nil
+	})
+	return codeResults
+}
+
+// SearchCodeStream searches one project page by page and lets the caller
+// persist each page before the next page is fetched.
+func SearchCodeStream(keyword string, project model.Repo, client *gitlab.Client, onPage func([]*model.SearchResult) error) error {
 	global.GVA_LOG.Info(fmt.Sprintf("Search inside project %s", project.Path))
 	opt := &gitlab.SearchOptions{Page: 1, PerPage: 100}
 	for {
 		results, resp, err := client.Search.BlobsByProject(project.ProjectId, keyword, opt)
 		if err != nil {
 			global.GVA_LOG.Error("search inside project error", zap.Error(err))
-			break
+			return err
 		}
 		if resp != nil && resp.StatusCode != http.StatusOK {
 			global.GVA_LOG.Info(fmt.Sprintf("Request error for project statuscode %d", resp.StatusCode))
-			break
+			return fmt.Errorf("search project returned status %d", resp.StatusCode)
 		}
+		pageResults := make([]*model.SearchResult, 0, len(results))
 		for _, result := range results {
 			url := project.Url + "/blob/master/" + result.Filename
 			textMatches := make([]model.TextMatch, 0)
@@ -199,14 +217,17 @@ func SearchCode(keyword string, project model.Repo, client *gitlab.Client) []*mo
 				Status:          0,
 				Keyword:         keyword,
 			}
-			codeResults = append(codeResults, &codeResult)
+			pageResults = append(pageResults, &codeResult)
+		}
+		if err := onPage(pageResults); err != nil {
+			return err
 		}
 		if resp == nil || resp.NextPage == 0 {
 			break
 		}
 		opt.Page = resp.NextPage
 	}
-	return codeResults
+	return nil
 }
 
 // ListValidProjects returns every known gitlab repo that hasn't been searched
@@ -238,7 +259,10 @@ func GetClient() *gitlab.Client {
 	if len(tokens) == 0 {
 		return nil
 	}
-	client, err := gitlab.NewClient(tokens[0].Content, gitlab.WithBaseURL(baseURL))
+	client, err := gitlab.NewClient(tokens[0].Content,
+		gitlab.WithBaseURL(baseURL),
+		gitlab.WithHTTPClient(&http.Client{Timeout: gitlabRequestTimeout}),
+	)
 	if err != nil {
 		global.GVA_LOG.Error("getClient error", zap.Error(err))
 	}
@@ -258,20 +282,32 @@ func SearchBlobBySearchOptions(client *gitlab.Client, keyword string, searchOpti
 // so callers can tell "unsupported" apart from a transient error.
 func SearchBlobs(client *gitlab.Client, keyword string) ([]*gitlab.Blob, *gitlab.Response, bool) {
 	blobs := make([]*gitlab.Blob, 0)
+	resp, ok := SearchBlobsStream(client, keyword, func(page []*gitlab.Blob) error {
+		blobs = append(blobs, page...)
+		return nil
+	})
+	return blobs, resp, ok
+}
+
+// SearchBlobsStream fetches GitLab global-search pages one at a time. The
+// callback runs before the next page is requested to bound retained results.
+func SearchBlobsStream(client *gitlab.Client, keyword string, onPage func([]*gitlab.Blob) error) (*gitlab.Response, bool) {
 	opt := &gitlab.SearchOptions{Page: 1, PerPage: 100}
 	for {
 		page, resp, err := SearchBlobBySearchOptions(client, keyword, opt)
 		if err != nil {
 			global.GVA_LOG.Error("SearchBlobs error", zap.Error(err))
-			return blobs, resp, false
+			return resp, false
 		}
-		blobs = append(blobs, page...)
+		if err := onPage(page); err != nil {
+			return resp, false
+		}
 		if resp == nil || resp.NextPage == 0 {
 			break
 		}
 		opt.Page = resp.NextPage
 	}
-	return blobs, nil, true
+	return nil, true
 }
 
 // GetProjectById is utilized to get the project by id

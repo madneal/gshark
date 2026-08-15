@@ -89,7 +89,15 @@ func RunTask() model.ScanOutcome {
 	partial := false
 	for _, rule := range rules {
 		global.GVA_LOG.Info("Search all indexed repositories in Sourcegraph", zap.String("rule", rule.Content))
-		results, warnings, searchErr := SearchForSourcegraph(rule, sourcegraphHTTPClient)
+		var inserted int
+		warnings, searchErr := SearchForSourcegraphStream(rule, sourcegraphHTTPClient, func(results []*model.SearchResult) error {
+			if len(results) == 0 {
+				return nil
+			}
+			SaveResults(results, &rule.Content)
+			inserted += len(results)
+			return nil
+		})
 		if searchErr != nil {
 			scanErrors = append(scanErrors, fmt.Errorf("search %q: %w", rule.Content, searchErr))
 			continue
@@ -100,7 +108,7 @@ func RunTask() model.ScanOutcome {
 				global.GVA_LOG.Warn("Sourcegraph returned partial search information", zap.String("rule", rule.Content), zap.String("warning", warning))
 			}
 		}
-		SaveResults(results, &rule.Content)
+		global.GVA_LOG.Info("Sourcegraph results persisted", zap.String("rule", rule.Content), zap.Int("processed", inserted))
 	}
 	if err := errors.Join(scanErrors...); err != nil {
 		return model.ScanFailed("Sourcegraph scan completed with errors: " + err.Error())
@@ -152,6 +160,18 @@ func sourcegraphToken() string {
 // Sourcegraph. count:all is intentional: unlike the retired Searchcode API,
 // this is a global search and does not require a repository list.
 func SearchForSourcegraph(rule model.Rule, client *http.Client) ([]*model.SearchResult, []string, error) {
+	results := make([]*model.SearchResult, 0)
+	warnings, err := SearchForSourcegraphStream(rule, client, func(batch []*model.SearchResult) error {
+		results = append(results, batch...)
+		return nil
+	})
+	return results, warnings, err
+}
+
+// SearchForSourcegraphStream parses the Sourcegraph stream and delivers each
+// matches event immediately. This keeps a global search from retaining all
+// matches for a rule before they are persisted.
+func SearchForSourcegraphStream(rule model.Rule, client *http.Client, onResults func([]*model.SearchResult) error) ([]string, error) {
 	query := globalQuery(rule.Content)
 	params := url.Values{}
 	params.Set("q", query)
@@ -163,7 +183,7 @@ func SearchForSourcegraph(rule model.Rule, client *http.Client) ([]*model.Search
 	endpoint := sourcegraphBaseURL() + "/.api/search/stream?" + params.Encode()
 	req, err := http.NewRequest(http.MethodGet, endpoint, nil)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 	req.Header.Set("Accept", "text/event-stream")
 	if token := sourcegraphToken(); token != "" {
@@ -172,18 +192,17 @@ func SearchForSourcegraph(rule model.Rule, client *http.Client) ([]*model.Search
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 	if resp == nil {
-		return nil, nil, errors.New("Sourcegraph returned a nil response")
+		return nil, errors.New("Sourcegraph returned a nil response")
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(io.LimitReader(resp.Body, 4096))
-		return nil, nil, fmt.Errorf("Sourcegraph request returned status %d: %s", resp.StatusCode, strings.TrimSpace(string(body)))
+		return nil, fmt.Errorf("Sourcegraph request returned status %d: %s", resp.StatusCode, strings.TrimSpace(string(body)))
 	}
 
-	results := make([]*model.SearchResult, 0)
 	warnings := make([]string, 0)
 	var streamErr error
 	if err := parseStream(resp.Body, func(eventName, data string) error {
@@ -193,10 +212,14 @@ func SearchForSourcegraph(rule model.Rule, client *http.Client) ([]*model.Search
 			if err := json.Unmarshal([]byte(data), &matches); err != nil {
 				return fmt.Errorf("decode Sourcegraph matches: %w", err)
 			}
+			results := make([]*model.SearchResult, 0, len(matches))
 			for _, match := range matches {
 				if result := convertMatch(match); result != nil {
 					results = append(results, result)
 				}
+			}
+			if err := onResults(results); err != nil {
+				return err
 			}
 		case "progress":
 			var progress progressEvent
@@ -223,12 +246,12 @@ func SearchForSourcegraph(rule model.Rule, client *http.Client) ([]*model.Search
 		}
 		return nil
 	}); err != nil {
-		return results, warnings, err
+		return warnings, err
 	}
 	if streamErr != nil {
-		return results, warnings, streamErr
+		return warnings, streamErr
 	}
-	return results, uniqueWarnings(warnings), nil
+	return uniqueWarnings(warnings), nil
 }
 
 func globalQuery(content string) string {

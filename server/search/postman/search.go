@@ -104,12 +104,12 @@ func Search(rules *[]model.Rule) error {
 }
 
 func SearchByType(keyword, searchType string) error {
-	resList, err := SearchAPI(keyword, searchType)
-	for _, res := range *resList {
+	err := SearchAPIStream(keyword, searchType, func(res PostmanRes) error {
 		results := res.ConvertToSearchResult(keyword)
 		stats := service.SaveSearchResultsWithStats(*results)
 		global.GVA_LOG.Info(stats.Summary(keyword, "Postman"))
-	}
+		return nil
+	})
 	if err != nil {
 		global.GVA_LOG.Error("postman SearchAPI err", zap.Error(err))
 	}
@@ -136,6 +136,10 @@ func SearchAPI(rule, searchType string) (*[]PostmanRes, error) {
 	return searchAPI(postmanHTTPClient, postmanURL, rule, searchType)
 }
 
+func SearchAPIStream(rule, searchType string, onPage func(PostmanRes) error) error {
+	return searchAPIStream(postmanHTTPClient, postmanURL, rule, searchType, onPage)
+}
+
 type postmanSearchRequest struct {
 	ElementType string               `json:"elementType"`
 	QueryText   string               `json:"q"`
@@ -156,8 +160,17 @@ type postmanEqualsFilter struct {
 }
 
 func searchAPI(client *http.Client, endpoint, rule, searchType string) (*[]PostmanRes, error) {
+	resList := make([]PostmanRes, 0)
+	err := searchAPIStream(client, endpoint, rule, searchType, func(page PostmanRes) error {
+		resList = append(resList, page)
+		return nil
+	})
+	return &resList, err
+}
+
+func searchAPIStream(client *http.Client, endpoint, rule, searchType string, onPage func(PostmanRes) error) error {
 	if searchType != "collection" && searchType != "request" {
-		return &[]PostmanRes{}, fmt.Errorf("unsupported Postman search type %q", searchType)
+		return fmt.Errorf("unsupported Postman search type %q", searchType)
 	}
 
 	body, err := json.Marshal(postmanSearchRequest{
@@ -171,10 +184,9 @@ func searchAPI(client *http.Client, endpoint, rule, searchType string) (*[]Postm
 		},
 	})
 	if err != nil {
-		return &[]PostmanRes{}, fmt.Errorf("marshal Postman search request: %w", err)
+		return fmt.Errorf("marshal Postman search request: %w", err)
 	}
 
-	resList := make([]PostmanRes, 0)
 	seenCursors := make(map[string]struct{})
 	seenResources := make(map[string]struct{})
 	cursor := ""
@@ -182,28 +194,28 @@ func searchAPI(client *http.Client, endpoint, rule, searchType string) (*[]Postm
 		color.Infof("search for the rule %s of page %d\n", rule, page)
 		requestURL, err := buildPostmanSearchURL(endpoint, cursor)
 		if err != nil {
-			return &resList, fmt.Errorf("build Postman search page %d URL: %w", page, err)
+			return fmt.Errorf("build Postman search page %d URL: %w", page, err)
 		}
 
 		req, err := http.NewRequest(http.MethodPost, requestURL, bytes.NewReader(body))
 		if err != nil {
-			return &resList, fmt.Errorf("create Postman search request: %w", err)
+			return fmt.Errorf("create Postman search request: %w", err)
 		}
 		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0")
 
 		res, err := client.Do(req)
 		if err != nil {
-			return &resList, fmt.Errorf("request Postman search page %d: %w", page, err)
+			return fmt.Errorf("request Postman search page %d: %w", page, err)
 		}
 
 		resBody, err := readPostmanResponse(res)
 		if err != nil {
-			return &resList, fmt.Errorf("read Postman search page %d: %w", page, err)
+			return fmt.Errorf("read Postman search page %d: %w", page, err)
 		}
 		var postRes PostmanRes
 		if err = json.Unmarshal(resBody, &postRes); err != nil {
-			return &resList, fmt.Errorf("decode Postman search page %d: %w", page, err)
+			return fmt.Errorf("decode Postman search page %d: %w", page, err)
 		}
 
 		uniqueResources := make([]PostmanResource, 0, len(postRes.Data))
@@ -219,7 +231,9 @@ func searchAPI(client *http.Client, endpoint, rule, searchType string) (*[]Postm
 		}
 		postRes.Data = uniqueResources
 		if len(postRes.Data) > 0 {
-			resList = append(resList, postRes)
+			if err := onPage(postRes); err != nil {
+				return err
+			}
 		}
 
 		nextCursor := postRes.Meta.NextCursor
@@ -227,12 +241,12 @@ func searchAPI(client *http.Client, endpoint, rule, searchType string) (*[]Postm
 			break
 		}
 		if _, exists := seenCursors[nextCursor]; exists {
-			return &resList, fmt.Errorf("Postman search repeated cursor on page %d", page)
+			return fmt.Errorf("Postman search repeated cursor on page %d", page)
 		}
 		seenCursors[nextCursor] = struct{}{}
 		cursor = nextCursor
 	}
-	return &resList, nil
+	return nil
 }
 
 func readPostmanResponse(res *http.Response) ([]byte, error) {

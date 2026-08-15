@@ -15,28 +15,25 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
-func TestRunProviderDoesNotBlockOnSlowFn(t *testing.T) {
+func TestRunProviderWaitsForSlowFnAndKeepsHeartbeat(t *testing.T) {
 	stubScanLogPersistence(t)
-	var finished model.ScanOutcome
-	finishScanLog = func(_ uint, outcome model.ScanOutcome, _, _ time.Time) error {
-		finished = outcome
+	origHeartbeat := providerHeartbeat
+	providerHeartbeat = time.Millisecond
+	heartbeats := 0
+	heartbeatScanLog = func(uint, time.Time) error {
+		heartbeats++
 		return nil
 	}
-	origWatchdog := providerWatchdog
-	origHeartbeat := providerHeartbeat
-	providerWatchdog = 10 * time.Millisecond
-	providerHeartbeat = time.Millisecond
 	defer func() {
-		providerWatchdog = origWatchdog
 		providerHeartbeat = origHeartbeat
 	}()
 
 	block := make(chan struct{})
-	defer close(block)
+	finished := make(chan model.ScanOutcome, 1)
 
 	done := make(chan struct{})
 	go func() {
-		runProvider(1, "slow", func() model.ScanOutcome {
+		finished <- runProvider(1, "slow", func() model.ScanOutcome {
 			<-block
 			return model.ScanSuccess("done")
 		})
@@ -45,22 +42,28 @@ func TestRunProviderDoesNotBlockOnSlowFn(t *testing.T) {
 
 	select {
 	case <-done:
-	case <-time.After(1 * time.Second):
-		t.Fatal("runProvider did not return promptly when fn hung past the watchdog")
+		t.Fatal("runProvider returned before the provider completed")
+	case <-time.After(20 * time.Millisecond):
 	}
-	if finished.Status != model.ScanStatusTimeout {
-		t.Fatalf("finished status = %q, want timeout", finished.Status)
+	close(block)
+	select {
+	case <-done:
+	case <-time.After(time.Second):
+		t.Fatal("runProvider did not return after the provider completed")
+	}
+	if outcome := <-finished; outcome.Status != model.ScanStatusSuccess {
+		t.Fatalf("finished status = %q, want success", outcome.Status)
+	}
+	if heartbeats == 0 {
+		t.Fatal("expected heartbeats while the provider was still running")
 	}
 }
 
 func TestRunProviderReturnsPromptlyOnFastFn(t *testing.T) {
 	stubScanLogPersistence(t)
-	origWatchdog := providerWatchdog
 	origHeartbeat := providerHeartbeat
-	providerWatchdog = 1 * time.Minute
 	providerHeartbeat = time.Minute
 	defer func() {
-		providerWatchdog = origWatchdog
 		providerHeartbeat = origHeartbeat
 	}()
 
