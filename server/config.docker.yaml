@@ -9,12 +9,8 @@ email:
   port: 465
   from: xxx@qq.com
   host: smtp.qq.com
-  is-ssl: true
   secret: xxx
-  nickname: test
   enable: false
-excel:
-  dir: ./resource/excel/
 jwt:
   signing-key: qmPlus
   expires-time: 604800
@@ -32,9 +28,7 @@ mysql:
   log-mode: false
   log-zap: ""
 search:
-  gobuster-filepath: ""
   subdomain-wordlist: ""
-  searchnum: 10
   gitlab-discover-pages: 5
   gitlab-batch-size: 50
   sourcegraph-url: https://sourcegraph.com
@@ -43,7 +37,6 @@ system:
   env: public
   addr: 8888
   db-type: mysql
-  oss-type: local
   use-multipoint: false
   gitlab-base:
   ai_server:

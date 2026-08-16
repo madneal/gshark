@@ -264,14 +264,22 @@ To execute the scan task for GitHub, you need to add a GitHub token for crawl in
 
 ### Rule Configuration
 
-For the Github or Gitlab rule, the rule will be matched by the syntax in the corresponding platforms. Directly, you config what you search at GitHub. You can download the rule import template CSV file, then batch import rules.
+For the Github or Gitlab rule, the rule will be matched by the syntax in the corresponding platforms. Directly, you config what you search at GitHub. GitHub rules reuse the same token across three surfaces:
+
+* `github` — repository code search (`in:file`)
+* `github_issue` — issues and pull requests (`in:title,body,comments`; you can add `is:issue` or `is:pr`)
+* `gist` — public Gist search; the scanner then loads matching gist files through the official Gist API
+
+One rule can enable several types at once, for example `github,github_issue,gist`.
+
+You can download the rule import template CSV file, then batch import rules.
 
 <img width="572" alt="image" src="https://user-images.githubusercontent.com/12164075/212504597-3e1ad5bd-bacf-433e-83e8-08de7eee6509.png">
 
 
 ### Filter Configuration
 
-Filters currently apply only to GitHub search. The supported classes are `extension` and `keyword`, and both can be configured as a blacklist or whitelist.
+Filters currently apply to GitHub surfaces. `keyword` filters apply to `github`, `github_issue`, and `gist`. `extension` filters apply to `github` code search and `gist` search. Both classes can be configured as a blacklist or whitelist.
 
 For more information, you can refer to this [video](https://www.bilibili.com/video/BV1aG4y1c72N/?vd_source=ef4657ebf0549af8755f75118b6e81bb).
 

@@ -12,9 +12,6 @@
           <el-form-item label="端口值">
             <el-input v-model.number="config.system.addr"></el-input>
           </el-form-item>
-          <el-form-item class="inline-control" label="数据初始化">
-            <el-checkbox v-model="config.system.needInitData">开启</el-checkbox>
-          </el-form-item>
           <el-form-item class="inline-control" label="多点登录拦截">
             <el-checkbox v-model="config.system.useMultipoint">开启</el-checkbox>
           </el-form-item>

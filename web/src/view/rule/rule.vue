@@ -102,7 +102,7 @@
         <el-form-item label="规则类型:" required>
           <el-checkbox-group v-model="formData.ruleType">
             <el-checkbox v-for="ruleType in types" :label="ruleType" :key="ruleType">
-              {{ ruleType }}
+              {{ typeLabels[ruleType] || ruleType }}
             </el-checkbox>
           </el-checkbox-group>
         </el-form-item>
@@ -158,7 +158,16 @@ export default {
         desc: "",
         status: true,
       },
-      types: ["github", "gitlab", "sourcegraph", "domain", "postman"],
+      types: ["github", "github_issue", "gist", "gitlab", "sourcegraph", "domain", "postman"],
+      typeLabels: {
+        github: "github",
+        github_issue: "github issue/pr",
+        gist: "gist",
+        gitlab: "gitlab",
+        sourcegraph: "sourcegraph",
+        domain: "domain",
+        postman: "postman",
+      },
     };
   },
   methods: {

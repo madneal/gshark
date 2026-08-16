@@ -14,17 +14,12 @@ type Server struct {
 	System  System  `mapstructure:"system" json:"system" yaml:"system"`
 	Captcha Captcha `mapstructure:"captcha" json:"captcha" yaml:"captcha"`
 	Local   Local   `mapstructure:"local" json:"local" yaml:"local"`
-	Excel   Excel   `mapstructure:"excel" json:"excel" yaml:"excel"`
 	Search  Search  `mapstructure:"search" json:"search" yaml:"search"`
 	Wechat  Wechat  `mapstructure:"wechat" json:"wechat" yaml:"wechat"`
 }
 
 type Local struct {
 	Path string `mapstructure:"path" json:"path" yaml:"path" `
-}
-
-type Excel struct {
-	Dir string `mapstructure:"dir" json:"dir" yaml:"dir"`
 }
 
 type Wechat struct {
