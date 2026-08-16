@@ -9,13 +9,30 @@ import (
 	"io"
 	"net/http"
 	"net/smtp"
+	"strings"
 
 	"github.com/madneal/gshark/global"
 )
 
 func EmailSend(subject string, body string) error {
-	to := []string{global.GVA_CONFIG.Email.From}
+	to := splitRecipients(global.GVA_CONFIG.Email.To)
+	if len(to) == 0 {
+		to = []string{global.GVA_CONFIG.Email.From}
+	}
 	return send(to, subject, body)
+}
+
+func splitRecipients(value string) []string {
+	raw := strings.FieldsFunc(value, func(r rune) bool {
+		return r == ',' || r == ';' || r == '\n'
+	})
+	recipients := make([]string, 0, len(raw))
+	for _, recipient := range raw {
+		if recipient = strings.TrimSpace(recipient); recipient != "" {
+			recipients = append(recipients, recipient)
+		}
+	}
+	return recipients
 }
 
 func BotSend(content string) error {
@@ -84,8 +101,10 @@ func send(to []string, subject string, body string) error {
 	if err = c.Mail(from); err != nil {
 		return fmt.Errorf("mail err: %v", err)
 	}
-	if err = c.Rcpt(to[0]); err != nil {
-		return fmt.Errorf("rcpt err: %v", err)
+	for _, recipient := range to {
+		if err = c.Rcpt(recipient); err != nil {
+			return fmt.Errorf("rcpt err: %v", err)
+		}
 	}
 
 	w, err := c.Data()
@@ -95,7 +114,7 @@ func send(to []string, subject string, body string) error {
 	defer w.Close()
 
 	msg := []byte("From: Sender Name <" + from + ">\r\n" +
-		"To: " + to[0] + "\r\n" +
+		"To: " + strings.Join(to, ", ") + "\r\n" +
 		"Subject: " + subject + "\r\n" +
 		"\r\n" +
 		body + "\r\n")
