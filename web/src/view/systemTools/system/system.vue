@@ -29,22 +29,43 @@
           :closable="false"
           show-icon
         />
-        <div class="field-grid two ai-config-grid">
-          <el-form-item class="inline-control wide" label="启用入库前分析">
+        <div class="ai-config-grid">
+          <el-form-item class="inline-control" label="启用入库前分析">
             <el-switch v-model="config.system.aiAnalysisEnabled"></el-switch>
           </el-form-item>
-          <el-form-item label="Chat Completions 地址">
-            <el-input
-              v-model="config.system.aiServer"
-              placeholder="例如 https://api.openai.com/v1/chat/completions"
-            ></el-input>
-          </el-form-item>
-          <el-form-item label="API Token">
-            <el-input v-model="config.system.aiToken" type="password" show-password></el-input>
-          </el-form-item>
-          <el-form-item label="模型名称">
-            <el-input v-model="config.system.model" placeholder="例如 gpt-4o-mini"></el-input>
-          </el-form-item>
+          <div
+            v-for="(provider, index) in config.system.aiProviders"
+            :key="index"
+            class="ai-provider-card"
+          >
+            <div class="ai-provider-header">
+              <span>AI Provider {{ index + 1 }}</span>
+              <el-button
+                link
+                type="danger"
+                :disabled="config.system.aiProviders.length <= 1"
+                @click="removeAIProvider(index)"
+              >删除</el-button>
+            </div>
+            <div class="field-grid two">
+              <el-form-item label="名称">
+                <el-input v-model="provider.name" placeholder="例如 primary"></el-input>
+              </el-form-item>
+              <el-form-item label="模型名称">
+                <el-input v-model="provider.model" placeholder="例如 gpt-4o-mini"></el-input>
+              </el-form-item>
+              <el-form-item label="Chat Completions 地址">
+                <el-input
+                  v-model="provider.server"
+                  placeholder="例如 https://api.openai.com/v1/chat/completions"
+                ></el-input>
+              </el-form-item>
+              <el-form-item label="API Token">
+                <el-input v-model="provider.token" type="password" show-password></el-input>
+              </el-form-item>
+            </div>
+          </div>
+          <el-button class="add-provider-button" @click="addAIProvider">添加 AI Provider</el-button>
         </div>
       </section>
 
@@ -211,7 +232,7 @@ export default {
   data() {
     return {
       config: {
-        system: {},
+        system: { aiProviders: [] },
         jwt: {},
         casbin: {},
         mysql: {},
@@ -231,6 +252,25 @@ export default {
       const res = await getSystemConfig();
       if (res.code === 0) {
         this.config = res.data.config;
+        this.normalizeAIProviders();
+      }
+    },
+    normalizeAIProviders() {
+      if (!Array.isArray(this.config.system.aiProviders) || this.config.system.aiProviders.length === 0) {
+        this.config.system.aiProviders = [{
+          name: "primary",
+          server: this.config.system.aiServer || "",
+          token: this.config.system.aiToken || "",
+          model: this.config.system.model || ""
+        }];
+      }
+    },
+    addAIProvider() {
+      this.config.system.aiProviders.push({ name: "", server: "", token: "", model: "" });
+    },
+    removeAIProvider(index) {
+      if (this.config.system.aiProviders.length > 1) {
+        this.config.system.aiProviders.splice(index, 1);
       }
     },
     reload() {},
@@ -251,7 +291,9 @@ export default {
         if (res.code === 0) {
           this.$message.success(res.msg || "AI 配置测试成功");
         } else {
-          this.$message.error(res.msg || "AI 配置测试失败");
+          const results = res.data && res.data.results ? res.data.results : [];
+          const failed = results.filter((item) => !item.success).map((item) => item.name).join(", ");
+          this.$message.error(`${res.msg || "AI 配置测试失败"}${failed ? `（失败: ${failed}）` : ""}`);
         }
       } catch (e) {
         this.$message.error("AI 配置测试请求失败");
@@ -356,6 +398,28 @@ export default {
 }
 
 .ai-config-grid {
+  margin-top: 14px;
+}
+
+.ai-provider-card {
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px solid var(--gs-dark-border-soft);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.ai-provider-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  color: var(--gs-dark-text);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.add-provider-button {
   margin-top: 14px;
 }
 

@@ -105,6 +105,31 @@ func TestAnalyzeSearchResultFailsClosedOnMalformedResponse(t *testing.T) {
 	}
 }
 
+func TestAnalyzeSearchResultFallsBackToNextProvider(t *testing.T) {
+	previous := global.GVA_CONFIG
+	first := newAIHTTPTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusServiceUnavailable)
+		_, _ = w.Write([]byte("temporarily unavailable"))
+	}))
+	second := newAIHTTPTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`{"choices":[{"message":{"content":"{\"real\":true,\"confidence\":0.8,\"reason\":\"usable\"}"}}]}`))
+	}))
+	global.GVA_CONFIG.System = config.System{AiProviders: []config.AIProvider{
+		{Name: "primary", Server: first.URL, Model: "first-model"},
+		{Name: "backup", Server: second.URL, Model: "second-model"},
+	}}
+	t.Cleanup(func() { global.GVA_CONFIG = previous })
+
+	result, err := AnalyzeSearchResult(model.SearchResult{Matches: "password=real"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !result.Real {
+		t.Fatalf("result = %#v", result)
+	}
+}
+
 func TestTestAIConfigUsesSyntheticEvidence(t *testing.T) {
 	server := newAIHTTPTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var request ChatCompletionRequest
@@ -118,9 +143,12 @@ func TestTestAIConfigUsesSyntheticEvidence(t *testing.T) {
 		_, _ = w.Write([]byte(`{"choices":[{"message":{"content":"{\"real\":false,\"confidence\":0.99,\"reason\":\"placeholder\"}"}}]}`))
 	}))
 
-	err := TestAIConfig(config.System{AiServer: server.URL, Model: "test-model", AiToken: "test-token"})
+	results, err := TestAIConfig(config.System{AiServer: server.URL, Model: "test-model", AiToken: "test-token"})
 	if err != nil {
 		t.Fatal(err)
+	}
+	if len(results) != 1 || !results[0].Success {
+		t.Fatalf("results = %#v", results)
 	}
 }
 

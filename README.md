@@ -301,7 +301,23 @@ Existing rules whose type is `searchcode` are also picked up by this provider, s
 
 ### AI pre-ingest filtering
 
-GShark can optionally send each new search result to an OpenAI-compatible Chat Completions endpoint before writing it to `search_result`. Set `system.ai_server`, `system.ai_token`, `system.model`, and `system.ai_analysis_enabled: true` in `config.yaml`. The model must return JSON in the form `{"real":true|false,"confidence":0.0,"reason":"..."}`. Only `real: true` results are persisted; malformed responses, timeouts, and API errors fail closed and are not stored. Each request uses built-in limits of 30 seconds and 6,000 characters. The feature is disabled by default.
+GShark can optionally send each new search result to one or more OpenAI-compatible Chat Completions endpoints before writing it to `search_result`. Configure `system.ai_providers` in priority order; the legacy `ai_server`, `ai_token`, and `model` fields remain supported as a single-provider fallback. Transport, HTTP, and authentication failures move to the next provider, while a valid `real: false` verdict is final. The model must return JSON in the form `{"real":true|false,"confidence":0.0,"reason":"..."}`. Only `real: true` results are persisted; malformed responses, timeouts, and API errors fail closed and are not stored. Each request uses built-in limits of 30 seconds and 6,000 characters. The feature is disabled by default.
+
+Example:
+
+```yaml
+system:
+  ai_analysis_enabled: true
+  ai_providers:
+    - name: primary
+      server: https://api.openai.com/v1/chat/completions
+      token: your-openai-token
+      model: gpt-4o-mini
+    - name: backup
+      server: https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions
+      token: your-dashscope-token
+      model: qwen-plus
+```
 
 The system configuration page includes **Test AI Config**, which sends synthetic placeholder evidence to verify endpoint connectivity, authentication, model availability, and response compatibility without writing a search result. Each request uses built-in limits of 30 seconds and 6,000 characters.
 

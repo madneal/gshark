@@ -40,12 +40,13 @@ func TestAIConfig(c *gin.Context) {
 		response.FailWithMessage("AI 配置参数无效", c)
 		return
 	}
-	if err := service.TestAIConfig(sys.Config.System); err != nil {
+	results, err := service.TestAIConfig(sys.Config.System)
+	if err != nil {
 		global.GVA_LOG.Warn("AI 配置测试失败", zap.Error(err))
-		response.FailWithMessage("AI 配置测试失败: "+err.Error(), c)
+		response.FailWithDetailed(gin.H{"results": results}, "AI 配置测试失败: "+err.Error(), c)
 		return
 	}
-	response.OkWithMessage("AI 配置测试成功，模型接口和响应格式可用", c)
+	response.OkWithDetailed(gin.H{"results": results}, "AI 配置测试成功，所有模型接口和响应格式可用", c)
 }
 
 func ReloadSystem(c *gin.Context) {
