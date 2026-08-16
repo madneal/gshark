@@ -43,7 +43,10 @@ func main() {
 			if global.GVA_DB == nil {
 				return nil
 			}
-			return initialize.MysqlTables(global.GVA_DB)
+			if err := initialize.MysqlTables(global.GVA_DB); err != nil {
+				return err
+			}
+			return source.SyncAccessControl()
 		},
 		Run: func(cmd *cobra.Command, args []string) {
 			core.RunServer()
