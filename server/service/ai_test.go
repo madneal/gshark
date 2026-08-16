@@ -1,12 +1,130 @@
 package service
 
 import (
-	"fmt"
+	"encoding/json"
+	"net"
+	"net/http"
+	"net/http/httptest"
+	"strings"
 	"testing"
+
+	"github.com/madneal/gshark/config"
+	"github.com/madneal/gshark/global"
+	"github.com/madneal/gshark/model"
 )
 
-func TestQuestion(t *testing.T) {
-	result := Question("You are a security operation engineer, you are expected to assistant.please judge if the below content contains sensitive information, and the sensitive information \" +\n\t\t\t\t\"could be exploited. Just answer yes or no",
-		"# PopWin_MeiTuan\n仿美团做的一个下拉选择页，类似于电商app中筛选距离的下拉菜单。很常见。\n#效果图\n![](https://github.com/reallin/PopWin_MeiTuan/blob/master/cam.gif)\n#功能点\n* popwindow下拉列表\n* 加载progressBar的生成")
-	fmt.Println(result)
+func TestSearchResultContentPrefersTextMatchesAndTruncates(t *testing.T) {
+	previous := global.GVA_CONFIG
+	global.GVA_CONFIG.System.AiAnalysisMaxContent = 12
+	t.Cleanup(func() { global.GVA_CONFIG = previous })
+
+	fragment := "credential=secret-value"
+	encoded, err := json.Marshal([]model.TextMatch{{Fragment: &fragment}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	content := SearchResultContent(model.SearchResult{
+		Matches:         "fallback",
+		TextMatchesJson: encoded,
+	})
+	if content != "credential=s"+"\n[truncated]" {
+		t.Fatalf("content = %q", content)
+	}
+}
+
+func TestParseSearchResultAnalysisAcceptsFencedJSON(t *testing.T) {
+	body := []byte("{\"choices\":[{\"message\":{\"content\":\"```json\\n{\\\"real\\\":true,\\\"confidence\\\":0.92,\\\"reason\\\":\\\"usable credential\\\"}\\n```\"}}]}")
+	analysis, err := parseSearchResultAnalysis(body)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !analysis.Real || analysis.Confidence != 0.92 {
+		t.Fatalf("analysis = %#v", analysis)
+	}
+}
+
+func TestAnalyzeSearchResultUsesOpenAICompatibleAPI(t *testing.T) {
+	previous := global.GVA_CONFIG
+	global.GVA_CONFIG.System = config.System{
+		AiServer:          "",
+		AiToken:           "test-token",
+		Model:             "test-model",
+		AiAnalysisTimeout: 5,
+	}
+	requests := 0
+	server := newAIHTTPTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		requests++
+		if got := r.Header.Get("Authorization"); got != "Bearer test-token" {
+			t.Fatalf("authorization = %q", got)
+		}
+		var request ChatCompletionRequest
+		if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+			t.Fatal(err)
+		}
+		if request.Model != "test-model" || len(request.Messages) != 2 {
+			t.Fatalf("request = %#v", request)
+		}
+		if !strings.Contains(request.Messages[1].Content, "password=real") {
+			t.Fatalf("missing evidence in request: %q", request.Messages[1].Content)
+		}
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`{"choices":[{"message":{"content":"{\"real\":true,\"confidence\":0.9,\"reason\":\"looks usable\"}"}}]}`))
+	}))
+	global.GVA_CONFIG.System.AiServer = server.URL
+	t.Cleanup(func() { global.GVA_CONFIG = previous })
+
+	result, err := AnalyzeSearchResult(model.SearchResult{Repo: "acme/app", Path: "config.env", Matches: "password=real"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !result.Real || requests != 1 {
+		t.Fatalf("result=%#v requests=%d", result, requests)
+	}
+}
+
+func TestAnalyzeSearchResultFailsClosedOnMalformedResponse(t *testing.T) {
+	previous := global.GVA_CONFIG
+	global.GVA_CONFIG.System = config.System{AiServer: "", Model: "test-model", AiAnalysisTimeout: 5}
+	server := newAIHTTPTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`{"choices":[{"message":{"content":"yes"}}]}`))
+	}))
+	global.GVA_CONFIG.System.AiServer = server.URL
+	t.Cleanup(func() { global.GVA_CONFIG = previous })
+
+	if _, err := AnalyzeSearchResult(model.SearchResult{Matches: "placeholder"}); err == nil {
+		t.Fatal("expected malformed verdict to fail closed")
+	}
+}
+
+func TestTestAIConfigUsesSyntheticEvidence(t *testing.T) {
+	server := newAIHTTPTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		var request ChatCompletionRequest
+		if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+			t.Fatal(err)
+		}
+		if strings.Contains(request.Messages[1].Content, "real-secret") {
+			t.Fatal("AI config test must not send a real secret")
+		}
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`{"choices":[{"message":{"content":"{\"real\":false,\"confidence\":0.99,\"reason\":\"placeholder\"}"}}]}`))
+	}))
+
+	err := TestAIConfig(config.System{AiServer: server.URL, Model: "test-model", AiToken: "test-token", AiAnalysisTimeout: 5})
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func newAIHTTPTestServer(t *testing.T, handler http.Handler) *httptest.Server {
+	t.Helper()
+	listener, err := net.Listen("tcp4", "127.0.0.1:0")
+	if err != nil {
+		t.Fatal(err)
+	}
+	server := httptest.NewUnstartedServer(handler)
+	server.Listener = listener
+	server.Start()
+	t.Cleanup(server.Close)
+	return server
 }

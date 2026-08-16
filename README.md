@@ -299,6 +299,12 @@ The Sourcegraph provider uses the Stream API to search all repositories indexed 
 
 Existing rules whose type is `searchcode` are also picked up by this provider, so existing rule data does not need a database migration.
 
+### AI pre-ingest filtering
+
+GShark can optionally send each new search result to an OpenAI-compatible Chat Completions endpoint before writing it to `search_result`. Set `system.ai_server`, `system.ai_token`, `system.model`, and `system.ai_analysis_enabled: true` in `config.yaml`. The model must return JSON in the form `{"real":true|false,"confidence":0.0,"reason":"..."}`. Only `real: true` results are persisted; malformed responses, timeouts, and API errors fail closed and are not stored. `system.ai_analysis_timeout` (seconds) and `system.ai_analysis_max_content` (characters) bound each request. The feature is disabled by default.
+
+The system configuration page includes **Test AI Config**, which sends synthetic placeholder evidence to verify endpoint connectivity, authentication, model availability, and response compatibility without writing a search result.
+
 
 ## FAQ
 

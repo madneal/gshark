@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/csv"
-	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/model"
@@ -11,8 +10,6 @@ import (
 	"github.com/madneal/gshark/service"
 	"go.uber.org/zap"
 	"net/http"
-	"strconv"
-	"strings"
 )
 
 var statusOptions = map[int]string{
@@ -53,50 +50,10 @@ func UpdateSearchResultByIds(c *gin.Context) {
 	respondMutation(c, service.UpdateSearchResultByIds(batchUpdateReq), "批量更新状态失败！", "批量更新状态失败", "批量更新状态成功")
 }
 
+// StartAITask is kept for clients using the old endpoint. AI triage now runs
+// before persistence, so existing rows are intentionally not reprocessed here.
 func StartAITask(c *gin.Context) {
-	response.Ok(c)
-	go func() {
-		err, list := service.ListSearchResultByStatus(0)
-		if err != nil {
-			global.GVA_LOG.Error("ListSearchResultByStatus error", zap.Any("err", err))
-			return
-		}
-		for _, result := range list {
-			textMatches := make([]model.TextMatch, 0)
-			var content string
-			if json.Valid(result.TextMatchesJson) {
-				err = json.Unmarshal(result.TextMatchesJson, &textMatches)
-				if err != nil {
-					global.GVA_LOG.Error("json unmarshal error", zap.Error(err), zap.Any("result", result))
-					continue
-				}
-				for _, textMatch := range textMatches {
-					content += *textMatch.Fragment + "\n"
-				}
-			} else {
-				content = string(result.TextMatchesJson)
-			}
-			if content == "" {
-				content = result.Matches
-			}
-
-			ans := service.Question("You are a security operation engineer, you are expected to assistant."+
-				"please judge if the below content contains sensitive information,including password, credentials,token,etc. "+
-				"The sensitive information could be exploited. Just answer yes or no",
-				content)
-			global.GVA_LOG.Info(strconv.Itoa(int(result.ID)))
-			global.GVA_LOG.Info(content)
-			global.GVA_LOG.Info(ans)
-			if strings.ToLower(ans) == "yes" {
-				err = service.UpdateSearchResultById(int(result.ID), 1)
-			} else {
-				err = service.UpdateSearchResultById(int(result.ID), 2)
-			}
-			if err != nil {
-				global.GVA_LOG.Error("UpdateSearchResultByIds error", zap.Any("err", err))
-			}
-		}
-	}()
+	response.FailWithMessage("AI 分析已改为搜索结果入库前执行，请在 system.ai_analysis_enabled 中启用", c)
 }
 
 func UpdateSearchResult(c *gin.Context) {

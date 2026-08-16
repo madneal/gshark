@@ -29,6 +29,17 @@ export const setSystemConfig = (data) => {
 };
 
 // @Tags system
+// @Summary 测试 AI 配置
+// @Security ApiKeyAuth
+export const testAIConfig = (data) => {
+    return service({
+        url: "/system/testAIConfig",
+        method: "post",
+        data,
+    });
+};
+
+// @Tags system
 // @Summary 获取服务器运行状态
 // @Security ApiKeyAuth
 // @Produce  application/json
