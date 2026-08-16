@@ -16,18 +16,14 @@ type SaveResultStats struct {
 	Inserted   int      // Successfully inserted
 	Skipped    int      // Skipped (already exists)
 	Failed     int      // Failed to insert
-	AIAnalyzed int      // Results sent to the AI pre-ingest filter
-	AIRejected int      // Results classified as false positives
-	AIErrors   int      // Results rejected because AI analysis failed
+	AIFiltered int      // Rejected by the AI pre-ingest filter, including analysis errors
 	Repos      []string // Unique repos affected
-	repoSet    map[string]struct{}
 }
 
 // NewSaveResultStats creates a new SaveResultStats instance
 func NewSaveResultStats() *SaveResultStats {
 	return &SaveResultStats{
-		Repos:   make([]string, 0),
-		repoSet: make(map[string]struct{}),
+		Repos: make([]string, 0),
 	}
 }
 
@@ -36,17 +32,19 @@ func (s *SaveResultStats) AddRepo(repo string) {
 	if repo == "" {
 		return
 	}
-	if _, exists := s.repoSet[repo]; !exists {
-		s.repoSet[repo] = struct{}{}
-		s.Repos = append(s.Repos, repo)
+	for _, existing := range s.Repos {
+		if existing == repo {
+			return
+		}
 	}
+	s.Repos = append(s.Repos, repo)
 }
 
 // Summary returns a human-readable summary of the save operation
 func (s *SaveResultStats) Summary(keyword, source string) string {
 	aiSummary := ""
-	if s.AIAnalyzed > 0 {
-		aiSummary = fmt.Sprintf(", ai_analyzed=%d, ai_rejected=%d, ai_errors=%d", s.AIAnalyzed, s.AIRejected, s.AIErrors)
+	if s.AIFiltered > 0 {
+		aiSummary = fmt.Sprintf(", ai_filtered=%d", s.AIFiltered)
 	}
 	if s.Inserted == 0 {
 		return fmt.Sprintf("[%s] keyword=%q: no new results (processed=%d, skipped=%d%s)",
@@ -146,20 +144,19 @@ func SaveSearchResultsWithStats(searchResults []model.SearchResult) *SaveResultS
 			continue
 		}
 		if global.GVA_CONFIG.System.AiAnalysisEnabled {
-			stats.AIAnalyzed++
 			analysis, err := AnalyzeSearchResult(result)
 			if err != nil {
 				// AI filtering is deliberately fail-closed: when enabled, an
 				// unavailable or malformed model response must not turn an
 				// unverified finding into a stored finding.
-				stats.AIErrors++
+				stats.AIFiltered++
 				global.GVA_LOG.Error("AI pre-ingest analysis failed; result rejected",
 					zap.Uint("result_id", result.ID), zap.String("repo", result.Repo),
 					zap.String("path", result.Path), zap.Error(err))
 				continue
 			}
 			if !analysis.Real {
-				stats.AIRejected++
+				stats.AIFiltered++
 				global.GVA_LOG.Info("AI pre-ingest analysis rejected result",
 					zap.Uint("result_id", result.ID), zap.String("repo", result.Repo),
 					zap.String("path", result.Path), zap.String("reason", analysis.Reason))
