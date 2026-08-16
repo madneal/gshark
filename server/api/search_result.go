@@ -50,12 +50,6 @@ func UpdateSearchResultByIds(c *gin.Context) {
 	respondMutation(c, service.UpdateSearchResultByIds(batchUpdateReq), "批量更新状态失败！", "批量更新状态失败", "批量更新状态成功")
 }
 
-// StartAITask is kept for clients using the old endpoint. AI triage now runs
-// before persistence, so existing rows are intentionally not reprocessed here.
-func StartAITask(c *gin.Context) {
-	response.FailWithMessage("AI 分析已改为搜索结果入库前执行，请在 system.ai_analysis_enabled 中启用", c)
-}
-
 func UpdateSearchResult(c *gin.Context) {
 	var updateReq request.UpdateReq
 	if !bindJSON(c, &updateReq) {
