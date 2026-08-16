@@ -127,23 +127,6 @@
 
       <section class="config-section">
         <div class="section-header">
-          <h2>验证码配置</h2>
-        </div>
-        <div class="field-grid three">
-          <el-form-item label="keyLong">
-            <el-input v-model.number="config.captcha.keyLong"></el-input>
-          </el-form-item>
-          <el-form-item label="imgWidth">
-            <el-input v-model.number="config.captcha.imgWidth"></el-input>
-          </el-form-item>
-          <el-form-item label="imgHeight">
-            <el-input v-model.number="config.captcha.imgHeight"></el-input>
-          </el-form-item>
-        </div>
-      </section>
-
-      <section class="config-section">
-        <div class="section-header">
           <h2>MySQL数据库配置</h2>
         </div>
         <div class="field-grid two">
@@ -202,7 +185,6 @@ export default {
         jwt: {},
         casbin: {},
         mysql: {},
-        captcha: {},
         zap: {},
         local: {},
         email: {},
