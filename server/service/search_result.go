@@ -151,15 +151,15 @@ func SaveSearchResultsWithStats(searchResults []model.SearchResult) *SaveResultS
 				// unverified finding into a stored finding.
 				stats.AIFiltered++
 				global.GVA_LOG.Error("AI pre-ingest analysis failed; result rejected",
-					zap.Uint("result_id", result.ID), zap.String("repo", result.Repo),
-					zap.String("path", result.Path), zap.Error(err))
+					zap.String("repo", result.Repo), zap.String("path", result.Path),
+					zap.Error(err))
 				continue
 			}
 			if !analysis.Real {
 				stats.AIFiltered++
 				global.GVA_LOG.Info("AI pre-ingest analysis rejected result",
-					zap.Uint("result_id", result.ID), zap.String("repo", result.Repo),
-					zap.String("path", result.Path), zap.String("reason", analysis.Reason))
+					zap.String("repo", result.Repo), zap.String("path", result.Path),
+					zap.String("reason", analysis.Reason))
 				continue
 			}
 		}
