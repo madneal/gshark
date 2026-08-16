@@ -299,9 +299,9 @@ Sourcegraph provider 使用 Stream API 对 Sourcegraph 索引中的全部仓库�
 
 ### 入库前 AI 过滤
 
-GShark 支持在搜索结果写入 `search_result` 之前，将每条新结果发送到兼容 OpenAI Chat Completions 的接口进行判断。请在 `config.yaml` 中配置 `system.ai_server`、`system.ai_token`、`system.model`，并设置 `system.ai_analysis_enabled: true`。模型必须返回 `{"real":true|false,"confidence":0.0,"reason":"..."}` 格式的 JSON；只有 `real: true` 的结果才会入库，响应格式错误、超时或接口异常都会安全拒绝入库。`system.ai_analysis_timeout`（秒）和 `system.ai_analysis_max_content`（字符数）用于限制单次请求。该功能默认关闭。
+GShark 支持在搜索结果写入 `search_result` 之前，将每条新结果发送到兼容 OpenAI Chat Completions 的接口进行判断。请在 `config.yaml` 中配置 `system.ai_server`、`system.ai_token`、`system.model`，并设置 `system.ai_analysis_enabled: true`。模型必须返回 `{"real":true|false,"confidence":0.0,"reason":"..."}` 格式的 JSON；只有 `real: true` 的结果才会入库，响应格式错误、超时或接口异常都会安全拒绝入库。每次请求使用内置限制：超时 30 秒、最多发送 6000 个字符。该功能默认关闭。
 
-系统配置页提供“测试 AI 配置”按钮，会使用合成的占位符内容验证接口连通性、鉴权、模型可用性和响应格式，不会写入搜索结果。
+系统配置页提供“测试 AI 配置”按钮，会使用合成的占位符内容验证接口连通性、鉴权、模型可用性和响应格式，不会写入搜索结果。每次请求使用内置限制：超时 30 秒、最多发送 6000 个字符。
 
 ## 常见问题
 

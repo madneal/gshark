@@ -43,8 +43,6 @@ system:
   ai_token:
   model:
   ai_analysis_enabled: false
-  ai_analysis_timeout: 30
-  ai_analysis_max_content: 6000
 wechat:
   url:
   enable: false

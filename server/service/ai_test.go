@@ -13,9 +13,8 @@ import (
 	"github.com/madneal/gshark/model"
 )
 
-func TestSearchResultContentPrefersTextMatchesAndTruncates(t *testing.T) {
+func TestSearchResultContentPrefersTextMatches(t *testing.T) {
 	previous := global.GVA_CONFIG
-	global.GVA_CONFIG.System.AiAnalysisMaxContent = 12
 	t.Cleanup(func() { global.GVA_CONFIG = previous })
 
 	fragment := "credential=secret-value"
@@ -27,8 +26,18 @@ func TestSearchResultContentPrefersTextMatchesAndTruncates(t *testing.T) {
 		Matches:         "fallback",
 		TextMatchesJson: encoded,
 	})
-	if content != "credential=s"+"\n[truncated]" {
+	if content != "credential=secret-value" {
 		t.Fatalf("content = %q", content)
+	}
+}
+
+func TestSearchResultContentUsesBuiltinLimit(t *testing.T) {
+	content := SearchResultContent(model.SearchResult{Matches: strings.Repeat("x", defaultAIAnalysisMaxContent+10)})
+	if !strings.HasSuffix(content, "\n[truncated]") {
+		t.Fatalf("content was not truncated")
+	}
+	if got := len([]rune(strings.TrimSuffix(content, "\n[truncated]"))); got != defaultAIAnalysisMaxContent {
+		t.Fatalf("content length = %d, want %d", got, defaultAIAnalysisMaxContent)
 	}
 }
 
@@ -46,10 +55,9 @@ func TestParseSearchResultAnalysisAcceptsFencedJSON(t *testing.T) {
 func TestAnalyzeSearchResultUsesOpenAICompatibleAPI(t *testing.T) {
 	previous := global.GVA_CONFIG
 	global.GVA_CONFIG.System = config.System{
-		AiServer:          "",
-		AiToken:           "test-token",
-		Model:             "test-model",
-		AiAnalysisTimeout: 5,
+		AiServer: "",
+		AiToken:  "test-token",
+		Model:    "test-model",
 	}
 	requests := 0
 	server := newAIHTTPTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -84,7 +92,7 @@ func TestAnalyzeSearchResultUsesOpenAICompatibleAPI(t *testing.T) {
 
 func TestAnalyzeSearchResultFailsClosedOnMalformedResponse(t *testing.T) {
 	previous := global.GVA_CONFIG
-	global.GVA_CONFIG.System = config.System{AiServer: "", Model: "test-model", AiAnalysisTimeout: 5}
+	global.GVA_CONFIG.System = config.System{AiServer: "", Model: "test-model"}
 	server := newAIHTTPTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		_, _ = w.Write([]byte(`{"choices":[{"message":{"content":"yes"}}]}`))
@@ -110,7 +118,7 @@ func TestTestAIConfigUsesSyntheticEvidence(t *testing.T) {
 		_, _ = w.Write([]byte(`{"choices":[{"message":{"content":"{\"real\":false,\"confidence\":0.99,\"reason\":\"placeholder\"}"}}]}`))
 	}))
 
-	err := TestAIConfig(config.System{AiServer: server.URL, Model: "test-model", AiToken: "test-token", AiAnalysisTimeout: 5})
+	err := TestAIConfig(config.System{AiServer: server.URL, Model: "test-model", AiToken: "test-token"})
 	if err != nil {
 		t.Fatal(err)
 	}

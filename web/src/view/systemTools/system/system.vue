@@ -45,12 +45,6 @@
           <el-form-item label="模型名称">
             <el-input v-model="config.system.model" placeholder="例如 gpt-4o-mini"></el-input>
           </el-form-item>
-          <el-form-item label="单条分析超时（秒）">
-            <el-input v-model.number="config.system.aiAnalysisTimeout" type="number"></el-input>
-          </el-form-item>
-          <el-form-item label="最多发送字符数">
-            <el-input v-model.number="config.system.aiAnalysisMaxContent" type="number"></el-input>
-          </el-form-item>
         </div>
       </section>
 

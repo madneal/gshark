@@ -301,9 +301,9 @@ Existing rules whose type is `searchcode` are also picked up by this provider, s
 
 ### AI pre-ingest filtering
 
-GShark can optionally send each new search result to an OpenAI-compatible Chat Completions endpoint before writing it to `search_result`. Set `system.ai_server`, `system.ai_token`, `system.model`, and `system.ai_analysis_enabled: true` in `config.yaml`. The model must return JSON in the form `{"real":true|false,"confidence":0.0,"reason":"..."}`. Only `real: true` results are persisted; malformed responses, timeouts, and API errors fail closed and are not stored. `system.ai_analysis_timeout` (seconds) and `system.ai_analysis_max_content` (characters) bound each request. The feature is disabled by default.
+GShark can optionally send each new search result to an OpenAI-compatible Chat Completions endpoint before writing it to `search_result`. Set `system.ai_server`, `system.ai_token`, `system.model`, and `system.ai_analysis_enabled: true` in `config.yaml`. The model must return JSON in the form `{"real":true|false,"confidence":0.0,"reason":"..."}`. Only `real: true` results are persisted; malformed responses, timeouts, and API errors fail closed and are not stored. Each request uses built-in limits of 30 seconds and 6,000 characters. The feature is disabled by default.
 
-The system configuration page includes **Test AI Config**, which sends synthetic placeholder evidence to verify endpoint connectivity, authentication, model availability, and response compatibility without writing a search result.
+The system configuration page includes **Test AI Config**, which sends synthetic placeholder evidence to verify endpoint connectivity, authentication, model availability, and response compatibility without writing a search result. Each request uses built-in limits of 30 seconds and 6,000 characters.
 
 
 ## FAQ
