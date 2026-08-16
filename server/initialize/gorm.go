@@ -3,6 +3,7 @@ package initialize
 import (
 	"errors"
 
+	gormadapter "github.com/casbin/gorm-adapter/v3"
 	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/model"
 	"go.uber.org/zap"
@@ -46,7 +47,37 @@ func MysqlTables(db *gorm.DB) error {
 		global.GVA_LOG.Error("register table failed", zap.Any("err", err))
 		return err
 	}
+	if err := ensureAIConfigPermission(db); err != nil {
+		global.GVA_LOG.Error("ensure AI config permission failed", zap.Any("err", err))
+		return err
+	}
 	global.GVA_LOG.Info("register table success")
+	return nil
+}
+
+// ensureAIConfigPermission is an idempotent migration for installations that
+// already have a database. The regular source seed runs only during initial
+// setup, but the configuration page must be able to call this newly added API
+// after an upgrade as well.
+func ensureAIConfigPermission(db *gorm.DB) error {
+	api := model.SysApi{
+		Path:        "/system/testAIConfig",
+		Description: "测试 AI 配置",
+		ApiGroup:    "system",
+		Method:      "POST",
+	}
+	if err := db.Where("path = ? AND method = ?", api.Path, api.Method).FirstOrCreate(&api).Error; err != nil {
+		return err
+	}
+
+	var rule gormadapter.CasbinRule
+	query := db.Where("p_type = ? AND v0 = ? AND v1 = ? AND v2 = ?", "p", "888", api.Path, api.Method)
+	if err := query.First(&rule).Error; err != nil {
+		if !errors.Is(err, gorm.ErrRecordNotFound) {
+			return err
+		}
+		return db.Create(&gormadapter.CasbinRule{PType: "p", V0: "888", V1: api.Path, V2: api.Method}).Error
+	}
 	return nil
 }
 
