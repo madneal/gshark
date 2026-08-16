@@ -25,7 +25,7 @@ export default {
   },
   computed: {
     iconName() {
-      return menuIcon(this.routerInfo.meta?.icon)
+      return menuIcon(this.routerInfo.meta?.icon, this.routerInfo.name)
     }
   }
 }
