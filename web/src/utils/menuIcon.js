@@ -38,4 +38,25 @@ const iconMap = {
   's-opportunity': 'Filter'
 }
 
-export const menuIcon = icon => iconMap[icon] || 'Menu'
+const routeIconMap = {
+  superAdmin: 'UserFilled',
+  authority: 'UserFilled',
+  menu: 'Menu',
+  api: 'Connection',
+  user: 'Avatar',
+  person: 'Avatar',
+  systemTools: 'Tools',
+  system: 'Setting',
+  operation: 'Clock',
+  state: 'Odometer',
+  setting: 'Briefcase',
+  rule: 'CollectionTag',
+  result: 'Search',
+  code: 'DocumentCopy',
+  token: 'Key',
+  subdomain: 'Share',
+  filter: 'Filter',
+  scanLog: 'List'
+}
+
+export const menuIcon = (icon, routeName) => routeIconMap[routeName] || iconMap[icon] || 'Menu'
