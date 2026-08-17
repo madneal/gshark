@@ -32,6 +32,8 @@ GShark 是一个敏感信息检测和管理平台。后端基于 Go 和 Gin 构�
 gshark / gshark
 ```
 
+非本地部署完成后请立即修改默认密码。
+
 可通过脚本参数自定义管理员账号（无需打开初始化页面）：
 
 ```bash
@@ -55,6 +57,9 @@ gshark / gshark
 # 如果需要同时启动扫描容器
 ./scripts/quick-docker.sh --with-scan
 ```
+
+> [!TIP]
+> 不使用 `--with-scan` 时，请先在网页中完成首次配置，再执行 `docker compose up -d scan` 启动扫描。
 
 ```bash
 # 方式二：Release quick，自动下载匹配当前系统的 release 包，
@@ -81,6 +86,14 @@ cd gshark
 > Docker quick 脚本会先启动 MySQL、初始化数据库，只有使用 `--with-scan` 时才会在初始化完成后启动扫描器。如果手动使用 Docker Compose 启动扫描器，请先等待数据库初始化完成。
 
 扫描器在 `docker-compose.yaml` 中默认配置了资源保护：内存上限 512 MB、CPU 上限 1 核，并通过 `GOMEMLIMIT=384MiB` 让 Go 更积极地回收内存。搜索结果会按分页写入数据库，避免大规模搜索结果全部驻留内存。如果 scanner 因超过内存上限被 OOM kill，Compose 会自动重启；可以先使用 `docker stats gshark-scanner` 观察实际占用，再决定是否继续下调限制。
+
+常用运维命令：
+
+```bash
+docker compose ps
+docker compose logs -f server scan
+docker compose stop scan
+```
 
 ## 本地部署
 
@@ -179,7 +192,7 @@ mv dist/* /usr/local/www/html/
 ./gshark serve
 ```
 
-初始时，将 `config-temp.yaml` 复制为 `config.yaml`，并根据环境修改配置。之后，您可以直接运行 `gshark` 二进制文件。然后，访问 `localhost:8080` 进行本地部署。
+初始时，将 `config-temp.yaml` 复制为 `config.yaml`，并根据环境修改配置。之后，您可以直接运行 `gshark` 二进制文件。后端默认监听 `8888`；使用 Nginx 时，应通过前端端口（例如 `8080`）访问网页。
 
 如果您之前没有初始化数据库，您将首先被重定向到数据库初始化页面。
 
@@ -280,6 +293,13 @@ npm run serve
 过滤器目前针对 GitHub 相关扫描。`keyword` 适用于 `github`、`github_issue` 和 `gist`；`extension` 适用于 `github` 代码搜索和 `gist`。两类都可以配置为黑名单或白名单。
 
 更多信息，您可以参考这个[视频](https://www.bilibili.com/video/BV1aG4y1c72N/?vd_source=ef4657ebf0549af8755f75118b6e81bb)。
+
+## 扫描运营
+
+1. 数据库初始化完成后启动 `scan` 服务。
+2. 确认平台 Token 有效、规则已配置。
+3. 让 scanner 周期性运行，然后在结果页面查看发现。
+4. 确认真实密钥，忽略示例值和误报，并按需导出结果。
 
 ## 配置
 

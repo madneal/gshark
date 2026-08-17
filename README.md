@@ -32,6 +32,8 @@ Default login after initialization (if not customized):
 gshark / gshark
 ```
 
+Change the default password immediately after a non-local deployment.
+
 Set a custom admin account via script/CLI flags (no browser init page required):
 
 ```bash
@@ -55,6 +57,9 @@ Use one of the two quick deployment entries:
 # Start the scan container too.
 ./scripts/quick-docker.sh --with-scan
 ```
+
+> [!TIP]
+> Without `--with-scan`, finish the first-run setup in the web UI and start the scanner afterwards with `docker compose up -d scan`.
 
 ```bash
 # Option 2: Release quick. Download the matching release package,
@@ -81,6 +86,14 @@ cd gshark
 > The quick Docker script starts MySQL first, initializes the database, and only then starts the scanner when `--with-scan` is used. If you start the scanner manually with Docker Compose, wait until database initialization completes first.
 
 The scanner container has conservative resource guardrails in `docker-compose.yaml`: a 512 MB memory limit, a 1 CPU limit, and Go's `GOMEMLIMIT=384MiB`. Scan results are persisted page by page so a large repository search does not remain fully resident in memory. If the scanner is OOM-killed, Compose restarts it automatically; monitor the actual usage with `docker stats gshark-scanner` before lowering the limits further.
+
+Useful commands while operating the deployment:
+
+```bash
+docker compose ps
+docker compose logs -f server scan
+docker compose stop scan
+```
 
 ## Local Deployment 
 
@@ -180,7 +193,7 @@ Start the Nginx and the Front-End is deployed successfully.
 ./gshark serve
 ```
 
-Initially, copy `config-temp.yaml` to `config.yaml` and update it for your environment. After that, you can run the `gshark` binary file directly. Then, access `localhost:8080` for local deployment.
+Initially, copy `config-temp.yaml` to `config.yaml` and update it for your environment. After that, you can run the `gshark` binary file directly. The backend listens on `8888`; when Nginx is used, access the web UI through its frontend port (for example, `8080`).
 
 If you haven't initialized the database before, you will be redirected to the database initialization page first.
 
@@ -282,6 +295,13 @@ You can download the rule import template CSV file, then batch import rules.
 Filters currently apply to GitHub surfaces. `keyword` filters apply to `github`, `github_issue`, and `gist`. `extension` filters apply to `github` code search and `gist` search. Both classes can be configured as a blacklist or whitelist.
 
 For more information, you can refer to this [video](https://www.bilibili.com/video/BV1aG4y1c72N/?vd_source=ef4657ebf0549af8755f75118b6e81bb).
+
+## Scan operation
+
+1. Start the `scan` service after the database is initialized.
+2. Confirm that valid platform tokens and rules are configured.
+3. Let the scanner run periodically, then review findings in the result page.
+4. Confirm genuine secrets, ignore placeholders and false positives, and export results when needed.
 
 ## Configuration
 
