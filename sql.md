@@ -1,3 +1,23 @@
+## v2.1.16
+
+Add the AI configuration test API and administrator permission for existing databases:
+
+```sql
+insert into sys_apis (created_at, updated_at, deleted_at, path, description, api_group, method)
+select current_timestamp, current_timestamp, null, '/system/testAIConfig',
+       '测试 AI 配置', 'system', 'POST'
+where not exists (
+    select 1 from sys_apis where path = '/system/testAIConfig' and method = 'POST'
+);
+
+insert into casbin_rule (p_type, v0, v1, v2)
+select 'p', '888', '/system/testAIConfig', 'POST'
+where not exists (
+    select 1 from casbin_rule
+    where p_type = 'p' and v0 = '888' and v1 = '/system/testAIConfig' and v2 = 'POST'
+);
+```
+
 ## v2.1.15
 
 Remove the unused dictionary management menus, API catalog entries, and permissions from an existing database. Dictionary data tables are intentionally preserved:
