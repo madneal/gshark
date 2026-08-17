@@ -34,6 +34,21 @@ func SetSystemConfig(c *gin.Context) {
 	}
 }
 
+func TestAIConfig(c *gin.Context) {
+	var sys model.System
+	if err := c.ShouldBindJSON(&sys); err != nil {
+		response.FailWithMessage("AI 配置参数无效", c)
+		return
+	}
+	results, err := service.TestAIConfig(sys.Config.System)
+	if err != nil {
+		global.GVA_LOG.Warn("AI 配置测试失败", zap.Error(err))
+		response.FailWithDetailed(gin.H{"results": results}, "AI 配置测试失败: "+err.Error(), c)
+		return
+	}
+	response.OkWithDetailed(gin.H{"results": results}, "AI 配置测试成功，所有模型接口和响应格式可用", c)
+}
+
 func ReloadSystem(c *gin.Context) {
 	if runtime.GOOS == "windows" {
 		response.FailWithMessage("系统不支持", c)

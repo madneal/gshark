@@ -56,7 +56,6 @@
         >
           批量忽略
         </el-button>
-        <el-button @click="startAITask">启动AI分析</el-button>
       </div>
     </div>
 
@@ -145,7 +144,6 @@ import {
   updateSearchResult,
   updateSearchResultStatusByIds,
   exportSearchResult,
-  startAITask,
 } from "@/api/searchResult";
 import { formatDate } from "@/utils/date";
 import infoList from "@/mixins/infoList";
@@ -294,14 +292,6 @@ export default {
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;
-    },
-    async startAITask() {
-      try {
-        await startAITask();
-        this.$message({ type: "success", message: "已启动 AI 分析任务" });
-      } catch (e) {
-        this.$message({ type: "error", message: "启动 AI 分析失败" });
-      }
     },
     confirmBulk(isIgnore) {
       if (!this.hasSelection) {

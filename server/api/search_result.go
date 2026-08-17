@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/csv"
-	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/model"
@@ -11,8 +10,6 @@ import (
 	"github.com/madneal/gshark/service"
 	"go.uber.org/zap"
 	"net/http"
-	"strconv"
-	"strings"
 )
 
 var statusOptions = map[int]string{
@@ -51,52 +48,6 @@ func UpdateSearchResultByIds(c *gin.Context) {
 		return
 	}
 	respondMutation(c, service.UpdateSearchResultByIds(batchUpdateReq), "批量更新状态失败！", "批量更新状态失败", "批量更新状态成功")
-}
-
-func StartAITask(c *gin.Context) {
-	response.Ok(c)
-	go func() {
-		err, list := service.ListSearchResultByStatus(0)
-		if err != nil {
-			global.GVA_LOG.Error("ListSearchResultByStatus error", zap.Any("err", err))
-			return
-		}
-		for _, result := range list {
-			textMatches := make([]model.TextMatch, 0)
-			var content string
-			if json.Valid(result.TextMatchesJson) {
-				err = json.Unmarshal(result.TextMatchesJson, &textMatches)
-				if err != nil {
-					global.GVA_LOG.Error("json unmarshal error", zap.Error(err), zap.Any("result", result))
-					continue
-				}
-				for _, textMatch := range textMatches {
-					content += *textMatch.Fragment + "\n"
-				}
-			} else {
-				content = string(result.TextMatchesJson)
-			}
-			if content == "" {
-				content = result.Matches
-			}
-
-			ans := service.Question("You are a security operation engineer, you are expected to assistant."+
-				"please judge if the below content contains sensitive information,including password, credentials,token,etc. "+
-				"The sensitive information could be exploited. Just answer yes or no",
-				content)
-			global.GVA_LOG.Info(strconv.Itoa(int(result.ID)))
-			global.GVA_LOG.Info(content)
-			global.GVA_LOG.Info(ans)
-			if strings.ToLower(ans) == "yes" {
-				err = service.UpdateSearchResultById(int(result.ID), 1)
-			} else {
-				err = service.UpdateSearchResultById(int(result.ID), 2)
-			}
-			if err != nil {
-				global.GVA_LOG.Error("UpdateSearchResultByIds error", zap.Any("err", err))
-			}
-		}
-	}()
 }
 
 func UpdateSearchResult(c *gin.Context) {

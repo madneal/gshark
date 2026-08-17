@@ -89,10 +89,3 @@ export const exportSearchResult = async (params) => {
          data
      })
  }
-
- export const startAITask = () => {
-     return service({
-         url: "/searchResult/startAITask",
-         method: "post"
-     })
- }

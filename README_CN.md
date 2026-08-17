@@ -297,6 +297,28 @@ Sourcegraph provider 使用 Stream API 对 Sourcegraph 索引中的全部仓库�
 
 数据库中已有的 `searchcode` 类型规则也会由该 provider 继续执行，不需要迁移规则数据。
 
+### 入库前 AI 过滤
+
+GShark 支持在搜索结果写入 `search_result` 之前，将每条新结果发送到一个或多个兼容 OpenAI Chat Completions 的接口进行判断。请按优先级配置 `system.ai_providers`；旧的 `ai_server`、`ai_token`、`model` 字段仍兼容为单个 Provider。网络、HTTP 或鉴权失败时切换到下一个 Provider；模型明确返回 `real: false` 时不再切换。模型必须返回 `{"real":true|false,"confidence":0.0,"reason":"..."}` 格式的 JSON；只有 `real: true` 的结果才会入库，响应格式错误、超时或接口异常都会安全拒绝入库。每次请求使用内置限制：超时 30 秒、最多发送 6000 个字符。该功能默认关闭。
+
+示例：
+
+```yaml
+system:
+  ai_analysis_enabled: true
+  ai_providers:
+    - name: primary
+      server: https://api.openai.com/v1/chat/completions
+      token: your-openai-token
+      model: gpt-4o-mini
+    - name: backup
+      server: https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions
+      token: your-dashscope-token
+      model: qwen-plus
+```
+
+系统配置页提供“测试 AI 配置”按钮，会使用合成的占位符内容验证接口连通性、鉴权、模型可用性和响应格式，不会写入搜索结果。每次请求使用内置限制：超时 30 秒、最多发送 6000 个字符。
+
 ## 常见问题
 
 1. GShark 扫描的是本地代码还是公开平台代码？

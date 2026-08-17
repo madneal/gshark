@@ -12,19 +12,18 @@ import (
 
 // SaveResultStats contains detailed statistics about saved search results
 type SaveResultStats struct {
-	Total    int      // Total results processed
-	Inserted int      // Successfully inserted
-	Skipped  int      // Skipped (already exists)
-	Failed   int      // Failed to insert
-	Repos    []string // Unique repos affected
-	repoSet  map[string]struct{}
+	Total      int      // Total results processed
+	Inserted   int      // Successfully inserted
+	Skipped    int      // Skipped (already exists)
+	Failed     int      // Failed to insert
+	AIFiltered int      // Rejected by the AI pre-ingest filter, including analysis errors
+	Repos      []string // Unique repos affected
 }
 
 // NewSaveResultStats creates a new SaveResultStats instance
 func NewSaveResultStats() *SaveResultStats {
 	return &SaveResultStats{
-		Repos:   make([]string, 0),
-		repoSet: make(map[string]struct{}),
+		Repos: make([]string, 0),
 	}
 }
 
@@ -33,17 +32,23 @@ func (s *SaveResultStats) AddRepo(repo string) {
 	if repo == "" {
 		return
 	}
-	if _, exists := s.repoSet[repo]; !exists {
-		s.repoSet[repo] = struct{}{}
-		s.Repos = append(s.Repos, repo)
+	for _, existing := range s.Repos {
+		if existing == repo {
+			return
+		}
 	}
+	s.Repos = append(s.Repos, repo)
 }
 
 // Summary returns a human-readable summary of the save operation
 func (s *SaveResultStats) Summary(keyword, source string) string {
+	aiSummary := ""
+	if s.AIFiltered > 0 {
+		aiSummary = fmt.Sprintf(", ai_filtered=%d", s.AIFiltered)
+	}
 	if s.Inserted == 0 {
-		return fmt.Sprintf("[%s] keyword=%q: no new results (processed=%d, skipped=%d)",
-			source, keyword, s.Total, s.Skipped)
+		return fmt.Sprintf("[%s] keyword=%q: no new results (processed=%d, skipped=%d%s)",
+			source, keyword, s.Total, s.Skipped, aiSummary)
 	}
 
 	repoSummary := ""
@@ -56,8 +61,8 @@ func (s *SaveResultStats) Summary(keyword, source string) string {
 		}
 	}
 
-	return fmt.Sprintf("[%s] keyword=%q: inserted=%d, skipped=%d, total=%d%s",
-		source, keyword, s.Inserted, s.Skipped, s.Total, repoSummary)
+	return fmt.Sprintf("[%s] keyword=%q: inserted=%d, skipped=%d, total=%d%s%s",
+		source, keyword, s.Inserted, s.Skipped, s.Total, aiSummary, repoSummary)
 }
 
 func CreateSearchResult(searchResult model.SearchResult) (err error) {
@@ -137,6 +142,26 @@ func SaveSearchResultsWithStats(searchResults []model.SearchResult) *SaveResultS
 		if exist {
 			stats.Skipped++
 			continue
+		}
+		if global.GVA_CONFIG.System.AiAnalysisEnabled {
+			analysis, err := AnalyzeSearchResult(result)
+			if err != nil {
+				// AI filtering is deliberately fail-closed: when enabled, an
+				// unavailable or malformed model response must not turn an
+				// unverified finding into a stored finding.
+				stats.AIFiltered++
+				global.GVA_LOG.Error("AI pre-ingest analysis failed; result rejected",
+					zap.String("repo", result.Repo), zap.String("path", result.Path),
+					zap.Error(err))
+				continue
+			}
+			if !analysis.Real {
+				stats.AIFiltered++
+				global.GVA_LOG.Info("AI pre-ingest analysis rejected result",
+					zap.String("repo", result.Repo), zap.String("path", result.Path),
+					zap.String("reason", analysis.Reason))
+				continue
+			}
 		}
 		err := CreateSearchResult(result)
 		if err != nil {

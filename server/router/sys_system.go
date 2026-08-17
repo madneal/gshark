@@ -11,6 +11,7 @@ func InitSystemRouter(Router *gin.RouterGroup) {
 	{
 		SystemRouter.POST("getSystemConfig", api.GetSystemConfig)
 		SystemRouter.POST("setSystemConfig", api.SetSystemConfig)
+		SystemRouter.POST("testAIConfig", api.TestAIConfig)
 		SystemRouter.POST("getServerInfo", api.GetServerInfo)
 		SystemRouter.POST("reloadSystem", api.ReloadSystem)
 		SystemRouter.POST("emailTest", api.EmailTest) // 发送测试邮件
