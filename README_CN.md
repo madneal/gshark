@@ -1,99 +1,327 @@
 <p align="center">
-  <img alt="GShark logo" src="https://s1.ax1x.com/2018/10/17/idhZvj.png" />
-  <h3 align="center">GShark</h3>
-  <p align="center">轻松有效地扫描公开代码平台中的敏感信息。</p>
+   <img alt="GShark logo" src="https://s1.ax1x.com/2018/10/17/idhZvj.png" />
+   <h3 align="center">GShark</h3>
+   <p align="center">轻松有效地扫描敏感信息。</p>
 </p>
 
 <div align="center">
-  <strong>🇨🇳 中文版</strong> | <a href="README.md">🇺🇸 English</a>
+   <strong>🇨🇳 中文版</strong> | <a href="README.md">🇺🇸 English</a>
 </div>
 
 # GShark [![Go Report Card](https://goreportcard.com/badge/github.com/madneal/gshark)](https://goreportcard.com/report/github.com/madneal/gshark) [![Release](https://github.com/madneal/gshark/actions/workflows/release.yml/badge.svg)](https://github.com/madneal/gshark/actions/workflows/release.yml)
 
-GShark 是一个基于 Go/Gin 后端和 Vue 3 管理界面的敏感信息监测平台，支持 GitHub、GitLab、Sourcegraph、Postman 和 Gobuster 子域名发现。
+GShark 是一个敏感信息检测和管理平台。后端基于 Go 和 Gin 构建，当前前端基于 Vue 3、Vite、Vue Router 4、Vuex 4 和 Element Plus 构建。完整介绍请参考[文章](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI3MjA3MTY3Mw==&action=getalbum&album_id=2376148333116850178#wechat_redirect)和[视频](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI3MjA3MTY3Mw==&action=getalbum&album_id=1834365721464651778#wechat_redirect)。目前，所有扫描仅针对公共环境，不针对本地环境。
 
-GShark 通过公开 API 和公开索引进行搜索。私有仓库是否可见取决于平台 API 和 Token 权限。完整介绍可参考[文章](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI3MjA3MTY3Mw==&action=getalbum&album_id=2376148333116850178#wechat_redirect)、[视频](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI3MjA3MTY3Mw==&action=getalbum&album_id=1834365721464651778#wechat_redirect)和 [Wiki](https://github.com/madneal/gshark/wiki)。
+关于 GShark 的使用，请参考 [wiki](https://github.com/madneal/gshark/wiki)。
 
-## 主要特性
+# 主要特性
 
-- GitHub 代码、Issue/PR 和公开 Gist 搜索
-- GitLab 全局搜索，不支持时自动降级为项目爬取
-- Sourcegraph 全局代码搜索（已有的 `searchcode` 规则也会继续支持）
-- Postman 集合搜索和子域名发现
-- 自定义规则、关键词/扩展名过滤、结果审核和导出
-- 可选的入库前 AI 过滤，支持多个兼容 OpenAI 的 Provider
-- Docker 部署和 scanner 资源限制
+* 🌐 多平台支持：GitHub、GitLab、Sourcegraph、Postman 等
+* 🔍 灵活的规则管理：自定义扫描规则和过滤，支持白名单/黑名单
+* 🔑 细粒度访问控制：可配置的菜单和 API 权限
+* 🔄 子域名发现：集成 gobuster 进行子域名枚举
+* 🚀 Docker 部署：容器化部署，易于设置
+* 📊 Vue 3 管理界面：基于 Vite 的 Web 界面，用于任务和结果管理
+* 🔁 更健壮的扫描：GitHub 触发限流后会自动重试，GitLab 全局搜索不可用时会自动降级为逐项目爬取
 
-## 快速开始：Docker
+# 快速开始
 
-环境要求：Docker Engine 和 Docker Compose。
+初始化后的默认登录账号（未自定义时）：
+
+```text
+gshark / gshark
+```
+
+非本地部署完成后请立即修改默认密码。
+
+可通过脚本参数自定义管理员账号（无需打开初始化页面）：
 
 ```bash
-git clone https://github.com/madneal/gshark.git
+./scripts/quick-docker.sh --admin-user myadmin --admin-password 'S3cret!'
+# 或
+./gshark init --host 127.0.0.1 --user root --password madneal --db gshark \
+  --admin-user myadmin --admin-password 'S3cret!'
+```
+
+## Quick 一键部署
+
+推荐优先使用下面两个 quick 部署入口：
+
+```bash
+# 方式一：Docker quick，构建所有应用镜像并后台启动 mysql/server/web
+./scripts/quick-docker.sh
+
+# 自定义管理员账号
+./scripts/quick-docker.sh --admin-user myadmin --admin-password 'S3cret!'
+
+# 如果需要同时启动扫描容器
+./scripts/quick-docker.sh --with-scan
+```
+
+> [!TIP]
+> 不使用 `--with-scan` 时，请先在网页中完成首次配置，再执行 `docker compose up -d scan` 启动扫描。
+
+```bash
+# 方式二：Release quick，自动下载匹配当前系统的 release 包，
+# 配置 Nginx，并在后台启动 gshark 后端
+./scripts/quick-release.sh
+
+# 也可以使用本地 release zip
+./scripts/quick-release.sh --file ./gshark_linux_amd64.zip
+```
+
+## Docker 部署
+
+```
+# 克隆仓库
+git clone https://github.com/madneal/gshark
+
 cd gshark
 
-# 启动 MySQL、后端和前端；默认不会启动 scanner
-./scripts/quick-docker.sh \
-  --admin-user myadmin \
-  --admin-password 'change-this-password'
+# 一键构建并启动容器
+./scripts/quick-docker.sh
 ```
 
-打开 <http://localhost:8080>。登录后添加 Token 和规则，再启动扫描：
+> [!IMPORTANT]
+> Docker quick 脚本会先启动 MySQL、初始化数据库，只有使用 `--with-scan` 时才会在初始化完成后启动扫描器。如果手动使用 Docker Compose 启动扫描器，请先等待数据库初始化完成。
 
-```bash
-docker compose up -d scan
-```
+扫描器在 `docker-compose.yaml` 中默认配置了资源保护：内存上限 512 MB、CPU 上限 1 核，并通过 `GOMEMLIMIT=384MiB` 让 Go 更积极地回收内存。搜索结果会按分页写入数据库，避免大规模搜索结果全部驻留内存。如果 scanner 因超过内存上限被 OOM kill，Compose 会自动重启；可以先使用 `docker stats gshark-scanner` 观察实际占用，再决定是否继续下调限制。
 
-未自定义账号时，默认账号密码为 `gshark / gshark`。非本地部署请立即修改。quick 脚本会先初始化数据库，再启动 scanner；数据库初始化完成前不要手动启动 `scan`。
-
-常用 Docker 命令：
+常用运维命令：
 
 ```bash
 docker compose ps
-docker compose logs -f server
-docker compose logs -f scan
-docker compose restart server
-docker compose stop scan       # 暂停扫描，不影响前端和后端
-docker compose down            # 保留 ./mysql 数据目录
+docker compose logs -f server scan
+docker compose stop scan
 ```
 
-scanner 默认限制为 512 MB 内存、1 个 CPU，并设置 `GOMEMLIMIT=384MiB`。只有在查看 `docker stats gshark-scanner` 后，才建议调整 [docker-compose.yaml](docker-compose.yaml) 中的 `scan` 限制。除非确认要删除数据库，否则不要使用 `docker compose down -v`。
+## 本地部署
 
-> **安全提示：** Docker 示例文件包含本地开发用凭据。生产环境使用前，请同时修改 `docker-compose.yaml` 和 `server/config.docker.yaml` 中的 MySQL 和 JWT 密钥。
+```bash
+# 克隆仓库
+git clone https://github.com/madneal/gshark.git
+cd gshark
 
-## 第一次扫描
+# 执行 Release quick 脚本下载发布包、配置 Nginx 并启动后端
+./scripts/quick-release.sh
+```
 
-1. 打开 `http://localhost:8080` 并登录后台。
-2. 在对应平台添加 Token。Token 只应保存在 GShark 中，不要提交到代码仓库或粘贴到 Issue。
-3. 一条规则写一个搜索表达式，例如：
+## 手动部署
 
-   ```text
-   password in:file
-   access_token org:example
-   secret repo:owner/repository
-   api_key extension:yaml
-   ```
+### 环境要求
 
-   GitHub 规则类型包括 `github`（代码）、`github_issue`（Issue/PR）和 `gist`（公开 Gist）。一条规则可以同时选择多个类型，例如 `github,github_issue,gist`。
-4. 如果结果噪声较多，添加关键词或扩展名过滤器。目前过滤器用于 GitHub 代码和 Gist。
-5. 如需 AI 入库前过滤，先配置 Provider，在系统页面点击“测试 AI 配置”，确认成功后再开启。该功能默认关闭。
-6. 使用 `docker compose up -d scan` 启动 scanner；手动部署使用 `./gshark scan`。只要 Token 和规则有效，scanner 就会周期性运行。
-7. 在结果页面确认真实结果，忽略示例值和误报，并按需导出。
+* Nginx
+* MySQL **8.0+**
+* Go **1.25+**，用于构建后端
+* Node.js **20+** 和 npm，用于构建前端
 
-## 平台配置
+建议使用 Nginx 部署前端。构建 Vite 项目后，将生成的 `web/dist` 文件放置在 `/var/www/html` 中，并配置 Nginx 将 `/api/` 反向代理到后端服务。详细的部署教程可以观看 [bilibili](https://www.bilibili.com/video/BV1Py4y1s7ap/) 或 [youtube](https://youtu.be/bFrKm5t4M54) 上的视频。Windows 部署请参考[此链接](https://www.bilibili.com/video/BV1CA411L7ux/)。
 
-- **GitHub：** 在 [GitHub Token 设置](https://github.com/settings/tokens) 创建 Token。Token 必须具备规则所需的搜索权限。GitHub 搜索仍有 rate limit，GShark 会重试限流页面，但无法消除上游限制。
-- **GitLab：** 配置 Token；自建 GitLab 还需要配置 GitLab Base URL。全局代码搜索不可用时，GShark 会搜索近期活跃的公开项目。
-- **Sourcegraph：** 配置 `search.sourcegraph-url`（默认 `https://sourcegraph.com`）以及 `search.sourcegraph-token` 或 `SOURCEGRAPH_TOKEN`。结果受实例索引、超时和上游返回限制影响。
-- **Postman/子域名发现：** 配置对应规则和字典后再启动 scanner。
+### Nginx
 
-规则支持通过 CSV 模板批量导入。数据库中已有的 `searchcode` 类型规则会由 Sourcegraph provider 继续处理，不需要迁移规则数据。
+可以使用 `nginx -t` 定位 `nginx.conf` 文件，然后修改 `nginx.conf`：
 
-## 可选：入库前 AI 过滤
+```
+// 根据您的需要配置用户
+user  www www;
+worker_processes  1;
 
-AI 过滤发生在结果写入 `search_result` 之前。只有模型严格返回 `real: true` 的结果才会入库；格式错误、超时、HTTP 错误和网络错误都会安全拒绝入库。内置限制为请求超时 30 秒、最多发送 6000 个字符。
+events {
+    worker_connections  1024;
+}
 
-该功能默认关闭。可在 `server/config.yaml`（Docker 使用 `server/config.docker.yaml`）中配置：
+http {
+    include       mime.types;
+    default_type  application/octet-stream;
+    sendfile        on;
+    keepalive_timeout  65;
+    server {
+        listen       8080;
+        server_name  localhost;
+
+        location / {
+            autoindex on;
+            root   html;
+            index  index.html index.htm;
+        }
+        location /api/ {
+            proxy_set_header Host $http_host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            rewrite ^/api/(.*)$ /$1 break;
+            proxy_pass http://127.0.0.1:8888;
+        }
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   html;
+        }
+    }
+    include servers/*;
+}
+
+```
+
+部署工作很简单。从 [releases](https://github.com/madneal/gshark/releases) 找到对应版本的 zip 文件。
+
+解压并将 `dist` 内的文件复制到 Nginx 的 `/var/www/html` 文件夹。
+
+```
+unzip gshark*.zip
+cd gshark*
+mv dist/* /var/www/html/
+# Mac 系统
+mv dist/* /usr/local/www/html/
+```
+
+启动 Nginx，前端部署成功。
+
+> [!TIP]
+> 如果您通过 Homebrew 安装了 Nginx，需要停止 Nginx：
+> ```shell
+> brew services stop nginx
+> ```
+> Ubuntu 启动 Nginx：
+> ```shell
+> systemctl start nginx
+> ```
+
+### 服务器服务
+
+```shell
+./gshark serve
+```
+
+初始时，将 `config-temp.yaml` 复制为 `config.yaml`，并根据环境修改配置。之后，您可以直接运行 `gshark` 二进制文件。后端默认监听 `8888`；使用 Nginx 时，应通过前端端口（例如 `8080`）访问网页。
+
+如果您之前没有初始化数据库，您将首先被重定向到数据库初始化页面。
+
+<img width="936" alt="image" src="https://github.com/user-attachments/assets/dfa7e53e-dc4a-4697-831f-a4f4f3810c3c">
+
+### 扫描服务
+
+```shell
+./gshark scan
+```
+
+对于扫描服务，需要配置相应的规则。例如，GitHub 或 Gitlab 规则。
+
+### 增量部署
+
+对于增量部署，应该执行 [sql.md](https://github.com/madneal/gshark/blob/master/sql.md) 进行相应的数据库操作。
+
+## 开发
+
+### 服务器
+
+```shell
+git clone https://github.com/madneal/gshark.git
+cd gshark/server
+go mod tidy
+cp config-temp.yaml config.yaml
+go build
+```
+
+运行 Web 服务器：
+
+```shell
+go build
+./gshark serve 
+```
+
+或者
+
+```shell
+go run main.go serve
+```
+
+运行扫描任务：
+
+```shell
+go build
+./gshark scan 
+```
+
+或者
+
+```shell
+go run main.go scan
+```
+
+> [!NOTE]
+> 在 macOS ARM 上，服务器状态页面的 CPU 百分比采集依赖 cgo。如果需要显示 CPU 使用率，请在运行或构建后端时启用 `CGO_ENABLED=1`：
+>
+> ```shell
+> CGO_ENABLED=1 go run main.go serve
+> ```
+
+### Web 前端
+
+```
+cd ../web
+
+npm install
+
+npm run serve
+```
+
+## 使用方法
+### 添加 Token
+
+#### GitHub
+
+要执行 GitHub 的扫描任务，您需要添加 GitHub token 来爬取 GitHub 中的信息。您可以在 [tokens](https://github.com/settings/tokens) 中生成 token。大多数访问范围就足够了。对于 GitLab 搜索，记得也要添加 token。
+
+[![iR2TMt.md.png](https://s1.ax1x.com/2018/10/31/iR2TMt.md.png)](https://imgchr.com/i/iR2TMt)
+
+### 规则配置
+
+对于 Github 或 Gitlab 规则，规则将按照相应平台的语法进行匹配。您可以直接配置在 GitHub 中搜索的内容。同一套 GitHub token 会覆盖三个面：
+
+* `github`：仓库代码搜索（`in:file`）
+* `github_issue`：Issue 和 PR（默认 `in:title,body,comments`，也可自行加 `is:issue` / `is:pr`）
+* `gist`：公开 Gist 搜索，命中后再通过官方 Gist API 拉取文件内容
+
+同一条规则可以勾选多种类型，例如 `github,github_issue,gist`。
+
+您可以下载规则导入模板 CSV 文件，然后批量导入规则。
+
+<img width="572" alt="image" src="https://user-images.githubusercontent.com/12164075/212504597-3e1ad5bd-bacf-433e-83e8-08de7eee6509.png">
+
+### 过滤器配置
+
+过滤器目前针对 GitHub 相关扫描。`keyword` 适用于 `github`、`github_issue` 和 `gist`；`extension` 适用于 `github` 代码搜索和 `gist`。两类都可以配置为黑名单或白名单。
+
+更多信息，您可以参考这个[视频](https://www.bilibili.com/video/BV1aG4y1c72N/?vd_source=ef4657ebf0549af8755f75118b6e81bb)。
+
+## 扫描运营
+
+1. 数据库初始化完成后启动 `scan` 服务。
+2. 确认平台 Token 有效、规则已配置。
+3. 让 scanner 周期性运行，然后在结果页面查看发现。
+4. 确认真实密钥，忽略示例值和误报，并按需导出结果。
+
+## 配置
+
+您应该将 `config-temp.yaml` 复制为 `config.yaml`，并根据您的环境配置数据库信息和其他信息。
+
+### GitLab 基础 URL
+
+<img width="363" alt="image" src="https://user-images.githubusercontent.com/12164075/203898719-1ce66395-083d-4226-937f-b6eed859addc.png">
+
+当 GitLab 全局搜索不可用时，GShark 会降级为爬取近期活跃的公开项目。`config.yaml` 中的 `search.gitlab-discover-pages` 和 `search.gitlab-batch-size` 用于控制每个扫描周期发现的项目分页数和搜索的项目数量（默认分别为 5 和 50）。
+
+### Sourcegraph 全局代码搜索
+
+Sourcegraph provider 使用 Stream API 对 Sourcegraph 索引中的全部仓库执行规则搜索，不需要逐个配置仓库。默认使用 `https://sourcegraph.com` 公共实例；如果使用自建实例，可在 `config.yaml` 中设置 `search.sourcegraph-url`，并通过 `search.sourcegraph-token` 或 `SOURCEGRAPH_TOKEN` 提供访问令牌。公共实例默认排除的 fork 和 archived 仓库会被 GShark 显式包含，以尽量扩大覆盖范围。Sourcegraph 的结果仍受其索引范围、搜索超时和结果限制影响，扫描日志会记录上游返回的限制信息。
+
+数据库中已有的 `searchcode` 类型规则也会由该 provider 继续执行，不需要迁移规则数据。
+
+### 入库前 AI 过滤
+
+GShark 支持在搜索结果写入 `search_result` 之前，将每条新结果发送到一个或多个兼容 OpenAI Chat Completions 的接口进行判断。请按优先级配置 `system.ai_providers`；旧的 `ai_server`、`ai_token`、`model` 字段仍兼容为单个 Provider。网络、HTTP 或鉴权失败时切换到下一个 Provider；模型明确返回 `real: false` 时不再切换。模型必须返回 `{"real":true|false,"confidence":0.0,"reason":"..."}` 格式的 JSON；只有 `real: true` 的结果才会入库，响应格式错误、超时或接口异常都会安全拒绝入库。每次请求使用内置限制：超时 30 秒、最多发送 6000 个字符。该功能默认关闭。
+
+示例：
 
 ```yaml
 system:
@@ -101,82 +329,94 @@ system:
   ai_providers:
     - name: primary
       server: https://api.openai.com/v1/chat/completions
-      token: your-token
+      token: your-openai-token
       model: gpt-4o-mini
     - name: backup
-      server: https://example.com/v1/chat/completions
-      token: backup-token
-      model: backup-model
+      server: https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions
+      token: your-dashscope-token
+      model: qwen-plus
 ```
 
-当网络、鉴权或 HTTP 请求失败时按顺序切换 Provider。旧的 `ai_server`、`ai_token` 和 `model` 字段仍兼容为单 Provider 配置。系统页面的测试功能只发送合成占位证据，不会写入扫描结果。
-
-## Release 包部署
-
-Release 脚本支持 macOS 和 Linux，需要 `curl`、`jq`、`unzip`、`nginx` 和 `sudo`：
-
-```bash
-./scripts/quick-release.sh \
-  --admin-user myadmin \
-  --admin-password 'change-this-password'
-```
-
-脚本会下载匹配系统的 Release zip，将前端部署到检测到的 Nginx 根目录，把 `/api/` 代理到后端 `8888` 端口，并通过 `8080` 提供网页。使用本地包时增加 `--file ./gshark_linux_amd64.zip`；数据库已初始化时可增加 `--skip-init`。
-
-## 手动部署
-
-环境要求：MySQL 8.0+、Go 1.25+、Node.js 20+、npm 和 Nginx。
-
-```bash
-cd server
-cp config-temp.yaml config.yaml
-go build -o gshark
-./gshark serve       # 后端，默认 8888 端口
-./gshark scan        # scanner，数据库初始化后再运行
-```
-
-在 `web/` 中执行 `npm install && npm run build`，将 `web/dist` 交给 Nginx，并把 `/api/` 反向代理到 `127.0.0.1:8888`。浏览器访问 Nginx 端口（示例为 8080），不要直接访问后端端口。
-
-已有部署升级时，请先备份 MySQL，再执行 [sql.md](sql.md) 中对应版本的 SQL，重启后端，确认迁移完成后再启动 scanner。不能假设只替换二进制就会完成所有历史迁移。
-
-## 配置说明
-
-主配置文件是 `server/config.yaml`。请从 [server/config-temp.yaml](server/config-temp.yaml) 开始；Docker 使用 [server/config.docker.yaml](server/config.docker.yaml)。可以通过 `-c` 或 `GSHARK_CONFIG` 指定配置文件：
-
-```bash
-./gshark -c /path/to/config.yaml serve
-GSHARK_CONFIG=/path/to/config.yaml ./gshark scan
-```
+系统配置页提供“测试 AI 配置”按钮，会使用合成的占位符内容验证接口连通性、鉴权、模型可用性和响应格式，不会写入搜索结果。每次请求使用内置限制：超时 30 秒、最多发送 6000 个字符。
 
 ## 常见问题
 
-- **GitHub 返回 401：** 用 GitHub API 单独验证 Token，检查过期时间、权限以及是否绑定到正确的平台规则。
-- **没有扫描结果：** 确认 `scan` 正在运行、规则语法正确、Token 有效且平台可访问，然后查看 `docker compose logs server scan`。
-- **scanner 没启动：** 等待 MySQL health check 和数据库初始化完成，再执行 `docker compose up -d scan`。
-- **页面慢或内存高：** 先查看 `docker stats`、scanner 日志和 MySQL 状态，再调整资源限制。
-- **GitHub 限流：** 减少规则噪声和搜索范围，接受扫描延迟；scanner 会重试限流页面。
-- **升级异常：** 确认版本、备份数据库、执行对应的 [sql.md](sql.md) 迁移，再按顺序重启后端和 scanner。
+1. GShark 扫描的是本地代码还是公开平台代码？
 
-## 开发
+当前项目定位是扫描公开环境，不是本地代码扫描器。GitHub 扫描基于 GitHub Search API；GitLab 扫描依赖 GitLab 搜索能力；Sourcegraph 扫描其索引中的公开代码。私有仓库是否能扫到，取决于对应平台 API、Sourcegraph 实例和 token 权限。
 
-后端：
+2. 推荐怎么部署？
 
-```bash
-cd server
-go mod tidy
-cp config-temp.yaml config.yaml
-go run main.go serve
+新用户优先使用 quick 脚本：
+
+```shell
+./scripts/quick-docker.sh
+./scripts/quick-docker.sh --with-scan
+./scripts/quick-release.sh
 ```
 
-前端：
+手动部署适合需要自定义 Nginx、MySQL、后端配置的场景。
 
-```bash
-cd web
-npm install
-npm run serve
+3. 部署环境有什么要求？
+
+MySQL 需要 8.0+。手动构建时需要 Go 1.25+、Node.js 20+、npm 和 Nginx。Docker 部署建议直接使用项目提供的 compose 和 quick 脚本，避免老教程里的配置差异。
+
+4. 初始化后默认账号是什么？
+
+默认账号密码是 `gshark / gshark`。生产环境部署完成后应立即修改密码。
+
+5. Docker 部署后 scanner 为什么没启动或没结果？
+
+scanner 依赖数据库初始化。MySQL 初始化前 scanner 容器可能会退出，初始化完成后需要重启 scanner。排查时优先看 scanner/server 容器日志，而不是只看页面。
+
+6. GShark 的核心运行链路是什么？
+
+基本链路是：配置数据库 -> 初始化系统 -> 登录后台 -> 添加 token -> 添加规则 -> 启动 scan 服务 -> 拉取并过滤搜索结果 -> 人工确认或忽略 -> 导出结果。
+
+7. 配置 token 和规则后为什么没有扫描结果？
+
+常见原因包括：scan 服务没启动、scanner 连不上数据库、token 无效、规则没有命中、GitHub/GitLab API 网络不通、DNS 配置错误、触发平台 rate limit。应先看后端和 scanner 日志。
+
+8. 扫描任务是手动触发还是自动循环？
+
+新版中扫描服务会循环执行。只要 scan 服务在运行，并且存在有效 token 和规则，就会周期性扫描。旧版任务管理相关问题不适用于新版 FAQ。
+
+9. GitHub 规则应该怎么写？
+
+GitHub 规则可以直接使用 GitHub 搜索语法，例如：
+
+```text
+password in:file
+access_token org:example
+secret repo:owner/repo
+api_key extension:yaml
 ```
 
-可先运行 AI 相关的聚焦测试：`go test ./service -run 'Test(SearchResultContent|ParseSearchResultAnalysis|AnalyzeSearchResult|TestAIConfig)'`。完整测试请只在隔离的测试数据库中运行。macOS ARM 如果需要在服务器信息页面显示 CPU 百分比，请设置 `CGO_ENABLED=1`。
+规则不是只能写普通关键词，可以带 `repo:`、`org:`、`user:`、`in:file` 等限定符。
+
+10. 一条规则可以写多个关键词吗？
+
+单条规则建议只写一个搜索表达式。多个规则应使用批量导入能力，不要把多个无关关键词塞到一条规则里。
+
+11. 如何减少 `.json`、`.csv`、日志文件等噪声结果？
+
+使用 GitHub 过滤器，通过 `extension` 和 `keyword` 缩小初始搜索范围，在结果入库前减少噪声。
+
+12. GitHub rate limit 怎么处理？
+
+GitHub 搜索限制无法可靠绕过，也不建议通过多账号规避，存在封号风险。scanner 现在会在触发限流后自动重试该页，而不是直接丢弃，但仍建议减少规则噪声、缩小搜索范围、接受扫描延迟。
+
+13. 自建 GitLab 能接入吗？
+
+可以配置 GitLab Base URL。GShark 会优先尝试 GitLab 的全局代码搜索（`scope=blobs`），该功能依赖 Advanced Search/Elasticsearch —— 自建实例如果开启了该功能默认可用，GitLab.com 则只有开通 Advanced Search 的账号可用。当服务端返回不支持全局搜索时，GShark 会自动降级为爬取并搜索近期活跃的公开项目，因此没有 Advanced Search 的账号依然能拿到结果，只是覆盖范围比真正的全局搜索要窄。
+
+14. 搜索结果可以导出吗？
+
+可以。新版已有搜索结果导出能力，适合离线分析、归档和后续处置。
+
+15. 遇到问题应该先提供哪些信息？
+
+建议提供版本号、部署方式、操作系统、MySQL 版本、是否 Docker、server 日志、scanner 日志、浏览器控制台错误、相关配置截图或脱敏后的 token/rule 配置。这样比单独贴页面截图更容易定位。
 
 ## 资源
 
@@ -189,7 +429,7 @@ npm run serve
 
 * [GShark v1.5.0 版本及 Docker 使用指南](https://www.bilibili.com/video/BV1oUe3eBEMz/)
 * [GShark v1.3.0 版本支持 Docker](https://www.bilibili.com/video/BV1BH4y1C7Ga/)
-* [GShark 支持多种规则类型以及规则配置建议](https://www.bilibili.com/video/BV1uY4y177SX)
+* [GShark 支持多种规则类型以及规则配置建议](https://www.bilibili.com/video/BV1uY4y177SX) 
 * [批量导入规则](https://mp.weixin.qq.com/s?__biz=MzI3MjA3MTY3Mw==&mid=2247484546&idx=1&sn=818915279c5199457340ade89d6cbd54&chksm=eb396a14dc4ee302039bcb1474380a6049dba84370345b7813049aa8feb49a98f89d47ec5d5b#rd)
 * [GShark部署](https://mp.weixin.qq.com/s?__biz=MzI3MjA3MTY3Mw==&mid=2247484487&idx=1&sn=78f942ccf6861f433fc7f4a60564441c&chksm=eb396ad1dc4ee3c7505362da243433e54a2b558c96fbbb50f8b6cea87d1f9bc920b249b72705#rd)
 * [windows 部署](https://mp.weixin.qq.com/s?__biz=MzI3MjA3MTY3Mw==&mid=2247484289&idx=1&sn=2b0f1c38b88c924ad514fb64b559b784&chksm=eb396d17dc4ee4018573dde6c3bfce83903c86034403539eaf1b87b89c4a4dd44f957a308818#rd)
