@@ -207,8 +207,12 @@ export default {
         .then(() => this.onDelete())
         .catch(() => {});
     },
-    uploadSuccess() {
-      this.$message({ type: "success", message: "规则导入成功" });
+    uploadSuccess(res) {
+      if (res && res.code === 0) {
+        this.$message({ type: "success", message: res.msg || "规则导入成功" });
+      } else {
+        this.$message({ type: "error", message: (res && res.msg) || "规则导入失败" });
+      }
       this.getTableData();
     },
     async onDelete() {

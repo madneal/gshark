@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/csv"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/model"
@@ -39,25 +40,31 @@ func UploadRules(c *gin.Context) {
 		response.FailWithMessage("规则导入失败", c)
 		return
 	}
-	rules := convertCsvIntoRules(csvLines)
+	rules, skipped := convertCsvIntoRules(csvLines)
+	imported := 0
 	for _, rule := range rules {
 		if err := service.CreateRule(rule); err != nil {
 			global.GVA_LOG.Error("创建规则失败！", zap.Error(err))
-			response.FailWithMessage("创建规则失败", c)
+			response.FailWithMessage(fmt.Sprintf("规则导入中断：已导入 %d 条，跳过 %d 行，失败原因：%s",
+				imported, skipped, err.Error()), c)
 			return
 		}
+		imported++
 	}
-	response.OkWithMessage("规则导入成功", c)
+	response.OkWithDetailed(gin.H{"imported": imported, "skipped": skipped},
+		fmt.Sprintf("规则导入成功：导入 %d 条，跳过 %d 行", imported, skipped), c)
 }
 
-func convertCsvIntoRules(lines [][]string) []model.Rule {
+func convertCsvIntoRules(lines [][]string) ([]model.Rule, int) {
 	rules := make([]model.Rule, 0)
+	skipped := 0
 	for index, line := range lines {
 		if index == 0 {
 			continue
 		}
 		if len(line) < 4 {
 			global.GVA_LOG.Warn("skip invalid rule csv row", zap.Int("row", index+1))
+			skipped++
 			continue
 		}
 		rules = append(rules, model.Rule{
@@ -68,7 +75,7 @@ func convertCsvIntoRules(lines [][]string) []model.Rule {
 			Status:   true,
 		})
 	}
-	return rules
+	return rules, skipped
 }
 
 func DeleteRule(c *gin.Context) {
