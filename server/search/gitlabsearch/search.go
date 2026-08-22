@@ -167,7 +167,7 @@ func SaveResult(results []*model.SearchResult, keyword *string) {
 	if len(results) == 0 {
 		return
 	}
-	stats := service.SaveSearchResultPointersWithStats(results, *keyword, nil)
+	stats := service.SaveSearchResultPointersWithStats(results, *keyword)
 	global.GVA_LOG.Info(stats.Summary(*keyword, "GitLab"))
 }
 

@@ -330,7 +330,7 @@ On the rules page, create or edit a rule and fill in:
 | Field | Example | Purpose |
 | --- | --- | --- |
 | Rule content | `ghp_` | Broad provider search expression |
-| Local match regex | `(^|[^A-Za-z0-9_])ghp_[A-Za-z0-9_]{16,}([^A-Za-z0-9_]|$)` | Final local evidence check |
+| Local match regex | `ghp_[A-Za-z0-9_]{16,}` | Final local evidence check |
 
 The same fields are available in the CSV import template, with **Local match regex** as the last column.
 
@@ -338,7 +338,7 @@ For example, a GitHub token rule can use:
 
 ```text
 content: ghp_
-matchPattern: (^|[^A-Za-z0-9_])ghp_[A-Za-z0-9_]{16,}([^A-Za-z0-9_]|$)
+matchPattern: ghp_[A-Za-z0-9_]{16,}
 ```
 
 Historical result analysis and rule tuning remain operational tasks; the scanner does not query old results or learn new patterns during a scan.

@@ -130,12 +130,12 @@ func CheckExistOfSearchResult(searchResult *model.SearchResult) bool {
 	return urlExist || repoExists
 }
 
-func SaveSearchResultsWithStats(searchResults []model.SearchResult, matchPattern *regexp.Regexp) *SaveResultStats {
+func SaveSearchResultsWithStats(searchResults []model.SearchResult, matchPatterns ...*regexp.Regexp) *SaveResultStats {
 	stats := NewSaveResultStats()
 	stats.Total = len(searchResults)
 
 	for _, result := range searchResults {
-		if matchPattern != nil && !matchPattern.MatchString(SearchResultContent(result)) {
+		if len(matchPatterns) > 0 && matchPatterns[0] != nil && !matchPatterns[0].MatchString(SearchResultContent(result)) {
 			stats.ContextFiltered++
 			continue
 		}
@@ -177,7 +177,7 @@ func SaveSearchResultsWithStats(searchResults []model.SearchResult, matchPattern
 	return stats
 }
 
-func SaveSearchResultPointersWithStats(searchResults []*model.SearchResult, keyword string, matchPattern *regexp.Regexp) *SaveResultStats {
+func SaveSearchResultPointersWithStats(searchResults []*model.SearchResult, keyword string, matchPatterns ...*regexp.Regexp) *SaveResultStats {
 	results := make([]model.SearchResult, 0, len(searchResults))
 	for _, result := range searchResults {
 		if result == nil {
@@ -188,5 +188,5 @@ func SaveSearchResultPointersWithStats(searchResults []*model.SearchResult, keyw
 		}
 		results = append(results, *result)
 	}
-	return SaveSearchResultsWithStats(results, matchPattern)
+	return SaveSearchResultsWithStats(results, matchPatterns...)
 }

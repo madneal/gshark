@@ -107,7 +107,7 @@ func Search(rules *[]model.Rule) error {
 func SearchByType(keyword, searchType string) error {
 	err := SearchAPIStream(keyword, searchType, func(res PostmanRes) error {
 		results := res.ConvertToSearchResult(keyword)
-		stats := service.SaveSearchResultsWithStats(*results, nil)
+		stats := service.SaveSearchResultsWithStats(*results)
 		global.GVA_LOG.Info(stats.Summary(keyword, "Postman"))
 		return nil
 	})
