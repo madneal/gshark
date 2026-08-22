@@ -130,12 +130,8 @@ func CheckExistOfSearchResult(searchResult *model.SearchResult) bool {
 }
 
 func SaveSearchResults(searchResults []model.SearchResult) int {
-	stats := SaveSearchResultsWithStats(searchResults)
+	stats := SaveSearchResultsWithContextFilter(searchResults, nil)
 	return stats.Inserted
-}
-
-func SaveSearchResultsWithStats(searchResults []model.SearchResult) *SaveResultStats {
-	return SaveSearchResultsWithContextFilter(searchResults, nil)
 }
 
 func SaveSearchResultsWithContextFilter(searchResults []model.SearchResult, contextFilter *ContextFilter) *SaveResultStats {
@@ -186,12 +182,8 @@ func SaveSearchResultsWithContextFilter(searchResults []model.SearchResult, cont
 }
 
 func SaveSearchResultPointers(searchResults []*model.SearchResult, keyword string) int {
-	stats := SaveSearchResultPointersWithStats(searchResults, keyword)
+	stats := SaveSearchResultPointersWithContextFilter(searchResults, keyword, nil)
 	return stats.Inserted
-}
-
-func SaveSearchResultPointersWithStats(searchResults []*model.SearchResult, keyword string) *SaveResultStats {
-	return SaveSearchResultPointersWithContextFilter(searchResults, keyword, nil)
 }
 
 func SaveSearchResultPointersWithContextFilter(searchResults []*model.SearchResult, keyword string, contextFilter *ContextFilter) *SaveResultStats {

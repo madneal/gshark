@@ -119,10 +119,6 @@ func notifyNewResults(title, content string) {
 	}
 }
 
-func SaveResultWithStats(results []*github.CodeSearchResult, keyword string) *service.SaveResultStats {
-	return SaveResultWithContextFilter(results, keyword, nil)
-}
-
 func SaveResultWithContextFilter(results []*github.CodeSearchResult, keyword string, contextFilter *service.ContextFilter) *service.SaveResultStats {
 	searchResults := ConvertToSearchResults(results, keyword)
 	return service.SaveSearchResultsWithContextFilter(searchResults, contextFilter)

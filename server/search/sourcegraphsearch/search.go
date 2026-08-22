@@ -393,10 +393,6 @@ func uniqueWarnings(warnings []string) []string {
 	return unique
 }
 
-func SaveResults(results []*model.SearchResult, keyword *string) {
-	SaveResultsWithContextFilter(results, keyword, nil)
-}
-
 func SaveResultsWithContextFilter(results []*model.SearchResult, keyword *string, contextFilter *service.ContextFilter) *service.SaveResultStats {
 	if len(results) == 0 {
 		return service.NewSaveResultStats()
