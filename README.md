@@ -321,9 +321,18 @@ system:
 
 The system configuration page includes **Test AI Config**, which sends synthetic placeholder evidence to verify endpoint connectivity, authentication, model availability, and response compatibility without writing a search result. Each request uses built-in limits of 30 seconds and 6,000 characters.
 
-### Historical false-positive analysis
+### Local context matching
 
-Historical result analysis is intentionally kept out of the scan path. Use `scripts/analyze-false-positive-results.sql` as a one-time or scheduled report to compare ignored and confirmed content signatures, then manually update the corresponding rules after review. The scanner does not query historical results or automatically learn new exclusions during a scan.
+Rules may optionally define `matchPattern`. `content` remains the provider search expression used to find candidates; `matchPattern` is a Go/RE2-compatible regular expression applied to the returned code fragment before it is stored. This keeps provider discovery broad while making the final decision local and consistent across providers. Empty `matchPattern` preserves the existing behavior.
+
+For example, a GitHub token rule can use:
+
+```text
+content: ghp_
+matchPattern: (^|[^A-Za-z0-9_])ghp_[A-Za-z0-9_]{16,}([^A-Za-z0-9_]|$)
+```
+
+Historical result analysis and rule tuning remain operational tasks; the scanner does not query old results or learn new patterns during a scan.
 
 
 ## FAQ

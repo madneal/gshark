@@ -61,14 +61,22 @@ func convertCsvIntoRules(lines [][]string) []model.Rule {
 			continue
 		}
 		rules = append(rules, model.Rule{
-			RuleType: line[0],
-			Content:  line[1],
-			Name:     line[2],
-			Desc:     line[3],
-			Status:   true,
+			RuleType:     line[0],
+			Content:      line[1],
+			MatchPattern: optionalCsvValue(line, 4),
+			Name:         line[2],
+			Desc:         line[3],
+			Status:       true,
 		})
 	}
 	return rules
+}
+
+func optionalCsvValue(line []string, index int) string {
+	if len(line) <= index {
+		return ""
+	}
+	return line[index]
 }
 
 func DeleteRule(c *gin.Context) {

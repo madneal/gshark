@@ -63,6 +63,7 @@
       </el-table-column>
       <el-table-column label="规则类型" prop="ruleType" width="120" />
       <el-table-column label="规则内容" prop="content" width="120" />
+      <el-table-column label="本地匹配正则" prop="matchPattern" width="180" />
       <el-table-column label="规则名称" prop="name" width="120" />
       <el-table-column label="规则描述" prop="desc" width="120" />
       <el-table-column label="状态" width="120">
@@ -109,6 +110,15 @@
         <el-form-item label="规则内容:" required>
           <el-input v-model="formData.content" clearable placeholder="请输入关键词内容" />
         </el-form-item>
+        <el-form-item label="本地匹配正则:">
+          <el-input
+            v-model="formData.matchPattern"
+            type="textarea"
+            :rows="3"
+            clearable
+            placeholder="可选，仅对返回的代码片段进行本地校验"
+          />
+        </el-form-item>
         <el-form-item label="规则名称:">
           <el-input v-model="formData.name" clearable placeholder="请输入" />
         </el-form-item>
@@ -154,6 +164,7 @@ export default {
       formData: {
         ruleType: [],
         content: "",
+        matchPattern: "",
         name: "",
         desc: "",
         status: true,
@@ -234,6 +245,7 @@ export default {
       this.formData = {
         ruleType: [],
         content: "",
+        matchPattern: "",
         name: "",
         desc: "",
         status: 0,
