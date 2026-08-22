@@ -323,7 +323,16 @@ The system configuration page includes **Test AI Config**, which sends synthetic
 
 ### Local context matching
 
-Rules may optionally define `matchPattern`. `content` remains the provider search expression used to find candidates; `matchPattern` is a Go/RE2-compatible regular expression applied to the returned code fragment before it is stored. This keeps provider discovery broad while making the final decision local and consistent across providers. Empty `matchPattern` preserves the existing behavior.
+Rules may optionally define `matchPattern` from the rules page. Keep `content` as the provider search expression used to find candidates, then enter a Go/RE2-compatible regular expression in **Local match regex** to validate the returned code fragment before it is stored. Empty `matchPattern` preserves the existing behavior.
+
+On the rules page, create or edit a rule and fill in:
+
+| Field | Example | Purpose |
+| --- | --- | --- |
+| Rule content | `ghp_` | Broad provider search expression |
+| Local match regex | `(^|[^A-Za-z0-9_])ghp_[A-Za-z0-9_]{16,}([^A-Za-z0-9_]|$)` | Final local evidence check |
+
+The same fields are available in the CSV import template, with **Local match regex** as the last column.
 
 For example, a GitHub token rule can use:
 

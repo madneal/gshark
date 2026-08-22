@@ -66,7 +66,7 @@ func searchGists(client *Client, rules []model.Rule) error {
 		var repos []string
 		var hasMoreRepos bool
 		err = client.LoadGistResultsStream(hits, rule.Content, extensionFilters, func(results []model.SearchResult) error {
-			stats := service.SaveSearchResultsWithContextFilter(results, nil)
+			stats := service.SaveSearchResultsWithStats(results, nil)
 			inserted += stats.Inserted
 			var more bool
 			repos, more = appendUniqueRepos(repos, stats.Repos)

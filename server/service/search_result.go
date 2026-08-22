@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 
 	"github.com/madneal/gshark/global"
@@ -129,17 +130,12 @@ func CheckExistOfSearchResult(searchResult *model.SearchResult) bool {
 	return urlExist || repoExists
 }
 
-func SaveSearchResults(searchResults []model.SearchResult) int {
-	stats := SaveSearchResultsWithContextFilter(searchResults, nil)
-	return stats.Inserted
-}
-
-func SaveSearchResultsWithContextFilter(searchResults []model.SearchResult, contextFilter *ContextFilter) *SaveResultStats {
+func SaveSearchResultsWithStats(searchResults []model.SearchResult, matchPattern *regexp.Regexp) *SaveResultStats {
 	stats := NewSaveResultStats()
 	stats.Total = len(searchResults)
 
 	for _, result := range searchResults {
-		if !contextFilter.Matches(result) {
+		if matchPattern != nil && !matchPattern.MatchString(SearchResultContent(result)) {
 			stats.ContextFiltered++
 			continue
 		}
@@ -181,12 +177,7 @@ func SaveSearchResultsWithContextFilter(searchResults []model.SearchResult, cont
 	return stats
 }
 
-func SaveSearchResultPointers(searchResults []*model.SearchResult, keyword string) int {
-	stats := SaveSearchResultPointersWithContextFilter(searchResults, keyword, nil)
-	return stats.Inserted
-}
-
-func SaveSearchResultPointersWithContextFilter(searchResults []*model.SearchResult, keyword string, contextFilter *ContextFilter) *SaveResultStats {
+func SaveSearchResultPointersWithStats(searchResults []*model.SearchResult, keyword string, matchPattern *regexp.Regexp) *SaveResultStats {
 	results := make([]model.SearchResult, 0, len(searchResults))
 	for _, result := range searchResults {
 		if result == nil {
@@ -197,5 +188,5 @@ func SaveSearchResultPointersWithContextFilter(searchResults []*model.SearchResu
 		}
 		results = append(results, *result)
 	}
-	return SaveSearchResultsWithContextFilter(results, contextFilter)
+	return SaveSearchResultsWithStats(results, matchPattern)
 }

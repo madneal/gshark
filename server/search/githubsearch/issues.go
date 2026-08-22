@@ -31,7 +31,7 @@ func searchIssues(client *Client, rules []model.Rule) error {
 		var repos []string
 		var hasMoreRepos bool
 		err = client.SearchIssuesStream(query, func(page *github.IssuesSearchResult) error {
-			stats := service.SaveSearchResultsWithContextFilter(ConvertIssuesToSearchResults([]*github.IssuesSearchResult{page}, rule.Content), nil)
+			stats := service.SaveSearchResultsWithStats(ConvertIssuesToSearchResults([]*github.IssuesSearchResult{page}, rule.Content), nil)
 			inserted += stats.Inserted
 			var more bool
 			repos, more = appendUniqueRepos(repos, stats.Repos)
