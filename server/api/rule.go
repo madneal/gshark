@@ -56,21 +56,18 @@ func convertCsvIntoRules(lines [][]string) []model.Rule {
 		if index == 0 {
 			continue
 		}
-		if len(line) < 4 {
+		if len(line) < 5 {
 			global.GVA_LOG.Warn("skip invalid rule csv row", zap.Int("row", index+1))
 			continue
 		}
-		rule := model.Rule{
-			RuleType: line[0],
-			Content:  line[1],
-			Name:     line[2],
-			Desc:     line[3],
-			Status:   true,
-		}
-		if len(line) > 4 {
-			rule.MatchPattern = line[4]
-		}
-		rules = append(rules, rule)
+		rules = append(rules, model.Rule{
+			RuleType:     line[0],
+			Content:      line[1],
+			Name:         line[2],
+			Desc:         line[3],
+			Status:       true,
+			MatchPattern: line[4],
+		})
 	}
 	return rules
 }
