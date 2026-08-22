@@ -321,9 +321,9 @@ system:
 
 The system configuration page includes **Test AI Config**, which sends synthetic placeholder evidence to verify endpoint connectivity, authentication, model availability, and response compatibility without writing a search result. Each request uses built-in limits of 30 seconds and 6,000 characters.
 
-### Learned content false-positive filtering
+### Historical false-positive analysis
 
-For simple token-prefix rules such as `gho_` and `ghp_`, the scanner can learn conservative false-positive signatures from existing results. A signature is considered only after it appears in at least three ignored results for the same rule and does not appear in any confirmed result. The filter uses the matched content and its surrounding line only; repository names and file paths are not used. Results rejected by this filter are not written to `search_result` and are reported as `context_filtered` in scanner statistics.
+Historical result analysis is intentionally kept out of the scan path. Use `scripts/analyze-false-positive-results.sql` as a one-time or scheduled report to compare ignored and confirmed content signatures, then manually update the corresponding rules after review. The scanner does not query historical results or automatically learn new exclusions during a scan.
 
 
 ## FAQ

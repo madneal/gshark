@@ -89,18 +89,13 @@ func RunTask() model.ScanOutcome {
 	partial := false
 	for _, rule := range rules {
 		global.GVA_LOG.Info("Search all indexed repositories in Sourcegraph", zap.String("rule", rule.Content))
-		contextFilter, filterErr := service.BuildLearnedContextFilter(rule.Content)
-		if filterErr != nil {
-			scanErrors = append(scanErrors, fmt.Errorf("build context filter for %q: %w", rule.Content, filterErr))
-			continue
-		}
 		var inserted int
 		warnings, searchErr := SearchForSourcegraphStream(rule, sourcegraphHTTPClient, func(results []*model.SearchResult) error {
 			if len(results) == 0 {
 				return nil
 			}
-			stats := SaveResultsWithContextFilter(results, &rule.Content, contextFilter)
-			inserted += stats.Inserted
+			SaveResults(results, &rule.Content)
+			inserted += len(results)
 			return nil
 		})
 		if searchErr != nil {
@@ -394,14 +389,9 @@ func uniqueWarnings(warnings []string) []string {
 }
 
 func SaveResults(results []*model.SearchResult, keyword *string) {
-	SaveResultsWithContextFilter(results, keyword, nil)
-}
-
-func SaveResultsWithContextFilter(results []*model.SearchResult, keyword *string, contextFilter *service.LearnedContextFilter) *service.SaveResultStats {
 	if len(results) == 0 {
-		return service.NewSaveResultStats()
+		return
 	}
-	stats := service.SaveSearchResultPointersWithContextFilter(results, *keyword, contextFilter)
+	stats := service.SaveSearchResultPointersWithStats(results, *keyword)
 	global.GVA_LOG.Info(stats.Summary(*keyword, "Sourcegraph"))
-	return stats
 }

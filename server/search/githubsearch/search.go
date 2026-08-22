@@ -43,17 +43,11 @@ func searchCode(client *Client, rules []model.Rule) error {
 			scanErrors = append(scanErrors, fmt.Errorf("build query for %q: %w", rule.Content, err))
 			continue
 		}
-		contextFilter, err := service.BuildLearnedContextFilter(rule.Content)
-		if err != nil {
-			global.GVA_LOG.Error("BuildLearnedContextFilter error", zap.Error(err))
-			scanErrors = append(scanErrors, fmt.Errorf("build context filter for %q: %w", rule.Content, err))
-			continue
-		}
 		var ruleInserted int
 		var ruleRepos []string
 		var ruleHasMoreRepos bool
 		err = client.SearchCodeStream(query, func(page []*github.CodeSearchResult) error {
-			stats := SaveResultWithContextFilter(page, rule.Content, contextFilter)
+			stats := SaveResultWithStats(page, rule.Content)
 			ruleInserted += stats.Inserted
 			var more bool
 			ruleRepos, more = appendUniqueRepos(ruleRepos, stats.Repos)
@@ -120,12 +114,8 @@ func notifyNewResults(title, content string) {
 }
 
 func SaveResultWithStats(results []*github.CodeSearchResult, keyword string) *service.SaveResultStats {
-	return SaveResultWithContextFilter(results, keyword, nil)
-}
-
-func SaveResultWithContextFilter(results []*github.CodeSearchResult, keyword string, contextFilter *service.LearnedContextFilter) *service.SaveResultStats {
 	searchResults := ConvertToSearchResults(results, keyword)
-	return service.SaveSearchResultsWithContextFilter(searchResults, contextFilter)
+	return service.SaveSearchResultsWithStats(searchResults)
 }
 
 func appendUniqueRepos(existing []string, repos []string) ([]string, bool) {
