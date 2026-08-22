@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 
 	"github.com/madneal/gshark/global"
@@ -12,12 +13,13 @@ import (
 
 // SaveResultStats contains detailed statistics about saved search results
 type SaveResultStats struct {
-	Total      int      // Total results processed
-	Inserted   int      // Successfully inserted
-	Skipped    int      // Skipped (already exists)
-	Failed     int      // Failed to insert
-	AIFiltered int      // Rejected by the AI pre-ingest filter, including analysis errors
-	Repos      []string // Unique repos affected
+	Total           int      // Total results processed
+	Inserted        int      // Successfully inserted
+	Skipped         int      // Skipped (already exists)
+	Failed          int      // Failed to insert
+	ContextFiltered int      // Rejected by a local rule context expression
+	AIFiltered      int      // Rejected by the AI pre-ingest filter, including analysis errors
+	Repos           []string // Unique repos affected
 }
 
 // NewSaveResultStats creates a new SaveResultStats instance
@@ -47,8 +49,8 @@ func (s *SaveResultStats) Summary(keyword, source string) string {
 		aiSummary = fmt.Sprintf(", ai_filtered=%d", s.AIFiltered)
 	}
 	if s.Inserted == 0 {
-		return fmt.Sprintf("[%s] keyword=%q: no new results (processed=%d, skipped=%d%s)",
-			source, keyword, s.Total, s.Skipped, aiSummary)
+		return fmt.Sprintf("[%s] keyword=%q: no new results (processed=%d, skipped=%d, context_filtered=%d%s)",
+			source, keyword, s.Total, s.Skipped, s.ContextFiltered, aiSummary)
 	}
 
 	repoSummary := ""
@@ -61,8 +63,8 @@ func (s *SaveResultStats) Summary(keyword, source string) string {
 		}
 	}
 
-	return fmt.Sprintf("[%s] keyword=%q: inserted=%d, skipped=%d, total=%d%s%s",
-		source, keyword, s.Inserted, s.Skipped, s.Total, aiSummary, repoSummary)
+	return fmt.Sprintf("[%s] keyword=%q: inserted=%d, skipped=%d, context_filtered=%d, total=%d%s%s",
+		source, keyword, s.Inserted, s.Skipped, s.ContextFiltered, s.Total, aiSummary, repoSummary)
 }
 
 func CreateSearchResult(searchResult model.SearchResult) (err error) {
@@ -128,16 +130,15 @@ func CheckExistOfSearchResult(searchResult *model.SearchResult) bool {
 	return urlExist || repoExists
 }
 
-func SaveSearchResults(searchResults []model.SearchResult) int {
-	stats := SaveSearchResultsWithStats(searchResults)
-	return stats.Inserted
-}
-
-func SaveSearchResultsWithStats(searchResults []model.SearchResult) *SaveResultStats {
+func SaveSearchResultsWithStats(searchResults []model.SearchResult, matchPatterns ...*regexp.Regexp) *SaveResultStats {
 	stats := NewSaveResultStats()
 	stats.Total = len(searchResults)
 
 	for _, result := range searchResults {
+		if len(matchPatterns) > 0 && matchPatterns[0] != nil && !matchPatterns[0].MatchString(SearchResultContent(result)) {
+			stats.ContextFiltered++
+			continue
+		}
 		exist := CheckExistOfSearchResult(&result)
 		if exist {
 			stats.Skipped++
@@ -176,12 +177,7 @@ func SaveSearchResultsWithStats(searchResults []model.SearchResult) *SaveResultS
 	return stats
 }
 
-func SaveSearchResultPointers(searchResults []*model.SearchResult, keyword string) int {
-	stats := SaveSearchResultPointersWithStats(searchResults, keyword)
-	return stats.Inserted
-}
-
-func SaveSearchResultPointersWithStats(searchResults []*model.SearchResult, keyword string) *SaveResultStats {
+func SaveSearchResultPointersWithStats(searchResults []*model.SearchResult, keyword string, matchPatterns ...*regexp.Regexp) *SaveResultStats {
 	results := make([]model.SearchResult, 0, len(searchResults))
 	for _, result := range searchResults {
 		if result == nil {
@@ -192,5 +188,5 @@ func SaveSearchResultPointersWithStats(searchResults []*model.SearchResult, keyw
 		}
 		results = append(results, *result)
 	}
-	return SaveSearchResultsWithStats(results)
+	return SaveSearchResultsWithStats(results, matchPatterns...)
 }

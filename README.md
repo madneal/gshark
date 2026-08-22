@@ -321,6 +321,28 @@ system:
 
 The system configuration page includes **Test AI Config**, which sends synthetic placeholder evidence to verify endpoint connectivity, authentication, model availability, and response compatibility without writing a search result. Each request uses built-in limits of 30 seconds and 6,000 characters.
 
+### Local context matching
+
+Rules may optionally define `matchPattern` from the rules page. Keep `content` as the provider search expression used to find candidates, then enter a Go/RE2-compatible regular expression in **Local match regex** to validate the returned code fragment before it is stored. Empty `matchPattern` preserves the existing behavior.
+
+On the rules page, create or edit a rule and fill in:
+
+| Field | Example | Purpose |
+| --- | --- | --- |
+| Rule content | `ghp_` | Broad provider search expression |
+| Local match regex | `ghp_[A-Za-z0-9_]{16,}` | Final local evidence check |
+
+The same fields are available in the CSV import template, with **Local match regex** as the last column.
+
+For example, a GitHub token rule can use:
+
+```text
+content: ghp_
+matchPattern: ghp_[A-Za-z0-9_]{16,}
+```
+
+Historical result analysis and rule tuning remain operational tasks; the scanner does not query old results or learn new patterns during a scan.
+
 
 ## FAQ
 
