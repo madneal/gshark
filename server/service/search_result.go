@@ -12,12 +12,13 @@ import (
 
 // SaveResultStats contains detailed statistics about saved search results
 type SaveResultStats struct {
-	Total      int      // Total results processed
-	Inserted   int      // Successfully inserted
-	Skipped    int      // Skipped (already exists)
-	Failed     int      // Failed to insert
-	AIFiltered int      // Rejected by the AI pre-ingest filter, including analysis errors
-	Repos      []string // Unique repos affected
+	Total           int      // Total results processed
+	Inserted        int      // Successfully inserted
+	Skipped         int      // Skipped (already exists)
+	Failed          int      // Failed to insert
+	ContextFiltered int      // Rejected by a learned content false-positive signature
+	AIFiltered      int      // Rejected by the AI pre-ingest filter, including analysis errors
+	Repos           []string // Unique repos affected
 }
 
 // NewSaveResultStats creates a new SaveResultStats instance
@@ -47,8 +48,8 @@ func (s *SaveResultStats) Summary(keyword, source string) string {
 		aiSummary = fmt.Sprintf(", ai_filtered=%d", s.AIFiltered)
 	}
 	if s.Inserted == 0 {
-		return fmt.Sprintf("[%s] keyword=%q: no new results (processed=%d, skipped=%d%s)",
-			source, keyword, s.Total, s.Skipped, aiSummary)
+		return fmt.Sprintf("[%s] keyword=%q: no new results (processed=%d, skipped=%d, context_filtered=%d%s)",
+			source, keyword, s.Total, s.Skipped, s.ContextFiltered, aiSummary)
 	}
 
 	repoSummary := ""
@@ -61,8 +62,8 @@ func (s *SaveResultStats) Summary(keyword, source string) string {
 		}
 	}
 
-	return fmt.Sprintf("[%s] keyword=%q: inserted=%d, skipped=%d, total=%d%s%s",
-		source, keyword, s.Inserted, s.Skipped, s.Total, aiSummary, repoSummary)
+	return fmt.Sprintf("[%s] keyword=%q: inserted=%d, skipped=%d, context_filtered=%d, total=%d%s%s",
+		source, keyword, s.Inserted, s.Skipped, s.ContextFiltered, s.Total, aiSummary, repoSummary)
 }
 
 func CreateSearchResult(searchResult model.SearchResult) (err error) {
@@ -134,10 +135,20 @@ func SaveSearchResults(searchResults []model.SearchResult) int {
 }
 
 func SaveSearchResultsWithStats(searchResults []model.SearchResult) *SaveResultStats {
+	return SaveSearchResultsWithContextFilter(searchResults, nil)
+}
+
+// SaveSearchResultsWithContextFilter applies the learned content filter before
+// duplicate checks and optional AI analysis.
+func SaveSearchResultsWithContextFilter(searchResults []model.SearchResult, contextFilter *LearnedContextFilter) *SaveResultStats {
 	stats := NewSaveResultStats()
 	stats.Total = len(searchResults)
 
 	for _, result := range searchResults {
+		if contextFilter.ShouldFilter(result) {
+			stats.ContextFiltered++
+			continue
+		}
 		exist := CheckExistOfSearchResult(&result)
 		if exist {
 			stats.Skipped++
@@ -182,6 +193,10 @@ func SaveSearchResultPointers(searchResults []*model.SearchResult, keyword strin
 }
 
 func SaveSearchResultPointersWithStats(searchResults []*model.SearchResult, keyword string) *SaveResultStats {
+	return SaveSearchResultPointersWithContextFilter(searchResults, keyword, nil)
+}
+
+func SaveSearchResultPointersWithContextFilter(searchResults []*model.SearchResult, keyword string, contextFilter *LearnedContextFilter) *SaveResultStats {
 	results := make([]model.SearchResult, 0, len(searchResults))
 	for _, result := range searchResults {
 		if result == nil {
@@ -192,5 +207,5 @@ func SaveSearchResultPointersWithStats(searchResults []*model.SearchResult, keyw
 		}
 		results = append(results, *result)
 	}
-	return SaveSearchResultsWithStats(results)
+	return SaveSearchResultsWithContextFilter(results, contextFilter)
 }
