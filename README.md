@@ -59,7 +59,7 @@ Use one of the two quick deployment entries:
 ```
 
 > [!TIP]
-> Without `--with-scan`, finish the first-run setup in the web UI and start the scanner afterwards with `docker compose up -d scan`.
+> By default, the script initializes the database through the CLI. Without `--with-scan`, sign in at `http://localhost:8080`, configure tokens and rules, then start the scanner with `docker compose up -d scan`. If you use `--skip-init`, complete database initialization in the web UI first.
 
 ```bash
 # Option 2: Release quick. Download the matching release package,
@@ -72,7 +72,7 @@ Use one of the two quick deployment entries:
 
 ## Docker Deployment
 
-```
+```bash
 # Clone the repository
 git clone https://github.com/madneal/gshark
 
@@ -91,7 +91,9 @@ Useful commands while operating the deployment:
 
 ```bash
 docker compose ps
+docker compose up -d scan
 docker compose logs -f server scan
+docker compose restart scan
 docker compose stop scan
 ```
 
@@ -298,10 +300,11 @@ For more information, you can refer to this [video](https://www.bilibili.com/vid
 
 ## Scan operation
 
-1. Start the `scan` service after the database is initialized.
-2. Confirm that valid platform tokens and rules are configured.
-3. Let the scanner run periodically, then review findings in the result page.
-4. Confirm genuine secrets, ignore placeholders and false positives, and export results when needed.
+1. Initialize the database and sign in to the web UI.
+2. Configure valid platform tokens and enable the required rules. Add a local match regex when a broad provider query needs stricter evidence validation.
+3. Start the scanner with `docker compose up -d scan` for Docker deployments, or `./gshark scan` for manual deployments.
+4. Check the scan log page or run `docker compose logs -f scan` to confirm each provider completes successfully.
+5. Review findings in the result page, confirm genuine secrets, ignore placeholders and false positives, and export results when needed.
 
 ## Configuration
 

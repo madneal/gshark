@@ -59,7 +59,7 @@ gshark / gshark
 ```
 
 > [!TIP]
-> 不使用 `--with-scan` 时，请先在网页中完成首次配置，再执行 `docker compose up -d scan` 启动扫描。
+> 脚本默认会通过 CLI 初始化数据库。不使用 `--with-scan` 时，请登录 `http://localhost:8080` 配置 Token 和规则，再执行 `docker compose up -d scan` 启动扫描器；如果使用了 `--skip-init`，则需先在网页中完成数据库初始化。
 
 ```bash
 # 方式二：Release quick，自动下载匹配当前系统的 release 包，
@@ -72,7 +72,7 @@ gshark / gshark
 
 ## Docker 部署
 
-```
+```bash
 # 克隆仓库
 git clone https://github.com/madneal/gshark
 
@@ -91,7 +91,9 @@ cd gshark
 
 ```bash
 docker compose ps
+docker compose up -d scan
 docker compose logs -f server scan
+docker compose restart scan
 docker compose stop scan
 ```
 
@@ -296,10 +298,11 @@ npm run serve
 
 ## 扫描运营
 
-1. 数据库初始化完成后启动 `scan` 服务。
-2. 确认平台 Token 有效、规则已配置。
-3. 让 scanner 周期性运行，然后在结果页面查看发现。
-4. 确认真实密钥，忽略示例值和误报，并按需导出结果。
+1. 初始化数据库并登录管理页面。
+2. 配置有效的平台 Token，并启用需要的规则；当平台侧搜索较宽泛时，可以增加本地匹配正则，对候选证据做更严格的校验。
+3. Docker 部署执行 `docker compose up -d scan`，手动部署执行 `./gshark scan`，启动扫描器。
+4. 查看扫描日志页面，或执行 `docker compose logs -f scan`，确认各平台扫描正常完成。
+5. 在结果页面确认真实密钥，忽略示例值和误报，并按需导出结果。
 
 ## 配置
 
