@@ -341,9 +341,6 @@ content: ghp_
 matchPattern: ghp_[A-Za-z0-9_]{16,}
 ```
 
-Historical result analysis and rule tuning remain operational tasks; the scanner does not query old results or learn new patterns during a scan.
-
-
 ## FAQ
 
 1. Does GShark scan local code or public platforms?
