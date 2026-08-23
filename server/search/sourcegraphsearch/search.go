@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"regexp"
 	"strings"
 	"time"
 
@@ -89,13 +90,21 @@ func RunTask() model.ScanOutcome {
 	partial := false
 	for _, rule := range rules {
 		global.GVA_LOG.Info("Search all indexed repositories in Sourcegraph", zap.String("rule", rule.Content))
+		var matchPattern *regexp.Regexp
+		if rule.MatchPattern != "" {
+			matchPattern, err = regexp.Compile(rule.MatchPattern)
+			if err != nil {
+				scanErrors = append(scanErrors, fmt.Errorf("compile match pattern for %q: %w", rule.Content, err))
+				continue
+			}
+		}
 		var inserted int
 		warnings, searchErr := SearchForSourcegraphStream(rule, sourcegraphHTTPClient, func(results []*model.SearchResult) error {
 			if len(results) == 0 {
 				return nil
 			}
-			SaveResults(results, &rule.Content)
-			inserted += len(results)
+			stats := SaveResults(results, &rule.Content, matchPattern)
+			inserted += stats.Inserted
 			return nil
 		})
 		if searchErr != nil {
@@ -388,10 +397,11 @@ func uniqueWarnings(warnings []string) []string {
 	return unique
 }
 
-func SaveResults(results []*model.SearchResult, keyword *string) {
+func SaveResults(results []*model.SearchResult, keyword *string, matchPattern *regexp.Regexp) *service.SaveResultStats {
 	if len(results) == 0 {
-		return
+		return service.NewSaveResultStats()
 	}
-	stats := service.SaveSearchResultPointersWithStats(results, *keyword)
+	stats := service.SaveSearchResultPointersWithStats(results, *keyword, matchPattern)
 	global.GVA_LOG.Info(stats.Summary(*keyword, "Sourcegraph"))
+	return stats
 }

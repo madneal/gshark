@@ -13,6 +13,7 @@ import (
 	"github.com/madneal/gshark/utils"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
+	"regexp"
 	"strings"
 
 	"time"
@@ -43,11 +44,21 @@ func searchCode(client *Client, rules []model.Rule) error {
 			scanErrors = append(scanErrors, fmt.Errorf("build query for %q: %w", rule.Content, err))
 			continue
 		}
+		var matchPattern *regexp.Regexp
+		if rule.MatchPattern != "" {
+			matchPattern, err = regexp.Compile(rule.MatchPattern)
+		}
+		if err != nil {
+			global.GVA_LOG.Error("compile match pattern error", zap.Error(err))
+			scanErrors = append(scanErrors, fmt.Errorf("compile match pattern for %q: %w", rule.Content, err))
+			continue
+		}
 		var ruleInserted int
 		var ruleRepos []string
 		var ruleHasMoreRepos bool
 		err = client.SearchCodeStream(query, func(page []*github.CodeSearchResult) error {
-			stats := SaveResultWithStats(page, rule.Content)
+			searchResults := ConvertToSearchResults(page, rule.Content)
+			stats := service.SaveSearchResultsWithStats(searchResults, matchPattern)
 			ruleInserted += stats.Inserted
 			var more bool
 			ruleRepos, more = appendUniqueRepos(ruleRepos, stats.Repos)
@@ -111,11 +122,6 @@ func notifyNewResults(title, content string) {
 			global.GVA_LOG.Error("send wechat error", zap.Any("err", err))
 		}
 	}
-}
-
-func SaveResultWithStats(results []*github.CodeSearchResult, keyword string) *service.SaveResultStats {
-	searchResults := ConvertToSearchResults(results, keyword)
-	return service.SaveSearchResultsWithStats(searchResults)
 }
 
 func appendUniqueRepos(existing []string, repos []string) ([]string, bool) {
