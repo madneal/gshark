@@ -10,7 +10,7 @@
 
 # GShark [![Go Report Card](https://goreportcard.com/badge/github.com/madneal/gshark)](https://goreportcard.com/report/github.com/madneal/gshark) [![Release](https://github.com/madneal/gshark/actions/workflows/release.yml/badge.svg)](https://github.com/madneal/gshark/actions/workflows/release.yml)
 
-GShark is a sensitive information detection and management platform. The backend is built with Go and Gin, and the current frontend is built with Vue 3, Vite, Vue Router 4, Vuex 4, and Element Plus. For the full introduction, please refer to [articles](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI3MjA3MTY3Mw==&action=getalbum&album_id=2376148333116850178#wechat_redirect) and [videos](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI3MjA3MTY3Mw==&action=getalbum&album_id=1834365721464651778#wechat_redirect). For now, all scans target public environments, not local environments.
+GShark is a sensitive information detection and management platform. The backend is built with Go and Gin, and the current frontend is built with Vue 3, Vite, Vue Router 4, Vuex 4, and Element Plus. For the full introduction, please refer to [articles](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI3MjA3MTY3Mw==&action=getalbum&album_id=2376148333116850178#wechat_redirect) and [videos](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI3MjA3MTY3Mw==&action=getalbum&album_id=1834365721464651778#wechat_redirect). GShark scans repositories exposed by configured providers rather than local source trees.
 
 For the usage of GShark, please refer to the [wiki](https://github.com/madneal/gshark/wiki).
 
@@ -32,6 +32,8 @@ Default login after initialization (if not customized):
 gshark / gshark
 ```
 
+Change the default password immediately after a non-local deployment.
+
 Set a custom admin account via script/CLI flags (no browser init page required):
 
 ```bash
@@ -41,57 +43,55 @@ Set a custom admin account via script/CLI flags (no browser init page required):
   --admin-user myadmin --admin-password 'S3cret!'
 ```
 
-## Quick one-click deployment
-
-Use one of the two quick deployment entries:
-
-```bash
-# Option 1: Docker quick. Build all application images and start mysql/server/web in the background.
-./scripts/quick-docker.sh
-
-# Custom admin account
-./scripts/quick-docker.sh --admin-user myadmin --admin-password 'S3cret!'
-
-# Start the scan container too.
-./scripts/quick-docker.sh --with-scan
-```
-
-```bash
-# Option 2: Release quick. Download the matching release package,
-# configure Nginx, and start the gshark backend in the background.
-./scripts/quick-release.sh
-
-# Or deploy from a local release zip.
-./scripts/quick-release.sh --file ./gshark_linux_amd64.zip
-```
-
 ## Docker Deployment
 
-```
+```bash
 # Clone the repository
-git clone https://github.com/madneal/gshark
-
+git clone https://github.com/madneal/gshark.git
 cd gshark
 
-# Build and start the containers
+# Build the images, initialize MySQL, and start server/web
 ./scripts/quick-docker.sh
+
+# Set a custom administrator during initialization
+./scripts/quick-docker.sh --admin-user myadmin --admin-password 'S3cret!'
+
+# Start the scanner after initialization as part of the same command
+./scripts/quick-docker.sh --with-scan
 ```
 
 > [!IMPORTANT]
 > The quick Docker script starts MySQL first, initializes the database, and only then starts the scanner when `--with-scan` is used. If you start the scanner manually with Docker Compose, wait until database initialization completes first.
 
+> [!TIP]
+> Without `--with-scan`, sign in at `http://localhost:8080`, configure tokens and rules, then run `docker compose up -d scan`. If you use `--skip-init`, complete database initialization in the web UI first.
+
 The scanner container has conservative resource guardrails in `docker-compose.yaml`: a 512 MB memory limit, a 1 CPU limit, and Go's `GOMEMLIMIT=384MiB`. Scan results are persisted page by page so a large repository search does not remain fully resident in memory. If the scanner is OOM-killed, Compose restarts it automatically; monitor the actual usage with `docker stats gshark-scanner` before lowering the limits further.
 
-## Local Deployment 
+### Docker Operations
 
-```bash  
-# Clone the repository  
-git clone https://github.com/madneal/gshark.git  
-cd gshark  
+```bash
+docker compose ps
+docker compose up -d scan
+docker compose logs -f server scan
+docker compose restart scan
+docker compose stop scan
+```
 
-# Run Release quick to download the release package, configure Nginx,
-# and start the backend.
+## Release Package Deployment
+
+This option requires MySQL, Nginx, `curl`, `jq`, and `unzip` on macOS or Linux.
+
+```bash
+git clone https://github.com/madneal/gshark.git
+cd gshark
+
+# Download the latest package, configure Nginx, initialize the database,
+# and start the backend
 ./scripts/quick-release.sh
+
+# Or deploy a package that has already been downloaded
+./scripts/quick-release.sh --file ./gshark_linux_amd64.zip
 ```
 
 ## Manual Deployment
@@ -107,11 +107,9 @@ It is recommended to deploy the frontend with Nginx. Build the Vite project, pla
 
 ### Nginx
 
-Can use `nginx -t` to locate the `nginx.conf` file, then modify the `nginx.conf`:
+Use `nginx -t` to locate the active `nginx.conf`, then add a server configuration like this. Adjust the web root for your installation.
 
-```
-// config the user accoring to your need
-user  www www;
+```nginx
 worker_processes  1;
 
 events {
@@ -128,9 +126,9 @@ http {
         server_name  localhost;
 
         location / {
-            autoindex on;
-            root   html;
+            root   /var/www/html;
             index  index.html index.htm;
+            try_files $uri $uri/ /index.html;
         }
         location /api/ {
             proxy_set_header Host $http_host;
@@ -142,45 +140,42 @@ http {
         }
         error_page   500 502 503 504  /50x.html;
         location = /50x.html {
-            root   html;
+            root   /var/www/html;
         }
     }
-    include servers/*;
 }
-
 ```
 
-The deployment work is straightforward. Find the corresponding version zip file from [releases](https://github.com/madneal/gshark/releases).
+Download the package for your platform from [releases](https://github.com/madneal/gshark/releases), then copy the complete `dist` directory contents to the Nginx web root:
 
-Unzip and copy the files inside `dist` to `/var/www/html` folder of Nginx. 
-
-```
+```bash
 unzip gshark*.zip
 cd gshark*
-mv dist/* /var/www/html/
-# for Mac
-mv dist/* /usr/local/www/html/
+sudo mkdir -p /var/www/html
+sudo cp -R dist/. /var/www/html/
 ```
 
-Start the Nginx and the Front-End is deployed successfully.
+On Homebrew macOS, the common web root is `$(brew --prefix)/var/www`; keep the Nginx `root` and copy destination consistent.
 
-> [!TIP]
-> If you installed Nginx by Homebrew, you need to stop Nginx by:
-> ```shell
-> brew services stop nginx
-> ```
-> Start Nginx for Ubuntu:
-> ```shell
-> systemctl start nginx
-> ```
+Validate and restart Nginx after changing the configuration:
+
+```bash
+sudo nginx -t
+# Homebrew macOS
+brew services restart nginx
+# Linux with systemd
+sudo systemctl restart nginx
+```
 
 ### Server service
 
 ```shell
+cp config-temp.yaml config.yaml
+# Edit config.yaml and set the MySQL connection before starting the service.
 ./gshark serve
 ```
 
-Initially, copy `config-temp.yaml` to `config.yaml` and update it for your environment. After that, you can run the `gshark` binary file directly. Then, access `localhost:8080` for local deployment.
+The backend listens on `8888`; when Nginx is used, access the web UI through its frontend port (for example, `8080`).
 
 If you haven't initialized the database before, you will be redirected to the database initialization page first.
 
@@ -192,11 +187,11 @@ If you haven't initialized the database before, you will be redirected to the da
 ./gshark scan
 ```
 
-For the scan service, it's necessary to config the corresponding rules. For example, GitHub or Gitlab rules.
+Configure the required platform tokens and rules before starting the scan service.
 
 ### Incremental Deployment
 
-For the incremental deployment, [sql.md](https://github.com/madneal/gshark/blob/master/sql.md) should be executed for the corresponding database operations.
+Back up the database and read the release notes before upgrading. GORM applies model schema additions automatically at startup; run only the version-specific statements in [sql.md](https://github.com/madneal/gshark/blob/master/sql.md) when the release notes explicitly require them. Do not execute the entire file on every upgrade.
 
 ## Development
 
@@ -205,34 +200,28 @@ For the incremental deployment, [sql.md](https://github.com/madneal/gshark/blob/
 ```shell
 git clone https://github.com/madneal/gshark.git
 cd gshark/server
-go mod tidy
+go mod download
 cp config-temp.yaml config.yaml
-go build
+# Edit config.yaml and set the MySQL connection.
+go build -o gshark .
 ```
 
 Run the web server:
 
 ```shell
-go build
-./gshark serve 
+./gshark serve
 ```
 
-Or
+Run the scan task in another terminal after configuring tokens and rules:
+
+```shell
+./gshark scan
+```
+
+For development without producing a binary, use `go run`:
 
 ```shell
 go run main.go serve
-```
-
-Run the scan task:
-
-```shell
-go build
-./gshark scan 
-```
-
-Or
-
-```shell
 go run main.go scan
 ```
 
@@ -243,28 +232,27 @@ go run main.go scan
 > CGO_ENABLED=1 go run main.go serve
 > ```
 
-### Web 
+### Web
 
-```
+```bash
 cd ../web
-
 npm install
-
 npm run serve
 ```
 
 ## Usage
+
 ### Add Token
 
 #### GitHub
 
-To execute the scan task for GitHub, you need to add a GitHub token for crawl information in GitHub. You can generate a token in [tokens](https://github.com/settings/tokens). Most access scopes are enough. For the GitLab search, remember to add a token too.
+Create a [fine-grained personal access token](https://github.com/settings/personal-access-tokens/new) and grant only the repositories and permissions required by your rules. Prefer a short expiration and do not reuse an administrator token. See GitHub's [personal access token guidance](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens). GitLab searches require a separate GitLab token.
 
 [![iR2TMt.md.png](https://s1.ax1x.com/2018/10/31/iR2TMt.md.png)](https://imgchr.com/i/iR2TMt)
 
 ### Rule Configuration
 
-For the Github or Gitlab rule, the rule will be matched by the syntax in the corresponding platforms. Directly, you config what you search at GitHub. GitHub rules reuse the same token across three surfaces:
+GitHub and GitLab rules use the search syntax of the corresponding provider. Configure the rule content as the expression you would search for on that provider. GitHub rules reuse the same token across three surfaces:
 
 * `github` — repository code search (`in:file`)
 * `github_issue` — issues and pull requests (`in:title,body,comments`; you can add `is:issue` or `is:pr`)
@@ -283,11 +271,19 @@ Filters currently apply to GitHub surfaces. `keyword` filters apply to `github`,
 
 For more information, you can refer to this [video](https://www.bilibili.com/video/BV1aG4y1c72N/?vd_source=ef4657ebf0549af8755f75118b6e81bb).
 
+## Scan operation
+
+1. Initialize the database and sign in to the web UI.
+2. Configure valid platform tokens and enable the required rules. Add a local match regex when a broad provider query needs stricter evidence validation.
+3. Start the scanner with `docker compose up -d scan` for Docker deployments, or `./gshark scan` for manual deployments.
+4. Check the scan log page or run `docker compose logs -f scan` to confirm each provider completes successfully.
+5. Review findings in the result page, confirm genuine secrets, ignore placeholders and false positives, and export results when needed.
+
 ## Configuration
 
-You are supposed to rename `config-temp.yaml` to `config.yaml` and config the database information and other information according to your environment.
+For manual deployments, copy `config-temp.yaml` to `config.yaml`, then configure the database and other settings for your environment.
 
-### GitLab Base Url
+### GitLab Base URL
 
 <img width="363" alt="image" src="https://user-images.githubusercontent.com/12164075/203898719-1ce66395-083d-4226-937f-b6eed859addc.png">
 
@@ -345,7 +341,7 @@ matchPattern: ghp_[A-Za-z0-9_]{16,}
 
 1. Does GShark scan local code or public platforms?
 
-GShark is designed to scan public environments, not local source trees. GitHub scanning is based on the GitHub Search API, GitLab scanning depends on GitLab search, and Sourcegraph scanning covers repositories indexed by Sourcegraph. Whether private repositories can be scanned depends on the platform API, the Sourcegraph instance, and token permissions.
+GShark scans repositories exposed by configured providers, not local source trees. GitHub scanning is based on the GitHub Search API, GitLab scanning depends on GitLab search, and Sourcegraph scanning covers repositories indexed by Sourcegraph. Private-repository coverage depends on the provider API, the Sourcegraph instance, and token permissions.
 
 2. What is the recommended deployment method?
 
@@ -369,11 +365,11 @@ The default account is `gshark / gshark`. Change the password immediately after 
 
 5. Why did the scanner not start or produce results after Docker deployment?
 
-The scanner depends on database initialization. Before MySQL is initialized, the scanner container may exit. Restart the scanner after database initialization. When troubleshooting, check the scanner/server container logs first instead of only checking the web page.
+The scanner depends on database initialization. `./scripts/quick-docker.sh --with-scan` waits for initialization before starting it. With a manual Compose flow, a scanner started too early may exit; after initialization, run `docker compose up -d scan`. When troubleshooting, check the scanner and server logs first.
 
 6. What is the core GShark workflow?
 
-The basic workflow is: configure the database -> initialize the system -> log in -> add tokens -> add rules -> start the scan service -> fetch search results -> filter or run secondary filtering -> manually confirm or ignore findings -> export results.
+The basic workflow is: configure the database -> initialize the system -> sign in -> add tokens -> add rules -> start the scan service -> fetch and filter search results -> manually confirm or ignore findings -> export results.
 
 7. Why are there no scan results after configuring tokens and rules?
 
@@ -402,7 +398,7 @@ One rule should normally contain one search expression. Use batch import for mul
 
 11. How can I reduce noisy results from `.json`, `.csv`, log files, and similar files?
 
-Use GitHub filters such as `extension` and `keyword` to narrow the initial search and reduce noisy results before they are stored.
+Use GitHub filters such as `extension` and `keyword` to narrow the initial search. For broad rules, add a local `matchPattern` regular expression to require stronger evidence before a result is stored.
 
 12. How should GitHub rate limits be handled?
 
@@ -420,7 +416,7 @@ Yes. Current versions include search result export, which is useful for offline 
 
 Provide the version, deployment method, operating system, MySQL version, whether Docker is used, server logs, scanner logs, browser console errors, relevant screenshots, and redacted token/rule configuration. This is more useful than a page screenshot alone.
 
-## Resources 
+## Resources
 
 ### Articles
 
