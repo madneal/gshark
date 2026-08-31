@@ -337,6 +337,8 @@ content: ghp_
 matchPattern: ghp_[A-Za-z0-9_]{16,}
 ```
 
+GShark automatically recognizes supported GitHub, GitLab, Sourcegraph, and Postman token formats in every result and validates them with the owning provider before ingest. No validation setting or capture group is required. A detected token is stored only when its API check succeeds; invalid tokens are ignored, while rate limits and other indeterminate failures are retried by a later scan. Results without a recognized token keep the existing search-and-local-match behavior.
+
 ## FAQ
 
 1. Does GShark scan local code or public platforms?

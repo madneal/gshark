@@ -335,6 +335,8 @@ content: ghp_
 matchPattern: ghp_[A-Za-z0-9_]{16,}
 ```
 
+GShark 会在所有搜索结果中自动识别受支持的 GitHub、GitLab、Sourcegraph 和 Postman Token，并在入库前调用所属平台进行验证，无需配置验证类型或正则捕获分组。检测到的 Token 只有验证成功才会入库；无效 Token 会被忽略，限流等暂时无法确定的情况会留待后续扫描重试。未识别到内置 Token 的结果继续沿用原有的搜索和本地匹配流程。
+
 ## 常见问题
 
 1. GShark 扫描的是本地代码还是公开平台代码？
