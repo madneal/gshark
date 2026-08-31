@@ -103,7 +103,7 @@ func RunTask() model.ScanOutcome {
 			if len(results) == 0 {
 				return nil
 			}
-			stats := SaveResults(results, &rule.Content, matchPattern)
+			stats := SaveRuleResults(results, rule, matchPattern)
 			inserted += stats.Inserted
 			return nil
 		})
@@ -403,5 +403,14 @@ func SaveResults(results []*model.SearchResult, keyword *string, matchPattern *r
 	}
 	stats := service.SaveSearchResultPointersWithStats(results, *keyword, matchPattern)
 	global.GVA_LOG.Info(stats.Summary(*keyword, "Sourcegraph"))
+	return stats
+}
+
+func SaveRuleResults(results []*model.SearchResult, rule model.Rule, matchPattern *regexp.Regexp) *service.SaveResultStats {
+	if len(results) == 0 {
+		return service.NewSaveResultStats()
+	}
+	stats := service.SaveSearchResultPointersForRule(results, rule)
+	global.GVA_LOG.Info(stats.Summary(rule.Content, "Sourcegraph"))
 	return stats
 }

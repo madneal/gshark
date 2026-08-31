@@ -326,16 +326,20 @@ On the rules page, create or edit a rule and fill in:
 | Field | Example | Purpose |
 | --- | --- | --- |
 | Rule content | `ghp_` | Broad provider search expression |
-| Local match regex | `ghp_[A-Za-z0-9_]{16,}` | Final local evidence check |
+| Local match regex | `ghp_(?P<key>[A-Za-z0-9_]{20,})` | Final local check and `key` extraction |
+| Key validation API | `github` | Verify the extracted key against the provider API before storing |
 
-The same fields are available in the CSV import template, with **Local match regex** as the last column.
+The CSV import template includes these fields, with **Local match regex** and **Key validation API** as the last two columns.
 
 For example, a GitHub token rule can use:
 
 ```text
 content: ghp_
-matchPattern: ghp_[A-Za-z0-9_]{16,}
+matchPattern: ghp_(?P<key>[A-Za-z0-9_]{20,})
+validationType: github
 ```
+
+Supported validation types are `github`, `gitlab`, `sourcegraph`, and `postman`. GShark calls each provider's current-user endpoint before ingesting a result. Only a 2xx response is stored; 401 responses are ignored as invalid keys, while rate limits, network failures, and other indeterminate responses are deferred for a later scan. Leaving the validation type empty preserves the existing search-and-local-match behavior.
 
 ## FAQ
 

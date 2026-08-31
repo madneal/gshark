@@ -64,6 +64,7 @@
       <el-table-column label="规则类型" prop="ruleType" width="120" />
       <el-table-column label="规则内容" prop="content" width="120" />
       <el-table-column label="本地匹配正则" prop="matchPattern" width="180" />
+      <el-table-column label="Key 验证 API" prop="validationType" width="130" />
       <el-table-column label="规则名称" prop="name" width="120" />
       <el-table-column label="规则描述" prop="desc" width="120" />
       <el-table-column label="状态" width="120">
@@ -119,6 +120,16 @@
             placeholder="可选，仅对返回的代码片段进行本地校验"
           />
         </el-form-item>
+        <el-form-item label="Key 验证 API:">
+          <el-select v-model="formData.validationType" clearable placeholder="不验证">
+            <el-option label="不验证" value="" />
+            <el-option label="GitHub /user" value="github" />
+            <el-option label="GitLab /user" value="gitlab" />
+            <el-option label="Sourcegraph /user" value="sourcegraph" />
+            <el-option label="Postman /me" value="postman" />
+          </el-select>
+          <div class="form-tip">匹配正则建议使用命名分组 (?P&lt;key&gt;...)；未配置时会按已知 token 前缀自动识别。</div>
+        </el-form-item>
         <el-form-item label="规则名称:">
           <el-input v-model="formData.name" clearable placeholder="请输入" />
         </el-form-item>
@@ -165,6 +176,7 @@ export default {
         ruleType: [],
         content: "",
         matchPattern: "",
+        validationType: "",
         name: "",
         desc: "",
         status: true,
@@ -246,6 +258,7 @@ export default {
         ruleType: [],
         content: "",
         matchPattern: "",
+        validationType: "",
         name: "",
         desc: "",
         status: 0,

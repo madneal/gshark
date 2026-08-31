@@ -324,16 +324,20 @@ system:
 | 字段 | 示例 | 用途 |
 | --- | --- | --- |
 | 规则内容 | `ghp_` | 平台侧的宽泛搜索表达式 |
-| 本地匹配正则 | `ghp_[A-Za-z0-9_]{16,}` | 对候选结果进行最终的本地校验 |
+| 本地匹配正则 | `ghp_(?P<key>[A-Za-z0-9_]{20,})` | 对候选结果进行最终的本地校验，并提取 `key` 分组 |
+| Key 验证 API | `github` | 入库前调用对应平台 API 验证提取出的 key |
 
-CSV 导入模板也支持相同字段，“本地匹配正则”位于最后一列。
+CSV 导入模板也支持这些字段，“本地匹配正则”和 “Key 验证 API”分别位于最后两列。
 
 例如，GitHub token 规则可以配置为：
 
 ```text
 content: ghp_
-matchPattern: ghp_[A-Za-z0-9_]{16,}
+matchPattern: ghp_(?P<key>[A-Za-z0-9_]{20,})
+validationType: github
 ```
+
+支持的 Key 验证 API 为 `github`、`gitlab`、`sourcegraph` 和 `postman`，分别调用各平台的当前用户接口。验证返回 2xx 才会入库；401 会作为无效 key 忽略，网络错误、限流和其他非确定性错误会暂不入库并在下一轮重试。未配置验证 API 时保持原有的仅搜索和本地匹配行为。
 
 ## 常见问题
 
