@@ -18,8 +18,7 @@ type SaveResultStats struct {
 	Skipped            int      // Skipped (already exists)
 	Failed             int      // Failed to insert
 	ContextFiltered    int      // Rejected by a local rule context expression
-	ValidationFiltered int      // Rejected because the extracted key was invalid
-	ValidationDeferred int      // Not stored because key validation was unavailable
+	ValidationFiltered int      // Rejected or deferred by built-in key validation
 	AIFiltered         int      // Rejected by the AI pre-ingest filter, including analysis errors
 	Repos              []string // Unique repos affected
 }
@@ -51,8 +50,8 @@ func (s *SaveResultStats) Summary(keyword, source string) string {
 		aiSummary = fmt.Sprintf(", ai_filtered=%d", s.AIFiltered)
 	}
 	validationSummary := ""
-	if s.ValidationFiltered > 0 || s.ValidationDeferred > 0 {
-		validationSummary = fmt.Sprintf(", key_invalid=%d, key_deferred=%d", s.ValidationFiltered, s.ValidationDeferred)
+	if s.ValidationFiltered > 0 {
+		validationSummary = fmt.Sprintf(", key_filtered=%d", s.ValidationFiltered)
 	}
 	if s.Inserted == 0 {
 		return fmt.Sprintf("[%s] keyword=%q: no new results (processed=%d, skipped=%d, context_filtered=%d%s%s)",
@@ -137,36 +136,10 @@ func CheckExistOfSearchResult(searchResult *model.SearchResult) bool {
 }
 
 func SaveSearchResultsWithStats(searchResults []model.SearchResult, matchPatterns ...*regexp.Regexp) *SaveResultStats {
-	return saveSearchResults(searchResults, nil, firstMatchPattern(matchPatterns...))
-}
-
-// SaveSearchResultsForRule applies the rule's local context pattern and, when
-// configured or inferable, validates extracted keys against the platform API
-// before allowing a result into the database.
-func SaveSearchResultsForRule(searchResults []model.SearchResult, rule model.Rule) *SaveResultStats {
 	var matchPattern *regexp.Regexp
-	if strings.TrimSpace(rule.MatchPattern) != "" {
-		if compiled, err := regexp.Compile(rule.MatchPattern); err == nil {
-			matchPattern = compiled
-		} else {
-			stats := NewSaveResultStats()
-			stats.Total = len(searchResults)
-			stats.ContextFiltered = len(searchResults)
-			global.GVA_LOG.Error("compile rule match pattern error", zap.String("pattern", rule.MatchPattern), zap.Error(err))
-			return stats
-		}
+	if len(matchPatterns) > 0 {
+		matchPattern = matchPatterns[0]
 	}
-	return saveSearchResults(searchResults, &rule, matchPattern)
-}
-
-func firstMatchPattern(matchPatterns ...*regexp.Regexp) *regexp.Regexp {
-	if len(matchPatterns) == 0 {
-		return nil
-	}
-	return matchPatterns[0]
-}
-
-func saveSearchResults(searchResults []model.SearchResult, rule *model.Rule, matchPattern *regexp.Regexp) *SaveResultStats {
 	stats := NewSaveResultStats()
 	stats.Total = len(searchResults)
 
@@ -180,19 +153,14 @@ func saveSearchResults(searchResults []model.SearchResult, rule *model.Rule, mat
 			stats.Skipped++
 			continue
 		}
-		if rule != nil {
-			validation, err := ValidateRuleResult(*rule, result)
-			switch validation {
-			case ValidationInvalid:
-				stats.ValidationFiltered++
-				continue
-			case ValidationDeferred:
-				stats.ValidationDeferred++
-				if err != nil {
-					global.GVA_LOG.Warn("key validation deferred; result not stored", zap.String("provider", rule.ValidationType), zap.String("repo", result.Repo), zap.String("path", result.Path), zap.Error(err))
-				}
-				continue
+		validation, err := ValidateSearchResultKeys(result)
+		if validation == ValidationInvalid || validation == ValidationDeferred {
+			stats.ValidationFiltered++
+			if validation == ValidationDeferred && err != nil {
+				global.GVA_LOG.Warn("key validation deferred; result not stored",
+					zap.String("repo", result.Repo), zap.String("path", result.Path), zap.Error(err))
 			}
+			continue
 		}
 		if global.GVA_CONFIG.System.AiAnalysisEnabled {
 			analysis, err := AnalyzeSearchResult(result)
@@ -214,10 +182,10 @@ func saveSearchResults(searchResults []model.SearchResult, rule *model.Rule, mat
 				continue
 			}
 		}
-		err := CreateSearchResult(result)
-		if err != nil {
+		createErr := CreateSearchResult(result)
+		if createErr != nil {
 			global.GVA_LOG.Error("save search result error", zap.Any("save searchResult error",
-				err))
+				createErr))
 			stats.Failed++
 		} else {
 			stats.Inserted++
@@ -239,18 +207,4 @@ func SaveSearchResultPointersWithStats(searchResults []*model.SearchResult, keyw
 		results = append(results, *result)
 	}
 	return SaveSearchResultsWithStats(results, matchPatterns...)
-}
-
-func SaveSearchResultPointersForRule(searchResults []*model.SearchResult, rule model.Rule) *SaveResultStats {
-	results := make([]model.SearchResult, 0, len(searchResults))
-	for _, result := range searchResults {
-		if result == nil {
-			continue
-		}
-		if rule.Content != "" {
-			result.Keyword = rule.Content
-		}
-		results = append(results, *result)
-	}
-	return SaveSearchResultsForRule(results, rule)
 }

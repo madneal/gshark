@@ -8,7 +8,7 @@
    <a href="README_CN.md">🇨🇳 中文版</a> | <strong>🇺🇸 English</strong>
 </div>
 
-# GShark [![Release](https://github.com/madneal/gshark/actions/workflows/release.yml/badge.svg)](https://github.com/madneal/gshark/actions/workflows/release.yml)
+# GShark [![Go Report Card](https://goreportcard.com/badge/github.com/madneal/gshark)](https://goreportcard.com/report/github.com/madneal/gshark) [![Release](https://github.com/madneal/gshark/actions/workflows/release.yml/badge.svg)](https://github.com/madneal/gshark/actions/workflows/release.yml)
 
 GShark is a sensitive information detection and management platform. The backend is built with Go and Gin, and the current frontend is built with Vue 3, Vite, Vue Router 4, Vuex 4, and Element Plus. For the full introduction, please refer to [articles](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI3MjA3MTY3Mw==&action=getalbum&album_id=2376148333116850178#wechat_redirect) and [videos](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI3MjA3MTY3Mw==&action=getalbum&album_id=1834365721464651778#wechat_redirect). GShark scans repositories exposed by configured providers rather than local source trees.
 
@@ -326,20 +326,18 @@ On the rules page, create or edit a rule and fill in:
 | Field | Example | Purpose |
 | --- | --- | --- |
 | Rule content | `ghp_` | Broad provider search expression |
-| Local match regex | `ghp_(?P<key>[A-Za-z0-9_]{20,})` | Final local check and `key` extraction |
-| Key validation API | `github` | Verify the extracted key against the provider API before storing |
+| Local match regex | `ghp_[A-Za-z0-9_]{16,}` | Final local evidence check |
 
-The CSV import template includes these fields, with **Local match regex** and **Key validation API** as the last two columns.
+The same fields are available in the CSV import template, with **Local match regex** as the last column.
 
 For example, a GitHub token rule can use:
 
 ```text
 content: ghp_
-matchPattern: ghp_(?P<key>[A-Za-z0-9_]{20,})
-validationType: github
+matchPattern: ghp_[A-Za-z0-9_]{16,}
 ```
 
-Supported validation types are `github`, `gitlab`, `sourcegraph`, and `postman`. GShark calls each provider's current-user endpoint before ingesting a result. Only a 2xx response is stored; 401 responses are ignored as invalid keys, while rate limits, network failures, and other indeterminate responses are deferred for a later scan. Leaving the validation type empty preserves the existing search-and-local-match behavior.
+GShark automatically recognizes supported GitHub, GitLab, Sourcegraph, and Postman token formats in every result and validates them with the owning provider before ingest. No validation setting or capture group is required. A detected token is stored only when its API check succeeds; invalid tokens are ignored, while rate limits and other indeterminate failures are retried by a later scan. Results without a recognized token keep the existing search-and-local-match behavior.
 
 ## FAQ
 

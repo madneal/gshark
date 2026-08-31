@@ -8,7 +8,7 @@
    <strong>🇨🇳 中文版</strong> | <a href="README.md">🇺🇸 English</a>
 </div>
 
-# GShark [![Release](https://github.com/madneal/gshark/actions/workflows/release.yml/badge.svg)](https://github.com/madneal/gshark/actions/workflows/release.yml)
+# GShark [![Go Report Card](https://goreportcard.com/badge/github.com/madneal/gshark)](https://goreportcard.com/report/github.com/madneal/gshark) [![Release](https://github.com/madneal/gshark/actions/workflows/release.yml/badge.svg)](https://github.com/madneal/gshark/actions/workflows/release.yml)
 
 GShark 是一个敏感信息检测和管理平台。后端基于 Go 和 Gin 构建，当前前端基于 Vue 3、Vite、Vue Router 4、Vuex 4 和 Element Plus 构建。完整介绍请参考[文章](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI3MjA3MTY3Mw==&action=getalbum&album_id=2376148333116850178#wechat_redirect)和[视频](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI3MjA3MTY3Mw==&action=getalbum&album_id=1834365721464651778#wechat_redirect)。GShark 扫描配置平台可访问的仓库，不扫描本地源码目录。
 
@@ -324,20 +324,18 @@ system:
 | 字段 | 示例 | 用途 |
 | --- | --- | --- |
 | 规则内容 | `ghp_` | 平台侧的宽泛搜索表达式 |
-| 本地匹配正则 | `ghp_(?P<key>[A-Za-z0-9_]{20,})` | 对候选结果进行最终的本地校验，并提取 `key` 分组 |
-| Key 验证 API | `github` | 入库前调用对应平台 API 验证提取出的 key |
+| 本地匹配正则 | `ghp_[A-Za-z0-9_]{16,}` | 对候选结果进行最终的本地校验 |
 
-CSV 导入模板也支持这些字段，“本地匹配正则”和 “Key 验证 API”分别位于最后两列。
+CSV 导入模板也支持相同字段，“本地匹配正则”位于最后一列。
 
 例如，GitHub token 规则可以配置为：
 
 ```text
 content: ghp_
-matchPattern: ghp_(?P<key>[A-Za-z0-9_]{20,})
-validationType: github
+matchPattern: ghp_[A-Za-z0-9_]{16,}
 ```
 
-支持的 Key 验证 API 为 `github`、`gitlab`、`sourcegraph` 和 `postman`，分别调用各平台的当前用户接口。验证返回 2xx 才会入库；401 会作为无效 key 忽略，网络错误、限流和其他非确定性错误会暂不入库并在下一轮重试。未配置验证 API 时保持原有的仅搜索和本地匹配行为。
+GShark 会在所有搜索结果中自动识别受支持的 GitHub、GitLab、Sourcegraph 和 Postman Token，并在入库前调用所属平台进行验证，无需配置验证类型或正则捕获分组。检测到的 Token 只有验证成功才会入库；无效 Token 会被忽略，限流等暂时无法确定的情况会留待后续扫描重试。未识别到内置 Token 的结果继续沿用原有的搜索和本地匹配流程。
 
 ## 常见问题
 

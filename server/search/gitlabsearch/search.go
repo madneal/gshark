@@ -95,7 +95,7 @@ func RunGlobalSearchTask(client *gitlab.Client, rules []model.Rule) bool {
 	for i, rule := range rules {
 		resp, ok := SearchBlobsStream(client, rule.Content, func(blobs []*gitlab.Blob) error {
 			results := ConvertBlobsToResults(client, blobs, rule.Content)
-			SaveRuleResult(results, rule)
+			SaveResult(results, &rule.Content)
 			return nil
 		})
 		if !ok {
@@ -151,7 +151,7 @@ func RunSearchTaskByProject(projects []model.Repo, rules []model.Rule, client *g
 func searchProjectForRules(project model.Repo, rules []model.Rule, client *gitlab.Client) {
 	for _, rule := range rules {
 		if err := SearchCodeStream(rule.Content, project, client, func(results []*model.SearchResult) error {
-			SaveRuleResult(results, rule)
+			SaveResult(results, &rule.Content)
 			return nil
 		}); err != nil {
 			global.GVA_LOG.Error("search project stream error", zap.Error(err), zap.String("project", project.Path))
@@ -169,14 +169,6 @@ func SaveResult(results []*model.SearchResult, keyword *string) {
 	}
 	stats := service.SaveSearchResultPointersWithStats(results, *keyword)
 	global.GVA_LOG.Info(stats.Summary(*keyword, "GitLab"))
-}
-
-func SaveRuleResult(results []*model.SearchResult, rule model.Rule) {
-	if len(results) == 0 {
-		return
-	}
-	stats := service.SaveSearchResultPointersForRule(results, rule)
-	global.GVA_LOG.Info(stats.Summary(rule.Content, "GitLab"))
 }
 
 // SearchCode searches for keyword inside a single project, paginating through

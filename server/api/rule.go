@@ -60,18 +60,13 @@ func convertCsvIntoRules(lines [][]string) []model.Rule {
 			global.GVA_LOG.Warn("skip invalid rule csv row", zap.Int("row", index+1))
 			continue
 		}
-		validationType := ""
-		if len(line) > 5 {
-			validationType = line[5]
-		}
 		rules = append(rules, model.Rule{
-			RuleType:       line[0],
-			Content:        line[1],
-			Name:           line[2],
-			Desc:           line[3],
-			Status:         true,
-			MatchPattern:   line[4],
-			ValidationType: validationType,
+			RuleType:     line[0],
+			Content:      line[1],
+			Name:         line[2],
+			Desc:         line[3],
+			Status:       true,
+			MatchPattern: line[4],
 		})
 	}
 	return rules

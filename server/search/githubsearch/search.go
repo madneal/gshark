@@ -44,19 +44,21 @@ func searchCode(client *Client, rules []model.Rule) error {
 			scanErrors = append(scanErrors, fmt.Errorf("build query for %q: %w", rule.Content, err))
 			continue
 		}
+		var matchPattern *regexp.Regexp
 		if rule.MatchPattern != "" {
-			if _, err = regexp.Compile(rule.MatchPattern); err != nil {
-				global.GVA_LOG.Error("compile match pattern error", zap.Error(err))
-				scanErrors = append(scanErrors, fmt.Errorf("compile match pattern for %q: %w", rule.Content, err))
-				continue
-			}
+			matchPattern, err = regexp.Compile(rule.MatchPattern)
+		}
+		if err != nil {
+			global.GVA_LOG.Error("compile match pattern error", zap.Error(err))
+			scanErrors = append(scanErrors, fmt.Errorf("compile match pattern for %q: %w", rule.Content, err))
+			continue
 		}
 		var ruleInserted int
 		var ruleRepos []string
 		var ruleHasMoreRepos bool
 		err = client.SearchCodeStream(query, func(page []*github.CodeSearchResult) error {
 			searchResults := ConvertToSearchResults(page, rule.Content)
-			stats := service.SaveSearchResultsForRule(searchResults, rule)
+			stats := service.SaveSearchResultsWithStats(searchResults, matchPattern)
 			ruleInserted += stats.Inserted
 			var more bool
 			ruleRepos, more = appendUniqueRepos(ruleRepos, stats.Repos)

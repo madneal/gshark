@@ -1,14 +1,3 @@
-## v2.1.26
-
-Add per-rule key validation settings. Apply this migration before starting the
-scanner so rules can extract a key and verify it against the matching provider
-API:
-
-```sql
-alter table rule
-    add column validation_type varchar(32) null after match_pattern;
-```
-
 ## v2.1.16
 
 Add the AI configuration test API and administrator permission for existing databases:

@@ -97,7 +97,7 @@ func RunTask() model.ScanOutcome {
 func Search(rules *[]model.Rule) error {
 	var searchErrors []error
 	for _, rule := range *rules {
-		if err := searchRuleByType(rule, "request"); err != nil {
+		if err := SearchByType(rule.Content, "request"); err != nil {
 			searchErrors = append(searchErrors, err)
 		}
 	}
@@ -105,14 +105,9 @@ func Search(rules *[]model.Rule) error {
 }
 
 func SearchByType(keyword, searchType string) error {
-	return searchRuleByType(model.Rule{Content: keyword}, searchType)
-}
-
-func searchRuleByType(rule model.Rule, searchType string) error {
-	keyword := rule.Content
 	err := SearchAPIStream(keyword, searchType, func(res PostmanRes) error {
 		results := res.ConvertToSearchResult(keyword)
-		stats := service.SaveSearchResultsForRule(*results, rule)
+		stats := service.SaveSearchResultsWithStats(*results)
 		global.GVA_LOG.Info(stats.Summary(keyword, "Postman"))
 		return nil
 	})

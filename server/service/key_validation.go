@@ -24,6 +24,7 @@ const (
 	ValidationInvalid    = "invalid"
 	ValidationDeferred   = "deferred"
 	keyValidationTimeout = 15 * time.Second
+	keyValidationLimit   = 10000
 )
 
 var keyValidationClient = &http.Client{Timeout: keyValidationTimeout}
@@ -38,47 +39,68 @@ var keyValidationCache = struct {
 	items map[string]keyValidationCacheEntry
 }{items: make(map[string]keyValidationCacheEntry)}
 
-var keyPatterns = map[string]*regexp.Regexp{
-	"github":      regexp.MustCompile(`(?:gh[pousr]_[A-Za-z0-9_]{16,}|github_pat_[A-Za-z0-9_]{20,})`),
-	"gitlab":      regexp.MustCompile(`glpat-[A-Za-z0-9_-]{20,}`),
-	"sourcegraph": regexp.MustCompile(`sgp_[A-Za-z0-9_-]{20,}`),
-	"postman":     regexp.MustCompile(`PMAK-[A-Za-z0-9_-]{20,}`),
+type keyDetector struct {
+	provider string
+	pattern  *regexp.Regexp
 }
 
-// ValidateRuleResult extracts the key selected by a rule's match pattern and
-// verifies it against that platform's authenticated API. A deferred result is
-// deliberately not persisted: transient errors and rate limits must be
-// retried on a later scan instead of being treated as a valid secret.
-func ValidateRuleResult(rule model.Rule, result model.SearchResult) (string, error) {
-	provider := ruleValidationType(rule)
-	if provider == "" {
+type detectedKey struct {
+	provider string
+	value    string
+}
+
+// Built-in detectors make key validation automatic. Search rules only decide
+// what to search for; they do not need to know how a provider validates keys.
+var keyDetectors = []keyDetector{
+	{provider: "github", pattern: regexp.MustCompile(`(?:gh[pousr]_[A-Za-z0-9_]{16,}|github_pat_[A-Za-z0-9_]{20,})`)},
+	{provider: "gitlab", pattern: regexp.MustCompile(`glpat-[A-Za-z0-9_-]{20,}`)},
+	{provider: "sourcegraph", pattern: regexp.MustCompile(`sgp_[A-Za-z0-9_-]{20,}`)},
+	{provider: "postman", pattern: regexp.MustCompile(`PMAK-[A-Za-z0-9_-]{20,}`)},
+}
+
+// ValidateSearchResultKeys detects supported keys in a result and validates
+// them with the owning provider. Results without a known key keep the existing
+// ingest behavior. If keys are detected, at least one must validate before the
+// result can be stored.
+func ValidateSearchResultKeys(result model.SearchResult) (string, error) {
+	keys := detectKeys(SearchResultContent(result))
+	if len(keys) == 0 {
 		return ValidationSkipped, nil
 	}
-	if _, ok := keyPatterns[provider]; !ok {
-		return ValidationDeferred, fmt.Errorf("unsupported key validation provider %q", provider)
-	}
-	candidates := ruleKeyCandidates(rule, SearchResultContent(result), provider)
-	if len(candidates) == 0 {
-		return ValidationInvalid, nil
-	}
-	deferred := false
-	for _, candidate := range candidates {
-		status, err := validateKeyCached(context.Background(), provider, candidate)
-		if err != nil {
-			deferred = true
-			continue
-		}
+
+	var deferredErr error
+	for _, key := range keys {
+		status, err := validateKeyCached(context.Background(), key.provider, key.value)
 		if status == ValidationValid {
 			return ValidationValid, nil
 		}
-		if status == ValidationDeferred {
-			deferred = true
+		if status == ValidationDeferred || err != nil {
+			if err == nil {
+				err = errors.New("validation deferred")
+			}
+			deferredErr = fmt.Errorf("%s key validation failed: %w", key.provider, err)
 		}
 	}
-	if deferred {
-		return ValidationDeferred, errors.New("key validation could not be completed")
+	if deferredErr != nil {
+		return ValidationDeferred, deferredErr
 	}
 	return ValidationInvalid, nil
+}
+
+func detectKeys(content string) []detectedKey {
+	seen := make(map[string]struct{})
+	keys := make([]detectedKey, 0)
+	for _, detector := range keyDetectors {
+		for _, value := range detector.pattern.FindAllString(content, -1) {
+			cacheKey := detector.provider + "\x00" + value
+			if _, exists := seen[cacheKey]; exists {
+				continue
+			}
+			seen[cacheKey] = struct{}{}
+			keys = append(keys, detectedKey{provider: detector.provider, value: value})
+		}
+	}
+	return keys
 }
 
 func validateKeyCached(ctx context.Context, provider, key string) (string, error) {
@@ -103,84 +125,21 @@ func validateKeyCached(ctx context.Context, provider, key string) (string, error
 	}
 	keyValidationCache.Lock()
 	keyValidationCache.items[cacheKey] = keyValidationCacheEntry{status: status, expiresAt: now.Add(ttl)}
-	if len(keyValidationCache.items) > 10000 {
+	if len(keyValidationCache.items) > keyValidationLimit {
 		for itemKey, item := range keyValidationCache.items {
 			if now.After(item.expiresAt) {
 				delete(keyValidationCache.items, itemKey)
 			}
 		}
+		for itemKey := range keyValidationCache.items {
+			if len(keyValidationCache.items) <= keyValidationLimit {
+				break
+			}
+			delete(keyValidationCache.items, itemKey)
+		}
 	}
 	keyValidationCache.Unlock()
 	return status, err
-}
-
-func ruleValidationType(rule model.Rule) string {
-	if value := strings.ToLower(strings.TrimSpace(rule.ValidationType)); value != "" {
-		if value == "none" {
-			return ""
-		}
-		return value
-	}
-	text := strings.ToLower(rule.MatchPattern + "\n" + rule.Content)
-	switch {
-	case strings.Contains(text, "github_pat_") || strings.Contains(text, "ghp_") ||
-		strings.Contains(text, "gho_") || strings.Contains(text, "ghu_") ||
-		strings.Contains(text, "ghs_") || strings.Contains(text, "ghr_"):
-		return "github"
-	case strings.Contains(text, "glpat-"):
-		return "gitlab"
-	case strings.Contains(text, "sgp_"):
-		return "sourcegraph"
-	case strings.Contains(text, "pmak-"):
-		return "postman"
-	default:
-		return ""
-	}
-}
-
-func ruleKeyCandidates(rule model.Rule, content, provider string) []string {
-	seen := make(map[string]struct{})
-	add := func(value string) {
-		value = strings.Trim(strings.TrimSpace(value), "\"'`.,;)")
-		if value == "" || len(value) > 1000 {
-			return
-		}
-		if _, exists := seen[value]; !exists {
-			seen[value] = struct{}{}
-		}
-	}
-	if strings.TrimSpace(rule.MatchPattern) != "" {
-		if pattern, err := regexp.Compile(rule.MatchPattern); err == nil {
-			keyGroup := -1
-			for _, name := range []string{"key", "token", "value", "secret"} {
-				if index := pattern.SubexpIndex(name); index >= 0 {
-					keyGroup = index
-					break
-				}
-			}
-			for _, match := range pattern.FindAllStringSubmatch(content, -1) {
-				if keyGroup > 0 && keyGroup < len(match) {
-					add(match[keyGroup])
-				} else if pattern.NumSubexp() == 1 && len(match) > 1 {
-					add(match[1])
-				} else {
-					for _, candidate := range keyPatterns[provider].FindAllString(match[0], -1) {
-						add(candidate)
-					}
-				}
-			}
-		}
-	}
-	if len(seen) == 0 {
-		for _, candidate := range keyPatterns[provider].FindAllString(content, -1) {
-			add(candidate)
-		}
-	}
-	values := make([]string, 0, len(seen))
-	for value := range seen {
-		values = append(values, value)
-	}
-	return values
 }
 
 func validateKey(ctx context.Context, provider, key string) (string, error) {
