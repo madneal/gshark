@@ -75,16 +75,16 @@ func ValidateSearchResultKeys(result model.SearchResult) (string, error) {
 }
 
 func detectKeys(content string) []detectedKey {
-	seen := make(map[string]struct{})
+	seen := make(map[detectedKey]struct{})
 	keys := make([]detectedKey, 0)
 	for _, detector := range keyDetectors {
 		for _, value := range detector.pattern.FindAllString(content, -1) {
-			seenKey := detector.provider + "\x00" + value
-			if _, exists := seen[seenKey]; exists {
+			key := detectedKey{provider: detector.provider, value: value}
+			if _, exists := seen[key]; exists {
 				continue
 			}
-			seen[seenKey] = struct{}{}
-			keys = append(keys, detectedKey{provider: detector.provider, value: value})
+			seen[key] = struct{}{}
+			keys = append(keys, key)
 		}
 	}
 	return keys

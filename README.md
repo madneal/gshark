@@ -321,6 +321,8 @@ The system configuration page includes **Test AI Config**, which sends synthetic
 
 Rules may optionally define `matchPattern` from the rules page. Keep `content` as the provider search expression used to find candidates, then enter a Go/RE2-compatible regular expression in **Local match regex** to validate the returned code fragment before it is stored. Empty `matchPattern` preserves the existing behavior.
 
+Known GitHub, GitLab, Sourcegraph, and Postman tokens are automatically API-validated before storage; no extra rule setting is required.
+
 On the rules page, create or edit a rule and fill in:
 
 | Field | Example | Purpose |
@@ -336,8 +338,6 @@ For example, a GitHub token rule can use:
 content: ghp_
 matchPattern: ghp_[A-Za-z0-9_]{16,}
 ```
-
-GShark automatically recognizes supported GitHub, GitLab, Sourcegraph, and Postman token formats in every result and validates them with the owning provider before ingest. No validation setting or capture group is required. A detected token is stored only when its API check succeeds; invalid tokens are ignored, while rate limits and other indeterminate failures are retried by a later scan. Results without a recognized token keep the existing search-and-local-match behavior.
 
 ## FAQ
 

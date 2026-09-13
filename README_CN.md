@@ -319,6 +319,8 @@ system:
 
 规则可以在规则页面配置可选的 `matchPattern`。`content` 仍作为平台侧的搜索表达式，用于发现候选结果；“本地匹配正则”使用兼容 Go/RE2 的正则表达式，在结果入库前校验返回的代码片段。`matchPattern` 为空时保持原有行为。
 
+已知的 GitHub、GitLab、Sourcegraph 和 Postman Token 会在入库前自动通过 API 验证，无需增加规则配置。
+
 在规则页面新增或编辑规则时，可以按以下方式填写：
 
 | 字段 | 示例 | 用途 |
@@ -334,8 +336,6 @@ CSV 导入模板也支持相同字段，“本地匹配正则”位于最后一�
 content: ghp_
 matchPattern: ghp_[A-Za-z0-9_]{16,}
 ```
-
-GShark 会在所有搜索结果中自动识别受支持的 GitHub、GitLab、Sourcegraph 和 Postman Token，并在入库前调用所属平台进行验证，无需配置验证类型或正则捕获分组。检测到的 Token 只有验证成功才会入库；无效 Token 会被忽略，限流等暂时无法确定的情况会留待后续扫描重试。未识别到内置 Token 的结果继续沿用原有的搜索和本地匹配流程。
 
 ## 常见问题
 
