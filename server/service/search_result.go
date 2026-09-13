@@ -13,13 +13,14 @@ import (
 
 // SaveResultStats contains detailed statistics about saved search results
 type SaveResultStats struct {
-	Total           int      // Total results processed
-	Inserted        int      // Successfully inserted
-	Skipped         int      // Skipped (already exists)
-	Failed          int      // Failed to insert
-	ContextFiltered int      // Rejected by a local rule context expression
-	AIFiltered      int      // Rejected by the AI pre-ingest filter, including analysis errors
-	Repos           []string // Unique repos affected
+	Total              int      // Total results processed
+	Inserted           int      // Successfully inserted
+	Skipped            int      // Skipped (already exists)
+	Failed             int      // Failed to insert
+	ContextFiltered    int      // Rejected by a local rule context expression
+	ValidationFiltered int      // Rejected or deferred by built-in key validation
+	AIFiltered         int      // Rejected by the AI pre-ingest filter, including analysis errors
+	Repos              []string // Unique repos affected
 }
 
 // NewSaveResultStats creates a new SaveResultStats instance
@@ -48,9 +49,13 @@ func (s *SaveResultStats) Summary(keyword, source string) string {
 	if s.AIFiltered > 0 {
 		aiSummary = fmt.Sprintf(", ai_filtered=%d", s.AIFiltered)
 	}
+	validationSummary := ""
+	if s.ValidationFiltered > 0 {
+		validationSummary = fmt.Sprintf(", key_filtered=%d", s.ValidationFiltered)
+	}
 	if s.Inserted == 0 {
-		return fmt.Sprintf("[%s] keyword=%q: no new results (processed=%d, skipped=%d, context_filtered=%d%s)",
-			source, keyword, s.Total, s.Skipped, s.ContextFiltered, aiSummary)
+		return fmt.Sprintf("[%s] keyword=%q: no new results (processed=%d, skipped=%d, context_filtered=%d%s%s)",
+			source, keyword, s.Total, s.Skipped, s.ContextFiltered, validationSummary, aiSummary)
 	}
 
 	repoSummary := ""
@@ -63,8 +68,8 @@ func (s *SaveResultStats) Summary(keyword, source string) string {
 		}
 	}
 
-	return fmt.Sprintf("[%s] keyword=%q: inserted=%d, skipped=%d, context_filtered=%d, total=%d%s%s",
-		source, keyword, s.Inserted, s.Skipped, s.ContextFiltered, s.Total, aiSummary, repoSummary)
+	return fmt.Sprintf("[%s] keyword=%q: inserted=%d, skipped=%d, context_filtered=%d, total=%d%s%s%s",
+		source, keyword, s.Inserted, s.Skipped, s.ContextFiltered, s.Total, validationSummary, aiSummary, repoSummary)
 }
 
 func CreateSearchResult(searchResult model.SearchResult) (err error) {
@@ -131,17 +136,30 @@ func CheckExistOfSearchResult(searchResult *model.SearchResult) bool {
 }
 
 func SaveSearchResultsWithStats(searchResults []model.SearchResult, matchPatterns ...*regexp.Regexp) *SaveResultStats {
+	var matchPattern *regexp.Regexp
+	if len(matchPatterns) > 0 {
+		matchPattern = matchPatterns[0]
+	}
 	stats := NewSaveResultStats()
 	stats.Total = len(searchResults)
 
 	for _, result := range searchResults {
-		if len(matchPatterns) > 0 && matchPatterns[0] != nil && !matchPatterns[0].MatchString(SearchResultContent(result)) {
+		if matchPattern != nil && !matchPattern.MatchString(SearchResultContent(result)) {
 			stats.ContextFiltered++
 			continue
 		}
 		exist := CheckExistOfSearchResult(&result)
 		if exist {
 			stats.Skipped++
+			continue
+		}
+		validation, err := ValidateSearchResultKeys(result)
+		if validation == ValidationInvalid || validation == ValidationDeferred {
+			stats.ValidationFiltered++
+			if validation == ValidationDeferred && err != nil {
+				global.GVA_LOG.Warn("key validation deferred; result not stored",
+					zap.String("repo", result.Repo), zap.String("path", result.Path), zap.Error(err))
+			}
 			continue
 		}
 		if global.GVA_CONFIG.System.AiAnalysisEnabled {
@@ -164,10 +182,10 @@ func SaveSearchResultsWithStats(searchResults []model.SearchResult, matchPattern
 				continue
 			}
 		}
-		err := CreateSearchResult(result)
-		if err != nil {
+		createErr := CreateSearchResult(result)
+		if createErr != nil {
 			global.GVA_LOG.Error("save search result error", zap.Any("save searchResult error",
-				err))
+				createErr))
 			stats.Failed++
 		} else {
 			stats.Inserted++

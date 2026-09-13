@@ -321,6 +321,8 @@ The system configuration page includes **Test AI Config**, which sends synthetic
 
 Rules may optionally define `matchPattern` from the rules page. Keep `content` as the provider search expression used to find candidates, then enter a Go/RE2-compatible regular expression in **Local match regex** to validate the returned code fragment before it is stored. Empty `matchPattern` preserves the existing behavior.
 
+Known GitHub, GitLab, Sourcegraph, and Postman tokens are automatically API-validated before storage; no extra rule setting is required.
+
 On the rules page, create or edit a rule and fill in:
 
 | Field | Example | Purpose |

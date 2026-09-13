@@ -319,6 +319,8 @@ system:
 
 规则可以在规则页面配置可选的 `matchPattern`。`content` 仍作为平台侧的搜索表达式，用于发现候选结果；“本地匹配正则”使用兼容 Go/RE2 的正则表达式，在结果入库前校验返回的代码片段。`matchPattern` 为空时保持原有行为。
 
+已知的 GitHub、GitLab、Sourcegraph 和 Postman Token 会在入库前自动通过 API 验证，无需增加规则配置。
+
 在规则页面新增或编辑规则时，可以按以下方式填写：
 
 | 字段 | 示例 | 用途 |
