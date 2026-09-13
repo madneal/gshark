@@ -3,7 +3,6 @@ package service
 import (
 	"bytes"
 	"context"
-	"crypto/sha256"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -11,7 +10,6 @@ import (
 	"net/http"
 	"regexp"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/madneal/gshark/global"
@@ -24,20 +22,9 @@ const (
 	ValidationInvalid    = "invalid"
 	ValidationDeferred   = "deferred"
 	keyValidationTimeout = 15 * time.Second
-	keyValidationLimit   = 10000
 )
 
 var keyValidationClient = &http.Client{Timeout: keyValidationTimeout}
-
-type keyValidationCacheEntry struct {
-	status    string
-	expiresAt time.Time
-}
-
-var keyValidationCache = struct {
-	sync.Mutex
-	items map[string]keyValidationCacheEntry
-}{items: make(map[string]keyValidationCacheEntry)}
 
 type keyDetector struct {
 	provider string
@@ -70,7 +57,7 @@ func ValidateSearchResultKeys(result model.SearchResult) (string, error) {
 
 	var deferredErr error
 	for _, key := range keys {
-		status, err := validateKeyCached(context.Background(), key.provider, key.value)
+		status, err := validateKey(context.Background(), key.provider, key.value)
 		if status == ValidationValid {
 			return ValidationValid, nil
 		}
@@ -92,54 +79,15 @@ func detectKeys(content string) []detectedKey {
 	keys := make([]detectedKey, 0)
 	for _, detector := range keyDetectors {
 		for _, value := range detector.pattern.FindAllString(content, -1) {
-			cacheKey := detector.provider + "\x00" + value
-			if _, exists := seen[cacheKey]; exists {
+			seenKey := detector.provider + "\x00" + value
+			if _, exists := seen[seenKey]; exists {
 				continue
 			}
-			seen[cacheKey] = struct{}{}
+			seen[seenKey] = struct{}{}
 			keys = append(keys, detectedKey{provider: detector.provider, value: value})
 		}
 	}
 	return keys
-}
-
-func validateKeyCached(ctx context.Context, provider, key string) (string, error) {
-	cacheScope := provider + "\x00" + global.GVA_CONFIG.System.GitlabBase + "\x00" + global.GVA_CONFIG.Search.SourcegraphURL + "\x00" + key
-	digest := sha256.Sum256([]byte(cacheScope))
-	cacheKey := fmt.Sprintf("%x", digest[:])
-	now := time.Now()
-	keyValidationCache.Lock()
-	if cached, ok := keyValidationCache.items[cacheKey]; ok && now.Before(cached.expiresAt) {
-		keyValidationCache.Unlock()
-		if cached.status == ValidationDeferred {
-			return cached.status, errors.New("cached key validation failure")
-		}
-		return cached.status, nil
-	}
-	keyValidationCache.Unlock()
-
-	status, err := validateKey(ctx, provider, key)
-	ttl := 30 * time.Second
-	if status == ValidationValid || status == ValidationInvalid {
-		ttl = 10 * time.Minute
-	}
-	keyValidationCache.Lock()
-	keyValidationCache.items[cacheKey] = keyValidationCacheEntry{status: status, expiresAt: now.Add(ttl)}
-	if len(keyValidationCache.items) > keyValidationLimit {
-		for itemKey, item := range keyValidationCache.items {
-			if now.After(item.expiresAt) {
-				delete(keyValidationCache.items, itemKey)
-			}
-		}
-		for itemKey := range keyValidationCache.items {
-			if len(keyValidationCache.items) <= keyValidationLimit {
-				break
-			}
-			delete(keyValidationCache.items, itemKey)
-		}
-	}
-	keyValidationCache.Unlock()
-	return status, err
 }
 
 func validateKey(ctx context.Context, provider, key string) (string, error) {
