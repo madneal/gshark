@@ -21,7 +21,7 @@ type ScanLog struct {
 	CycleID         string     `json:"cycleId" gorm:"column:cycle_id;type:varchar(36);index:idx_scan_log_cycle"`
 	Provider        string     `json:"provider" gorm:"column:provider;type:varchar(32);index:idx_scan_log_provider"`
 	Status          string     `json:"status" gorm:"column:status;type:varchar(16);index:idx_scan_log_status"`
-	Message         string     `json:"message" gorm:"column:message;type:varchar(1000)"`
+	Message         string     `json:"message" gorm:"column:message;type:text"`
 	ProgressCurrent int        `json:"progressCurrent" gorm:"column:progress_current;default:0"`
 	ProgressTotal   int        `json:"progressTotal" gorm:"column:progress_total;default:1"`
 	StartedAt       *time.Time `json:"startedAt" gorm:"column:started_at"`

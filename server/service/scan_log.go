@@ -1,7 +1,9 @@
 package service
 
 import (
+	"strings"
 	"time"
+	"unicode/utf8"
 
 	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/model"
@@ -9,7 +11,11 @@ import (
 	"gorm.io/gorm"
 )
 
-const scanHeartbeatStaleAfter = 45 * time.Second
+const (
+	scanHeartbeatStaleAfter = 45 * time.Second
+	maxScanLogMessageBytes  = 60 * 1024
+	scanLogTruncatedSuffix  = "\n...[truncated]"
+)
 
 type ScanLogOverview struct {
 	CycleID        string          `json:"cycleId"`
@@ -70,12 +76,25 @@ func FinishScanLog(id uint, outcome model.ScanOutcome, startedAt, finishedAt tim
 	}
 	return global.GVA_DB.Model(&model.ScanLog{}).Where("id = ?", id).Updates(map[string]interface{}{
 		"status":           outcome.Status,
-		"message":          outcome.Message,
+		"message":          limitScanLogMessage(outcome.Message),
 		"finished_at":      finishedAt,
 		"heartbeat_at":     finishedAt,
 		"duration_ms":      finishedAt.Sub(startedAt).Milliseconds(),
 		"progress_current": 1,
 	}).Error
+}
+
+func limitScanLogMessage(message string) string {
+	message = strings.ToValidUTF8(message, "\uFFFD")
+	if len(message) <= maxScanLogMessageBytes {
+		return message
+	}
+
+	limit := maxScanLogMessageBytes - len(scanLogTruncatedSuffix)
+	for limit > 0 && !utf8.RuneStart(message[limit]) {
+		limit--
+	}
+	return message[:limit] + scanLogTruncatedSuffix
 }
 
 func MarkInterruptedScanLogs(interruptedAt time.Time) error {

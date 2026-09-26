@@ -10,13 +10,13 @@ import (
 
 type SearchResult struct {
 	global.GVA_MODEL
-	Repo            string         `json:"repo" form:"repo" gorm:"column:repo;comment:;type:varchar(1000);size:1000;"`
+	Repo            string         `json:"repo" form:"repo" gorm:"column:repo;comment:;type:varchar(1000);size:1000;index:idx_search_result_repo_status,priority:1,length:191"`
 	RepoUrl         string         `gorm:"column:repository;type:varchar(200);"`
 	Matches         string         `json:"matches" form:"matches" gorm:"column:matches;comment:;type:text;"`
 	Keyword         string         `json:"keyword" form:"keyword" gorm:"column:keyword;comment:;type:varchar(100);size:100;"`
 	Path            string         `json:"path" form:"path" gorm:"column:path;comment:;type:varchar(500);size:100;"`
 	Url             string         `json:"url" form:"url" gorm:"column:url;comment:;type:varchar(500);size:500;"`
-	Status          int            `json:"status" form:"status" gorm:"column:status;comment:;type:int;size:3;"`
+	Status          int            `json:"status" form:"status" gorm:"column:status;comment:;type:int;size:3;index:idx_search_result_repo_status,priority:2"`
 	TextMatchesJson datatypes.JSON `json:"text_matches,omitempty" gorm:"type:json;"`
 }
 
@@ -60,8 +60,8 @@ func (result *SearchResult) CheckPathExists() bool {
 
 func (result *SearchResult) CheckRepoExists() bool {
 	var r SearchResult
-	queryResult := global.GVA_DB.Table("search_result").Where("repo = ? and status > ?",
-		result.Repo, global.UnhandledStatus).First(&r)
+	queryResult := global.GVA_DB.Table("search_result").Select("id").Where("repo = ? and status > ?",
+		result.Repo, global.UnhandledStatus).Take(&r)
 	err := queryResult.Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return false
