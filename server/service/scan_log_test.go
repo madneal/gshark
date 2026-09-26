@@ -17,10 +17,10 @@ func TestLimitScanLogMessagePreservesShortMessage(t *testing.T) {
 }
 
 func TestLimitScanLogMessageTruncatesAtUTF8Boundary(t *testing.T) {
-	message := strings.Repeat("\u4e2d", maxScanLogMessageBytes)
+	message := strings.Repeat("\u4e2d", maxScanLogMessageRunes+100)
 	got := limitScanLogMessage(message)
-	if len(got) > maxScanLogMessageBytes {
-		t.Fatalf("limited message uses %d bytes, want at most %d", len(got), maxScanLogMessageBytes)
+	if count := utf8.RuneCountInString(got); count != maxScanLogMessageRunes {
+		t.Fatalf("limited message uses %d characters, want %d", count, maxScanLogMessageRunes)
 	}
 	if !utf8.ValidString(got) {
 		t.Fatal("limited message is not valid UTF-8")

@@ -3,7 +3,6 @@ package service
 import (
 	"strings"
 	"time"
-	"unicode/utf8"
 
 	"github.com/madneal/gshark/global"
 	"github.com/madneal/gshark/model"
@@ -13,7 +12,7 @@ import (
 
 const (
 	scanHeartbeatStaleAfter = 45 * time.Second
-	maxScanLogMessageBytes  = 60 * 1024
+	maxScanLogMessageRunes  = 1000
 	scanLogTruncatedSuffix  = "\n...[truncated]"
 )
 
@@ -86,15 +85,13 @@ func FinishScanLog(id uint, outcome model.ScanOutcome, startedAt, finishedAt tim
 
 func limitScanLogMessage(message string) string {
 	message = strings.ToValidUTF8(message, "\uFFFD")
-	if len(message) <= maxScanLogMessageBytes {
+	runes := []rune(message)
+	if len(runes) <= maxScanLogMessageRunes {
 		return message
 	}
 
-	limit := maxScanLogMessageBytes - len(scanLogTruncatedSuffix)
-	for limit > 0 && !utf8.RuneStart(message[limit]) {
-		limit--
-	}
-	return message[:limit] + scanLogTruncatedSuffix
+	limit := maxScanLogMessageRunes - len([]rune(scanLogTruncatedSuffix))
+	return string(runes[:limit]) + scanLogTruncatedSuffix
 }
 
 func MarkInterruptedScanLogs(interruptedAt time.Time) error {
