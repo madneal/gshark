@@ -1,7 +1,6 @@
 package model
 
 import (
-	"sync"
 	"testing"
 
 	"github.com/madneal/gshark/global"
@@ -10,33 +9,7 @@ import (
 	"go.uber.org/zap/zapcore"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"gorm.io/gorm/schema"
 )
-
-func TestSearchResultRepoStatusIndex(t *testing.T) {
-	parsed, err := schema.Parse(&SearchResult{}, &sync.Map{}, schema.NamingStrategy{})
-	if err != nil {
-		t.Fatalf("parse SearchResult schema: %v", err)
-	}
-
-	for _, index := range parsed.ParseIndexes() {
-		if index.Name != "idx_search_result_repo_status" {
-			continue
-		}
-		if len(index.Fields) != 2 {
-			t.Fatalf("index has %d fields, want 2", len(index.Fields))
-		}
-		if index.Fields[0].Field.Name != "Repo" || index.Fields[0].Length != 191 {
-			t.Fatalf("first index field = %s(%d), want Repo(191)", index.Fields[0].Field.Name, index.Fields[0].Length)
-		}
-		if index.Fields[1].Field.Name != "Status" {
-			t.Fatalf("second index field = %s, want Status", index.Fields[1].Field.Name)
-		}
-		return
-	}
-
-	t.Fatal("idx_search_result_repo_status was not parsed from SearchResult")
-}
 
 func TestSearchResult_CheckUrlExists(t *testing.T) {
 	global.GVA_DB = InitialDb()

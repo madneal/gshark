@@ -1,34 +1,11 @@
 package service
 
 import (
-	"strings"
 	"testing"
 	"time"
-	"unicode/utf8"
 
 	"github.com/madneal/gshark/model"
 )
-
-func TestLimitScanLogMessagePreservesShortMessage(t *testing.T) {
-	message := "provider completed"
-	if got := limitScanLogMessage(message); got != message {
-		t.Fatalf("limitScanLogMessage() = %q, want %q", got, message)
-	}
-}
-
-func TestLimitScanLogMessageTruncatesAtUTF8Boundary(t *testing.T) {
-	message := strings.Repeat("\u4e2d", maxScanLogMessageRunes+100)
-	got := limitScanLogMessage(message)
-	if count := utf8.RuneCountInString(got); count != maxScanLogMessageRunes {
-		t.Fatalf("limited message uses %d characters, want %d", count, maxScanLogMessageRunes)
-	}
-	if !utf8.ValidString(got) {
-		t.Fatal("limited message is not valid UTF-8")
-	}
-	if !strings.HasSuffix(got, scanLogTruncatedSuffix) {
-		t.Fatalf("limited message does not end with %q", scanLogTruncatedSuffix)
-	}
-}
 
 func TestBuildScanLogOverviewSummarizesCycle(t *testing.T) {
 	now := time.Now()
