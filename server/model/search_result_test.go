@@ -1,14 +1,13 @@
 package model
 
 import (
-	"testing"
-
 	"github.com/madneal/gshark/global"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"testing"
 )
 
 func TestSearchResult_CheckUrlExists(t *testing.T) {
