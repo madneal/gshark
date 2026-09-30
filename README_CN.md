@@ -107,7 +107,7 @@ docker compose logs --tail=100 server scan
 
 scanner 通过 profile 或显式服务名按需启动。Web/server 健康检查仅表示 HTTP 存活，不代表数据库已就绪或扫描成功，仍需检查扫描日志。恢复旧 `GSHARK_VERSION` 只回退应用镜像，不回退数据库迁移。本次部署改造没有 SQL 迁移。
 
-维护者：Docker Images 工作流在 PR 中检查双架构构建和启动，正式 Release 发布版本化镜像清单。需允许 Actions 写入 Packages，并在首次发布后将两个 GHCR 包设为 public；确认匿名拉取成功后再宣布 Docker 镜像可用。不要重跑发布覆盖已有版本标签。基础镜像固定版本，仍需定期跟进安全更新。
+维护者：Docker Images 工作流在 PR 中仅检查双架构构建，不推送镜像；正式 Release 通过 Buildx 直接构建并推送后端、前端镜像，不再使用临时架构标签或独立的镜像清单发布任务。该流程验证构建，不执行容器启动检查。两个镜像均成功后再宣布版本可用；发布失败时可能只有其中一个镜像已推送，重跑发布可能替换该版本的镜像。需允许 Actions 写入 Packages，首次发布后将两个 GHCR 包设为 public，并确认匿名拉取成功。基础镜像固定 digest，仍需定期跟进安全更新。
 
 ## Release 包部署
 

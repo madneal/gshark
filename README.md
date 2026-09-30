@@ -107,7 +107,7 @@ docker compose logs --tail=100 server scan
 
 The scanner is opt-in via a Compose profile or explicit service name. Web/server health checks indicate HTTP liveness, not database readiness or scan success; verify scan logs separately. Reverting `GSHARK_VERSION` restores application images only, not database migrations. This deployment change adds no SQL migration.
 
-Maintainers: the Docker Images workflow smoke-tests both architectures on PRs and publishes versioned manifests on a formal release. Enable Actions package-write permissions and make both GHCR packages public after the first publication; confirm unauthenticated pulls before announcing Docker availability. Do not rerun publication to replace an existing version tag. Base images are version-pinned and need regular security updates.
+Maintainers: the Docker Images workflow builds both architectures on PRs without pushing images. Formal releases build and push the backend and web images directly with Buildx; there are no intermediate architecture tags or separate manifest-publishing jobs. This workflow checks builds, not container startup. Both image builds must succeed before announcing a version; a failed release may have published only one image. Rerunning publication can replace that version's images. Enable Actions package-write permissions and make both GHCR packages public after the first publication, then confirm unauthenticated pulls. Base images are digest-pinned and need regular security updates.
 
 ## Release Package Deployment
 

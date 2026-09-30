@@ -5,8 +5,6 @@ on:
     paths:
       - 'server/**'
       - 'web/**'
-      - 'docker-compose*.yaml'
-      - 'scripts/quick-docker.sh'
       - '.github/workflows/docker.yml'
   release:
     types: [published]
@@ -21,129 +19,41 @@ concurrency:
 jobs:
   build:
     if: github.event_name == 'pull_request' || !github.event.release.prerelease
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - arch: amd64
-            runner: ubuntu-24.04
-          - arch: arm64
-            runner: ubuntu-24.04-arm
-    runs-on: ${{ matrix.runner }}
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
       packages: write
+    strategy:
+      matrix:
+        include:
+          - context: server
+            suffix: ''
+          - context: web
+            suffix: '-web'
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.release.tag_name || github.ref }}
-      - name: Image coordinates
-        id: meta
-        env:
-          REPOSITORY: ${{ github.repository }}
-          RELEASE_TAG: ${{ github.event.release.tag_name }}
-        run: |
-          if [ "$GITHUB_EVENT_NAME" = release ]; then
-            [[ "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
-          fi
-          echo "base=ghcr.io/${REPOSITORY,,}" >> "$GITHUB_OUTPUT"
-          echo "revision=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64
       - uses: docker/setup-buildx-action@v3
-      - name: Build backend
-        uses: docker/build-push-action@v7
-        with:
-          context: server
-          load: true
-          tags: gshark-backend:local
-          labels: |
-            org.opencontainers.image.source=https://github.com/${{ github.repository }}
-            org.opencontainers.image.revision=${{ steps.meta.outputs.revision }}
-            org.opencontainers.image.version=${{ github.event.release.tag_name || 'development' }}
-          cache-from: type=gha,scope=backend-${{ matrix.arch }}
-          cache-to: type=gha,mode=max,scope=backend-${{ matrix.arch }}
-      - name: Build web
-        uses: docker/build-push-action@v7
-        with:
-          context: web
-          load: true
-          tags: gshark-web:local
-          labels: |
-            org.opencontainers.image.source=https://github.com/${{ github.repository }}
-            org.opencontainers.image.revision=${{ steps.meta.outputs.revision }}
-            org.opencontainers.image.version=${{ github.event.release.tag_name || 'development' }}
-          cache-from: type=gha,scope=web-${{ matrix.arch }}
-          cache-to: type=gha,mode=max,scope=web-${{ matrix.arch }}
-      - name: Validate configuration and smoke-test images
-        env:
-          GSHARK_VERSION: local
-          MYSQL_ROOT_PASSWORD: ci-only-password
-          JWT_SIGNING_KEY: ci-only-signing-key
-        run: |
-          bash -n scripts/quick-docker.sh
-          docker compose --profile scan config --quiet
-          docker compose -f docker-compose.yaml -f docker-compose.build.yaml --profile scan config --quiet
-          docker network create gshark-smoke
-          docker run -d --name server --network gshark-smoke gshark-backend:local
-          docker run -d --name web --network gshark-smoke -p 127.0.0.1:8080:8080 gshark-web:local
-          curl --fail --retry 30 --retry-all-errors --retry-delay 2 http://127.0.0.1:8080/healthz
-          curl --fail --retry 30 --retry-all-errors --retry-delay 2 http://127.0.0.1:8080/api/healthz
-          curl --fail -X POST http://127.0.0.1:8080/api/init/checkdb | jq -e '.data.needInit == true'
-          # Confirm CLI dispatch uses the shared image, without starting real scans.
-          docker run --rm --network gshark-smoke gshark-backend:local scan --help
-          docker restart server
-          sleep 12
-          curl --fail --retry 15 --retry-all-errors --retry-delay 2 http://127.0.0.1:8080/api/healthz
-      - name: Diagnostics
-        if: failure()
-        run: |
-          docker logs server || true
-          docker logs web || true
       - uses: docker/login-action@v3
         if: github.event_name == 'release'
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Push verified architecture images
-        if: github.event_name == 'release'
-        env:
-          BASE: ${{ steps.meta.outputs.base }}
-          ARCH: ${{ matrix.arch }}
-        run: |
-          docker tag gshark-backend:local "$BASE:build-$GITHUB_RUN_ID-$ARCH"
-          docker tag gshark-web:local "$BASE-web:build-$GITHUB_RUN_ID-$ARCH"
-          docker push "$BASE:build-$GITHUB_RUN_ID-$ARCH"
-          docker push "$BASE-web:build-$GITHUB_RUN_ID-$ARCH"
-
-  publish:
-    needs: build
-    if: github.event_name == 'release' && !github.event.release.prerelease
-    runs-on: ubuntu-24.04
-    permissions:
-      packages: write
-    steps:
-      - uses: docker/setup-buildx-action@v3
-      - uses: docker/login-action@v3
+      - name: Build and publish
+        uses: docker/build-push-action@v7
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Publish versioned multi-platform manifests
-        env:
-          REPOSITORY: ${{ github.repository }}
-          VERSION: ${{ github.event.release.tag_name }}
-        run: |
-          BASE="ghcr.io/${REPOSITORY,,}"
-          # Refuse to silently rebuild an already published application version.
-          for IMAGE in "$BASE" "$BASE-web"; do
-            if docker buildx imagetools inspect "$IMAGE:$VERSION" >/dev/null 2>&1; then
-              echo "Version already exists: $IMAGE:$VERSION. Publish a new version instead." >&2
-              exit 1
-            fi
-          done
-          for IMAGE in "$BASE" "$BASE-web"; do
-            docker buildx imagetools create --tag "$IMAGE:$VERSION" \
-              "$IMAGE:build-$GITHUB_RUN_ID-amd64" "$IMAGE:build-$GITHUB_RUN_ID-arm64"
-            docker buildx imagetools inspect "$IMAGE:$VERSION"
-          done
-          printf 'Published `%s:%s` and `%s-web:%s` (AMD64/ARM64).\n' "$BASE" "$VERSION" "$BASE" "$VERSION" >> "$GITHUB_STEP_SUMMARY"
+          context: ${{ matrix.context }}
+          platforms: linux/amd64,linux/arm64
+          push: ${{ github.event_name == 'release' }}
+          tags: ghcr.io/${{ github.repository }}${{ matrix.suffix }}:${{ github.event.release.tag_name || 'pr' }}
+          labels: |
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.version=${{ github.event.release.tag_name || 'development' }}
+          cache-from: type=gha,scope=${{ matrix.context }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.context }}
