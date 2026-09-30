@@ -138,11 +138,13 @@ else
     echo "[INFO] Initializing database (admin-user=${ADMIN_USER})..."
     # Separate process from long-lived serve: on success we must restart server
     # so GVA_DB reconnects (otherwise NeedInit blocks login).
+    MYSQL_PASSWORD="$("${COMPOSE[@]}" exec -T mysql printenv MYSQL_ROOT_PASSWORD)"
     set +e
-    "${COMPOSE[@]}" exec -T server sh -c 'exec ./gshark init --password "$GSHARK_MYSQL_PASSWORD" "$@"' sh \
+    "${COMPOSE[@]}" exec -T server ./gshark init \
         --host "$MYSQL_HOST" \
         --port "$MYSQL_PORT" \
         --user "$MYSQL_USER" \
+        --password "$MYSQL_PASSWORD" \
         --db "$MYSQL_DB" \
         --admin-user "$ADMIN_USER" \
         --admin-password "$ADMIN_PASSWORD"

@@ -3,9 +3,6 @@ x-backend: &backend
   restart: always
   environment:
     GSHARK_CONFIG: config.docker.yaml
-    GSHARK_MYSQL_PATH: mysql:3306
-    GSHARK_MYSQL_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in .env}
-    GSHARK_JWT_SIGNING_KEY: ${JWT_SIGNING_KEY:?Set JWT_SIGNING_KEY in .env}
   volumes:
     - ./server/config.docker.yaml:/go/src/github.com/madneal/gshark/server/config.docker.yaml
   depends_on:
@@ -41,7 +38,7 @@ services:
       server:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8080/healthz"]
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8080/"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -51,7 +48,7 @@ services:
     container_name: gshark-server
     command: ["serve"]
     healthcheck:
-      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8888/healthz"]
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "--post-data={}", "http://127.0.0.1:8888/init/checkdb"]
       interval: 10s
       timeout: 5s
       retries: 6
@@ -64,9 +61,6 @@ services:
     profiles: ["scan"]
     environment:
       GSHARK_CONFIG: config.docker.yaml
-      GSHARK_MYSQL_PATH: mysql:3306
-      GSHARK_MYSQL_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in .env}
-      GSHARK_JWT_SIGNING_KEY: ${JWT_SIGNING_KEY:?Set JWT_SIGNING_KEY in .env}
       GOMEMLIMIT: 384MiB
       GOGC: "75"
       GOMAXPROCS: "1"

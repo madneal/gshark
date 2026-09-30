@@ -36,16 +36,6 @@ func Viper(path ...string) *viper.Viper {
 
 	v := viper.New()
 	v.SetConfigFile(configFilename)
-	// Explicit bindings also participate in Unmarshal, unlike unbound AutomaticEnv keys.
-	for key, env := range map[string]string{
-		"mysql.path":      "GSHARK_MYSQL_PATH",
-		"mysql.password":  "GSHARK_MYSQL_PASSWORD",
-		"jwt.signing-key": "GSHARK_JWT_SIGNING_KEY",
-	} {
-		if err := v.BindEnv(key, env); err != nil {
-			panic(err)
-		}
-	}
 	err := v.ReadInConfig()
 	if err != nil {
 		panic(fmt.Errorf("Fatal error configFilename file: %s \n", err))

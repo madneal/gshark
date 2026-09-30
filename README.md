@@ -53,7 +53,8 @@ cd gshark
 # Configure the published version and secrets before starting
 cp .env.example .env
 chmod 600 .env server/config.docker.yaml
-# Edit .env: GSHARK_VERSION, MYSQL_ROOT_PASSWORD, JWT_SIGNING_KEY
+# Edit .env: GSHARK_VERSION, MYSQL_ROOT_PASSWORD
+# Edit server/config.docker.yaml: mysql.password, jwt.signing-key
 
 # Set a custom administrator during initialization
 ./scripts/quick-docker.sh --admin-user myadmin --admin-password 'S3cret!'
@@ -64,7 +65,7 @@ chmod 600 .env server/config.docker.yaml
 
 Production pulls `ghcr.io/madneal/gshark:<version>` and `ghcr.io/madneal/gshark-web:<version>`. Server and scanner use the same backend image in separate containers. Choose a release whose **Docker Images** workflow has completed; v2.1.26 and earlier do not have these images. There is no implicit `latest` tag. The application images support AMD64 and ARM64.
 
-Generate a new JWT key with `openssl rand -hex 32`. For existing installations, retain the current database root password and JWT signing key. Changing `.env` does not change a password inside an existing MySQL database. Environment variables override the Docker configuration's MySQL address/password and JWT key; initialization may also write these values to the mounted configuration, so protect both files. Keep the MySQL username as `root` for this bundled setup.
+The application continues to read `server/config.docker.yaml`: set `mysql.path` to `mysql:3306`, `mysql.username` to `root`, and `mysql.password` to the same value as `MYSQL_ROOT_PASSWORD` in `.env`. Set `jwt.signing-key` in YAML (generate a new key with `openssl rand -hex 32` for fresh installations). Existing installations must retain their database password and JWT key. `.env` configures Compose/MySQL, not application YAML, and does not change existing database credentials. Initialization writes database settings back to the mounted YAML; protect both files.
 
 Only the web port is published, on `127.0.0.1:8080` by default. Set `WEB_BIND_ADDRESS=0.0.0.0` for intentional LAN access and restrict access with your firewall/reverse proxy. MySQL and API ports are internal. In browser-based initialization use host `mysql`, port `3306`, user `root`, and the password configured in `.env`.
 
@@ -92,7 +93,7 @@ docker compose stop scan
 
 ### Docker Upgrades
 
-Back up MySQL and the configuration first. For the first migration from the old fixed-IP Compose setup, stop the old stack with `docker compose down` **before replacing its Compose file**, without deleting the database directory. Preserve any local configuration changes, prepare `.env`, and remove obsolete fixed-IP proxy overrides. Keep the project directory unchanged so the existing database bind mount is reused.
+Back up MySQL and the configuration first. For the first migration from the old fixed-IP Compose setup, stop the old stack with `docker compose down` **before replacing its Compose file**, without deleting the database directory. Preserve any local configuration changes, prepare `.env`, update `mysql.path` in the mounted YAML to `mysql:3306`, and remove obsolete fixed-IP proxy overrides. Keep the project directory unchanged so the existing database bind mount is reused.
 
 After updating `GSHARK_VERSION` in `.env` to a published image version:
 
@@ -105,7 +106,7 @@ docker compose ps
 docker compose logs --tail=100 server scan
 ```
 
-The scanner is opt-in via a Compose profile or explicit service name. Web/server health checks indicate HTTP liveness, not database readiness or scan success; verify scan logs separately. Reverting `GSHARK_VERSION` restores application images only, not database migrations. This deployment change adds no SQL migration.
+The scanner is opt-in via a Compose profile or explicit service name. Health checks reuse the web root and existing `POST /init/checkdb` endpoint; they check HTTP availability, not database readiness or scan success. Verify scan logs separately. Reverting `GSHARK_VERSION` restores application images only, not database migrations. This deployment change adds no SQL migration or application-code changes.
 
 Maintainers: the Docker Images workflow builds both architectures on PRs without pushing images. Formal releases build and push the backend and web images directly with Buildx; there are no intermediate architecture tags or separate manifest-publishing jobs. This workflow checks builds, not container startup. Both image builds must succeed before announcing a version; a failed release may have published only one image. Rerunning publication can replace that version's images. Enable Actions package-write permissions and make both GHCR packages public after the first publication, then confirm unauthenticated pulls. Base images are digest-pinned and need regular security updates.
 
