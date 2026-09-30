@@ -4,6 +4,7 @@
 /server/gshark
 **/log/
 .idea
+.env
 *.exe
 *.exe*
 repos

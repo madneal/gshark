@@ -50,8 +50,10 @@ Set a custom admin account via script/CLI flags (no browser init page required):
 git clone https://github.com/madneal/gshark.git
 cd gshark
 
-# Build the images, initialize MySQL, and start server/web
-./scripts/quick-docker.sh
+# Configure the published version and secrets before starting
+cp .env.example .env
+chmod 600 .env server/config.docker.yaml
+# Edit .env: GSHARK_VERSION, MYSQL_ROOT_PASSWORD, JWT_SIGNING_KEY
 
 # Set a custom administrator during initialization
 ./scripts/quick-docker.sh --admin-user myadmin --admin-password 'S3cret!'
@@ -59,6 +61,16 @@ cd gshark
 # Start the scanner after initialization as part of the same command
 ./scripts/quick-docker.sh --with-scan
 ```
+
+Production pulls `ghcr.io/madneal/gshark:<version>` and `ghcr.io/madneal/gshark-web:<version>`. Server and scanner use the same backend image in separate containers. Choose a release whose **Docker Images** workflow has completed; v2.1.26 and earlier do not have these images. There is no implicit `latest` tag. The application images support AMD64 and ARM64.
+
+Generate a new JWT key with `openssl rand -hex 32`. For existing installations, retain the current database root password and JWT signing key. Changing `.env` does not change a password inside an existing MySQL database. Environment variables override the Docker configuration's MySQL address/password and JWT key; initialization may also write these values to the mounted configuration, so protect both files. Keep the MySQL username as `root` for this bundled setup.
+
+Only the web port is published, on `127.0.0.1:8080` by default. Set `WEB_BIND_ADDRESS=0.0.0.0` for intentional LAN access and restrict access with your firewall/reverse proxy. MySQL and API ports are internal. In browser-based initialization use host `mysql`, port `3306`, user `root`, and the password configured in `.env`.
+
+The existing MySQL image and `./mysql` data directory are retained. Application multi-architecture support does not make `mysql/mysql-server:8.0.21` ARM64-compatible: fresh ARM64 installations must explicitly select a compatible MySQL image through `MYSQL_IMAGE` or arrange emulation. Do not change an existing database image without a verified upgrade and backup plan.
+
+For local source development, fill in the same secrets and run `./scripts/quick-docker.sh --build`. Subsequent development commands must include `-f docker-compose.yaml -f docker-compose.build.yaml`; build `server web` before starting `scan`. The script uses a local version placeholder in build mode and does not pull application images.
 
 > [!IMPORTANT]
 > The quick Docker script starts MySQL first, initializes the database, and only then starts the scanner when `--with-scan` is used. If you start the scanner manually with Docker Compose, wait until database initialization completes first.
@@ -77,6 +89,25 @@ docker compose logs -f server scan
 docker compose restart scan
 docker compose stop scan
 ```
+
+### Docker Upgrades
+
+Back up MySQL and the configuration first. For the first migration from the old fixed-IP Compose setup, stop the old stack with `docker compose down` **before replacing its Compose file**, without deleting the database directory. Preserve any local configuration changes, prepare `.env`, and remove obsolete fixed-IP proxy overrides. Keep the project directory unchanged so the existing database bind mount is reused.
+
+After updating `GSHARK_VERSION` in `.env` to a published image version:
+
+```bash
+docker compose --profile scan pull
+docker compose up -d --wait server web
+# Only after the database is initialized; omit when scanning is not wanted
+docker compose up -d scan
+docker compose ps
+docker compose logs --tail=100 server scan
+```
+
+The scanner is opt-in via a Compose profile or explicit service name. Web/server health checks indicate HTTP liveness, not database readiness or scan success; verify scan logs separately. Reverting `GSHARK_VERSION` restores application images only, not database migrations. This deployment change adds no SQL migration.
+
+Maintainers: the Docker Images workflow smoke-tests both architectures on PRs and publishes versioned manifests on a formal release. Enable Actions package-write permissions and make both GHCR packages public after the first publication; confirm unauthenticated pulls before announcing Docker availability. Do not rerun publication to replace an existing version tag. Base images are version-pinned and need regular security updates.
 
 ## Release Package Deployment
 

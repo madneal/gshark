@@ -1,93 +1,76 @@
-# 声明一个名为network的networks,subnet为network的子网地址,默认网关是177.7.0.1
-networks:
-  network:
-    ipam:
-      driver: default
-      config:
-        - subnet: '177.7.0.0/16'
+x-backend: &backend
+  image: ghcr.io/madneal/gshark:${GSHARK_VERSION:?Set GSHARK_VERSION in .env}
+  restart: always
+  environment:
+    GSHARK_CONFIG: config.docker.yaml
+    GSHARK_MYSQL_PATH: mysql:3306
+    GSHARK_MYSQL_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in .env}
+    GSHARK_JWT_SIGNING_KEY: ${JWT_SIGNING_KEY:?Set JWT_SIGNING_KEY in .env}
+  volumes:
+    - ./server/config.docker.yaml:/go/src/github.com/madneal/gshark/server/config.docker.yaml
+  depends_on:
+    mysql:
+      condition: service_healthy
 
 services:
   mysql:
-    image: mysql/mysql-server:8.0.21
+    # Keep the existing database image/data format during application upgrades.
+    image: ${MYSQL_IMAGE:-mysql/mysql-server:8.0.21}
     container_name: gshark-mysql
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
-    restart: "always"
-    ports:
-      - "13306:3306"  # host物理直接映射端口为13306
+    restart: always
     environment:
       MYSQL_ROOT_HOST: "%"
-      MYSQL_DATABASE:
-      MYSQL_ROOT_PASSWORD: 'madneal'
-      MYSQL_USER: 'gshark'
-      MYSQL_PASSWORD: 'gshark'
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in .env}
     volumes:
       - ./mysql:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      timeout: 2s
-      retries: 10
-    networks:
-      network:
-        ipv4_address: 177.7.0.13
+      test: ["CMD-SHELL", "MYSQL_PWD=\"$$MYSQL_ROOT_PASSWORD\" mysqladmin ping -h localhost --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
 
   web:
-    build:
-      context: ./web
-      dockerfile: ./Dockerfile
+    image: ghcr.io/madneal/gshark-web:${GSHARK_VERSION:?Set GSHARK_VERSION in .env}
     container_name: gshark-web
-    restart: "always"
+    restart: always
     ports:
-      - '8080:8080'
+      - '${WEB_BIND_ADDRESS:-127.0.0.1}:${WEB_PORT:-8080}:8080'
     depends_on:
-      - server
-    command: [ 'nginx', '-g', 'daemon off;' ]
-    networks:
-      network:
-        ipv4_address: 177.7.0.11
+      server:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8080/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
 
   server:
-    build:
-      context: ./server
-      dockerfile: deploy/serve/Dockerfile
-    environment:
-      - GSHARK_CONFIG=config.docker.yaml
+    <<: *backend
     container_name: gshark-server
-    volumes:
-      - ./server/config.docker.yaml:/go/src/github.com/madneal/gshark/server/config.docker.yaml
-    restart: "always"
-    ports:
-      - '8888:8888'
-    depends_on:
-      mysql:
-        condition: service_healthy
-    links:
-      - mysql
-    networks:
-      network:
-        ipv4_address: 177.7.0.12
+    command: ["serve"]
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8888/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 60s
 
   scan:
-    build:
-      context: ./server
-      dockerfile: deploy/scan/Dockerfile
-    environment:
-      - GSHARK_CONFIG=config.docker.yaml
-      - GOMEMLIMIT=384MiB
-      - GOGC=75
-      - GOMAXPROCS=1
+    <<: *backend
     container_name: gshark-scanner
+    command: ["scan"]
+    profiles: ["scan"]
+    environment:
+      GSHARK_CONFIG: config.docker.yaml
+      GSHARK_MYSQL_PATH: mysql:3306
+      GSHARK_MYSQL_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in .env}
+      GSHARK_JWT_SIGNING_KEY: ${JWT_SIGNING_KEY:?Set JWT_SIGNING_KEY in .env}
+      GOMEMLIMIT: 384MiB
+      GOGC: "75"
+      GOMAXPROCS: "1"
     mem_limit: 512m
     mem_reservation: 256m
     cpus: "1.0"
     pids_limit: 128
-    volumes:
-      - ./server/config.docker.yaml:/go/src/github.com/madneal/gshark/server/config.docker.yaml
-    restart: "always"
-    depends_on:
-      mysql:
-        condition: service_healthy
-    links:
-      - mysql
-    networks:
-      network:
-        ipv4_address: 177.7.0.14

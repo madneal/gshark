@@ -5,13 +5,13 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
 
 WITH_SCAN=false
+BUILD=false
 ADMIN_USER="gshark"
 ADMIN_PASSWORD="gshark"
 # MySQL settings matching config.docker.yaml / compose
-MYSQL_HOST="177.7.0.13"
+MYSQL_HOST="mysql"
 MYSQL_PORT="3306"
 MYSQL_USER="root"
-MYSQL_PASSWORD="madneal"
 MYSQL_DB="gshark"
 SKIP_INIT=false
 
@@ -19,11 +19,12 @@ usage() {
     cat <<'EOF'
 Usage: scripts/quick-docker.sh [options]
 
-Build GShark's server, web, and scanner images, start the server stack,
+Pull versioned GShark images, start the server stack,
 then initialize the database if needed (admin account via flags — no browser required).
 
 Options:
   --with-scan              Also start the scanner container.
+  --build                  Build local source using docker-compose.build.yaml.
   --admin-user NAME        Admin login username (default: gshark).
   --admin-password PASS    Admin login password (default: gshark).
   --skip-init              Do not run gshark init after start.
@@ -41,6 +42,9 @@ EOF
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
+        --build)
+            BUILD=true
+            ;;
         --with-scan)
             WITH_SCAN=true
             ;;
@@ -89,8 +93,19 @@ else
     exit 1
 fi
 
-echo "[INFO] Building server/web/scan images..."
-"${COMPOSE[@]}" build server web scan
+COMPOSE+=(-f docker-compose.yaml)
+if [[ "$BUILD" == true ]]; then
+    export GSHARK_VERSION="${GSHARK_VERSION:-local}"
+    COMPOSE+=(-f docker-compose.build.yaml)
+fi
+"${COMPOSE[@]}" config --quiet
+if [[ "$BUILD" == true ]]; then
+    echo "[INFO] Building backend/web images..."
+    "${COMPOSE[@]}" build server web
+else
+    echo "[INFO] Pulling versioned backend/web images..."
+    "${COMPOSE[@]}" pull server web scan
+fi
 
 echo "[INFO] Starting mysql..."
 "${COMPOSE[@]}" up -d mysql
@@ -124,11 +139,10 @@ else
     # Separate process from long-lived serve: on success we must restart server
     # so GVA_DB reconnects (otherwise NeedInit blocks login).
     set +e
-    docker exec gshark-server ./gshark init \
+    "${COMPOSE[@]}" exec -T server sh -c 'exec ./gshark init --password "$GSHARK_MYSQL_PASSWORD" "$@"' sh \
         --host "$MYSQL_HOST" \
         --port "$MYSQL_PORT" \
         --user "$MYSQL_USER" \
-        --password "$MYSQL_PASSWORD" \
         --db "$MYSQL_DB" \
         --admin-user "$ADMIN_USER" \
         --admin-password "$ADMIN_PASSWORD"
@@ -141,12 +155,18 @@ else
             echo "[INFO] Init applied; restarting server so it reconnects to MySQL..."
             "${COMPOSE[@]}" restart server
             # wait for server to accept traffic again
-            for i in $(seq 1 30); do
-                if curl -sS -o /dev/null -w '' -X POST "http://localhost:8888/init/checkdb" 2>/dev/null; then
+            ready=false
+            for i in $(seq 1 60); do
+                if [[ $(docker inspect --format='{{.State.Health.Status}}' gshark-server) == healthy ]]; then
+                    ready=true
                     break
                 fi
                 sleep 1
             done
+            if [[ "$ready" != true ]]; then
+                echo "[ERROR] Server did not become healthy after initialization." >&2
+                exit 1
+            fi
             ;;
         2)
             INIT_RESULT="skipped"
@@ -161,7 +181,9 @@ else
     esac
 fi
 
-if [[ "$WITH_SCAN" == true && "$INIT_RESULT" != "failed" ]]; then
+if [[ "$WITH_SCAN" == true && "$INIT_RESULT" == "skipped_flag" ]]; then
+    echo "[INFO] --skip-init supplied; start scan manually after confirming database initialization."
+elif [[ "$WITH_SCAN" == true && "$INIT_RESULT" != "failed" ]]; then
     echo "[INFO] Starting scan after database initialization..."
     "${COMPOSE[@]}" up -d scan
 fi
@@ -169,7 +191,8 @@ fi
 echo
 "${COMPOSE[@]}" ps
 echo
-echo "GShark is starting at: http://localhost:8080"
+echo "GShark web binding:"
+"${COMPOSE[@]}" port web 8080
 case "$INIT_RESULT" in
     applied)
         echo "Admin login: ${ADMIN_USER} / (password from --admin-password)"

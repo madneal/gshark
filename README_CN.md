@@ -50,8 +50,10 @@ gshark / gshark
 git clone https://github.com/madneal/gshark.git
 cd gshark
 
-# 构建镜像、初始化 MySQL，并启动 server/web
-./scripts/quick-docker.sh
+# 启动前配置已发布的版本和密钥
+cp .env.example .env
+chmod 600 .env server/config.docker.yaml
+# 编辑 .env：GSHARK_VERSION、MYSQL_ROOT_PASSWORD、JWT_SIGNING_KEY
 
 # 初始化时设置自定义管理员
 ./scripts/quick-docker.sh --admin-user myadmin --admin-password 'S3cret!'
@@ -59,6 +61,16 @@ cd gshark
 # 初始化完成后在同一命令中启动扫描器
 ./scripts/quick-docker.sh --with-scan
 ```
+
+生产环境拉取 `ghcr.io/madneal/gshark:<版本>` 和 `ghcr.io/madneal/gshark-web:<版本>`。server、scanner 使用同一后端镜像，仍是两个独立容器。请选择 **Docker Images** 工作流已成功完成的版本；v2.1.26 及更早版本没有这些镜像。不隐式使用 `latest`。应用镜像支持 AMD64 和 ARM64。
+
+新安装可用 `openssl rand -hex 32` 生成 JWT 密钥。旧安装必须保留当前数据库 root 密码和 JWT 签名密钥；修改 `.env` 不会修改现有 MySQL 数据库里的密码。环境变量覆盖 Docker 配置里的 MySQL 地址、密码和 JWT 密钥；初始化也可能将这些值写回挂载的配置文件，因此两个文件都需保护。使用配套数据库时，MySQL 用户名保持 `root`。
+
+默认只发布 `127.0.0.1:8080` Web 端口。如需局域网访问，显式设置 `WEB_BIND_ADDRESS=0.0.0.0`，并用防火墙或反向代理限制访问；MySQL、API 端口仅容器内部可达。使用网页初始化时，数据库地址填 `mysql`、端口 `3306`、用户 `root`，密码填写 `.env` 中配置的值。
+
+保留现有 MySQL 镜像和 `./mysql` 数据目录，不自动升级数据库。应用支持双架构不代表 `mysql/mysql-server:8.0.21` 支持 ARM64：ARM64 新安装需通过 `MYSQL_IMAGE` 显式选择兼容镜像，或自行配置模拟运行。现有数据库更换镜像前，必须确认升级兼容性并完成备份。
+
+本地源码开发填写同样的密钥后执行 `./scripts/quick-docker.sh --build`。之后的开发命令需附带 `-f docker-compose.yaml -f docker-compose.build.yaml`；先构建 `server web`，再启动 `scan`。构建模式使用本地版本占位值，不拉取应用镜像。
 
 > [!IMPORTANT]
 > Docker quick 脚本会先启动 MySQL、初始化数据库，只有使用 `--with-scan` 时才会在初始化完成后启动扫描器。如果手动使用 Docker Compose 启动扫描器，请先等待数据库初始化完成。
@@ -77,6 +89,25 @@ docker compose logs -f server scan
 docker compose restart scan
 docker compose stop scan
 ```
+
+### Docker 升级
+
+先备份 MySQL 和配置。首次从旧固定 IP Compose 迁移时，**在替换 Compose 文件前**用旧配置执行 `docker compose down`，不要删除数据库目录。保留本地配置修改，准备 `.env`，移除依赖旧固定 IP 的代理覆盖配置，并保持项目目录不变，以复用原有数据库挂载。
+
+将 `.env` 中的 `GSHARK_VERSION` 改为已发布镜像的版本后：
+
+```bash
+docker compose --profile scan pull
+docker compose up -d --wait server web
+# 仅在数据库初始化完成后执行；不需要扫描时省略
+docker compose up -d scan
+docker compose ps
+docker compose logs --tail=100 server scan
+```
+
+scanner 通过 profile 或显式服务名按需启动。Web/server 健康检查仅表示 HTTP 存活，不代表数据库已就绪或扫描成功，仍需检查扫描日志。恢复旧 `GSHARK_VERSION` 只回退应用镜像，不回退数据库迁移。本次部署改造没有 SQL 迁移。
+
+维护者：Docker Images 工作流在 PR 中检查双架构构建和启动，正式 Release 发布版本化镜像清单。需允许 Actions 写入 Packages，并在首次发布后将两个 GHCR 包设为 public；确认匿名拉取成功后再宣布 Docker 镜像可用。不要重跑发布覆盖已有版本标签。基础镜像固定版本，仍需定期跟进安全更新。
 
 ## Release 包部署
 

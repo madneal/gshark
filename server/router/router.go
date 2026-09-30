@@ -13,6 +13,10 @@ import (
 func Routers() *gin.Engine {
 	gin.SetMode(gin.ReleaseMode)
 	var Router = gin.Default()
+	// Liveness only: remain reachable before first-run database initialization.
+	Router.GET("/healthz", func(c *gin.Context) {
+		c.Status(http.StatusOK)
+	})
 	Router.StaticFS(global.GVA_CONFIG.Local.Path, http.Dir(global.GVA_CONFIG.Local.Path)) // 为用户头像和文件提供静态地址
 	// Router.Use(middleware.LoadTls())  // 打开就能玩https了
 	global.GVA_LOG.Info("use middleware logger")

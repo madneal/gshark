@@ -1,0 +1,10 @@
+.git
+gshark
+main
+log
+uploads
+repos
+config.yaml
+config-temp.yaml
+*_test.go
+**/*_test.go
