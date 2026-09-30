@@ -13,7 +13,7 @@ RUN apk add --no-cache ca-certificates tzdata
 WORKDIR /go/src/github.com/madneal/gshark/server
 ENV GSHARK_CONFIG=config.docker.yaml
 COPY --from=builder /out/gshark ./gshark
-COPY resource ./resource
+COPY resource/rbac_model.conf ./resource/rbac_model.conf
 COPY config.docker.yaml ./config.docker.yaml
 EXPOSE 8888
 ENTRYPOINT ["./gshark"]
