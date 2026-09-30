@@ -45,67 +45,38 @@ Set a custom admin account via script/CLI flags (no browser init page required):
 
 ## Docker Deployment
 
+Install Docker with Docker Compose, then clone the repository:
+
 ```bash
-# Clone the repository
 git clone https://github.com/madneal/gshark.git
 cd gshark
-
-# Check the three application image tags in docker-compose.yaml
-# Configure database passwords and server/config.docker.yaml before starting
-
-# Set a custom administrator during initialization
-./scripts/quick-docker.sh --admin-user myadmin --admin-password 'S3cret!'
-
-# Start the scanner after initialization as part of the same command
-./scripts/quick-docker.sh --with-scan
 ```
 
-Production pulls `ghcr.io/madneal/gshark:<version>` and `ghcr.io/madneal/gshark-web:<version>`. Server and scanner use the same backend image in separate containers. The Compose file targets v2.1.27, the planned first image release: until it is published, use `./scripts/quick-docker.sh --build`. Choose a release whose **Docker Images** workflow has completed; v2.1.26 and earlier do not have these images. The application images support AMD64 and ARM64.
+Before starting, set the same database password in `docker-compose.yaml` (`MYSQL_ROOT_PASSWORD`) and `server/config.docker.yaml` (`mysql.password`). Keep the database address as `mysql:3306`, and replace the default `jwt.signing-key` for a new installation. Preserve existing credentials when upgrading.
 
-No extra environment or Compose override file is required. The application reads `server/config.docker.yaml`: keep `mysql.path` as `mysql:3306`, and match `mysql.password` to `MYSQL_ROOT_PASSWORD` in Compose. Replace the example database password and `jwt.signing-key` for fresh installations; preserve the actual credentials for existing installations. Editing Compose does not reset an existing database password. Initialization writes database settings back to the mounted YAML.
-
-Only the web port is published, on `127.0.0.1:8080` by default. Edit the Compose port binding for intentional LAN access and restrict access with your firewall/reverse proxy. MySQL and API ports are internal. In browser-based initialization use host `mysql`, port `3306`, user `root`, and the configured database password.
-
-The existing MySQL image and `./mysql` data directory are retained. Application multi-architecture support does not make `mysql/mysql-server:8.0.21` ARM64-compatible: fresh ARM64 installations must explicitly choose a compatible MySQL image in Compose or arrange emulation. Do not change an existing database image without a verified upgrade and backup plan.
-
-For local source development, run `./scripts/quick-docker.sh --build`. It uses the same Compose file and builds `server web`; scanner reuses the backend image. The script starts these local images without pulling or rebuilding them. Local builds use the tags in Compose; run `docker compose pull server web scan` to replace them with published images when returning to release deployment.
-
-> [!IMPORTANT]
-> The quick Docker script starts MySQL first, initializes the database, and only then starts the scanner when `--with-scan` is used. If you start the scanner manually with Docker Compose, wait until database initialization completes first.
-
-> [!TIP]
-> Without `--with-scan`, sign in at `http://localhost:8080`, configure tokens and rules, then run `docker compose up -d scan`. If you use `--skip-init`, complete database initialization in the web UI first.
-
-The scanner container has conservative resource guardrails in `docker-compose.yaml`: a 512 MB memory limit, a 1 CPU limit, and Go's `GOMEMLIMIT=384MiB`. Scan results are persisted page by page so a large repository search does not remain fully resident in memory. If the scanner is OOM-killed, Compose restarts it automatically; monitor the actual usage with `docker stats gshark-scanner` before lowering the limits further.
-
-### Docker Operations
+Pull the configured GHCR images, initialize the database, and start the web interface:
 
 ```bash
-docker compose ps
-docker compose up -d scan
-docker compose logs -f server scan
-docker compose restart scan
-docker compose stop scan
+./scripts/quick-docker.sh --admin-user myadmin --admin-password 'S3cret!'
 ```
 
-### Docker Upgrades
+For a local source build, add `--build`. Use this option until the configured image version (currently v2.1.27) has been published.
 
-Back up MySQL and the configuration first. For the first migration from the old fixed-IP Compose setup, stop the old stack with `docker compose down` **before replacing its Compose file**, without deleting the database directory. Preserve local credentials, update `mysql.path` in the mounted YAML to `mysql:3306`, and remove obsolete fixed-IP proxy overrides. Keep the project directory unchanged so the existing database bind mount is reused.
+Open [http://localhost:8080](http://localhost:8080), sign in, configure tokens and rules, then start scanning:
 
-Update the image tags for `web`, `server`, and `scan` in Compose to the same published version, then:
+```bash
+docker compose up -d scan
+docker compose logs -f server scan
+```
+
+For LAN access, change the web port binding in Compose from `127.0.0.1:8080:8080` to `8080:8080` and restrict access with a firewall. ARM64 hosts also need a compatible MySQL image; the bundled MySQL 8.0.21 image is retained for existing installations.
+
+To upgrade, back up the database and configuration, update all three application image tags in Compose to the same published version, and run:
 
 ```bash
 docker compose pull server web scan
-docker compose up -d --no-build --pull never server web
-# Only after the database is initialized; omit when scanning is not wanted
-docker compose up -d --no-build --pull never scan
-docker compose ps
-docker compose logs --tail=100 server scan
+docker compose up -d --no-build --pull never server web scan
 ```
-
-The scanner is opt-in via a Compose profile or explicit service name. Check service and scan logs after upgrading; container startup does not prove successful scanning. Reverting image tags restores application images only, not database migrations. This deployment change adds no SQL migration or application-code changes.
-
-Maintainers: the Docker Images workflow builds both architectures on PRs without pushing images. Formal releases build and push the backend and web images directly with Buildx; there are no intermediate architecture tags or separate manifest-publishing jobs. This workflow checks builds, not container startup. Both image builds must succeed before announcing a version; a failed release may have published only one image. Rerunning publication can replace that version's images. Enable Actions package-write permissions and make both GHCR packages public after the first publication, then confirm unauthenticated pulls. Base images are digest-pinned and need regular security updates.
 
 ## Release Package Deployment
 

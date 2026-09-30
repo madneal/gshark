@@ -45,67 +45,38 @@ gshark / gshark
 
 ## Docker 部署
 
+安装 Docker 和 Docker Compose，然后克隆仓库：
+
 ```bash
-# 克隆仓库
 git clone https://github.com/madneal/gshark.git
 cd gshark
-
-# 检查 docker-compose.yaml 中三个应用镜像的版本
-# 启动前配置数据库密码及 server/config.docker.yaml
-
-# 初始化时设置自定义管理员
-./scripts/quick-docker.sh --admin-user myadmin --admin-password 'S3cret!'
-
-# 初始化完成后在同一命令中启动扫描器
-./scripts/quick-docker.sh --with-scan
 ```
 
-生产环境拉取 `ghcr.io/madneal/gshark:<版本>` 和 `ghcr.io/madneal/gshark-web:<版本>`。server、scanner 使用同一后端镜像，仍是两个独立容器。Compose 指向计划中的首个镜像版本 v2.1.27；该版本发布前请使用 `./scripts/quick-docker.sh --build`。请选择 **Docker Images** 工作流已成功完成的版本；v2.1.26 及更早版本没有这些镜像。应用镜像支持 AMD64 和 ARM64。
+启动前，将 `docker-compose.yaml` 中的 `MYSQL_ROOT_PASSWORD` 与 `server/config.docker.yaml` 中的 `mysql.password` 配置为相同密码，数据库地址保持 `mysql:3306`。新安装请更换默认 `jwt.signing-key`；升级时保留已有凭据。
 
-不需要额外的环境变量文件或 Compose 覆盖文件。应用继续读取 `server/config.docker.yaml`：`mysql.path` 保持 `mysql:3306`，`mysql.password` 与 Compose 中的 `MYSQL_ROOT_PASSWORD` 一致。新安装应更换示例数据库密码和 `jwt.signing-key`；旧安装保留真实凭据。编辑 Compose 不会重置已有数据库的密码。初始化仍会将数据库配置写回挂载的 YAML。
-
-默认只发布 `127.0.0.1:8080` Web 端口。如需局域网访问，直接修改 Compose 中的端口绑定，并用防火墙或反向代理限制访问；MySQL、API 端口仅容器内部可达。网页初始化时数据库地址填 `mysql`、端口 `3306`、用户 `root`，密码填写配置的数据库密码。
-
-保留现有 MySQL 镜像和 `./mysql` 数据目录，不自动升级数据库。应用支持双架构不代表 `mysql/mysql-server:8.0.21` 支持 ARM64：ARM64 新安装需直接在 Compose 中选择兼容的 MySQL 镜像，或自行配置模拟运行。现有数据库更换镜像前，必须确认升级兼容性并完成备份。
-
-本地源码开发执行 `./scripts/quick-docker.sh --build`，使用同一个 Compose 文件构建 `server web`，scanner 复用后端镜像；脚本启动时不再拉取或重复构建。源码构建使用 Compose 中配置的镜像标签；切回发布版本时执行 `docker compose pull server web scan` 替换本地构建镜像。
-
-> [!IMPORTANT]
-> Docker quick 脚本会先启动 MySQL、初始化数据库，只有使用 `--with-scan` 时才会在初始化完成后启动扫描器。如果手动使用 Docker Compose 启动扫描器，请先等待数据库初始化完成。
-
-> [!TIP]
-> 不使用 `--with-scan` 时，请登录 `http://localhost:8080` 配置 Token 和规则，再执行 `docker compose up -d scan`；如果使用了 `--skip-init`，则需先在网页中完成数据库初始化。
-
-扫描器在 `docker-compose.yaml` 中默认配置了资源保护：内存上限 512 MB、CPU 上限 1 核，并通过 `GOMEMLIMIT=384MiB` 让 Go 更积极地回收内存。搜索结果会按分页写入数据库，避免大规模搜索结果全部驻留内存。如果 scanner 因超过内存上限被 OOM kill，Compose 会自动重启；可以先使用 `docker stats gshark-scanner` 观察实际占用，再决定是否继续下调限制。
-
-### Docker 运维
+拉取配置的 GHCR 镜像，初始化数据库并启动 Web 界面：
 
 ```bash
-docker compose ps
-docker compose up -d scan
-docker compose logs -f server scan
-docker compose restart scan
-docker compose stop scan
+./scripts/quick-docker.sh --admin-user myadmin --admin-password 'S3cret!'
 ```
 
-### Docker 升级
+如需本地源码构建，在命令后添加 `--build`。配置的镜像版本（当前为 v2.1.27）发布前，请使用此方式。
 
-先备份 MySQL 和配置。首次从旧固定 IP Compose 迁移时，**在替换 Compose 文件前**用旧配置执行 `docker compose down`，不要删除数据库目录。保留本地真实凭据，将挂载 YAML 中的 `mysql.path` 改为 `mysql:3306`，移除依赖旧固定 IP 的代理覆盖配置，并保持项目目录不变，以复用原有数据库挂载。
+打开 [http://localhost:8080](http://localhost:8080)，登录后配置 Token 和规则，再启动扫描：
 
-将 Compose 中 `web`、`server`、`scan` 的镜像标签改为同一个已发布版本后：
+```bash
+docker compose up -d scan
+docker compose logs -f server scan
+```
+
+局域网访问需将 Compose 中的 Web 端口绑定从 `127.0.0.1:8080:8080` 改为 `8080:8080`，并通过防火墙限制访问。ARM64 主机还需选择兼容的 MySQL 镜像；默认保留 MySQL 8.0.21，避免自动升级已有数据库。
+
+升级前备份数据库和配置，将 Compose 中三个应用镜像标签改为同一个已发布版本，然后执行：
 
 ```bash
 docker compose pull server web scan
-docker compose up -d --no-build --pull never server web
-# 仅在数据库初始化完成后执行；不需要扫描时省略
-docker compose up -d --no-build --pull never scan
-docker compose ps
-docker compose logs --tail=100 server scan
+docker compose up -d --no-build --pull never server web scan
 ```
-
-scanner 通过 profile 或显式服务名按需启动。升级后检查服务和扫描日志，容器启动不代表扫描成功。恢复旧镜像标签只回退应用镜像，不回退数据库迁移。本次部署改造没有 SQL 迁移或应用代码修改。
-
-维护者：Docker Images 工作流在 PR 中仅检查双架构构建，不推送镜像；正式 Release 通过 Buildx 直接构建并推送后端、前端镜像，不再使用临时架构标签或独立的镜像清单发布任务。该流程验证构建，不执行容器启动检查。两个镜像均成功后再宣布版本可用；发布失败时可能只有其中一个镜像已推送，重跑发布可能替换该版本的镜像。需允许 Actions 写入 Packages，首次发布后将两个 GHCR 包设为 public，并确认匿名拉取成功。基础镜像固定 digest，仍需定期跟进安全更新。
 
 ## Release 包部署
 
