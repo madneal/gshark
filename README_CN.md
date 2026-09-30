@@ -50,11 +50,8 @@ gshark / gshark
 git clone https://github.com/madneal/gshark.git
 cd gshark
 
-# 启动前配置已发布的版本和密钥
-cp .env.example .env
-chmod 600 .env server/config.docker.yaml
-# 编辑 .env：GSHARK_VERSION、MYSQL_ROOT_PASSWORD
-# 编辑 server/config.docker.yaml：mysql.password、jwt.signing-key
+# 检查 docker-compose.yaml 中三个应用镜像的版本
+# 启动前配置数据库密码及 server/config.docker.yaml
 
 # 初始化时设置自定义管理员
 ./scripts/quick-docker.sh --admin-user myadmin --admin-password 'S3cret!'
@@ -63,15 +60,15 @@ chmod 600 .env server/config.docker.yaml
 ./scripts/quick-docker.sh --with-scan
 ```
 
-生产环境拉取 `ghcr.io/madneal/gshark:<版本>` 和 `ghcr.io/madneal/gshark-web:<版本>`。server、scanner 使用同一后端镜像，仍是两个独立容器。请选择 **Docker Images** 工作流已成功完成的版本；v2.1.26 及更早版本没有这些镜像。不隐式使用 `latest`。应用镜像支持 AMD64 和 ARM64。
+生产环境拉取 `ghcr.io/madneal/gshark:<版本>` 和 `ghcr.io/madneal/gshark-web:<版本>`。server、scanner 使用同一后端镜像，仍是两个独立容器。Compose 指向计划中的首个镜像版本 v2.1.27；该版本发布前请使用 `./scripts/quick-docker.sh --build`。请选择 **Docker Images** 工作流已成功完成的版本；v2.1.26 及更早版本没有这些镜像。应用镜像支持 AMD64 和 ARM64。
 
-应用继续读取 `server/config.docker.yaml`：`mysql.path` 填 `mysql:3306`，`mysql.username` 填 `root`，`mysql.password` 与 `.env` 中的 `MYSQL_ROOT_PASSWORD` 保持一致。JWT 密钥仍在 YAML 的 `jwt.signing-key` 中配置，新安装可用 `openssl rand -hex 32` 生成；旧安装保留当前数据库密码和 JWT 密钥。`.env` 仅配置 Compose/MySQL，不覆盖应用 YAML，也不会修改现有数据库密码。初始化会将数据库配置写回挂载的 YAML，因此两个文件都需保护。
+不需要额外的环境变量文件或 Compose 覆盖文件。应用继续读取 `server/config.docker.yaml`：`mysql.path` 保持 `mysql:3306`，`mysql.password` 与 Compose 中的 `MYSQL_ROOT_PASSWORD` 一致。新安装应更换示例数据库密码和 `jwt.signing-key`；旧安装保留真实凭据。编辑 Compose 不会重置已有数据库的密码。初始化仍会将数据库配置写回挂载的 YAML。
 
-默认只发布 `127.0.0.1:8080` Web 端口。如需局域网访问，显式设置 `WEB_BIND_ADDRESS=0.0.0.0`，并用防火墙或反向代理限制访问；MySQL、API 端口仅容器内部可达。使用网页初始化时，数据库地址填 `mysql`、端口 `3306`、用户 `root`，密码填写 `.env` 中配置的值。
+默认只发布 `127.0.0.1:8080` Web 端口。如需局域网访问，直接修改 Compose 中的端口绑定，并用防火墙或反向代理限制访问；MySQL、API 端口仅容器内部可达。网页初始化时数据库地址填 `mysql`、端口 `3306`、用户 `root`，密码填写配置的数据库密码。
 
-保留现有 MySQL 镜像和 `./mysql` 数据目录，不自动升级数据库。应用支持双架构不代表 `mysql/mysql-server:8.0.21` 支持 ARM64：ARM64 新安装需通过 `MYSQL_IMAGE` 显式选择兼容镜像，或自行配置模拟运行。现有数据库更换镜像前，必须确认升级兼容性并完成备份。
+保留现有 MySQL 镜像和 `./mysql` 数据目录，不自动升级数据库。应用支持双架构不代表 `mysql/mysql-server:8.0.21` 支持 ARM64：ARM64 新安装需直接在 Compose 中选择兼容的 MySQL 镜像，或自行配置模拟运行。现有数据库更换镜像前，必须确认升级兼容性并完成备份。
 
-本地源码开发填写同样的密钥后执行 `./scripts/quick-docker.sh --build`。之后的开发命令需附带 `-f docker-compose.yaml -f docker-compose.build.yaml`；先构建 `server web`，再启动 `scan`。构建模式使用本地版本占位值，不拉取应用镜像。
+本地源码开发执行 `./scripts/quick-docker.sh --build`，使用同一个 Compose 文件构建 `server web`，scanner 复用后端镜像；脚本启动时不再拉取或重复构建。源码构建使用 Compose 中配置的镜像标签；切回发布版本时执行 `docker compose pull server web scan` 替换本地构建镜像。
 
 > [!IMPORTANT]
 > Docker quick 脚本会先启动 MySQL、初始化数据库，只有使用 `--with-scan` 时才会在初始化完成后启动扫描器。如果手动使用 Docker Compose 启动扫描器，请先等待数据库初始化完成。
@@ -93,20 +90,20 @@ docker compose stop scan
 
 ### Docker 升级
 
-先备份 MySQL 和配置。首次从旧固定 IP Compose 迁移时，**在替换 Compose 文件前**用旧配置执行 `docker compose down`，不要删除数据库目录。保留本地配置修改，准备 `.env`，将挂载 YAML 中的 `mysql.path` 改为 `mysql:3306`，移除依赖旧固定 IP 的代理覆盖配置，并保持项目目录不变，以复用原有数据库挂载。
+先备份 MySQL 和配置。首次从旧固定 IP Compose 迁移时，**在替换 Compose 文件前**用旧配置执行 `docker compose down`，不要删除数据库目录。保留本地真实凭据，将挂载 YAML 中的 `mysql.path` 改为 `mysql:3306`，移除依赖旧固定 IP 的代理覆盖配置，并保持项目目录不变，以复用原有数据库挂载。
 
-将 `.env` 中的 `GSHARK_VERSION` 改为已发布镜像的版本后：
+将 Compose 中 `web`、`server`、`scan` 的镜像标签改为同一个已发布版本后：
 
 ```bash
-docker compose --profile scan pull
-docker compose up -d --wait server web
+docker compose pull server web scan
+docker compose up -d --no-build --pull never server web
 # 仅在数据库初始化完成后执行；不需要扫描时省略
-docker compose up -d scan
+docker compose up -d --no-build --pull never scan
 docker compose ps
 docker compose logs --tail=100 server scan
 ```
 
-scanner 通过 profile 或显式服务名按需启动。健康检查复用 Web 首页及已有的 `POST /init/checkdb` 接口，仅检查 HTTP 可用性，不代表数据库已就绪或扫描成功，仍需检查扫描日志。恢复旧 `GSHARK_VERSION` 只回退应用镜像，不回退数据库迁移。本次部署改造没有 SQL 迁移或应用代码修改。
+scanner 通过 profile 或显式服务名按需启动。升级后检查服务和扫描日志，容器启动不代表扫描成功。恢复旧镜像标签只回退应用镜像，不回退数据库迁移。本次部署改造没有 SQL 迁移或应用代码修改。
 
 维护者：Docker Images 工作流在 PR 中仅检查双架构构建，不推送镜像；正式 Release 通过 Buildx 直接构建并推送后端、前端镜像，不再使用临时架构标签或独立的镜像清单发布任务。该流程验证构建，不执行容器启动检查。两个镜像均成功后再宣布版本可用；发布失败时可能只有其中一个镜像已推送，重跑发布可能替换该版本的镜像。需允许 Actions 写入 Packages，首次发布后将两个 GHCR 包设为 public，并确认匿名拉取成功。基础镜像固定 digest，仍需定期跟进安全更新。
 

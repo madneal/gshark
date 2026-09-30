@@ -24,7 +24,7 @@ then initialize the database if needed (admin account via flags — no browser r
 
 Options:
   --with-scan              Also start the scanner container.
-  --build                  Build local source using docker-compose.build.yaml.
+  --build                  Build local source instead of pulling images.
   --admin-user NAME        Admin login username (default: gshark).
   --admin-password PASS    Admin login password (default: gshark).
   --skip-init              Do not run gshark init after start.
@@ -94,10 +94,6 @@ else
 fi
 
 COMPOSE+=(-f docker-compose.yaml)
-if [[ "$BUILD" == true ]]; then
-    export GSHARK_VERSION="${GSHARK_VERSION:-local}"
-    COMPOSE+=(-f docker-compose.build.yaml)
-fi
 "${COMPOSE[@]}" config --quiet
 if [[ "$BUILD" == true ]]; then
     echo "[INFO] Building backend/web images..."
@@ -111,7 +107,7 @@ echo "[INFO] Starting mysql..."
 "${COMPOSE[@]}" up -d mysql
 
 echo "[INFO] Starting server/web..."
-"${COMPOSE[@]}" up -d server web
+"${COMPOSE[@]}" up -d --no-build --pull never server web
 
 INIT_RESULT="skipped" # skipped | applied | failed | skipped_flag
 
@@ -159,14 +155,14 @@ else
             # wait for server to accept traffic again
             ready=false
             for i in $(seq 1 60); do
-                if [[ $(docker inspect --format='{{.State.Health.Status}}' gshark-server) == healthy ]]; then
+                if "${COMPOSE[@]}" exec -T server wget -q -O /dev/null --post-data='{}' http://127.0.0.1:8888/init/checkdb; then
                     ready=true
                     break
                 fi
                 sleep 1
             done
             if [[ "$ready" != true ]]; then
-                echo "[ERROR] Server did not become healthy after initialization." >&2
+                echo "[ERROR] Server did not respond after initialization." >&2
                 exit 1
             fi
             ;;
@@ -187,7 +183,7 @@ if [[ "$WITH_SCAN" == true && "$INIT_RESULT" == "skipped_flag" ]]; then
     echo "[INFO] --skip-init supplied; start scan manually after confirming database initialization."
 elif [[ "$WITH_SCAN" == true && "$INIT_RESULT" != "failed" ]]; then
     echo "[INFO] Starting scan after database initialization..."
-    "${COMPOSE[@]}" up -d scan
+    "${COMPOSE[@]}" up -d --no-build --pull never scan
 fi
 
 echo
