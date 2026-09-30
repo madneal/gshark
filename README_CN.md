@@ -45,13 +45,19 @@ gshark / gshark
 
 ## Docker 部署
 
-部署条件：Docker 已启动，并安装 Docker Compose、Bash、curl 和 unzip。不需要 Go、Node.js，也不需要 clone 仓库。
+部署条件：Docker 已启动，并安装 Docker Compose、Bash 和 curl。不需要 Go、Node.js，也不需要 clone 仓库。
 
-从[发布页面](https://github.com/madneal/gshark/releases)选择 Docker 镜像已发布的版本，下载 `gshark_docker.zip` 后解压：
+从[发布页面](https://github.com/madneal/gshark/releases)选择 Docker 镜像已发布的版本，将三个部署文件下载到新目录。按需替换示例版本：
 
 ```bash
-unzip gshark_docker.zip
-cd gshark_docker
+VERSION=v2.1.27
+BASE="https://github.com/madneal/gshark/releases/download/$VERSION"
+mkdir gshark-docker
+cd gshark-docker
+mkdir server scripts
+curl -fL "$BASE/docker-compose.yaml" -o docker-compose.yaml
+curl -fL "$BASE/config.docker.yaml" -o server/config.docker.yaml
+curl -fL "$BASE/quick-docker.sh" -o scripts/quick-docker.sh
 ```
 
 默认管理员账号为 `gshark / gshark`，可以使用下面的参数在初始化时设置自己的账号密码。
@@ -62,9 +68,9 @@ cd gshark_docker
 bash scripts/quick-docker.sh --admin-user myadmin --admin-password 'S3cret!'
 ```
 
-部署包只包含 Compose、配置文件和启动脚本，镜像标签自动与 Release 版本一致。部署前需确认 Docker Images 工作流成功且镜像可公开拉取。v2.1.26 及更早版本没有此部署包。
+下载的 Compose 文件中，镜像版本自动与 Release 一致。部署前需确认 Docker Images 工作流成功且镜像可公开拉取。v2.1.26 及更早版本没有单独提供这三个附件。
 
-如需源码构建（包括首个 Docker 部署包发布前），克隆仓库后执行 `bash scripts/quick-docker.sh --build`；仅含部署文件的压缩包不支持此选项。
+如需源码构建（包括这些附件首次发布前），克隆仓库后执行 `bash scripts/quick-docker.sh --build`；仅下载部署文件不支持此选项。
 
 脚本还支持 `--with-scan`，在初始化后同时启动扫描器；也可以按下面的步骤先配置 Token 和规则，再手动启动扫描。
 

@@ -96,7 +96,7 @@ fi
 
 if [[ "$BUILD" == true ]]; then
     if [[ ! -f server/Dockerfile || ! -f web/Dockerfile ]]; then
-        echo "[ERROR] --build requires a source checkout; omit it when using the Docker deployment package." >&2
+        echo "[ERROR] --build requires a source checkout; omit it when using downloaded deployment files." >&2
         exit 1
     fi
     echo "[INFO] Building backend/web images..."

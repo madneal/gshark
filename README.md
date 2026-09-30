@@ -45,13 +45,19 @@ Set a custom admin account via script/CLI flags (no browser init page required):
 
 ## Docker Deployment
 
-Requirements: a running Docker Engine, Docker Compose, Bash, curl, and unzip. No Go, Node.js, or Git checkout is needed.
+Requirements: a running Docker Engine, Docker Compose, Bash, and curl. No Go, Node.js, or Git checkout is needed.
 
-Download `gshark_docker.zip` from a [release](https://github.com/madneal/gshark/releases) whose Docker images have been published, then extract it:
+Choose a [release](https://github.com/madneal/gshark/releases) with published Docker images and download its three deployment files into a new directory. Replace the example version as needed:
 
 ```bash
-unzip gshark_docker.zip
-cd gshark_docker
+VERSION=v2.1.27
+BASE="https://github.com/madneal/gshark/releases/download/$VERSION"
+mkdir gshark-docker
+cd gshark-docker
+mkdir server scripts
+curl -fL "$BASE/docker-compose.yaml" -o docker-compose.yaml
+curl -fL "$BASE/config.docker.yaml" -o server/config.docker.yaml
+curl -fL "$BASE/quick-docker.sh" -o scripts/quick-docker.sh
 ```
 
 The default administrator account is `gshark / gshark`. Use the options below to set your own credentials during initialization.
@@ -62,9 +68,9 @@ Pull the images from GitHub Container Registry (GHCR), initialize MySQL, and sta
 bash scripts/quick-docker.sh --admin-user myadmin --admin-password 'S3cret!'
 ```
 
-The package contains only Compose, configuration, and the startup script. Its image tags automatically match the release version. The Docker Images workflow must finish successfully and the images must be publicly accessible before deployment. Releases v2.1.26 and earlier do not include this package.
+The downloaded Compose file automatically matches the release's image version. Wait for the Docker Images workflow to succeed and the images to become publicly accessible before deploying. Releases v2.1.26 and earlier do not provide these files as separate assets.
 
-For source builds (including before the first Docker package is released), clone the repository and run `bash scripts/quick-docker.sh --build`; this option is not available in the deployment-only package.
+For source builds (including before these assets are first released), clone the repository and run `bash scripts/quick-docker.sh --build`; downloaded deployment files alone do not support this option.
 
 The script accepts `--with-scan` to also start the scanner after initialization. Otherwise, start scanning after configuring tokens and rules as shown below.
 
