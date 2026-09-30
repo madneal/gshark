@@ -106,7 +106,7 @@ echo "[INFO] Starting mysql..."
 "${COMPOSE[@]}" up -d mysql
 
 echo "[INFO] Starting server/web..."
-"${COMPOSE[@]}" up -d --no-build --pull never server web
+"${COMPOSE[@]}" up -d --no-build server web
 
 INIT_RESULT="skipped" # skipped | applied | failed | skipped_flag
 
@@ -173,7 +173,7 @@ fi
 
 if [[ "$WITH_SCAN" == true && "$INIT_RESULT" != "failed" ]]; then
     echo "[INFO] Starting scan after database initialization..."
-    "${COMPOSE[@]}" up -d --no-build --pull never scan
+    "${COMPOSE[@]}" up -d --no-build scan
 fi
 
 echo
