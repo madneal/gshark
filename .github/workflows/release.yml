@@ -91,6 +91,28 @@ jobs:
         run: |
           GOOS=linux GOARCH=amd64 go build -o gshark && cp gshark ../release/gshark_linux_amd64
 
+      - name: Package Docker deployment
+        if: ${{ !github.event.release.prerelease }}
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          IMAGE_REPOSITORY: ${{ github.repository }}
+        run: |
+          mkdir -p release/gshark_docker/server release/gshark_docker/scripts
+          cp server/config.docker.yaml release/gshark_docker/server/
+          cp scripts/quick-docker.sh release/gshark_docker/scripts/
+          node <<'NODE'
+          const fs = require('node:fs');
+          const yaml = require('./web/node_modules/js-yaml');
+          const config = yaml.load(fs.readFileSync('docker-compose.yaml', 'utf8'));
+          const image = `ghcr.io/${process.env.IMAGE_REPOSITORY.toLowerCase()}`;
+          for (const name of ['server', 'scan', 'web']) {
+            config.services[name].image = `${image}${name === 'web' ? '-web' : ''}:${process.env.RELEASE_TAG}`;
+            delete config.services[name].build;
+          }
+          fs.writeFileSync('release/gshark_docker/docker-compose.yaml', yaml.dump(config));
+          NODE
+          7z a -r ./release/gshark_docker.zip ./release/gshark_docker/
+
       - name: Compress
         run: |
           7z a -r ./release/gshark_darwin_amd64.zip ./release/gshark_darwin_amd64/ &&

@@ -45,11 +45,13 @@ Set a custom admin account via script/CLI flags (no browser init page required):
 
 ## Docker Deployment
 
-Prerequisites: Docker is running and `docker compose version` succeeds. Download the source and deployment files:
+Requirements: a running Docker Engine, Docker Compose, Bash, curl, and unzip. No Go, Node.js, or Git checkout is needed.
+
+Download `gshark_docker.zip` from a [release](https://github.com/madneal/gshark/releases) whose Docker images have been published, then extract it:
 
 ```bash
-git clone https://github.com/madneal/gshark.git
-cd gshark
+unzip gshark_docker.zip
+cd gshark_docker
 ```
 
 The default administrator account is `gshark / gshark`. Use the options below to set your own credentials during initialization.
@@ -57,10 +59,12 @@ The default administrator account is `gshark / gshark`. Use the options below to
 Pull the images from GitHub Container Registry (GHCR), initialize MySQL, and start the backend and web interface (without the scanner):
 
 ```bash
-./scripts/quick-docker.sh --admin-user myadmin --admin-password 'S3cret!'
+bash scripts/quick-docker.sh --admin-user myadmin --admin-password 'S3cret!'
 ```
 
-For a local source build, add `--build`. Use this option until the configured image version (currently v2.1.27) has been published.
+The package contains only Compose, configuration, and the startup script. Its image tags automatically match the release version. The Docker Images workflow must finish successfully and the images must be publicly accessible before deployment. Releases v2.1.26 and earlier do not include this package.
+
+For source builds (including before the first Docker package is released), clone the repository and run `bash scripts/quick-docker.sh --build`; this option is not available in the deployment-only package.
 
 The script accepts `--with-scan` to also start the scanner after initialization. Otherwise, start scanning after configuring tokens and rules as shown below.
 

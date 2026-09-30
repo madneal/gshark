@@ -45,11 +45,13 @@ gshark / gshark
 
 ## Docker 部署
 
-准备好 Docker，确认 Docker 已启动且 `docker compose version` 能正常执行。下载源码和部署文件：
+部署条件：Docker 已启动，并安装 Docker Compose、Bash、curl 和 unzip。不需要 Go、Node.js，也不需要 clone 仓库。
+
+从[发布页面](https://github.com/madneal/gshark/releases)选择 Docker 镜像已发布的版本，下载 `gshark_docker.zip` 后解压：
 
 ```bash
-git clone https://github.com/madneal/gshark.git
-cd gshark
+unzip gshark_docker.zip
+cd gshark_docker
 ```
 
 默认管理员账号为 `gshark / gshark`，可以使用下面的参数在初始化时设置自己的账号密码。
@@ -57,10 +59,12 @@ cd gshark
 从 GitHub 镜像仓库（GHCR）拉取镜像，初始化 MySQL，并启动后端和 Web 界面（暂不启动扫描器）：
 
 ```bash
-./scripts/quick-docker.sh --admin-user myadmin --admin-password 'S3cret!'
+bash scripts/quick-docker.sh --admin-user myadmin --admin-password 'S3cret!'
 ```
 
-如需本地源码构建，在命令后添加 `--build`。配置的镜像版本（当前为 v2.1.27）发布前，请使用此方式。
+部署包只包含 Compose、配置文件和启动脚本，镜像标签自动与 Release 版本一致。部署前需确认 Docker Images 工作流成功且镜像可公开拉取。v2.1.26 及更早版本没有此部署包。
+
+如需源码构建（包括首个 Docker 部署包发布前），克隆仓库后执行 `bash scripts/quick-docker.sh --build`；仅含部署文件的压缩包不支持此选项。
 
 脚本还支持 `--with-scan`，在初始化后同时启动扫描器；也可以按下面的步骤先配置 Token 和规则，再手动启动扫描。
 
