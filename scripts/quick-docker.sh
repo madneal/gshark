@@ -5,7 +5,6 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
 
 WITH_SCAN=false
-BUILD=false
 ADMIN_USER="gshark"
 ADMIN_PASSWORD="gshark"
 # MySQL settings matching config.docker.yaml / compose
@@ -20,12 +19,11 @@ usage() {
     cat <<'EOF'
 Usage: scripts/quick-docker.sh [options]
 
-Pull GShark images, start the server stack,
+Pull GShark's server, web, and scanner images, start the server stack,
 then initialize the database if needed (admin account via flags — no browser required).
 
 Options:
   --with-scan              Also start the scanner container.
-  --build                  Build local images instead of pulling a release.
   --admin-user NAME        Admin login username (default: gshark).
   --admin-password PASS    Admin login password (default: gshark).
   --skip-init              Do not run gshark init after start.
@@ -43,9 +41,6 @@ EOF
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        --build)
-            BUILD=true
-            ;;
         --with-scan)
             WITH_SCAN=true
             ;;
@@ -94,23 +89,14 @@ else
     exit 1
 fi
 
-if [[ "$BUILD" == true ]]; then
-    if [[ ! -f server/Dockerfile || ! -f web/Dockerfile ]]; then
-        echo "[ERROR] --build requires a source checkout; omit it when using downloaded deployment files." >&2
-        exit 1
-    fi
-    echo "[INFO] Building backend/web images..."
-    "${COMPOSE[@]}" build server web
-else
-    echo "[INFO] Pulling backend/web images..."
-    "${COMPOSE[@]}" pull server web scan
-fi
+echo "[INFO] Pulling server/web/scan images..."
+"${COMPOSE[@]}" pull server web scan
 
 echo "[INFO] Starting mysql..."
 "${COMPOSE[@]}" up -d mysql
 
 echo "[INFO] Starting server/web..."
-"${COMPOSE[@]}" up -d --no-build server web
+"${COMPOSE[@]}" up -d server web
 
 INIT_RESULT="skipped" # skipped | applied | failed | skipped_flag
 
@@ -177,7 +163,7 @@ fi
 
 if [[ "$WITH_SCAN" == true && "$INIT_RESULT" != "failed" ]]; then
     echo "[INFO] Starting scan after database initialization..."
-    "${COMPOSE[@]}" up -d --no-build scan
+    "${COMPOSE[@]}" up -d scan
 fi
 
 echo

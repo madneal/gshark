@@ -45,63 +45,39 @@ gshark / gshark
 
 ## Docker 部署
 
-部署条件：Docker 已启动，并安装 Docker Compose、Bash 和 curl。不需要 Go、Node.js，也不需要 clone 仓库。
-
-从[发布页面](https://github.com/madneal/gshark/releases)选择 Docker 镜像已发布的版本，将三个部署文件下载到新目录。按需替换示例版本：
+脚本从 GitHub 镜像仓库（GHCR）拉取 `docker-compose.yaml` 指定版本的镜像。server 和 scanner 共用后端镜像，初始化流程和启动命令保持不变。
 
 ```bash
-VERSION=v2.1.27
-BASE="https://github.com/madneal/gshark/releases/download/$VERSION"
-mkdir gshark-docker
-cd gshark-docker
-mkdir server scripts
-curl -fL "$BASE/docker-compose.yaml" -o docker-compose.yaml
-curl -fL "$BASE/config.docker.yaml" -o server/config.docker.yaml
-curl -fL "$BASE/quick-docker.sh" -o scripts/quick-docker.sh
+# 克隆仓库
+git clone https://github.com/madneal/gshark.git
+cd gshark
+
+# 拉取镜像、初始化 MySQL，并启动 server/web
+./scripts/quick-docker.sh
+
+# 初始化时设置自定义管理员
+./scripts/quick-docker.sh --admin-user myadmin --admin-password 'S3cret!'
+
+# 初始化完成后在同一命令中启动扫描器
+./scripts/quick-docker.sh --with-scan
 ```
 
-默认管理员账号为 `gshark / gshark`，可以使用下面的参数在初始化时设置自己的账号密码。
+> [!IMPORTANT]
+> Docker quick 脚本会先启动 MySQL、初始化数据库，只有使用 `--with-scan` 时才会在初始化完成后启动扫描器。如果手动使用 Docker Compose 启动扫描器，请先等待数据库初始化完成。
 
-从 GitHub 镜像仓库（GHCR）拉取镜像，初始化 MySQL，并启动后端和 Web 界面（暂不启动扫描器）：
+> [!TIP]
+> 不使用 `--with-scan` 时，请登录 `http://localhost:8080` 配置 Token 和规则，再执行 `docker compose up -d scan`；如果使用了 `--skip-init`，则需先在网页中完成数据库初始化。
 
-```bash
-bash scripts/quick-docker.sh --admin-user myadmin --admin-password 'S3cret!'
-```
+扫描器在 `docker-compose.yaml` 中默认配置了资源保护：内存上限 512 MB、CPU 上限 1 核，并通过 `GOMEMLIMIT=384MiB` 让 Go 更积极地回收内存。搜索结果会按分页写入数据库，避免大规模搜索结果全部驻留内存。如果 scanner 因超过内存上限被 OOM kill，Compose 会自动重启；可以先使用 `docker stats gshark-scanner` 观察实际占用，再决定是否继续下调限制。
 
-下载的 Compose 文件中，镜像版本自动与 Release 一致。部署前需确认 Docker Images 工作流成功且镜像可公开拉取。v2.1.26 及更早版本没有单独提供这三个附件。
-
-如需源码构建（包括这些附件首次发布前），克隆仓库后执行 `bash scripts/quick-docker.sh --build`；仅下载部署文件不支持此选项。
-
-脚本还支持 `--with-scan`，在初始化后同时启动扫描器；也可以按下面的步骤先配置 Token 和规则，再手动启动扫描。
-
-打开 [http://localhost:8080](http://localhost:8080)，登录后配置 Token 和规则，再启动扫描：
+### Docker 运维
 
 ```bash
+docker compose ps
 docker compose up -d scan
 docker compose logs -f server scan
-```
-
-### 启停服务
-
-Compose 中的后端服务名是 `server`，不是 `serve`：它执行 `gshark serve`；`scan` 服务执行 `gshark scan`。两者使用同一个镜像，但运行在独立容器中。首次初始化完成后：
-
-```bash
-docker compose up -d server web  # 启动后端和 Web 界面
-docker compose up -d scan        # 启动扫描
-docker compose ps               # 查看服务状态
-docker compose restart server   # 重启后端
-docker compose restart scan     # 重启扫描器
-docker compose stop scan        # 停止扫描，保留 Web 界面
-docker compose stop server web  # 停止后端和 Web 界面
-```
-
-ARM64 部署需选择兼容的 MySQL 镜像；默认的 `mysql/mysql-server:8.0.21` 不支持 ARM64 原生运行。
-
-升级前备份数据库和配置，将 Compose 中三个应用镜像标签改为同一个已发布版本，然后执行：
-
-```bash
-docker compose pull server web scan
-docker compose up -d --no-build server web scan
+docker compose restart scan
+docker compose stop scan
 ```
 
 ## Release 包部署

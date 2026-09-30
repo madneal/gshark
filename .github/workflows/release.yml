@@ -91,26 +91,6 @@ jobs:
         run: |
           GOOS=linux GOARCH=amd64 go build -o gshark && cp gshark ../release/gshark_linux_amd64
 
-      - name: Export Docker deployment files
-        if: ${{ !github.event.release.prerelease }}
-        env:
-          RELEASE_TAG: ${{ github.event.release.tag_name }}
-          IMAGE_REPOSITORY: ${{ github.repository }}
-        run: |
-          cp server/config.docker.yaml release/config.docker.yaml
-          cp scripts/quick-docker.sh release/quick-docker.sh
-          node <<'NODE'
-          const fs = require('node:fs');
-          const yaml = require('./web/node_modules/js-yaml');
-          const config = yaml.load(fs.readFileSync('docker-compose.yaml', 'utf8'));
-          const image = `ghcr.io/${process.env.IMAGE_REPOSITORY.toLowerCase()}`;
-          for (const name of ['server', 'scan', 'web']) {
-            config.services[name].image = `${image}${name === 'web' ? '-web' : ''}:${process.env.RELEASE_TAG}`;
-            delete config.services[name].build;
-          }
-          fs.writeFileSync('release/docker-compose.yaml', yaml.dump(config));
-          NODE
-
       - name: Compress
         run: |
           7z a -r ./release/gshark_darwin_amd64.zip ./release/gshark_darwin_amd64/ &&

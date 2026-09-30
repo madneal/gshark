@@ -45,63 +45,39 @@ Set a custom admin account via script/CLI flags (no browser init page required):
 
 ## Docker Deployment
 
-Requirements: a running Docker Engine, Docker Compose, Bash, and curl. No Go, Node.js, or Git checkout is needed.
-
-Choose a [release](https://github.com/madneal/gshark/releases) with published Docker images and download its three deployment files into a new directory. Replace the example version as needed:
+The script pulls the image versions specified in `docker-compose.yaml` from GitHub Container Registry (GHCR). Server and scanner share one backend image; initialization and startup commands are unchanged.
 
 ```bash
-VERSION=v2.1.27
-BASE="https://github.com/madneal/gshark/releases/download/$VERSION"
-mkdir gshark-docker
-cd gshark-docker
-mkdir server scripts
-curl -fL "$BASE/docker-compose.yaml" -o docker-compose.yaml
-curl -fL "$BASE/config.docker.yaml" -o server/config.docker.yaml
-curl -fL "$BASE/quick-docker.sh" -o scripts/quick-docker.sh
+# Clone the repository
+git clone https://github.com/madneal/gshark.git
+cd gshark
+
+# Pull the images, initialize MySQL, and start server/web
+./scripts/quick-docker.sh
+
+# Set a custom administrator during initialization
+./scripts/quick-docker.sh --admin-user myadmin --admin-password 'S3cret!'
+
+# Start the scanner after initialization as part of the same command
+./scripts/quick-docker.sh --with-scan
 ```
 
-The default administrator account is `gshark / gshark`. Use the options below to set your own credentials during initialization.
+> [!IMPORTANT]
+> The quick Docker script starts MySQL first, initializes the database, and only then starts the scanner when `--with-scan` is used. If you start the scanner manually with Docker Compose, wait until database initialization completes first.
 
-Pull the images from GitHub Container Registry (GHCR), initialize MySQL, and start the backend and web interface (without the scanner):
+> [!TIP]
+> Without `--with-scan`, sign in at `http://localhost:8080`, configure tokens and rules, then run `docker compose up -d scan`. If you use `--skip-init`, complete database initialization in the web UI first.
 
-```bash
-bash scripts/quick-docker.sh --admin-user myadmin --admin-password 'S3cret!'
-```
+The scanner container has conservative resource guardrails in `docker-compose.yaml`: a 512 MB memory limit, a 1 CPU limit, and Go's `GOMEMLIMIT=384MiB`. Scan results are persisted page by page so a large repository search does not remain fully resident in memory. If the scanner is OOM-killed, Compose restarts it automatically; monitor the actual usage with `docker stats gshark-scanner` before lowering the limits further.
 
-The downloaded Compose file automatically matches the release's image version. Wait for the Docker Images workflow to succeed and the images to become publicly accessible before deploying. Releases v2.1.26 and earlier do not provide these files as separate assets.
-
-For source builds (including before these assets are first released), clone the repository and run `bash scripts/quick-docker.sh --build`; downloaded deployment files alone do not support this option.
-
-The script accepts `--with-scan` to also start the scanner after initialization. Otherwise, start scanning after configuring tokens and rules as shown below.
-
-Open [http://localhost:8080](http://localhost:8080), sign in, configure tokens and rules, then start scanning:
+### Docker Operations
 
 ```bash
+docker compose ps
 docker compose up -d scan
 docker compose logs -f server scan
-```
-
-### Start and Stop Services
-
-The Compose service is named `server`, not `serve`: it runs `gshark serve`. The `scan` service runs `gshark scan`. They use the same image but run in separate containers. After the initial setup:
-
-```bash
-docker compose up -d server web  # Start the backend and web interface
-docker compose up -d scan        # Start scanning
-docker compose ps               # Show service status
-docker compose restart server   # Restart the backend
-docker compose restart scan     # Restart the scanner
-docker compose stop scan        # Stop scanning; keep the web interface running
-docker compose stop server web  # Stop the backend and web interface
-```
-
-ARM64 installations require a compatible MySQL image; the default `mysql/mysql-server:8.0.21` image does not provide native ARM64 support.
-
-To upgrade, back up the database and configuration, update all three application image tags in Compose to the same published version, and run:
-
-```bash
-docker compose pull server web scan
-docker compose up -d --no-build server web scan
+docker compose restart scan
+docker compose stop scan
 ```
 
 ## Release Package Deployment
