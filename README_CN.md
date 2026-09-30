@@ -45,22 +45,24 @@ gshark / gshark
 
 ## Docker 部署
 
-安装 Docker 和 Docker Compose，然后克隆仓库：
+准备好 Docker，确认 Docker 已启动且 `docker compose version` 能正常执行。下载源码和部署文件：
 
 ```bash
 git clone https://github.com/madneal/gshark.git
 cd gshark
 ```
 
-数据库配置和初始化流程保持不变。未自定义时，默认管理员账号仍为 `gshark / gshark`；对外开放服务前请修改默认密码。
+默认管理员账号为 `gshark / gshark`，可以使用下面的参数在初始化时设置自己的账号密码。
 
-拉取配置的 GHCR 镜像，初始化数据库并启动 Web 界面：
+从 GitHub 镜像仓库（GHCR）拉取镜像，初始化 MySQL，并启动后端和 Web 界面（暂不启动扫描器）：
 
 ```bash
 ./scripts/quick-docker.sh --admin-user myadmin --admin-password 'S3cret!'
 ```
 
 如需本地源码构建，在命令后添加 `--build`。配置的镜像版本（当前为 v2.1.27）发布前，请使用此方式。
+
+脚本还支持 `--with-scan`，在初始化后同时启动扫描器；也可以按下面的步骤先配置 Token 和规则，再手动启动扫描。
 
 打开 [http://localhost:8080](http://localhost:8080)，登录后配置 Token 和规则，再启动扫描：
 
@@ -69,13 +71,27 @@ docker compose up -d scan
 docker compose logs -f server scan
 ```
 
-端口映射保持原样，请通过防火墙限制访问。ARM64 主机还需选择兼容的 MySQL 镜像；默认保留 MySQL 8.0.21，避免自动升级已有数据库。
+### 启停服务
+
+Compose 中的后端服务名是 `server`，不是 `serve`：它执行 `gshark serve`；`scan` 服务执行 `gshark scan`。两者使用同一个镜像，但运行在独立容器中。首次初始化完成后：
+
+```bash
+docker compose up -d server web  # 启动后端和 Web 界面
+docker compose up -d scan        # 启动扫描
+docker compose ps               # 查看服务状态
+docker compose restart server   # 重启后端
+docker compose restart scan     # 重启扫描器
+docker compose stop scan        # 停止扫描，保留 Web 界面
+docker compose stop server web  # 停止后端和 Web 界面
+```
+
+ARM64 部署需选择兼容的 MySQL 镜像；默认的 `mysql/mysql-server:8.0.21` 不支持 ARM64 原生运行。
 
 升级前备份数据库和配置，将 Compose 中三个应用镜像标签改为同一个已发布版本，然后执行：
 
 ```bash
 docker compose pull server web scan
-docker compose up -d --no-build --pull never server web scan
+docker compose up -d --no-build server web scan
 ```
 
 ## Release 包部署

@@ -45,22 +45,24 @@ Set a custom admin account via script/CLI flags (no browser init page required):
 
 ## Docker Deployment
 
-Install Docker with Docker Compose, then clone the repository:
+Prerequisites: Docker is running and `docker compose version` succeeds. Download the source and deployment files:
 
 ```bash
 git clone https://github.com/madneal/gshark.git
 cd gshark
 ```
 
-The existing database configuration and initialization flow are unchanged. Default administrator credentials remain `gshark / gshark` unless customized below; change default passwords before exposing the service.
+The default administrator account is `gshark / gshark`. Use the options below to set your own credentials during initialization.
 
-Pull the configured GHCR images, initialize the database, and start the web interface:
+Pull the images from GitHub Container Registry (GHCR), initialize MySQL, and start the backend and web interface (without the scanner):
 
 ```bash
 ./scripts/quick-docker.sh --admin-user myadmin --admin-password 'S3cret!'
 ```
 
 For a local source build, add `--build`. Use this option until the configured image version (currently v2.1.27) has been published.
+
+The script accepts `--with-scan` to also start the scanner after initialization. Otherwise, start scanning after configuring tokens and rules as shown below.
 
 Open [http://localhost:8080](http://localhost:8080), sign in, configure tokens and rules, then start scanning:
 
@@ -69,13 +71,27 @@ docker compose up -d scan
 docker compose logs -f server scan
 ```
 
-Existing port mappings are unchanged; restrict access with a firewall. ARM64 hosts also need a compatible MySQL image; the bundled MySQL 8.0.21 image is retained for existing installations.
+### Start and Stop Services
+
+The Compose service is named `server`, not `serve`: it runs `gshark serve`. The `scan` service runs `gshark scan`. They use the same image but run in separate containers. After the initial setup:
+
+```bash
+docker compose up -d server web  # Start the backend and web interface
+docker compose up -d scan        # Start scanning
+docker compose ps               # Show service status
+docker compose restart server   # Restart the backend
+docker compose restart scan     # Restart the scanner
+docker compose stop scan        # Stop scanning; keep the web interface running
+docker compose stop server web  # Stop the backend and web interface
+```
+
+ARM64 installations require a compatible MySQL image; the default `mysql/mysql-server:8.0.21` image does not provide native ARM64 support.
 
 To upgrade, back up the database and configuration, update all three application image tags in Compose to the same published version, and run:
 
 ```bash
 docker compose pull server web scan
-docker compose up -d --no-build --pull never server web scan
+docker compose up -d --no-build server web scan
 ```
 
 ## Release Package Deployment
