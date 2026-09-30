@@ -52,7 +52,7 @@ git clone https://github.com/madneal/gshark.git
 cd gshark
 ```
 
-启动前，将 `docker-compose.yaml` 中的 `MYSQL_ROOT_PASSWORD` 与 `server/config.docker.yaml` 中的 `mysql.password` 配置为相同密码，数据库地址保持 `mysql:3306`。新安装请更换默认 `jwt.signing-key`；升级时保留已有凭据。
+数据库配置和初始化流程保持不变。未自定义时，默认管理员账号仍为 `gshark / gshark`；对外开放服务前请修改默认密码。
 
 拉取配置的 GHCR 镜像，初始化数据库并启动 Web 界面：
 
@@ -69,7 +69,7 @@ docker compose up -d scan
 docker compose logs -f server scan
 ```
 
-局域网访问需将 Compose 中的 Web 端口绑定从 `127.0.0.1:8080:8080` 改为 `8080:8080`，并通过防火墙限制访问。ARM64 主机还需选择兼容的 MySQL 镜像；默认保留 MySQL 8.0.21，避免自动升级已有数据库。
+端口映射保持原样，请通过防火墙限制访问。ARM64 主机还需选择兼容的 MySQL 镜像；默认保留 MySQL 8.0.21，避免自动升级已有数据库。
 
 升级前备份数据库和配置，将 Compose 中三个应用镜像标签改为同一个已发布版本，然后执行：
 

@@ -9,9 +9,10 @@ BUILD=false
 ADMIN_USER="gshark"
 ADMIN_PASSWORD="gshark"
 # MySQL settings matching config.docker.yaml / compose
-MYSQL_HOST="mysql"
+MYSQL_HOST="177.7.0.13"
 MYSQL_PORT="3306"
 MYSQL_USER="root"
+MYSQL_PASSWORD="madneal"
 MYSQL_DB="gshark"
 SKIP_INIT=false
 
@@ -19,12 +20,12 @@ usage() {
     cat <<'EOF'
 Usage: scripts/quick-docker.sh [options]
 
-Pull versioned GShark images, start the server stack,
+Pull GShark images, start the server stack,
 then initialize the database if needed (admin account via flags — no browser required).
 
 Options:
   --with-scan              Also start the scanner container.
-  --build                  Build local source instead of pulling images.
+  --build                  Build local images instead of pulling a release.
   --admin-user NAME        Admin login username (default: gshark).
   --admin-password PASS    Admin login password (default: gshark).
   --skip-init              Do not run gshark init after start.
@@ -93,13 +94,11 @@ else
     exit 1
 fi
 
-COMPOSE+=(-f docker-compose.yaml)
-"${COMPOSE[@]}" config --quiet
 if [[ "$BUILD" == true ]]; then
     echo "[INFO] Building backend/web images..."
     "${COMPOSE[@]}" build server web
 else
-    echo "[INFO] Pulling versioned backend/web images..."
+    echo "[INFO] Pulling backend/web images..."
     "${COMPOSE[@]}" pull server web scan
 fi
 
@@ -134,9 +133,8 @@ else
     echo "[INFO] Initializing database (admin-user=${ADMIN_USER})..."
     # Separate process from long-lived serve: on success we must restart server
     # so GVA_DB reconnects (otherwise NeedInit blocks login).
-    MYSQL_PASSWORD="$("${COMPOSE[@]}" exec -T mysql printenv MYSQL_ROOT_PASSWORD)"
     set +e
-    "${COMPOSE[@]}" exec -T server ./gshark init \
+    docker exec gshark-server ./gshark init \
         --host "$MYSQL_HOST" \
         --port "$MYSQL_PORT" \
         --user "$MYSQL_USER" \
@@ -153,18 +151,12 @@ else
             echo "[INFO] Init applied; restarting server so it reconnects to MySQL..."
             "${COMPOSE[@]}" restart server
             # wait for server to accept traffic again
-            ready=false
-            for i in $(seq 1 60); do
-                if "${COMPOSE[@]}" exec -T server wget -q -O /dev/null --post-data='{}' http://127.0.0.1:8888/init/checkdb; then
-                    ready=true
+            for i in $(seq 1 30); do
+                if curl -sS -o /dev/null -w '' -X POST "http://localhost:8888/init/checkdb" 2>/dev/null; then
                     break
                 fi
                 sleep 1
             done
-            if [[ "$ready" != true ]]; then
-                echo "[ERROR] Server did not respond after initialization." >&2
-                exit 1
-            fi
             ;;
         2)
             INIT_RESULT="skipped"
@@ -179,9 +171,7 @@ else
     esac
 fi
 
-if [[ "$WITH_SCAN" == true && "$INIT_RESULT" == "skipped_flag" ]]; then
-    echo "[INFO] --skip-init supplied; start scan manually after confirming database initialization."
-elif [[ "$WITH_SCAN" == true && "$INIT_RESULT" != "failed" ]]; then
+if [[ "$WITH_SCAN" == true && "$INIT_RESULT" != "failed" ]]; then
     echo "[INFO] Starting scan after database initialization..."
     "${COMPOSE[@]}" up -d --no-build --pull never scan
 fi
@@ -189,8 +179,7 @@ fi
 echo
 "${COMPOSE[@]}" ps
 echo
-echo "GShark web binding:"
-"${COMPOSE[@]}" port web 8080
+echo "GShark is starting at: http://localhost:8080"
 case "$INIT_RESULT" in
     applied)
         echo "Admin login: ${ADMIN_USER} / (password from --admin-password)"

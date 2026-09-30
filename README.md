@@ -52,7 +52,7 @@ git clone https://github.com/madneal/gshark.git
 cd gshark
 ```
 
-Before starting, set the same database password in `docker-compose.yaml` (`MYSQL_ROOT_PASSWORD`) and `server/config.docker.yaml` (`mysql.password`). Keep the database address as `mysql:3306`, and replace the default `jwt.signing-key` for a new installation. Preserve existing credentials when upgrading.
+The existing database configuration and initialization flow are unchanged. Default administrator credentials remain `gshark / gshark` unless customized below; change default passwords before exposing the service.
 
 Pull the configured GHCR images, initialize the database, and start the web interface:
 
@@ -69,7 +69,7 @@ docker compose up -d scan
 docker compose logs -f server scan
 ```
 
-For LAN access, change the web port binding in Compose from `127.0.0.1:8080:8080` to `8080:8080` and restrict access with a firewall. ARM64 hosts also need a compatible MySQL image; the bundled MySQL 8.0.21 image is retained for existing installations.
+Existing port mappings are unchanged; restrict access with a firewall. ARM64 hosts also need a compatible MySQL image; the bundled MySQL 8.0.21 image is retained for existing installations.
 
 To upgrade, back up the database and configuration, update all three application image tags in Compose to the same published version, and run:
 
