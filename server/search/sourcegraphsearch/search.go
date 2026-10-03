@@ -20,8 +20,9 @@ import (
 )
 
 const (
-	defaultSourcegraphURL = "https://sourcegraph.com"
-	defaultRequestTimeout = 2 * time.Minute
+	defaultSourcegraphURL              = "https://sourcegraph.com"
+	defaultSourcegraphRepositoryFilter = `-repo:^github\.com/`
+	defaultRequestTimeout              = 2 * time.Minute
 )
 
 var (
@@ -274,6 +275,7 @@ func globalQuery(content string) string {
 	if !strings.Contains(query, "archived:") {
 		query += " archived:yes"
 	}
+	query += " " + defaultSourcegraphRepositoryFilter
 	return strings.TrimSpace(query)
 }
 

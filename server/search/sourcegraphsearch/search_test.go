@@ -13,7 +13,7 @@ import (
 
 func TestGlobalQueryIncludesExhaustiveRepositoryFilters(t *testing.T) {
 	query := globalQuery("ghp_")
-	for _, part := range []string{"ghp_", "count:all", "fork:yes", "archived:yes"} {
+	for _, part := range []string{"ghp_", "count:all", "fork:yes", "archived:yes", `-repo:^github\.com/`} {
 		if !strings.Contains(query, part) {
 			t.Fatalf("query %q does not contain %q", query, part)
 		}
@@ -67,7 +67,7 @@ func (fn roundTripFunc) RoundTrip(req *http.Request) (*http.Response, error) {
 
 func TestSearchForSourcegraphParsesMatches(t *testing.T) {
 	client := &http.Client{Transport: roundTripFunc(func(req *http.Request) (*http.Response, error) {
-		if req.URL.Query().Get("q") != "ghp_ count:all fork:yes archived:yes" {
+		if req.URL.Query().Get("q") != `ghp_ count:all fork:yes archived:yes -repo:^github\.com/` {
 			t.Fatalf("unexpected query: %s", req.URL.Query().Get("q"))
 		}
 		body := "event: matches\ndata: [{\"type\":\"content\",\"repository\":\"gitlab.com/acme/app\",\"path\":\".env\",\"commit\":\"deadbeef\",\"lineMatches\":[{\"line\":\"TOKEN=example\",\"lineNumber\":3}]}]\n\nevent: progress\ndata: {\"done\":true,\"matchCount\":1,\"repositoriesCount\":1}\n\nevent: done\ndata: {}\n\n"
