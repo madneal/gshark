@@ -1,8 +1,6 @@
-<p align="center">
-   <img alt="GShark logo" src="https://s1.ax1x.com/2018/10/17/idhZvj.png" />
-   <h3 align="center">GShark</h3>
-   <p align="center">Scan for sensitive information easily and effectively.</p>
-</p>
+
+<p align="center"><img width="500" height="500" alt="image" src="https://github.com/user-attachments/assets/38fa9ded-1854-4884-99d5-c81720fa1bf6" /></p>
+
 
 <div align="center">
    <a href="README_CN.md">🇨🇳 中文版</a> | <strong>🇺🇸 English</strong>
