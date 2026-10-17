@@ -33,7 +33,7 @@
     "autoprefixer": "^10.5.0",
     "core-js": "^3.21.1",
     "eslint": "^8.10.0",
-    "eslint-plugin-vue": "^9.32.0",
+    "eslint-plugin-vue": "^10.11.1",
     "numericjs": "^1.2.6",
     "playwright-core": "^1.59.1",
     "sass": "^1.49.9",
