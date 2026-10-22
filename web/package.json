@@ -37,7 +37,7 @@
     "numericjs": "^1.2.6",
     "playwright-core": "^1.59.1",
     "sass": "^1.49.9",
-    "vite": "^8.0.16"
+    "vite": "^8.3.5"
   },
   "overrides": {
     "brace-expansion": "1.1.18",
