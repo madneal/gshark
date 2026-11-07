@@ -1,0 +1,142 @@
+// ============================================================
+// GShark 设计令牌（Design Tokens）
+// 唯一的颜色/字号/圆角/阴影事实来源。语义令牌 -> Element Plus
+// CSS 变量映射，组件库全库自动换肤，视图层零改动。
+// 旧 --gs-dark-* 变量在此作为语义令牌的别名保留，兼容存量样式。
+// ============================================================
+
+:root {
+    /* ---- 品牌与语义色（light · shadcn neutral，主色近单色） ---- */
+    --gs-brand: #18181b;
+    --gs-brand-strong: #3f3f46;
+    --gs-success: #10b981;
+    --gs-warning: #f59e0b;
+    --gs-danger: #ef4444;
+    --gs-info: #64748b;
+
+    /* ---- 中性色阶（light · slate） ---- */
+    --gs-bg-page: #f7f7f8;
+    --gs-bg-card: #ffffff;
+    --gs-bg-subtle: #f4f4f5;
+    --gs-bg-aside: #ffffff;
+    --gs-border: #e4e4e7;
+    --gs-border-strong: #d4d4d8;
+    --gs-text: #18181b;
+    --gs-text-secondary: #52525b;
+    --gs-text-muted: #a1a1aa;
+
+    /* ---- 形状与字体 ---- */
+    --gs-radius: 8px;
+    --gs-radius-lg: 12px;
+    --gs-font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas,
+        "Liberation Mono", monospace;
+    --gs-shadow-card: none;
+    --gs-shadow-pop: 0 8px 24px rgba(0, 0, 0, 0.08);
+    --gs-hover: rgba(0, 0, 0, 0.045);
+
+    /* ---- 旧变量别名（存量样式兼容，随主题自动切换） ---- */
+    --gs-dark-bg: var(--gs-bg-page);
+    --gs-dark-bg-soft: var(--gs-bg-subtle);
+    --gs-dark-panel: var(--gs-bg-card);
+    --gs-dark-panel-soft: var(--gs-bg-subtle);
+    --gs-dark-border: var(--gs-border-strong);
+    --gs-dark-border-soft: var(--gs-border);
+    --gs-dark-text: var(--gs-text);
+    --gs-dark-muted: var(--gs-text-secondary);
+    --gs-dark-subtle: var(--gs-text-muted);
+    --gs-dark-primary: var(--gs-brand);
+    --gs-dark-primary-strong: var(--gs-brand-strong);
+    --gs-dark-success: var(--gs-success);
+    --gs-dark-danger: var(--gs-danger);
+    --gs-dark-warning: var(--gs-warning);
+}
+
+html.dark {
+    --gs-brand: #fafafa;
+    --gs-brand-strong: #d4d4d8;
+
+    /* ---- 中性色阶（dark · slate 控制台） ---- */
+    --gs-bg-page: #141416;
+    --gs-bg-card: #1c1c1f;
+    --gs-bg-subtle: #26262a;
+    --gs-bg-aside: #17171a;
+    --gs-border: #2e2e33;
+    --gs-border-strong: #3f3f46;
+    --gs-text: #f4f4f5;
+    --gs-text-secondary: #a1a1aa;
+    --gs-text-muted: #71717a;
+
+    --gs-shadow-card: none;
+    --gs-shadow-pop: 0 8px 24px rgba(0, 0, 0, 0.5);
+    --gs-hover: rgba(255, 255, 255, 0.08);
+}
+
+// ============================================================
+// Element Plus 变量映射（ep 的 dark/css-vars.css 先于本文件加载，
+// 此处覆盖即生效；light-3/5/7/8/9 用 color-mix 派生，不用手调色值）
+// ============================================================
+
+:root {
+    --el-color-primary: var(--gs-brand);
+    --el-color-primary-dark-2: var(--gs-brand-strong);
+    --el-color-primary-light-3: color-mix(in srgb, var(--gs-brand) 70%, #ffffff);
+    --el-color-primary-light-5: color-mix(in srgb, var(--gs-brand) 50%, #ffffff);
+    --el-color-primary-light-7: color-mix(in srgb, var(--gs-brand) 30%, #ffffff);
+    --el-color-primary-light-8: color-mix(in srgb, var(--gs-brand) 20%, #ffffff);
+    --el-color-primary-light-9: color-mix(in srgb, var(--gs-brand) 10%, #ffffff);
+
+    @each $name, $color in (success: var(--gs-success), warning: var(--gs-warning),
+        danger: var(--gs-danger), info: var(--gs-info)) {
+        --el-color-#{$name}: #{$color};
+        --el-color-#{$name}-dark-2: color-mix(in srgb, #{$color} 80%, #000000);
+        --el-color-#{$name}-light-3: color-mix(in srgb, #{$color} 70%, #ffffff);
+        --el-color-#{$name}-light-5: color-mix(in srgb, #{$color} 50%, #ffffff);
+        --el-color-#{$name}-light-7: color-mix(in srgb, #{$color} 30%, #ffffff);
+        --el-color-#{$name}-light-8: color-mix(in srgb, #{$color} 20%, #ffffff);
+        --el-color-#{$name}-light-9: color-mix(in srgb, #{$color} 10%, #ffffff);
+    }
+
+    --el-bg-color: var(--gs-bg-card);
+    --el-bg-color-page: var(--gs-bg-page);
+    --el-bg-color-overlay: var(--gs-bg-card);
+    --el-text-color-primary: var(--gs-text);
+    --el-text-color-regular: var(--gs-text-secondary);
+    --el-text-color-secondary: var(--gs-text-secondary);
+    --el-text-color-placeholder: var(--gs-text-muted);
+    --el-text-color-disabled: var(--gs-text-muted);
+    --el-border-color: var(--gs-border-strong);
+    --el-border-color-light: var(--gs-border);
+    --el-border-color-lighter: var(--gs-border);
+    --el-border-color-extra-light: var(--gs-bg-subtle);
+    --el-fill-color: var(--gs-bg-subtle);
+    --el-fill-color-light: var(--gs-bg-subtle);
+    --el-fill-color-lighter: var(--gs-bg-page);
+    --el-fill-color-blank: var(--gs-bg-card);
+    --el-border-radius-base: var(--gs-radius);
+    --el-border-radius-small: 4px;
+    --el-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+        "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+}
+
+html.dark {
+    --el-color-primary: var(--gs-brand);
+    --el-color-primary-dark-2: var(--gs-brand-strong);
+    --el-color-primary-light-3: color-mix(in srgb, var(--gs-brand) 70%, #141416);
+    --el-color-primary-light-5: color-mix(in srgb, var(--gs-brand) 50%, #141416);
+    --el-color-primary-light-7: color-mix(in srgb, var(--gs-brand) 30%, #141416);
+    --el-color-primary-light-8: color-mix(in srgb, var(--gs-brand) 20%, #141416);
+    --el-color-primary-light-9: color-mix(in srgb, var(--gs-brand) 12%, #141416);
+
+    @each $name, $color in (success: var(--gs-success), warning: var(--gs-warning),
+        danger: var(--gs-danger), info: var(--gs-info)) {
+        --el-color-#{$name}-light-3: color-mix(in srgb, #{$color} 70%, #141416);
+        --el-color-#{$name}-light-5: color-mix(in srgb, #{$color} 50%, #141416);
+        --el-color-#{$name}-light-7: color-mix(in srgb, #{$color} 30%, #141416);
+        --el-color-#{$name}-light-8: color-mix(in srgb, #{$color} 20%, #141416);
+        --el-color-#{$name}-light-9: color-mix(in srgb, #{$color} 12%, #141416);
+    }
+
+    --el-fill-color-dark: var(--gs-bg-subtle);
+    --el-fill-color-darker: var(--gs-border);
+    --el-mask-color: rgba(5, 10, 20, 0.65);
+}

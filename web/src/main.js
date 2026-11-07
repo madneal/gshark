@@ -1,13 +1,14 @@
-import { configureCompat, createApp } from 'vue'
+import { createApp } from 'vue'
 import App from './App.vue'
 
 import ElementPlus, { ElLoading, ElMessage, ElMessageBox } from 'element-plus'
+import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import 'element-plus/dist/index.css'
 import 'element-plus/theme-chalk/dark/css-vars.css'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
-// Desktop dark console theme (matches existing GShark slate palette)
-document.documentElement.classList.add('dark')
+// 主题初始化（默认暗色，可切换，写入 localStorage）
+import '@/theme'
 
 // 引入封装的router
 import router from '@/router/index'
@@ -22,17 +23,7 @@ import { auth } from '@/directive/auth'
 
 const app = createApp(App)
 
-configureCompat({
-    MODE: 3,
-    COMPONENT_V_MODEL: false
-})
-
-app.config.compatConfig = {
-    MODE: 3,
-    COMPONENT_V_MODEL: false
-}
-
-app.use(ElementPlus)
+app.use(ElementPlus, { locale: zhCn })
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
     app.component(key, component)
 }

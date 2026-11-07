@@ -29,6 +29,7 @@
               </el-breadcrumb>
             </div>
             <div class="right-box">
+                <ThemeToggle />
                 <Search />
                 <Screenfull class="screenfull" :style="{cursor:'pointer'}"></Screenfull>
                 <el-dropdown>
@@ -70,6 +71,7 @@
 import LayoutAside from '@/view/layout/aside/index.vue'
 import HistoryComponent from '@/view/layout/aside/historyComponent/history.vue'
 import Screenfull from '@/view/layout/screenfull/index.vue'
+import ThemeToggle from '@/view/layout/themeToggle/index.vue'
 import Search from '@/view/layout/search/search.vue'
 import { mapGetters, mapActions } from 'vuex'
 import CustomPic from '@/components/customPic/index.vue'
@@ -91,6 +93,7 @@ export default {
     LayoutAside,
     HistoryComponent,
     Screenfull,
+    ThemeToggle,
     Search,
     CustomPic
   },
