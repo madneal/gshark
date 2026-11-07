@@ -104,7 +104,7 @@ jobs:
           GOOS=darwin GOARCH=arm64 go build -trimpath -o ../release/gshark_darwin_arm64/gshark-cli ./cmd/gshark-cli
           GOOS=windows GOARCH=amd64 go build -trimpath -o ../release/gshark_windows_amd64/gshark-cli.exe ./cmd/gshark-cli
           GOOS=linux GOARCH=amd64 go build -trimpath -o ../release/gshark_linux_amd64/gshark-cli ./cmd/gshark-cli
-          for dir in ../release/gshark_*/; do cp ../CLI.md "$dir/CLI.md"; done
+          for dir in ../release/gshark_*/; do cp ../CLI.md ../CLI_CN.md "$dir"; done
 
       - name: Compress
         run: |
