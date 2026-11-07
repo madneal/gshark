@@ -4,12 +4,12 @@ export const baseUrl = process.env.FE_TEST_URL || 'http://localhost:8081/'
 export const chromePath = process.env.CHROME_PATH || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
 
 export const userInfo = {
-  ID: 1,
-  uuid: 'fb7d4a9e-e362-4eea-824d-6fb90c9fc128',
+  ID: Number(process.env.FE_TEST_UID || 1),
+  uuid: process.env.FE_TEST_UUID || 'fb7d4a9e-e362-4eea-824d-6fb90c9fc128',
   userName: 'gshark',
   nickName: '超级管理员',
   headerImg: '',
-  authorityId: '888',
+  authorityId: process.env.FE_TEST_AUTHORITY || '888',
   authority: {
     authorityId: '888',
     authorityName: '普通用户',
