@@ -43,6 +43,8 @@ gshark / gshark
   --admin-user myadmin --admin-password 'S3cret!'
 ```
 
+Release 压缩包包含独立管理命令行工具 `gshark-cli`，可处理和导出结果、管理规则/仓库/过滤规则、查询扫描状态，参见 [CLI 使用说明](CLI_CN.md)。
+
 ## Docker 部署
 
 ```bash

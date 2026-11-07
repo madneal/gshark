@@ -91,6 +91,21 @@ jobs:
         run: |
           GOOS=linux GOARCH=amd64 go build -o gshark && cp gshark ../release/gshark_linux_amd64
 
+      - name: Test management CLI
+        working-directory: ./server
+        run: go test ./client ./cli ./cmd/gshark-cli
+
+      - name: Build management CLI
+        working-directory: ./server
+        env:
+          CGO_ENABLED: 0
+        run: |
+          GOOS=darwin GOARCH=amd64 go build -trimpath -o ../release/gshark_darwin_amd64/gshark-cli ./cmd/gshark-cli
+          GOOS=darwin GOARCH=arm64 go build -trimpath -o ../release/gshark_darwin_arm64/gshark-cli ./cmd/gshark-cli
+          GOOS=windows GOARCH=amd64 go build -trimpath -o ../release/gshark_windows_amd64/gshark-cli.exe ./cmd/gshark-cli
+          GOOS=linux GOARCH=amd64 go build -trimpath -o ../release/gshark_linux_amd64/gshark-cli ./cmd/gshark-cli
+          for dir in ../release/gshark_*/; do cp ../CLI.md ../CLI_CN.md "$dir"; done
+
       - name: Compress
         run: |
           7z a -r ./release/gshark_darwin_amd64.zip ./release/gshark_darwin_amd64/ &&

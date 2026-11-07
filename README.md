@@ -41,6 +41,8 @@ Set a custom admin account via script/CLI flags (no browser init page required):
   --admin-user myadmin --admin-password 'S3cret!'
 ```
 
+The release archives include a standalone management CLI for querying and managing results, rules, repositories and filters, and viewing scan status. See [CLI usage](CLI.md).
+
 ## Docker Deployment
 
 ```bash
