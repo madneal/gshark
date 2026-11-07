@@ -24,7 +24,9 @@
                 <el-button @click="deleteVisible = false" size="mini" type="text">取消</el-button>
                 <el-button @click="onDelete" size="mini" type="primary">确定</el-button>
               </div>
-            <el-button icon="el-icon-delete" size="mini" slot="reference" type="danger">批量删除</el-button>
+            <template #reference>
+              <el-button icon="el-icon-delete" size="mini" type="danger">批量删除</el-button>
+            </template>
           </el-popover>
         </el-form-item>
       </el-form>

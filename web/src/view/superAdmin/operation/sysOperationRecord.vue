@@ -21,7 +21,9 @@
               <el-button @click="deleteVisible = false" size="mini" type="text">取消</el-button>
               <el-button @click="onDelete" size="mini" type="primary">确定</el-button>
             </div>
-            <el-button icon="el-icon-delete" size="mini" slot="reference" type="danger">批量删除</el-button>
+            <template #reference>
+              <el-button icon="el-icon-delete" size="mini" type="danger">批量删除</el-button>
+            </template>
           </el-popover>
         </el-form-item>
       </el-form>
@@ -61,7 +63,7 @@
               <div class="popover-box">
                 <pre>{{fmtBody(scope.row.body)}}</pre>
               </div>
-              <i class="el-icon-view" slot="reference"></i>
+              <template #reference><i class="el-icon-view"></i></template>
             </el-popover>
 
             <span v-else>无</span>
@@ -75,7 +77,7 @@
               <div class="popover-box">
                 <pre>{{fmtBody(scope.row.resp)}}</pre>
               </div>
-              <i class="el-icon-view" slot="reference"></i>
+              <template #reference><i class="el-icon-view"></i></template>
             </el-popover>
             <span v-else>无</span>
           </div>
@@ -89,7 +91,9 @@
               <el-button @click="scope.row.visible = false" size="mini" type="text">取消</el-button>
               <el-button @click="deleteSysOperationRecord(scope.row)" size="mini" type="primary">确定</el-button>
             </div>
-            <el-button icon="el-icon-delete" size="mini" slot="reference" type="danger">删除</el-button>
+            <template #reference>
+              <el-button icon="el-icon-delete" size="mini" type="danger">删除</el-button>
+            </template>
           </el-popover>
         </template>
       </el-table-column>
