@@ -53,16 +53,15 @@ export const user = {
             if (res.code == 0) {
                 commit('setUserInfo', res.data.user)
                 commit('setToken', res.data.token)
+                const query = router.currentRoute.value.query
+                if (query.callback) {
+                    await router.replace({ name: 'cliAuth', query })
+                    return true
+                }
                 await dispatch('router/SetAsyncRouter', {}, { root: true })
                 const asyncRouters = rootGetters['router/asyncRouters']
                 router.addRoutes(asyncRouters)
-                // const redirect = router.history.current.query.redirect
-                // console.log(redirect)
-                // if (redirect) {
-                //     router.push({ path: redirect })
-                // } else {
-                    router.push({ path: defaultRouterPath(getters["userInfo"]) })
-                // }
+                await router.push({ path: defaultRouterPath(getters["userInfo"]) })
                 return true
             }
         },

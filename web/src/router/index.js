@@ -1,6 +1,10 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 
 const baseRouters = [{
+    path: '/cli-auth',
+    name: 'cliAuth',
+    component: () => import('@/view/cliAuth/index.vue')
+}, {
     path: '/',
     redirect: '/login'
 },

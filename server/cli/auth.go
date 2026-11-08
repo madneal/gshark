@@ -1,14 +1,10 @@
 package cli
 
 import (
-	"bufio"
-	"bytes"
+	"context"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"image"
-	_ "image/png"
-	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -16,7 +12,6 @@ import (
 
 	"github.com/madneal/gshark/client"
 	"github.com/spf13/cobra"
-	"golang.org/x/term"
 )
 
 type credentials struct {
@@ -85,88 +80,39 @@ func saveCredentials(saved credentials) error {
 
 func authCommand(server *string, timeout *time.Duration) *cobra.Command {
 	auth := &cobra.Command{Use: "auth", Short: "Log in and manage saved credentials"}
-	var username string
-	login := &cobra.Command{Use: "login", Short: "Log in with username, password and image captcha", Args: cobra.NoArgs, RunE: func(cmd *cobra.Command, _ []string) error {
+	var webURL string
+	var loginTimeout time.Duration
+	var noBrowser bool
+	login := &cobra.Command{Use: "login", Short: "Log in and authorize the CLI in your browser", Args: cobra.NoArgs, RunE: func(cmd *cobra.Command, _ []string) error {
 		endpoint := *server
 		if !cmd.Flags().Changed("server") && os.Getenv("GSHARK_SERVER") == "" {
 			if saved, err := loadCredentials(); err == nil {
 				endpoint = saved.Server
 			}
 		}
-		input := bufio.NewReader(cmd.InOrStdin())
-		prompt := func(label string) (string, error) {
-			fmt.Fprint(cmd.ErrOrStderr(), label)
-			line, err := input.ReadString('\n')
-			if err != nil {
-				return "", fmt.Errorf("read %s: %w", label, err)
-			}
-			return strings.TrimSpace(line), nil
+		if _, err := client.New(endpoint, "", *timeout); err != nil {
+			return err
 		}
-		var err error
-		if username == "" {
-			username, err = prompt("Username: ")
-			if err != nil {
-				return err
-			}
-		}
-		if username == "" {
-			return fmt.Errorf("username cannot be empty")
-		}
-		file, ok := cmd.InOrStdin().(*os.File)
-		if !ok || !term.IsTerminal(int(file.Fd())) {
-			return fmt.Errorf("auth login requires an interactive terminal for hidden password input")
-		}
-		fmt.Fprint(cmd.ErrOrStderr(), "Password: ")
-		password, err := term.ReadPassword(int(file.Fd()))
-		fmt.Fprintln(cmd.ErrOrStderr())
+		page, err := loginPageURL(endpoint, webURL)
 		if err != nil {
 			return err
 		}
-		if len(password) == 0 {
-			return fmt.Errorf("password cannot be empty")
+		if loginTimeout <= 0 {
+			return fmt.Errorf("--login-timeout must be positive")
 		}
-		c, err := client.New(endpoint, "", *timeout)
+		ctx, cancel := context.WithTimeout(cmd.Context(), loginTimeout)
+		defer cancel()
+		saved, err := browserLogin(ctx, page, endpoint, *timeout, cmd.ErrOrStderr(), noBrowser, openBrowser)
 		if err != nil {
 			return err
 		}
-		data, err := c.Post(cmd.Context(), "base/captcha", struct{}{})
-		if err != nil {
-			return err
-		}
-		var captcha struct {
-			ID      string `json:"captchaId"`
-			Picture string `json:"picPath"`
-		}
-		if err = json.Unmarshal(data, &captcha); err != nil {
-			return err
-		}
-		if err = renderCaptcha(cmd.ErrOrStderr(), captcha.Picture); err != nil {
-			return err
-		}
-		answer, err := prompt("Captcha: ")
-		if err != nil {
-			return err
-		}
-		data, err = c.Post(cmd.Context(), "base/login", map[string]string{"username": username, "password": string(password), "captchaId": captcha.ID, "captcha": answer})
-		if err != nil {
-			return fmt.Errorf("login failed (run auth login to retry): %w", err)
-		}
-		var result struct {
-			Token string `json:"token"`
-		}
-		if err = json.Unmarshal(data, &result); err != nil {
-			return err
-		}
-		if result.Token == "" {
-			return fmt.Errorf("login returned no token")
-		}
-		if err = saveCredentials(credentials{Server: strings.TrimRight(endpoint, "/"), Username: username, Token: result.Token}); err != nil {
-			return err
-		}
-		_, err = fmt.Fprintf(cmd.OutOrStdout(), "Logged in as %s on %s\n", username, endpoint)
+		_, err = fmt.Fprintf(cmd.OutOrStdout(), "Logged in as %s on %s\n", saved.Username, saved.Server)
 		return err
 	}}
-	login.Flags().StringVarP(&username, "username", "u", "", "Login username")
+	login.Flags().StringVar(&webURL, "web-url", "", "GShark website URL (required for direct backend connections)")
+	login.Flags().DurationVar(&loginTimeout, "login-timeout", 5*time.Minute, "Time to complete browser authorization")
+	login.Flags().BoolVar(&noBrowser, "no-browser", false, "Print the authorization URL without opening a browser")
+
 	auth.AddCommand(login)
 	auth.AddCommand(&cobra.Command{Use: "status", Short: "Show saved login and local token expiry (no server verification)", Args: cobra.NoArgs, RunE: func(cmd *cobra.Command, _ []string) error {
 		saved, err := loadCredentials()
@@ -217,46 +163,4 @@ func tokenExpiry(token string) time.Time {
 		return time.Time{}
 	}
 	return time.Unix(claims.Exp, 0)
-}
-
-func renderCaptcha(out io.Writer, data string) error {
-	_, encoded, ok := strings.Cut(data, ",")
-	if !ok {
-		return fmt.Errorf("invalid captcha image")
-	}
-	raw, err := base64.StdEncoding.DecodeString(encoded)
-	if err != nil {
-		return err
-	}
-	img, _, err := image.Decode(bytes.NewReader(raw))
-	if err != nil {
-		return fmt.Errorf("decode captcha: %w", err)
-	}
-	bounds := img.Bounds()
-	if bounds.Dx() == 0 || bounds.Dy() == 0 {
-		return fmt.Errorf("empty captcha")
-	}
-	width := bounds.Dx()
-	if width > 80 {
-		width = 80
-	}
-	height := bounds.Dy() * width / bounds.Dx()
-	// A colored half block carries two image rows per terminal character.
-	for y := 0; y < height; y += 2 {
-		for x := 0; x < width; x++ {
-			r, g, b, _ := img.At(bounds.Min.X+x*bounds.Dx()/width, bounds.Min.Y+y*bounds.Dy()/height).RGBA()
-			yy := y + 1
-			if yy >= height {
-				yy = height - 1
-			}
-			br, bg, bb, _ := img.At(bounds.Min.X+x*bounds.Dx()/width, bounds.Min.Y+yy*bounds.Dy()/height).RGBA()
-			if _, err = fmt.Fprintf(out, "\x1b[38;2;%d;%d;%dm\x1b[48;2;%d;%d;%dm▀", r>>8, g>>8, b>>8, br>>8, bg>>8, bb>>8); err != nil {
-				return err
-			}
-		}
-		if _, err = fmt.Fprintln(out, "\x1b[0m"); err != nil {
-			return err
-		}
-	}
-	return nil
 }

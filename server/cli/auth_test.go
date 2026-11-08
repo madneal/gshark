@@ -3,8 +3,6 @@ package cli
 import (
 	"bytes"
 	"encoding/base64"
-	"image"
-	"image/png"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -87,18 +85,7 @@ func TestSavedTokenNeverSentToOtherServer(t *testing.T) {
 	}
 }
 
-func TestCaptchaAndExpiry(t *testing.T) {
-	var encoded bytes.Buffer
-	if err := png.Encode(&encoded, image.NewRGBA(image.Rect(0, 0, 4, 4))); err != nil {
-		t.Fatal(err)
-	}
-	var out bytes.Buffer
-	if err := renderCaptcha(&out, "data:image/png;base64,"+base64.StdEncoding.EncodeToString(encoded.Bytes())); err != nil || !strings.Contains(out.String(), "▀") {
-		t.Fatalf("captcha: %v", err)
-	}
-	if err := renderCaptcha(&out, "broken"); err == nil {
-		t.Fatal("expected image error")
-	}
+func TestTokenExpiry(t *testing.T) {
 	token := "header." + base64.RawURLEncoding.EncodeToString([]byte(`{"exp":123456789}`)) + ".sig"
 	if tokenExpiry(token).Unix() != 123456789 {
 		t.Fatal("incorrect expiry")
