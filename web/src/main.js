@@ -1,11 +1,13 @@
 import { createApp } from 'vue'
-import App from './App.vue'
 
-import ElementPlus, { ElLoading, ElMessage, ElMessageBox } from 'element-plus'
-import zhCn from 'element-plus/es/locale/lang/zh-cn'
+// EP 样式必须先于 App.vue（其 style 块含 tokens/main.scss）注入，
+// 否则 dev 下 EP 的 :root 变量会后加载而压掉令牌映射
 import 'element-plus/dist/index.css'
 import 'element-plus/theme-chalk/dark/css-vars.css'
+import ElementPlus, { ElLoading, ElMessage, ElMessageBox } from 'element-plus'
+import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+import App from './App.vue'
 
 // 主题初始化（默认暗色，可切换，写入 localStorage）
 import '@/theme'

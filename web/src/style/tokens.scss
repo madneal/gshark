@@ -72,11 +72,12 @@ html.dark {
 }
 
 // ============================================================
-// Element Plus 变量映射（ep 的 dark/css-vars.css 先于本文件加载，
-// 此处覆盖即生效；light-3/5/7/8/9 用 color-mix 派生，不用手调色值）
+// Element Plus 变量映射（必须同时覆盖 :root 与 html.dark：
+// EP 的 dark/css-vars.css 用 html.dark 声明，单写 :root 会被其
+// 以更高优先级压掉；本文件后加载，同选择器即胜出）
 // ============================================================
 
-:root {
+:root, html.dark {
     --el-color-primary: var(--gs-brand);
     --el-color-primary-dark-2: var(--gs-brand-strong);
     --el-color-primary-light-3: color-mix(in srgb, var(--gs-brand) 70%, #ffffff);

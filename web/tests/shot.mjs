@@ -1,13 +1,15 @@
 // 截图工具：node tests/shot.mjs <route> <outfile> [light|dark]
 // 例：node tests/shot.mjs /login /tmp/login.png dark
 import { chromium } from 'playwright-core'
-import { authHeaders, baseUrl, chromePath, installAuth, token } from './auth.mjs'
+import { baseUrl, chromePath, installAuth } from './auth.mjs'
 
 const route = process.argv[2] || '/'
 const out = process.argv[3] || `/tmp/gshark-shot.png`
 const theme = process.argv[4] || 'dark'
 
-const browser = await chromium.launch({
+let browser
+try {
+browser = await chromium.launch({
     executablePath: chromePath,
     headless: true,
     args: ['--no-sandbox']
@@ -29,4 +31,6 @@ await page.goto(target, { waitUntil: 'load' })
 await page.waitForTimeout(1500)
 await page.screenshot({ path: out, fullPage: false })
 console.log(`shot: ${out}${errors.length ? '\nconsole errors:\n' + errors.join('\n') : ''}`)
-await browser.close()
+} finally {
+  if (browser) await browser.close()
+}
