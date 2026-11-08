@@ -34,7 +34,9 @@
               <el-button size="mini" type="text" @click="scope.row.visible = false">取消</el-button>
               <el-button type="primary" size="mini" @click="deleteUser(scope.row)">确定</el-button>
             </div>
-            <el-button type="danger" icon="el-icon-delete" size="small" slot="reference">删除</el-button>
+            <template #reference>
+              <el-button type="danger" icon="el-icon-delete" size="small">删除</el-button>
+            </template>
           </el-popover>
         </template>
       </el-table-column>

@@ -51,10 +51,7 @@ export default defineConfig(({ mode }) => {
       vue({
         template: {
           compilerOptions: {
-            whitespace: 'preserve',
-            compatConfig: {
-              MODE: 2
-            }
+            whitespace: 'preserve'
           }
         }
       }),
@@ -62,7 +59,6 @@ export default defineConfig(({ mode }) => {
     ],
     resolve: {
       alias: {
-        vue: '@vue/compat',
         '@': fileURLToPath(new URL('./src', import.meta.url))
       }
     },

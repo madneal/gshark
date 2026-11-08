@@ -4,7 +4,7 @@ $icon-size:17px;
 $active-color:#3b82f6;
 $bg-main:#0f172a;
 $border-color: #334155;
-$white-bg:#182235;
+$white-bg:var(--gs-bg-card);
 $el-icon-small:30px;
 $el-icon-mini:24px;
 // aside
@@ -14,7 +14,7 @@ $width-mobile-aside:210px;
 $color-aside:rgba(255, 255, 255,.9);
 $icon-arrow-size-aside:12px;
 $width-submenu-aside:55px;
-$bg-aside:#0b1120;
+$bg-aside:var(--gs-bg-aside);
 $height-aside-title:64px;
 $height-aside-img:30px;
 $width-aside-img:30px;
@@ -25,11 +25,11 @@ $height-nav-scroll:40px;
 $active-bg-tabs-item-nav-scroll:#3b82f6;
 $bg-tabs-item-nav-scroll:#475569;
 // table
-$bg-color-table-thead:#111827;
+$bg-color-table-thead:var(--gs-bg-subtle);
 $border-color-table:#334155;
 $height-table-cell:45px;
 $color-table-tbody:#cbd5e1;
-$color-table-thead:#e5e7eb;
+$color-table-thead:var(--gs-text-secondary);
 // dashboard
 $height-car:68px;
 // mobile
