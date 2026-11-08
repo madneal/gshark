@@ -1,6 +1,7 @@
 import router from './router'
 import { store } from '@/store/index'
 import getPageTitle from '@/utils/page'
+import { cliAuthorization, cliSessionActive } from '@/utils/cliAuth'
 
 let asyncRouterFlag = 0
 
@@ -21,6 +22,20 @@ const defaultRouterPath = () => {
 
 router.beforeEach(async(to, from, next) => {
     const token = store.getters['user/token']
+    if (to.name === 'cliAuth') {
+        try {
+            const query = cliAuthorization(to.query)
+            next(cliSessionActive(token) ? undefined : { name: 'login', query: { cli_callback: query.callback, cli_state: query.state } })
+        } catch {
+            next()
+        }
+        return
+    }
+    if (to.name === 'login' && to.query.cli_callback) {
+        next(cliSessionActive(token) ? { name: 'cliAuth', query: { callback: to.query.cli_callback, state: to.query.cli_state } } : undefined)
+        return
+    }
+
         // 在白名单中的判断情况
         //修改网页标签名称
     document.title = getPageTitle(to.meta.title)
