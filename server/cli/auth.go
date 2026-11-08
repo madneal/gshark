@@ -102,7 +102,7 @@ func authCommand(server *string, timeout *time.Duration) *cobra.Command {
 		}
 		ctx, cancel := context.WithTimeout(cmd.Context(), loginTimeout)
 		defer cancel()
-		saved, err := browserLogin(ctx, page, endpoint, cmd.ErrOrStderr(), noBrowser, openBrowser)
+		saved, err := browserLogin(ctx, page, endpoint, *timeout, cmd.ErrOrStderr(), noBrowser, openBrowser)
 		if err != nil {
 			return err
 		}

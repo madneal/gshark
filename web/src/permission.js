@@ -25,14 +25,14 @@ router.beforeEach(async(to, from, next) => {
     if (to.name === 'cliAuth') {
         try {
             const query = cliAuthorization(to.query)
-            next(cliSessionActive(token) ? undefined : { name: 'login', query: { cli_callback: query.callback, cli_state: query.state } })
+            next(cliSessionActive(token) ? undefined : { name: 'login', query })
         } catch {
             next()
         }
         return
     }
-    if (to.name === 'login' && to.query.cli_callback) {
-        next(cliSessionActive(token) ? { name: 'cliAuth', query: { callback: to.query.cli_callback, state: to.query.cli_state } } : undefined)
+    if (to.name === 'login' && to.query.callback) {
+        next(cliSessionActive(token) ? { name: 'cliAuth', query: to.query } : undefined)
         return
     }
 

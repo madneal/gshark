@@ -54,8 +54,8 @@ export const user = {
                 commit('setUserInfo', res.data.user)
                 commit('setToken', res.data.token)
                 const query = router.currentRoute.value.query
-                if (query.cli_callback) {
-                    await router.replace({ name: 'cliAuth', query: { callback: query.cli_callback, state: query.cli_state } })
+                if (query.callback) {
+                    await router.replace({ name: 'cliAuth', query })
                     return true
                 }
                 await dispatch('router/SetAsyncRouter', {}, { root: true })

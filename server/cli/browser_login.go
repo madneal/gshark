@@ -5,6 +5,7 @@ import (
 	"crypto/rand"
 	"crypto/subtle"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net"
@@ -15,6 +16,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/madneal/gshark/client"
 )
 
 func loginPageURL(endpoint, website string) (*url.URL, error) {
@@ -63,7 +66,7 @@ func openBrowser(address string) error {
 	return nil
 }
 
-func browserLogin(ctx context.Context, page *url.URL, endpoint string, out io.Writer, noBrowser bool, launch func(string) error) (credentials, error) {
+func browserLogin(ctx context.Context, page *url.URL, endpoint string, timeout time.Duration, out io.Writer, noBrowser bool, launch func(string) error) (credentials, error) {
 	var saved credentials
 	listener, err := net.Listen("tcp4", "127.0.0.1:0")
 	if err != nil {
@@ -107,11 +110,6 @@ func browserLogin(ctx context.Context, page *url.URL, endpoint string, out io.Wr
 			http.Error(w, "Invalid authorization state", http.StatusForbidden)
 			return
 		}
-		token, username := r.PostForm.Get("token"), r.PostForm.Get("username")
-		if token == "" || username == "" {
-			http.Error(w, "Missing login credentials", http.StatusBadRequest)
-			return
-		}
 		mu.Lock()
 		defer mu.Unlock()
 		if ctx.Err() != nil {
@@ -122,19 +120,36 @@ func browserLogin(ctx context.Context, page *url.URL, endpoint string, out io.Wr
 			http.Error(w, "Authorization already completed", http.StatusConflict)
 			return
 		}
-		saved := credentials{Server: strings.TrimRight(endpoint, "/"), Username: username, Token: token}
-		if err := saveCredentials(saved); err != nil {
-			http.Error(w, "Could not save CLI credentials", http.StatusInternalServerError)
+		if r.PostForm.Get("error") == "access_denied" {
 			completed = true
-			result <- outcome{err: fmt.Errorf("save browser login: %w", err)}
+			fmt.Fprintln(w, "GShark CLI authorization canceled. You can close this tab.")
+			result <- outcome{err: fmt.Errorf("browser authorization canceled")}
+			return
+		}
+		token := r.PostForm.Get("token")
+		if token == "" {
+			http.Error(w, "Missing login token", http.StatusBadRequest)
 			return
 		}
 		completed = true
+		saved, err := verifyBrowserCredentials(ctx, endpoint, token, timeout)
+		if err == nil {
+			err = ctx.Err()
+		}
+		if err == nil {
+			err = saveCredentials(saved)
+		}
+		if err != nil {
+			http.Error(w, "CLI authorization failed. Check the terminal and sign in again.", http.StatusBadGateway)
+			result <- outcome{err: fmt.Errorf("authorize browser login: %w", err)}
+			return
+		}
+
 		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 		fmt.Fprintln(w, "GShark CLI authorized. You can close this tab and return to the terminal.")
 		result <- outcome{credentials: saved}
 	})
-	server := &http.Server{Handler: mux, ReadHeaderTimeout: 5 * time.Second, ReadTimeout: 10 * time.Second, WriteTimeout: 10 * time.Second}
+	server := &http.Server{Handler: mux, ReadHeaderTimeout: 5 * time.Second, ReadTimeout: 10 * time.Second, WriteTimeout: timeout + 10*time.Second}
 	defer server.Close()
 	serveErrors := make(chan error, 1)
 	go func() { serveErrors <- server.Serve(listener) }()
@@ -161,4 +176,25 @@ func browserLogin(ctx context.Context, page *url.URL, endpoint string, out io.Wr
 	case <-ctx.Done():
 		return saved, fmt.Errorf("browser login canceled or timed out: %w", ctx.Err())
 	}
+}
+
+func verifyBrowserCredentials(ctx context.Context, endpoint, token string, timeout time.Duration) (credentials, error) {
+	saved := credentials{Server: strings.TrimRight(endpoint, "/"), Token: token}
+	c, err := client.New(endpoint, token, timeout)
+	if err != nil {
+		return saved, err
+	}
+	c.OnToken = func(next string) error { saved.Token = next; return nil }
+	data, err := c.Get(ctx, "base/session", nil)
+	if err != nil {
+		return saved, fmt.Errorf("verify session with target backend: %w", err)
+	}
+	var session struct {
+		Username string `json:"username"`
+	}
+	if err := json.Unmarshal(data, &session); err != nil || session.Username == "" {
+		return saved, fmt.Errorf("target backend returned an invalid session")
+	}
+	saved.Username = session.Username
+	return saved, nil
 }

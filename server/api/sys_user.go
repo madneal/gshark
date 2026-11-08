@@ -98,6 +98,11 @@ func tokenNext(c *gin.Context, user model.SysUser) {
 	}
 }
 
+func GetSession(c *gin.Context) {
+	claims := c.MustGet("claims").(*request.CustomClaims)
+	response.OkWithDetailed(gin.H{"username": claims.Username}, "会话有效", c)
+}
+
 func Register(c *gin.Context) {
 	var R request.Register
 	_ = c.ShouldBindJSON(&R)

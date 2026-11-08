@@ -11,6 +11,7 @@ func InitBaseRouter(Router *gin.RouterGroup) (R gin.IRoutes) {
 	{
 		BaseRouter.POST("login", api.Login)
 		BaseRouter.POST("captcha", api.Captcha)
+		BaseRouter.GET("session", middleware.JWTAuth(), api.GetSession)
 	}
 	return BaseRouter
 }

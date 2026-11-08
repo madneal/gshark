@@ -11,7 +11,7 @@ Manage a deployed GShark instance with `gshark-cli`, included in each release ar
 
 The CLI opens the GShark website. Log in there (including the captcha), then click **Authorize CLI**. An existing browser session can authorize directly. The terminal never asks for your password or captcha. Login is saved automatically; repeat this flow when it expires.
 
-For a direct backend connection, also specify its website: `auth login --server http://127.0.0.1:8888 --web-url http://localhost:8080`. The website must include the CLI authorization page from the same release and connect to that backend. With a frontend `/api` URL, the website URL is inferred; use `--web-url` to override it.
+For a direct backend connection, also specify its website: `auth login --server http://127.0.0.1:8888 --web-url http://localhost:8080`. Both the website and backend must be updated to this release. The CLI verifies the session with the target backend before replacing saved credentials; canceling in the browser ends the CLI wait immediately. With a frontend `/api` URL, the website URL is inferred; use `--web-url` to override it.
 
 If the browser does not open, use the printed URL on the same computer. `--no-browser` only prints the URL; `--login-timeout 10m` extends the default five-minute wait. The callback listens only on `127.0.0.1`; for remote/headless scripts, use `GSHARK_TOKEN` instead.
 
