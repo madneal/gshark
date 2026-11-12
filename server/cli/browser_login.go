@@ -154,13 +154,13 @@ func browserLogin(ctx context.Context, page *url.URL, endpoint string, timeout t
 	serveErrors := make(chan error, 1)
 	go func() { serveErrors <- server.Serve(listener) }()
 	query := url.Values{"callback": {callback}, "state": {state}}
-	authorization := *page
-	authorization.Fragment = "/cli-auth?" + query.Encode()
-	if _, err = fmt.Fprintf(out, "Complete login and authorize GShark CLI in your browser:\n%s\n", authorization.String()); err != nil {
+	// The hash-router query is already escaped; URL.String would escape its '%' again.
+	authorization := page.String() + "#/cli-auth?" + query.Encode()
+	if _, err = fmt.Fprintf(out, "Complete login and authorize GShark CLI in your browser:\n%s\n", authorization); err != nil {
 		return saved, err
 	}
 	if !noBrowser {
-		if err := launch(authorization.String()); err != nil {
+		if err := launch(authorization); err != nil {
 			fmt.Fprintln(out, "Could not open a browser. Open the URL above on this computer.")
 		}
 	}
